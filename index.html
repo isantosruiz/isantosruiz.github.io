@@ -31,6 +31,10 @@
       --card-radius: 6px;
       --muted: #6b7280;
       --border: rgba(0, 0, 0, 0.08);
+      --surface: #fff;
+      --page-bg: #f1f1f1;
+      --text: #111827;
+      --text-soft: #374151;
     }
 
     html,
@@ -50,6 +54,41 @@
       color: var(--title);
       line-height: 1.1;
       margin: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .view-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .view-control {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background-color 120ms ease-in-out, color 120ms ease-in-out, transform 120ms ease-in-out;
+    }
+
+    .view-control:hover,
+    .view-control:focus-visible {
+      background: rgba(0, 150, 136, 0.08);
+      color: var(--accent);
+      transform: translateY(-1px);
     }
 
     /* General links */
@@ -143,6 +182,11 @@
       .sticky-nav {
         position: static;
       }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
 
     /* Publications accordion */
@@ -163,7 +207,7 @@
       border-radius: 10px;
       padding: 10px 12px;
       margin-bottom: 10px;
-      background: #fff;
+      background: var(--surface);
     }
 
     details.pub-year[open] {
@@ -178,7 +222,7 @@
       justify-content: space-between;
       gap: 10px;
       font-weight: 700;
-      color: #111827;
+      color: var(--text);
     }
 
     summary.pub-summary::-webkit-details-marker {
@@ -228,9 +272,9 @@
       padding: 7px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: #fff;
+      background: var(--surface);
       text-decoration: none;
-      color: #374151;
+      color: var(--text-soft);
       line-height: 1;
       font-size: 0.95rem;
     }
@@ -251,7 +295,7 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 10px 12px;
-      background: #fff;
+      background: var(--surface);
     }
 
     .nav-mobile summary {
@@ -261,7 +305,7 @@
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      color: #111827;
+      color: var(--text);
     }
 
     .nav-mobile summary::-webkit-details-marker {
@@ -281,7 +325,7 @@
       padding: 8px 10px;
       border-radius: 8px;
       text-decoration: none;
-      color: #374151;
+      color: var(--text-soft);
     }
 
     .nav-mobile .nav-mobile-links a i {
@@ -295,6 +339,43 @@
       background: rgba(0, 150, 136, 0.08);
       text-decoration: none;
     }
+
+    body.dark-mode {
+      --link: #8ab4ff;
+      --link-hover: #b7d1ff;
+      --title: #e6fffb;
+      --muted: #aab4c2;
+      --border: rgba(255, 255, 255, 0.16);
+      --surface: #17212b;
+      --page-bg: #0f1720;
+      --text: #eef5f8;
+      --text-soft: #d2dbe3;
+      background: var(--page-bg) !important;
+      color: var(--text);
+    }
+
+    body.dark-mode .w3-white,
+    body.dark-mode .w3-light-grey,
+    body.dark-mode details.pub-year {
+      background-color: var(--surface) !important;
+      color: var(--text) !important;
+    }
+
+    body.dark-mode .w3-text-grey,
+    body.dark-mode .w3-text-theme,
+    body.dark-mode .w3-opacity,
+    body.dark-mode .w3-text-dark-grey {
+      color: var(--text-soft) !important;
+    }
+
+    body.dark-mode .w3-card,
+    body.dark-mode .w3-card-4 {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    body.dark-mode .w3-light-grey.w3-round-xlarge {
+      background-color: #263241 !important;
+    }
   </style>
 </head>
 
@@ -303,7 +384,17 @@
   <!-- Page Container -->
   <div class="w3-content w3-margin-top" style="max-width:1400px;">
     <header class="w3-row-padding">
-      <h1 class="page-title w3-padding-16" id="top">Ildeberto de los Santos Ruiz</h1>
+      <div class="topbar w3-padding-16">
+        <h1 class="page-title" id="top">Ildeberto de los Santos Ruiz</h1>
+        <div class="view-controls" aria-label="Controles de visualización">
+          <button class="view-control" id="fullscreenToggle" type="button" aria-label="Activar pantalla completa" title="Pantalla completa">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+          </button>
+          <button class="view-control" id="themeToggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- The Grid -->
@@ -950,6 +1041,66 @@
       document.querySelectorAll('#publications details.pub-year').forEach(d => d.open = false);
       document.getElementById('publicaciones-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    (function () {
+      const themeButton = document.getElementById('themeToggle');
+      const fullscreenButton = document.getElementById('fullscreenToggle');
+      const darkIcon = '<i class="fa fa-sun" aria-hidden="true"></i>';
+      const lightIcon = '<i class="fa fa-moon" aria-hidden="true"></i>';
+      const expandIcon = '<i class="fa fa-expand" aria-hidden="true"></i>';
+      const compressIcon = '<i class="fa fa-compress" aria-hidden="true"></i>';
+
+      function setTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        if (themeButton) {
+          themeButton.innerHTML = isDark ? darkIcon : lightIcon;
+          themeButton.setAttribute('aria-label', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
+          themeButton.setAttribute('title', isDark ? 'Modo claro' : 'Modo oscuro');
+        }
+        try {
+          localStorage.setItem('preferredTheme', isDark ? 'dark' : 'light');
+        } catch (error) {
+          // Local storage can be unavailable in strict privacy modes.
+        }
+      }
+
+      function updateFullscreenButton() {
+        const isFullscreen = Boolean(document.fullscreenElement);
+        if (!fullscreenButton) return;
+        fullscreenButton.innerHTML = isFullscreen ? compressIcon : expandIcon;
+        fullscreenButton.setAttribute('aria-label', isFullscreen ? 'Salir de pantalla completa' : 'Activar pantalla completa');
+        fullscreenButton.setAttribute('title', isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa');
+      }
+
+      let savedTheme = null;
+      try {
+        savedTheme = localStorage.getItem('preferredTheme');
+      } catch (error) {
+        savedTheme = null;
+      }
+      setTheme(savedTheme === 'dark');
+
+      themeButton?.addEventListener('click', () => {
+        setTheme(!document.body.classList.contains('dark-mode'));
+      });
+
+      fullscreenButton?.addEventListener('click', async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await document.documentElement.requestFullscreen();
+          }
+        } catch (error) {
+          fullscreenButton.setAttribute('title', 'Pantalla completa no disponible');
+        } finally {
+          updateFullscreenButton();
+        }
+      });
+
+      document.addEventListener('fullscreenchange', updateFullscreenButton);
+      updateFullscreenButton();
+    })();
 
     // Opcional UX: cerrar menú móvil al dar click en un enlace
     (function () {
