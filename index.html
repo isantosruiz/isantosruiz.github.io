@@ -378,14 +378,11 @@
     }
 
     body.dark-mode #publications .bib2html-runtime,
+    body.dark-mode #publications .bib2html-runtime *,
     body.dark-mode #publications .bib2html-runtime .b2h-root,
     body.dark-mode #publications .bib2html-runtime .b2h-list li,
     body.dark-mode #publications .bib2html-runtime .b2h-ref,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref span,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref em,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref strong,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref b,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref i {
+    body.dark-mode #publications .bib2html-runtime .b2h-ref * {
       color: var(--text) !important;
     }
 
@@ -419,6 +416,12 @@
 
     body.dark-mode #publications .bib2html-runtime a {
       color: var(--link) !important;
+    }
+
+    body.dark-mode #publications .bib2html-runtime a *,
+    body.dark-mode #publications .bib2html-runtime .b2h-ref a,
+    body.dark-mode #publications .bib2html-runtime .b2h-ref a * {
+      color: inherit !important;
     }
 
     body.dark-mode #publications .bib2html-runtime a:hover,
