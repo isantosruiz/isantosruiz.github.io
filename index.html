@@ -35,6 +35,31 @@
       --page-bg: #f1f1f1;
       --text: #111827;
       --text-soft: #374151;
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: var(--accent);
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: var(--accent);
+      --b2h-count-bg: rgba(0, 150, 136, 0.12);
+      --b2h-count-text: #006d77;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --b2h-text: #e8edf5;
+        --b2h-link: #7dd3fc;
+        --b2h-accent: #7dd3fc;
+        --b2h-surface: #111827;
+        --b2h-border: #374151;
+        --b2h-heading: #f3f7ff;
+        --b2h-muted: #b8c7de;
+        --b2h-icon: #91a8ca;
+        --b2h-count-bg: #173756;
+        --b2h-count-text: #bfe2ff;
+      }
     }
 
     html,
@@ -350,8 +375,38 @@
       --page-bg: #0f1720;
       --text: #eef5f8;
       --text-soft: #d2dbe3;
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: #7dd3fc;
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: #91a8ca;
+      --b2h-count-bg: #173756;
+      --b2h-count-text: #bfe2ff;
+      --b2h-button-border: #35557a;
+      --b2h-button-bg: #162a44;
+      --b2h-button-text: #cde8ff;
+      --b2h-button-hover-bg: #1d3859;
+      --b2h-empty-border: #465f83;
+      --b2h-empty-bg: #111b2d;
+      --b2h-empty-text: #aabbd4;
       background: var(--page-bg) !important;
       color: var(--text);
+    }
+
+    body.light-mode {
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: var(--accent);
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: var(--accent);
+      --b2h-count-bg: rgba(0, 150, 136, 0.12);
+      --b2h-count-text: #006d77;
     }
 
     body.dark-mode .w3-white,
@@ -377,64 +432,6 @@
       background-color: #263241 !important;
     }
 
-    body.dark-mode #publications .bib2html-runtime,
-    body.dark-mode #publications .bib2html-runtime *,
-    body.dark-mode #publications .bib2html-runtime .b2h-root,
-    body.dark-mode #publications .bib2html-runtime .b2h-list li,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref * {
-      color: var(--text) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-toggle,
-    body.dark-mode #publications .bib2html-runtime .b2h-status,
-    body.dark-mode #publications .bib2html-runtime .b2h-year,
-    body.dark-mode #publications .bib2html-runtime .fa-li {
-      color: var(--text-soft) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-group {
-      background: transparent !important;
-      border-color: var(--border) !important;
-      box-shadow: none !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-group summary {
-      background: transparent !important;
-      border-bottom-color: var(--border) !important;
-      color: var(--text) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-year::before {
-      color: var(--accent) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-count {
-      background: rgba(0, 150, 136, 0.18) !important;
-      color: #9ff2e7 !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime a {
-      color: var(--link) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime a *,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref a,
-    body.dark-mode #publications .bib2html-runtime .b2h-ref a * {
-      color: inherit !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime a:hover,
-    body.dark-mode #publications .bib2html-runtime a:focus-visible {
-      color: var(--link-hover) !important;
-    }
-
-    body.dark-mode #publications .bib2html-runtime .b2h-bib-btn,
-    body.dark-mode #publications .bib2html-runtime .b2h-empty {
-      background: #1d2a36 !important;
-      border-color: var(--border) !important;
-      color: var(--text) !important;
-    }
   </style>
 </head>
 
@@ -1111,6 +1108,7 @@
 
       function setTheme(isDark) {
         document.body.classList.toggle('dark-mode', isDark);
+        document.body.classList.toggle('light-mode', !isDark);
         if (themeButton) {
           themeButton.innerHTML = isDark ? darkIcon : lightIcon;
           themeButton.setAttribute('aria-label', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
@@ -1137,7 +1135,8 @@
       } catch (error) {
         savedTheme = null;
       }
-      setTheme(savedTheme === 'dark');
+      const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+      setTheme(savedTheme === 'dark' || (savedTheme !== 'light' && prefersDark));
 
       themeButton?.addEventListener('click', () => {
         setTheme(!document.body.classList.contains('dark-mode'));
