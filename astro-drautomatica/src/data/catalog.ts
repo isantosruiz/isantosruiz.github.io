@@ -63,11 +63,12 @@ export const catalogEntries = [
   {
     "id": "math-notebook-cuaderno-de-matematicas-simbolicas",
     "kind": "external",
-    "title": "Math Notebook: Cuaderno de matemáticas simbólicas",
+    "title": "Math Notebook: Cuaderno interactivo para matemáticas simbólicas en Python",
     "href": "https://mnotebook.vercel.app/",
     "icon": "fa-li fa fa-cloud",
     "sections": [
-      "inicio"
+      "inicio",
+      "python"
     ],
   },
   {
@@ -390,14 +391,15 @@ export const catalogEntries = [
     "kind": "asset",
     "title": "Gemelos digitales en robótica y automatización",
     "href": "/drautomatica/pdf/dt_robot.pdf",
-    "html": "<a href=\"/drautomatica/pdf/dt_robot.pdf\">Gemelos digitales en robótica y automatización</a>",
+    "html": "<a href=\"/drautomatica/pdf/dt_robot.pdf\">Gemelos digitales en robótica y automatización</a>&nbsp;<a href=\"https://medium.com/p/105bee9e7f23\"><i class=\"fa-brands fa-medium\"></i></a>",
     "icon": "fa-li fa fa-file-pdf",
     "sections": [
       "inicio",
       "modelado",
       "simulacion",
       "control",
-      "optimizacion"
+      "optimizacion",
+      "matlab"
     ],
   },
   {
@@ -1236,16 +1238,6 @@ export const catalogEntries = [
     ],
   },
   {
-    "id": "math-notebook-cuaderno-interactivo-para-matematicas-simbolicas-en-python",
-    "kind": "external",
-    "title": "Math Notebook: Cuaderno interactivo para matemáticas simbólicas en Python",
-    "href": "https://mnotebook.vercel.app/",
-    "icon": "fa-li fa fa-cloud",
-    "sections": [
-      "python"
-    ],
-  },
-  {
     "id": "pdfextract-script-para-extraer-paginas-especificas-de-un-archivo-pdf",
     "kind": "external",
     "title": "pdfextract : Script para extraer páginas específicas de un archivo PDF.",
@@ -1362,17 +1354,6 @@ export const catalogEntries = [
     "href": "https://la.mathworks.com/matlabcentral/fileexchange/70165-friction-and-roughness",
     "html": "<a href=\"https://la.mathworks.com/matlabcentral/fileexchange/70165-friction-and-roughness\"><b>Friction and Roughness</b></a>:\n                MATLAB code to compute the Darcy-Weisbach friction factor and estimate the relative roughness coefficient of a pipeline.<br>\n                <a href=\"https://la.mathworks.com/matlabcentral/fileexchange/70165-friction-and-roughness\"><img src=\"https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg\" alt=\"Abrir en File Exchange\" /></a>",
     "icon": "fa-li fa fa-file-code",
-    "sections": [
-      "matlab"
-    ],
-  },
-  {
-    "id": "gemelos-digitales-en-robotica-y-automatizacion-2",
-    "kind": "external",
-    "title": "Gemelos digitales en robótica y automatización",
-    "href": "https://medium.com/p/105bee9e7f23",
-    "html": "<a href=\"https://medium.com/p/105bee9e7f23\">Gemelos digitales en robótica y automatización</a>",
-    "icon": "fa-li fa fa-file-lines",
     "sections": [
       "matlab"
     ],
