@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EntryList from './EntryList.astro';
 import { getEntriesForSection, type SectionId } from '../lib/catalog';
-import { loadSectionIntro, loadSectionIntroParts } from '../lib/legacy';
+import { loadSectionIntro, loadSectionIntroParts, makeSectionsCollapsible } from '../lib/legacy';
 
 interface Props {
   source: string;
@@ -11,17 +11,20 @@ interface Props {
   description: string;
   heading?: string;
   entriesAfterSectionId?: string;
+  collapsibleSectionIds?: string[];
 }
 
-const { source, section, title, description, heading, entriesAfterSectionId } = Astro.props;
+const { source, section, title, description, heading, entriesAfterSectionId, collapsibleSectionIds = [] } = Astro.props;
 const introParts = entriesAfterSectionId
   ? loadSectionIntroParts(source, entriesAfterSectionId)
   : { before: loadSectionIntro(source), after: '' };
+const before = makeSectionsCollapsible(introParts.before, collapsibleSectionIds);
+const after = makeSectionsCollapsible(introParts.after, collapsibleSectionIds);
 const entries = getEntriesForSection(section);
 ---
 
 <BaseLayout title={title} description={description}>
-  <Fragment set:html={introParts.before} />
+  <Fragment set:html={before} />
   <EntryList entries={entries} heading={heading} />
-  {introParts.after && <Fragment set:html={introParts.after} />}
+  {after && <Fragment set:html={after} />}
 </BaseLayout>

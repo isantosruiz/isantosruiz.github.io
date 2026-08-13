@@ -191,6 +191,28 @@ export function loadSectionIntroParts(filename: string, splitAfterSectionId: str
   };
 }
 
+export function makeSectionsCollapsible(html: string, sectionIds: string[]) {
+  return sectionIds.reduce((currentHtml, sectionId) => {
+    const sectionPattern = new RegExp(
+      `<section\\s+id=["']${sectionId}["']([^>]*)>([\\s\\S]*?)<\\/section>`,
+      'i'
+    );
+
+    return currentHtml.replace(sectionPattern, (_match, _attributes, content) => {
+      const headingMatch = content.match(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/i);
+      const heading = headingMatch ? headingMatch[1].replace(/<[^>]*>/g, '').trim() : 'Mostrar contenido';
+      const body = headingMatch ? content.replace(headingMatch[0], '').trim() : content.trim();
+
+      return `<details id="${sectionId}" class="collapsible-section">
+  <summary>${heading}</summary>
+  <div class="collapsible-section-body">
+    ${body}
+  </div>
+</details>`;
+    });
+  }, html);
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs
