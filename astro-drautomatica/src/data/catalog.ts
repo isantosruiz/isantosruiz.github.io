@@ -11,7 +11,7 @@ export interface CatalogEntry {
   icon: string;
   articleSlug?: string;
   sections: SectionId[];
-  order: Partial<Record<SectionId, number>>;
+  order?: Partial<Record<SectionId, number>>;
 }
 
 export const catalogEntries = [

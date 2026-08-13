@@ -6,7 +6,7 @@ export function getEntriesForSection(section: SectionId) {
   return catalogEntries
     .filter((entry) => entry.sections.includes(section))
     .slice()
-    .sort((a, b) => (a.order[section] ?? 9999) - (b.order[section] ?? 9999));
+    .sort((a, b) => (a.order?.[section] ?? -9999) - (b.order?.[section] ?? -9999));
 }
 
 export function getEntryCounts() {
@@ -18,4 +18,3 @@ export function getEntryCounts() {
     { local: 0, external: 0, asset: 0 }
   );
 }
-
