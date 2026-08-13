@@ -899,7 +899,6 @@ export const catalogEntries = [
       "modelado",
       "simulacion",
       "control",
-      "optimizacion",
       "python"
     ],
   },
