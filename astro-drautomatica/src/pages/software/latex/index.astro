@@ -3,6 +3,14 @@ import SectionPage from '../../../components/SectionPage.astro';
 import { sections } from '../../../lib/legacy';
 
 const page = sections.latex;
+const compilerSection = `<section id="compiler">
+  <p class="w3-padding">
+    <a href="https://ilatex.vercel.app/" class="latex-button latex-app-button" target="_blank" rel="noopener noreferrer">
+      <span class="latex-app-icon" aria-hidden="true">TeX</span>
+      iLaTeX en línea
+    </a>
+  </p>
+</section>`;
 ---
 <SectionPage
   source={page.source}
@@ -12,4 +20,5 @@ const page = sections.latex;
   heading="Publicaciones recientes"
   hideSectionHeadingIds={['objetivos']}
   hideSectionLeadBoldIds={['objetivos']}
+  sectionOverrides={{ compiler: compilerSection }}
 />
