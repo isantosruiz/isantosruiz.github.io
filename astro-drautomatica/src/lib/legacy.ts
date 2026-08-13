@@ -22,47 +22,47 @@ const sectionRoutes: Record<string, string> = {
 export const sections = {
   inicio: {
     source: 'inicio.html',
-    title: 'DR Automática',
+    title: 'drAutomática',
     description: DESCRIPTION
   },
   modelado: {
     source: 'modelado.html',
-    title: 'Modelado | DR Automática',
+    title: 'Modelado | drAutomática',
     description: 'Artículos y recursos didácticos sobre modelado de sistemas dinámicos y mecatrónicos.'
   },
   simulacion: {
     source: 'simulacion.html',
-    title: 'Simulación | DR Automática',
+    title: 'Simulación | drAutomática',
     description: 'Recursos sobre simulación de sistemas dinámicos, robótica, control y análisis numérico.'
   },
   control: {
     source: 'control.html',
-    title: 'Control | DR Automática',
+    title: 'Control | drAutomática',
     description: 'Divulgación y materiales sobre control automático, estabilidad y sistemas dinámicos.'
   },
   optimizacion: {
     source: 'optimizacion.html',
-    title: 'Optimización | DR Automática',
+    title: 'Optimización | drAutomática',
     description: 'Entradas y recursos sobre optimización aplicada a ingeniería, simulación y MATLAB.'
   },
   python: {
     source: 'Python.html',
-    title: 'Python | DR Automática',
+    title: 'Python | drAutomática',
     description: 'Herramientas, artículos y contribuciones sobre Python para ciencia, ingeniería y automatización.'
   },
   matlab: {
     source: 'MATLAB.html',
-    title: 'MATLAB | DR Automática',
+    title: 'MATLAB | drAutomática',
     description: 'Contribuciones, recursos y publicaciones sobre MATLAB en ingeniería y análisis científico.'
   },
   latex: {
     source: 'iLaTeX.html',
-    title: 'LaTeX | DR Automática',
+    title: 'LaTeX | drAutomática',
     description: 'Recursos y publicaciones sobre LaTeX para escritura científica y documentos técnicos.'
   },
   miscelanea: {
     source: 'miscelanea.html',
-    title: 'Miscelánea | DR Automática',
+    title: 'Miscelánea | drAutomática',
     description: 'Ideas, reflexiones y contenidos diversos de divulgación científica y pensamiento crítico.'
   }
 } as const;
@@ -273,7 +273,7 @@ export function loadArticle(slug: string) {
 
   return {
     slug,
-    title: `${titleFromHtml(raw, slug)} | DR Automática`,
+    title: `${titleFromHtml(raw, slug)} | drAutomática`,
     description: descriptionFromHtml(raw),
     head,
     html: rewriteHtml(stripOuterDocument(raw), 'html')
