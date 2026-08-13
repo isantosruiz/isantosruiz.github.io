@@ -15,6 +15,7 @@ const rootAssets = [
   'drAutomatica.png',
   'favicon.png',
   'favicon_.png',
+  'ilatex-icon.png',
   'LaTeX_logo.png',
   'matlab-online.svg',
   'monline.png',
