@@ -391,7 +391,7 @@ export const catalogEntries = [
     "kind": "asset",
     "title": "Gemelos digitales en robótica y automatización",
     "href": "/drautomatica/pdf/dt_robot.pdf",
-    "html": "<a href=\"/drautomatica/pdf/dt_robot.pdf\">Gemelos digitales en robótica y automatización</a>&nbsp;<a href=\"https://medium.com/p/105bee9e7f23\"><i class=\"fa-brands fa-medium\"></i></a>",
+    "html": "<a href=\"/drautomatica/pdf/dt_robot.pdf\">Gemelos digitales en robótica y automatización</a>",
     "icon": "fa-li fa fa-file-pdf",
     "sections": [
       "inicio",
