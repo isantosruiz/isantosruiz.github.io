@@ -704,7 +704,7 @@ export const catalogEntries = [
     "title": "Resolución de ecuaciones diferenciales en Python con SciPy",
     "href": "https://isantosruiz.github.io/drautomatica/pdf/ode_scipy.pdf",
     "html": "<a href=\"/drautomatica/pdf/ode_scipy.pdf\">Resolución de ecuaciones diferenciales en Python con SciPy</a>",
-    "icon": "fa-li fa-brands fa-medium",
+    "icon": "fa-li fa fa-file-pdf",
     "sections": [
       "inicio",
       "modelado",
