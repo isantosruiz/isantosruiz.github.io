@@ -2,7 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EntryList from './EntryList.astro';
 import { getEntriesForSection, type SectionId } from '../lib/catalog';
-import { loadSectionIntro, loadSectionIntroParts, makeSectionsCollapsible } from '../lib/legacy';
+import {
+  loadSectionIntro,
+  loadSectionIntroParts,
+  makeSectionsCollapsible,
+  removeSectionHeadings
+} from '../lib/legacy';
 
 interface Props {
   source: string;
@@ -12,14 +17,26 @@ interface Props {
   heading?: string;
   entriesAfterSectionId?: string;
   collapsibleSectionIds?: string[];
+  hideSectionHeadingIds?: string[];
 }
 
-const { source, section, title, description, heading, entriesAfterSectionId, collapsibleSectionIds = [] } = Astro.props;
+const {
+  source,
+  section,
+  title,
+  description,
+  heading,
+  entriesAfterSectionId,
+  collapsibleSectionIds = [],
+  hideSectionHeadingIds = []
+} = Astro.props;
 const introParts = entriesAfterSectionId
   ? loadSectionIntroParts(source, entriesAfterSectionId)
   : { before: loadSectionIntro(source), after: '' };
-const before = makeSectionsCollapsible(introParts.before, collapsibleSectionIds);
-const after = makeSectionsCollapsible(introParts.after, collapsibleSectionIds);
+const strippedBefore = removeSectionHeadings(introParts.before, hideSectionHeadingIds);
+const strippedAfter = removeSectionHeadings(introParts.after, hideSectionHeadingIds);
+const before = makeSectionsCollapsible(strippedBefore, collapsibleSectionIds);
+const after = makeSectionsCollapsible(strippedAfter, collapsibleSectionIds);
 const entries = getEntriesForSection(section);
 ---
 

@@ -213,6 +213,20 @@ export function makeSectionsCollapsible(html: string, sectionIds: string[]) {
   }, html);
 }
 
+export function removeSectionHeadings(html: string, sectionIds: string[]) {
+  return sectionIds.reduce((currentHtml, sectionId) => {
+    const sectionPattern = new RegExp(
+      `(<section\\s+id=["']${sectionId}["'][^>]*>)([\\s\\S]*?)(<\\/section>)`,
+      'i'
+    );
+
+    return currentHtml.replace(sectionPattern, (_match, opening, content, closing) => {
+      const withoutHeading = content.replace(/^\s*<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/i, '');
+      return `${opening}${withoutHeading}${closing}`;
+    });
+  }, html);
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs
