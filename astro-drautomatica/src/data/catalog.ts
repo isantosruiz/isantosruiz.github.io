@@ -25,10 +25,7 @@ export const catalogEntries = [
     "sections": [
       "inicio",
       "matlab"
-    ],
-    "order": {
-      "inicio": 1
-    }
+    ]
   },  
   {
     "id": "math-notebook-cuaderno-de-matematicas-simbolicas",
