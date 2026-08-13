@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { loadLegacyFragment, sections } from '../../../lib/legacy';
+
+const page = sections.latex;
+const html = loadLegacyFragment(page.source);
+---
+<BaseLayout title={page.title} description={page.description}>
+  <Fragment set:html={html} />
+</BaseLayout>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>LaTeX</title>
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"></script>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <style type="text/css" media="screen">
+    @font-face {
+      font-family: 'Monaspace';
+      src: url('./MonaspaceNeon-Regular.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    .ace_editor {
+      border: 1px solid lightgray;
+      margin-bottom: 1px !important;
+      width: 100%;
+      font-family: 'Consolas', 'Monaspace', 'Fira Code', 'Roboto', 'Courier New', monospace !important;
+      font-size: medium;
+    }
+
+    div.spacer {
+      margin-top: 16px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #5555FF
+    }
+
+    a:hover {
+      text-decoration: underline
+    }
+  </style>
+  <script src="https://davidcarlisle.github.io/latexcgi/runlatex.js"></script>
+  <script>
+
+    runlatex.editorlines = 40;
+    runlatex.adddefaultpreamble = true;
+    runlatex.adddefaultengine = true;
+
+    runlatex.overleafURI = null;
+    runlatex.overleafURI = "https://www.overleaf.com/docs";
+
+    runlatex.texts = {
+      "Open in Overleaf": "",
+      "TeXLive.net": "Compilar",
+      "Delete Output": "Borrar salida",
+      "Open in Overleaf": "Abrir en Overleaf",
+      "Compiling PDF": "Compilando...",
+      "Added Code": "",
+      "End Added Code": "",
+      "Top Caption": ""
+    }
+    function updateURL() {
+      var t = editors["pre0"].getValue();
+      var newl = "?" + encodeURI(t);
+      // copy to clipboard
+      var nn = document.createElement("textarea");
+      nn.value = document.location.protocol + "//" + document.location.host + document.location.pathname + newl;
+      document.body.appendChild(nn);
+      nn.select();
+      document.execCommand("copy");
+      document.body.removeChild(nn);
+      // update
+      if (newl != document.location.search) {
+        document.location.search = "?" + encodeURI(t);
+      }
+    }
+
+    function fillForm() {
+      if (document.location.search != "") {
+        editors["pre0"].setValue(decodeURIComponent(document.location.search.substring(1)), 0);
+        editors["pre0"].clearSelection();
+        latexcgi("pre0");
+      }
+    }
+
+    window.addEventListener('load', fillForm, false);
+
+
+  </script>
+  <style>
+    body {
+      margin: 2em;
+      max-width: 100em;
+    }
+
+    div.h {
+      background-color: #F5F5FF;
+      margin: .25em 0;
+    }
+
+    pre {
+      background-color: #EEE;
+      margin: 0;
+      padding: .5em;
+    }
+  </style>
+
+</head>
+
+<body>
+  <p><a href="./">Inicio</a> &gt; LaTeX </p>
+  <p><img src="./LaTeX_logo.png" alt="LaTeX" width="120"/></p>
+  <p>LaTeX es un sistema de composición de textos utilizado para la creación de documentos científicos y técnicos de alta calidad. Es un lenguaje de marcado que permite escribir texto en un formato estructurado, lo que permite separar el contenido del documento de su presentación visual. Utiliza comandos especiales para definir la estructura del documento, como los títulos, secciones, párrafos, notas al pie, referencias cruzadas y bibliografía. También permite la inclusión de ecuaciones, tablas y gráficos.</p>
+
+  <p>LaTeX es muy utilizado en áreas como la física, matemáticas, ingeniería e informática, entre otras, debido a su capacidad para producir documentos de alta calidad con una apariencia consistente. Además, al separar el contenido de la presentación visual, permite a los autores concentrarse en el contenido de su trabajo sin preocuparse por detalles de formato.</p>
+
+  <p>Comienza aquí:</p>
+  <div class="h">
+<pre id="pre0">
+\documentclass[12pt]{article}
+\usepackage[spanish,mexico]{babel}
+\usepackage[letterpaper,margin=2.5cm]{geometry}
+\usepackage{mathtools,fourier,kantlipsum}
+\title{La cuadratura del círculo}
+\author{A. Utor}
+\begin{document}
+\maketitle
+\kant[1]
+\[ f(z_0) = \frac{1}{j2\pi} \oint_{\gamma} \frac{f(z)}{z-z_0} ~ \mathrm{d}z \]
+\kant[2]
+\end{document}
+</pre>
+  </div>
+  <br>&copy; 2025, Ildeberto de los Santos Ruiz  
+</body>
+</html>

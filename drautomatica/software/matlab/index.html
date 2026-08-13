@@ -1,0 +1,138 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MATLAB | DR Automática</title><meta name="description" content="Contribuciones, recursos y publicaciones sobre MATLAB en ingeniería y análisis científico."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/software/matlab/"><meta property="og:type" content="website"><meta property="og:site_name" content="DR Automática"><meta property="og:title" content="MATLAB | DR Automática"><meta property="og:description" content="Contribuciones, recursos y publicaciones sobre MATLAB en ingeniería y análisis científico."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/software/matlab/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Contribuciones, recursos y publicaciones sobre MATLAB en ingeniería y análisis científico."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="MATLAB | DR Automática"><meta name="twitter:description" content="Contribuciones, recursos y publicaciones sobre MATLAB en ingeniería y análisis científico."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner.png" alt="DR Automática"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">Divulgación</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>DR Automática</h1> </header> <div id="panel-content" class="w3-container content">  <!-- Sección introductoria para la página de MATLAB -->
+<main>
+    <!-- Bienvenida y propósito -->
+    <section id="objetivos">
+        <h2 class="w3-text-grey w3-padding">MATLAB</h2>
+        <p class="w3-padding">
+            <b>MATLAB</b> es un entorno de cálculo numérico y visualización desarrollado por <a href="https://la.mathworks.com/">MathWorks</a>, que combina un lenguaje de programación de alto nivel especializado en operaciones matriciales con un amplio conjunto de bibliotecas (toolboxes) para áreas como control, señal, optimización, inteligencia artificial y procesamiento de imágenes. Gracias a su interfaz interactiva y a sus capacidades de gráficos 2D y 3D, permite prototipar algoritmos, analizar datos y modelar sistemas dinámicos de manera rápida y eficiente. En el ámbito de la ingeniería y la investigación, <b>MATLAB</b> facilita la simulación de procesos complejos, la generación automática de código para sistemas embebidos y la integración con hardware de adquisición de datos, contribuyendo a acelerar el ciclo de desarrollo y validación de proyectos multidisciplinares.
+        </p>
+    </section>
+
+    <!-- Artículos temáticos de referencia -->
+    <section id="articulos-recientes">
+        <h2 class="w3-text-grey w3-padding">Contribuciones recientes</h2>
+        <ul class="fa-ul" id="publications">
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/72248-moody-chart"><b>Moody</b></a>:
+                MATLAB code to plot the Moody chart, showing the relationship between the friction factor and the Reynolds number for different roughness coefficients in a pipe.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/72248-moody-chart"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/71689-hurwitz-matrix"><b>Hurwitz</b></a>:
+                MATLAB function to compute the Hurwitz matrix and the principal minors for a given polynomial.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/71689-hurwitz-matrix"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>            
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/181285-rsolve-difference-equation-solver"><b>rsolve</b></a>:
+                A MATLAB function for automatically solving linear difference equations using the Z-transform method.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/181285-rsolve-difference-equation-solver"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/73001-epanetonmap"><b>epanetOnMap</b></a>:
+                MATLAB code to read EPANET .INP files and plot pipelines and junction/reservoir markers on MATLAB geographic basemaps.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/73001-epanetonmap"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/72980-getfigdata"><b>getfigdata</b></a>:
+                MATLAB function to extract the xyz data from a FIG file.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/72980-getfigdata"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/71072-water-properties"><b>Water Properties</b></a>:
+                MATLAB class to compute some physical properties of water dependent on temperature, from 1 to 99 celsius.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/71072-water-properties"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>            
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/71106-trapezoidal"><b>Trapezoidal</b></a>:
+                MATLAB function to simulate linear dynamic systems using trapezoidal integration method with constant time step.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/71106-trapezoidal"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>            
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/114895-inequalityplot"><b>inequalityplot</b></a>:
+                MATLAB function to plot inequalities in 2-D space.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/114895-inequalityplot"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/70165-friction-and-roughness"><b>Friction and Roughness</b></a>:
+                MATLAB code to compute the Darcy-Weisbach friction factor and estimate the relative roughness coefficient of a pipeline.<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/70165-friction-and-roughness"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+            <li><i class="fa-li fa fa-file-code"></i><a href="https://la.mathworks.com/matlabcentral/fileexchange/72247-colebrook-white-equation"><b>Colebrook-White Equation</b></a>:
+                MATLAB code to compute the friction factor in pipes for given values of Reynolds number (Re) and relative roughness coefficient (εᵣ).<br>
+                <a href="https://la.mathworks.com/matlabcentral/fileexchange/72247-colebrook-white-equation"><img src="https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg" alt="Abrir en File Exchange" /></a>
+            </li>
+
+        </ul>
+        <h2 class="w3-text-grey w3-padding">Publicaciones recientes</h2>
+        <ul class="fa-ul" id="publications">
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/de35677b1026">Transformaciones lineales: Tutorial paso a paso</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/105bee9e7f23">Gemelos digitales en robótica y automatización</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/1473531e72fb">Representación y procesamiento digital de imágenes</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/87c6a398eedb">Cómo se prueba una hipótesis estadística en ciencias e ingeniería</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/e36cd3709f41">Homogeneous transformations in Robotics: A comprehensive tutorial with examples</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/9d32143fa4a5">Introducción práctica al machine learning</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/9ae4fbeb77d0">Gráficos más personalizables en MATLAB</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/ec1dc0762b5e">Solving difference equations using the Z-transform</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/78d98a3d4256">Machine Learning versus Deep Learning</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/49a7c6b95c46">Mastering curve and surface plotting in MATLAB</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/b4146bfa5246">Optimización global con algoritmos genéticos en MATLAB: Un enfoque práctico</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/1db4969870bc">Simulación de dinámicas continuas con MATLAB</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/38db6d644b46">Análisis hidráulico y simulación de fugas en redes de distribución de agua</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/11a1b797a66d">Modelado dinámico Euler-Lagrange y simulación usando MATLAB</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/2fc771b34714">Creación de aplicaciones GUI orientadas a objetos en MATLAB mediante código</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/61e1ff545166">Comunicación serie entre MATLAB y MicroPython</a></li>
+            <li><i class='fa-li fa fa-file-lines'></i><a href="https://medium.com/p/6e5b796668aa">Expresiones regulares en MATLAB</a></li>
+        </ul>
+        
+    </section>
+
+</main>
+  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>

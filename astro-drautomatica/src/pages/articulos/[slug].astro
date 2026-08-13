@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getArticleSlugs, loadArticle } from '../../lib/legacy';
+
+export function getStaticPaths() {
+  return getArticleSlugs().map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const article = loadArticle(slug);
+---
+<BaseLayout title={article.title} description={article.description} type="article" head={article.head}>
+  <Fragment set:html={article.html} />
+</BaseLayout>
