@@ -3,6 +3,14 @@ import SectionPage from '../../../components/SectionPage.astro';
 import { sections } from '../../../lib/legacy';
 
 const page = sections.python;
+const compilerSection = `<section id="compiler">
+  <p class="w3-padding">
+    <a href="https://ipython.vercel.app/" class="latex-button python-app-button" target="_blank" rel="noopener noreferrer">
+      <i class="fa-brands fa-python" aria-hidden="true"></i>
+      iPython en línea
+    </a>
+  </p>
+</section>`;
 ---
 <SectionPage
   source={page.source}
@@ -12,4 +20,5 @@ const page = sections.python;
   heading="Contribuciones y publicaciones"
   hideSectionHeadingIds={['objetivos']}
   hideSectionLeadBoldIds={['objetivos']}
+  sectionOverrides={{ compiler: compilerSection }}
 />

@@ -241,6 +241,17 @@ export function removeSectionLeadingBoldText(html: string, sectionIds: string[])
   }, html);
 }
 
+export function replaceSectionsById(html: string, replacements: Record<string, string>) {
+  return Object.entries(replacements).reduce((currentHtml, [sectionId, replacement]) => {
+    const sectionPattern = new RegExp(
+      `<section\\s+id=["']${sectionId}["'][^>]*>[\\s\\S]*?<\\/section>`,
+      'i'
+    );
+
+    return currentHtml.replace(sectionPattern, replacement);
+  }, html);
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs
