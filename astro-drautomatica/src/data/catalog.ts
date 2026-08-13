@@ -16,6 +16,21 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "inequalities-matlab",
+    "kind": "external",
+    "title": "How to Plot Inequalities in MATLAB",
+    "href": "https://medium.com/p/f17697fdb8f7/",
+    "html": "<a href=\"https://medium.com/p/f17697fdb8f7/\">How to Plot Inequalities in MATLAB</a>✨🆕",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "matlab"
+    ],
+    "order": {
+      "inicio": 1
+    }
+  },  
+  {
     "id": "math-notebook-cuaderno-de-matematicas-simbolicas",
     "kind": "external",
     "title": "Math Notebook: Cuaderno de matemáticas simbólicas",
