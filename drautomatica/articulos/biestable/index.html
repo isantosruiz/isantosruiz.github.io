@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Multivibrador biestable | DR Automática</title><meta name="description" content="Multivibrador biestable Ildeberto de los Santos Ruiz Introducción El multivibrador biestable es un circuito con dos estados estables que conserva su est..."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/biestable/"><meta property="og:type" content="article"><meta property="og:site_name" content="DR Automática"><meta property="og:title" content="Multivibrador biestable | DR Automática"><meta property="og:description" content="Multivibrador biestable Ildeberto de los Santos Ruiz Introducción El multivibrador biestable es un circuito con dos estados estables que conserva su est..."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/biestable/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Multivibrador biestable Ildeberto de los Santos Ruiz Introducción El multivibrador biestable es un circuito con dos estados estables que conserva su est..."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Multivibrador biestable | DR Automática"><meta name="twitter:description" content="Multivibrador biestable Ildeberto de los Santos Ruiz Introducción El multivibrador biestable es un circuito con dos estados estables que conserva su est..."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner.png" alt="DR Automática"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">Divulgación</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>DR Automática</h1> </header> <div id="panel-content" class="w3-container content">  <h1 class="author">Multivibrador biestable</h1>
+<div class="author">Ildeberto de los Santos Ruiz</div>
+<hr>
+
+<h3>Introducción</h3>
+
+<p>El <b>multivibrador biestable</b> es un circuito con <b>dos estados estables</b> que conserva su estado hasta que una entrada lo obliga a cambiar. La versión de la figura usa dos transistores NPN con retroalimentación cruzada. Un transistor satura mientras el otro corta; al aplicar un pulso a SET o RESET el circuito conmuta y permanece en el nuevo estado, funcionando como una <b>celda de memoria de un bit</b>.</p>
+
+<h3>Propósito</h3>
+
+<p>El biestable almacena digitalmente un nivel lógico (H/L) y proporciona salidas complementarias con buena inmunidad al ruido. Es la base de pulsadores anti-rebote, memorias sencillas y etapas de control que requieren recordar un evento.</p>
+
+<p><img src="/drautomatica/html/biestable.png" alt="Multivibrador biestable con BJT" class="imagen-adaptable"></p>
+
+<p><a href="https://www.falstad.com/circuit/circuitjs.html?ctz=CQAgjCAMB0l3BWcMBMcUHYMGZIA4UA2ATmIxAUgoqoQFMBaMMAKACdwAWTkbFLnmBR4oySO154efSYOGiwcFgHdZ4edinhi-cQBdekHmhGbj+BVGiE0KBN0IlCCHcSsk8xMAjClunIjByRSoAEzoAMwBDAFcAGz0VEBQUOVMjZItxVVw05NTMkX188xEwbkLLBk5oBCxIbGxCZk4XTiarBs9OSGIXBpRyhBkQkHDo+MTVcryZ7V0JXPVTLSEi5DQJObWS5YVITYBZNR3uMvkqFFqkuZkzXgXj7fk8Kh3L64AlAQeQV9+qFQetRAVYEBIUqVdks3vBFhkTIZpBlYUoADLQjL-GGiPRsGJ0EEsDFLJZnJGiKh4glEgAeFEEkCQfWQIkI4HZAHsYnoAA48lj0gL8UacQjYZASwRcnn8xL0jCXDAiLzJPAQaUgADOdHlIACbkw5E4eCQwiBHJAbDoOsSAHMfpDHQh2YCWA77k7PS7KYLkOzBiLMMlvPrLQBFVhCuAhqWDEPszXhlAsIA" class="latex-button" target="_blank">Simulación en línea</a></p>
+
+<h3>Cómo funciona</h3>
+
+<p>El colector de cada transistor se acopla a la base del otro por medio de resistencias (≈1&nbsp;kΩ). Si <b>Q1</b> está encendido (saturado), su colector cae a un voltaje bajo y, a través de la resistencia cruzada, <b>apaga Q2</b>. A la inversa, si <b>Q2</b> satura, fuerza a <b>Q1</b> a cortarse. Esta retroalimentación crea dos puntos de equilibrio estables: (Q1&nbsp;ON, Q2&nbsp;OFF) o (Q1&nbsp;OFF, Q2&nbsp;ON). Las resistencias superiores (≈100&nbsp;Ω en el esquema) actúan como <b>cargas de colector</b> hacia +5&nbsp;V, y las resistencias a tierra (≈1&nbsp;kΩ) en las bases fijan polarización/retorno para asegurar estados bien definidos cuando no hay pulsos.</p>
+
+<h3>Entradas SET y RESET</h3>
+
+<p>Un pulso a <b>SET</b> inyecta corriente en la base de Q1 (o la lleva a nivel alto), provocando que Q1 conduzca y, por efecto cruzado, Q2 se apague. Un pulso a <b>RESET</b> hace lo opuesto: enciende Q2 y apaga Q1. Las salidas etiquetadas <b>H</b> y <b>L</b> son complementarias (una alta, la otra baja) y pueden tomarse de los colectores a través de sus resistencias de carga.</p>
+<p>Se pueden colocar LEDs en serie con las resistencias de 100&nbsp;Ω para indicar visualmente las acciones de encendido/apagado.</p>
+
+<table style="border-collapse:collapse;width:100%;max-width:520px;text-align:center">
+  <tr><th style="border:1px solid #ccc;padding:.4em">Pulso</th>
+      <th style="border:1px solid #ccc;padding:.4em">Estado resultante</th>
+      <th style="border:1px solid #ccc;padding:.4em">Salida</th>
+      <th style="border:1px solid #ccc;padding:.4em">~Salida</th></tr>
+  <tr><td style="border:1px solid #ccc;padding:.4em">SET</td>
+      <td style="border:1px solid #ccc;padding:.4em">Q1 ON, Q2 OFF</td>
+      <td style="border:1px solid #ccc;padding:.4em">Alta</td>
+      <td style="border:1px solid #ccc;padding:.4em">Baja</td></tr>
+  <tr><td style="border:1px solid #ccc;padding:.4em">RESET</td>
+      <td style="border:1px solid #ccc;padding:.4em">Q1 OFF, Q2 ON</td>
+      <td style="border:1px solid #ccc;padding:.4em">Baja</td>
+      <td style="border:1px solid #ccc;padding:.4em">Alta</td></tr>
+</table>
+
+<h3>Función de los transistores</h3>
+
+<p>Los transistores NPN <b>Q1 y Q2</b> forman un par cruzado. Cada transistor actúa como amplificador con carga resistiva y a la vez como elemento de realimentación para el otro. Cuando uno entra en saturación, la caída de su colector retira corriente de base del opuesto, forzándolo al corte. Esta acción regenerativa produce conmutación rápida y estados bien definidos.</p>
+
+<h3>Función de las resistencias</h3>
+
+<ul>
+  <li><b>Resistencias de colector (≈100&nbsp;Ω):</b> proveen carga a +5&nbsp;V y definen el nivel alto de salida. (En la práctica suelen usarse valores mayores, por ejemplo, 1–10&nbsp;kΩ, según la corriente deseada y la carga de salida.)</li>
+  <li><b>Resistencias de acoplamiento cruzado (≈1&nbsp;kΩ):</b> implementan la retroalimentación que provoca el comportamiento biestable.</li>
+  <li><b>Resistencias a tierra en las bases (≈1&nbsp;kΩ):</b> aseguran un estado conocido cuando las entradas están en reposo y limitan corriente de base durante los pulsos.</li>
+</ul>
+
+<h3>Detalles prácticos</h3>
+
+<ul>
+  <li><b>Entradas activas por pulso:</b> los nodos de <b>SET</b> y <b>RESET</b> se excitan brevemente a nivel bajo o alto (según el cableado) para conmutar. Añadir un capacitor pequeño y un resistor en serie puede conformar pulsos y mitigar rebotes mecánicos.</li>
+  <li><b>Niveles de salida:</b> al saturar un transistor, su colector queda cerca de 0&nbsp;V (en V<sub>CE(sat)</sub> ≈ 0.2&nbsp;V); el colector opuesto sube cerca de +5&nbsp;V a través de la resistencia de carga.</li>
+  <li><b>Consumo:</b> en un estado, el transistor activo conduce a través de su resistencia de colector; dimensiona resistencias para limitar la corriente y evitar sobrecalentamiento.</li>
+</ul>
+
+<h3>Conclusión</h3>
+
+<p>El <b>multivibrador biestable</b> guarda un bit con dos estados estables gracias a la realimentación positiva de dos BJT cruzados. Las entradas SET y RESET fuerzan la conmutación, y las salidas complementarias proporcionan niveles lógicos robustos para aplicaciones de memoria, control y anti-rebote.</p>
+
+<p>¡Comparte si te resultó útil la explicación!</p>
+
+<hr>
+
+<div class="centrado">Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a><img
+        src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"><img
+        src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"><img
+        src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"></div>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Mapas mentales con PlantUML | DR Automática</title><meta name="description" content="Mapas mentales con PlantUML Ildeberto de los Santos Ruiz Introducción PlantUML es una herramienta de código abierto que permite crear una variedad de di..."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/mindmaps/"><meta property="og:type" content="article"><meta property="og:site_name" content="DR Automática"><meta property="og:title" content="Mapas mentales con PlantUML | DR Automática"><meta property="og:description" content="Mapas mentales con PlantUML Ildeberto de los Santos Ruiz Introducción PlantUML es una herramienta de código abierto que permite crear una variedad de di..."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/mindmaps/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Mapas mentales con PlantUML Ildeberto de los Santos Ruiz Introducción PlantUML es una herramienta de código abierto que permite crear una variedad de di..."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Mapas mentales con PlantUML | DR Automática"><meta name="twitter:description" content="Mapas mentales con PlantUML Ildeberto de los Santos Ruiz Introducción PlantUML es una herramienta de código abierto que permite crear una variedad de di..."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner.png" alt="DR Automática"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">Divulgación</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>DR Automática</h1> </header> <div id="panel-content" class="w3-container content">  <h1 class="author">Mapas mentales con PlantUML</h1>
+<div class="author">Ildeberto de los Santos Ruiz</div>
+<hr>
+
+<h2>Introducción</h2>
+<p>PlantUML es una herramienta de código abierto que permite crear una variedad de diagramas a partir de texto
+    plano de forma sencilla. Esto incluye no solo diagramas UML tradicionales, sino también diagramas no UML
+    como mapas mentales, organigramas, diagramas de Gantt, entre otros.</p>
+
+<p>Por su parte, un <b>mapa mental</b> es un diagrama usado para representar ideas, conceptos o información
+    alrededor de una idea central, ramificándose en temas relacionados. En esencia, es una representación visual
+    tipo <i>árbol</i> o <i>telaraña</i>, útil para <b>lluvia de ideas</b> y planificación de proyectos.
+    Cada rama del mapa mental parte de un nodo central y se expande en subramas que descomponen la idea en
+    detalles o categorías relacionadas.
+    Esta estructura jerárquica y radial ayuda a visualizar relaciones entre conceptos, facilitando la
+    comprensión del panorama general y fomentando la creatividad.
+</p>
+
+<p>PlantUML combina estas ideas proporcionando una manera de generar mapas mentales mediante texto.
+    Es decir, en lugar de dibujar manualmente el diagrama, se escribe una descripción textual de las ideas y sus
+    relaciones, y PlantUML genera automáticamente el gráfico correspondiente.
+    Gracias a este enfoque textual, los mapas mentales creados con PlantUML se pueden editar fácilmente,
+    integrar en control de versiones y combinar con documentación más amplia.
+    Además, la herramienta se integra bien con otros entornos, lo que permite incorporar mapas mentales en
+    documentación de proyectos, wikis o incluso en flujos de desarrollo de software de manera ágil.</p>
+
+<p><b>¿Por qué usar PlantUML para mapas mentales?</b> Imagina que estás planificando un proyecto complejo o
+    estudiando un tema con muchas ideas. Un mapa mental te ayuda a desglosar y organizar esos conceptos.
+    Con PlantUML, puedes hacerlo simplemente escribiendo listas anidadas de ideas, sin preocuparte por alinear
+    cuadros o dibujar flechas: la disposición la calcula automáticamente la herramienta.
+    Esto ahorra tiempo y esfuerzo, y hace que actualizar el diagrama sea tan fácil como editar unas líneas de
+    texto. En resumen, PlantUML ofrece una forma rápida, editable y controlable de crear mapas mentales claros
+    y bien estructurados.</p>
+
+<h2>Requisitos para comenzar</h2>
+<p>Antes de crear mapas mentales con PlantUML, debes preparar tu entorno de trabajo.
+    Tienes dos enfoques principales: usar una plataforma en línea (sin instalar nada) o instalar PlantUML en tu
+    equipo e integrarlo con un editor como Visual Studio Code. A continuación, detallamos ambas opciones:</p>
+<ul>
+    <li><strong>Usar una plataforma en línea:</strong> La forma más sencilla de iniciarse es utilizar un
+        servicio web que soporte PlantUML. Por ejemplo, el servidor web oficial de PlantUML (<b>PlantUML Web Server</b>) te permite
+        escribir tu diagrama en un navegador y obtener la imagen generada al instante.
+        Simplemente accede al servidor web de PlantUML (<a
+            href="https://www.plantuml.com/plantuml/"><code>www.plantuml.com/plantuml</code></a>),
+        pega tu código fuente del diagrama y podrás ver el resultado en formato PNG o SVG. También existen
+        editores en línea como <b>PlantText</b> (<a href="https://www.planttext.com/"><code>planttext.com</code></a>),
+        una herramienta gratuita que genera diagramas a partir de texto de PlantUML. Estas soluciones son ideales
+        para pruebas rápidas o si no deseas instalar software localmente. Otra alternativa web es el <b>Editor
+        en línea de PlantUML</b> (<a href="https://editor.plantuml.com/"><code>editor.plantuml.com</code></a>),que
+        ofrece una interfaz dedicada para escribir y visualizar diagramas PlantUML. Usar plataformas en línea evita
+        configuraciones iniciales y te permite concentrarte directamente en el código del diagrama.</li>
+    <li><strong>Instalación local:</strong> Si prefieres un entorno local o
+        integrar PlantUML a tu flujo de trabajo diario, puedes instalarlo en tu computadora. Los requisitos
+        fundamentales son tener <b>Java</b> instalado (porque PlantUML se ejecuta sobre Java) y <b>Graphviz</b>
+        (necesario para calcular la disposición de ciertos diagramas). En Windows, la versión de PlantUML viene
+        con Graphviz incorporado, por lo que suele funcionar sin configuraciones adicionales. En Linux o macOS,
+        puedes instalar Graphviz y PlantUML fácilmente (por ejemplo, usando un administrador de paquetes como
+        <code>apt</code> o <code>brew</code>).
+        Una vez instalado, PlantUML se puede usar desde la línea de comandos o mediante su pequeña GUI
+        ejecutando el archivo <code>plantuml.jar</code>.
+    </li>
+</ul>
+<p>Entonces, para comenzar necesitas: un editor de texto cualquiera (o entorno web), y acceso a PlantUML
+    ya sea vía web o instalado localmente con Java (y posiblemente Graphviz). Con esto en pie, estarás listo
+    para crear tu primer mapa mental en PlantUML.</p>
+
+<h2>Estructura básica de un mapa mental en PlantUML</h2>
+
+<p>La sintaxis de PlantUML para mapas mentales se basa en listas con viñetas, muy similar a escribir puntos
+    y subpuntos en Markdown u Org-Mode. Un diagrama de mapa mental en PlantUML comienza con la directiva
+    <code>@startmindmap</code> y termina con <code>@endmindmap</code>.
+    Dentro de ese bloque, cada nodo del mapa se define en una nueva línea empezando con un asterisco
+    (<code>*</code>), de forma anidada para reflejar la jerarquía. En términos sencillos, cada <code>*</code>
+    representa un nodo,
+    y la cantidad de asteriscos indica el nivel de profundidad (jerarquía) del nodo:
+<ul>
+    <li>Un solo <code>*</code> define el nodo raíz (la idea central del mapa mental).</li>
+    <li><code>**</code> (dos asteriscos) define un nodo de primer nivel, es decir, un hijo directo del nodo
+        raíz.</li>
+    <li><code>***</code> (tres asteriscos) indica un nodo de segundo nivel (hijo de un nodo de primer nivel), y
+        así sucesivamente.</li>
+</ul>
+<p>Por ejemplo, si queremos una idea central con dos subtemas, escribiríamos algo así:</p>
+<pre>@startmindmap
+* Idea central
+** Subtema 1
+** Subtema 2
+@endmindmap</pre>
+
+<p>En este caso, <code>* Idea central</code> es el nodo raíz, y debajo se listan <code>** Subtema 1</code> y
+    <code>** Subtema 2</code> como hijos de esa idea central. PlantUML interpretará esta lista y generará
+    un diagrama con "Idea central" al centro (o a un lado, según el layout automático) y dos ramas
+    conectadas rotuladas "Subtema 1" y "Subtema 2".
+</p>
+
+<div class="centrado"><img src="/drautomatica/html/plantuml1.svg" style="transform: scale(0.9);" alt="Descripción"></div>
+
+<p>La imagen anterior fue exportada en formato SVG desde el servidor web de PlantUML (<a
+            href="https://www.plantuml.com/plantuml/"><code>www.plantuml.com/plantuml</code></a>).</p>
+
+<p>Es importante respetar la sintaxis de listas: cada nivel adicional puede indicarse añadiendo un asterisco
+    más o mediante indentación. PlantUML soporta ambas formas. Por ejemplo, la siguiente sintaxis con
+    indentación es equivalente a la anterior:</p>
+<pre>@startmindmap
+* Idea central
+    * Subtema 1
+    * Subtema 2
+@endmindmap</pre>
+
+<p>Obsérvese que aquí usamos un asterisco para "Idea central", y luego los subtemas se escriben con un asterisco
+    pero indentados debajo del central (cada cuatro espacios o una tabulación indica un nivel más profundo).
+    Esta es la sintaxis compatible con Markdown. En cambio, usando múltiples asteriscos sin indentar (sintaxis
+    estilo Org-Mode), logramos lo mismo poniendo <code>**</code> para subtemas, <code>***</code> para
+    sub-subtemas, etc., sin necesidad de indentar cada línea. En cualquier caso, PlantUML reconocerá la
+    jerarquía: ya sea por conteo de asteriscos o por niveles de sangría, el resultado es un árbol de nodos
+    conectados. Basta con colocar la lista de ítems jerárquicos entre <code>@startmindmap</code> y
+    <code>@endmindmap</code> y PlantUML lo renderizará como un mapa mental.
+</p>
+
+<p>Algunas consideraciones básicas de la estructura:</p>
+<ul>
+    <li>Solo debes tener (idealmente) un nodo raíz (<code>* ...</code>) en cada mapa mental. Ese será el
+        concepto principal del cual parten todas las ramas. Es posible tener múltiples raíces (dos o más líneas
+        comenzando con <code>*</code> al mismo nivel) dentro del mismo diagrama, pero normalmente un mapa mental
+        tradicional tiene una única idea central. En casos de usos avanzados se pueden colocar varios
+        <code>*</code> para representar varios árboles independientes en el mismo dibujo, pero para
+        principiantes es mejor ceñirse a un solo núcleo.
+    </li>
+    <li>Los nombres de los nodos pueden contener espacios y caracteres especiales (incluso tildes, eñes, etc.),
+        PlantUML los manejará sin problema siempre que el texto esté en UTF-8. Si necesitas incluir comillas o
+        ciertos símbolos especiales, podría requerir escaparlos, pero en la mayoría de los casos no es
+        necesario.</li>
+    <li>Puedes formatear el texto de los nodos con algunas etiquetas HTML simples. Por ejemplo,
+        <code>&lt;b&gt;negritas&lt;/b&gt;</code> para <b>negritas</b>, <code>&lt;i&gt;itálicas&lt;/i&gt;</code>
+        para <i>itálicas</i>, o <code>&lt;s&gt;tachado&lt;/s&gt;</code> para <s>tachado</s>.
+        El tachado es útil si quieres reflejar ideas descartadas o reemplazadas
+        (aunque en un mapa mental básico quizá no lo usemos mucho).
+    </li>
+    <li>No es necesario (ni posible) dibujar conexiones manualmente entre nodos; PlantUML las genera
+        automáticamente siguiendo la estructura dada. Todos los nodos con un nivel de profundidad mayor se
+        conectarán visualmente a su "padre" inmediato en la lista.</li>
+</ul>
+<p>Resumiendo, la estructura base es similar a hacer una lista de viñetas de varios niveles: Piensa en el mapa
+    mental como un esquema jerárquico, donde los niveles superiores representan ideas más generales y los
+    niveles más profundos representan detalles o desgloses de esas ideas.</p>
+<p>A continuación, pondremos esto en práctica con un ejemplo concreto, explicando cada línea de código y el
+    diagrama resultante.</p>
+
+
+<h2>Ejemplos prácticos: código y explicación</h2>
+<p>Veamos un ejemplo completo de mapa mental en PlantUML y analicemos cómo funciona.
+    Supongamos que queremos hacer un mapa mental para planificar unas vacaciones.
+    Tendremos como idea central el <i>Plan de vacaciones</i>, con ramas para distintos aspectos:
+    el <i>Destino</i> del viaje, el <i>Presupuesto</i> y el <i>Itinerario</i> (plan de vuelos, alojamiento y
+    actividades).
+    Dentro de "Destino" podríamos tener opciones como playa o montaña, y dentro de "Itinerario"
+    podríamos detallar componentes como vuelos, hoteles, etc.
+    Escribamos el código PlantUML para este mapa mental:
+<pre>@startmindmap
+* Plan de vacaciones
+** Destino
+*** Playa
+*** Montaña
+** Presupuesto
+** Itinerario
+*** Vuelos
+*** Hoteles
+*** Actividades
+@endmindmap</pre>
+
+<p>Con estas líneas, hemos descrito completamente nuestro mapa mental.
+    PlantUML se encargará de interpretar la jerarquía y dibujar el diagrama correspondiente.
+    El resultado debería mostrar "Plan de vacaciones" como nodo central, con tres ramas principales
+    ("Destino", "Presupuesto", "Itinerario"), donde a su vez "Destino" e "Itinerario" tienen subramas propias.
+</p>
+
+<div class="centrado"><img src="/drautomatica/html/plantuml2.svg" style="transform: scale(0.9);" alt="Descripción"></div>
+
+<p>El mapa mental generado refleja la estructura descrita en el código.
+    Se observa el nodo central <i>Plan de vacaciones</i> (a la izquierda en este caso) y de él parten
+    tres ramas principales hacia la derecha: <i>Destino</i>, <i>Presupuesto</i> e <i>Itinerario</i>.
+    Cada rama principal aparece como un recuadro conectado al nodo central mediante un conector curvo.
+    A su vez, las subramas se despliegan: por ejemplo, de Destino salen dos nodos hijos (<i>Playa</i> y
+    <i>Montaña</i>), e Itinerario conecta con <i>Vuelos</i>, <i>Hoteles</i> y <i>Actividades</i>.
+    PlantUML decidió automáticamente colocar todas las ramas hacia la derecha del nodo raíz (por defecto suele
+    organizar así los mindmaps), manteniendo la legibilidad. Nótese cómo la jerarquía se refleja en la
+    visualización:
+    los recuadros anidados más hacia afuera corresponden a los niveles más profundos (tercer nivel en nuestro
+    código), mientras que los más cercanos al centro son los temas generales de primer nivel.
+    Este diagrama confirma que nuestro código describe correctamente un mapa mental con la temática deseada.
+
+<p>En este ejemplo no usamos ningún formato especial aparte de texto plano,
+    pero PlantUML permite agregar <i>estilos</i> adicionales en el código del mapa mental.
+    Antes de pasar a consejos de estilo, vale la pena mencionar que es posible, por ejemplo, cambiar colores de
+    los nodos, aplicar íconos o sprites, o incluso añadir notas.
+    Por simplicidad no se mostraron aquí, pero en la siguiente sección abordaremos algunas de estas
+    posibilidades y buenas prácticas para mejorar la claridad de tus mapas mentales.</p>
+
+<p>Resumen de elementos del mapa mental:</p>
+<ul>
+    <li><code>@startmindmap</code>: inicio del diagrama.</li>
+    <li><code>* Planificar Vacaciones</code>: nodo raíz.</li>
+    <li><code>** Destino</code>: rama de primer nivel.</li>
+    <li><code>*** Playa</code> y <code>*** Montaña</code>: subramas bajo <em>Destino</em>.</li>
+    <li><code>** Presupuesto</code> y <code>** Itinerario</code>: ramas de primer nivel adicionales.</li>
+    <li><code>*** Vuelos</code>, <code>*** Hoteles</code>, <code>*** Actividades</code>: subramas bajo
+        <em>Itinerario</em>.
+    </li>
+    <li><code>@endmindmap</code>: fin del diagrama.</li>
+</ul>
+
+
+<h2>Consejos de estilo y buenas prácticas</h2>
+
+<p>Crear un mapa mental efectivo no solo depende de la estructura jerárquica, sino también de cómo presentas la
+    información.
+    Aquí van algunos consejos de estilo y buenas prácticas al usar PlantUML para mapas mentales:</p>
+<ul>
+    <li><b>Comienza con una idea central clara:</b> Asegúrate de definir bien tu nodo raíz, ya que será el foco
+        del mapa.
+        Todos los mapas mentales deben iniciar con un tema principal fuerte y definido en el centro.
+        En PlantUML, esto significa darle un nombre conciso y significativo a tu primer <code>*</code>.
+        Un título claro (por ejemplo, "Lanzamiento de Producto 2025" en lugar de algo vago como "Cosas a hacer")
+        ayudará a mantener el enfoque del diagrama.</li>
+    <li><b>Usa palabras clave o frases cortas en cada nodo:</b> Evita poner oraciones largas dentro de los
+        nodos.
+        Lo ideal es que cada rama del mapa mental sea fácilmente escaneable.
+        Utiliza palabras clave y términos concretos que capturen la esencia de la idea, en lugar de frases
+        completas.
+        Esto no solo hará tu mapa más limpio visualmente, sino que facilitará la comprensión rápida.
+        Por ejemplo, es mejor un nodo titulado "Mercadeo" que "Estrategias de marketing para el producto",
+        a menos que necesites el detalle específico.
+        Si requieres más explicación, PlantUML ofrece la opción de múltiples líneas en un nodo usando
+        <code>: :</code>
+        (dos puntos al comienzo y fin del texto multilínea), pero úsala con moderación;
+        la recomendación general es mantener los nodos lo más simples posible.
+    </li>
+    <li><b>Mantén una jerarquía coherente y equilibrada:</b> Organiza tus ideas en niveles lógicos.
+        Todos los nodos que tengan el mismo número de asteriscos estarán al mismo nivel de importancia.
+        Verifica que esa jerarquía tenga sentido (por ejemplo, que no hayas puesto un concepto muy general
+        como hijo de algo muy específico accidentalmente).
+        Asimismo, trata de no sobrecargar un solo nivel con demasiados elementos;
+        si un nodo tiene muchísimos subelementos, quizás puedas agrupar algunos en categorías intermedias.
+        Un mapa mental efectivo suele tener de 5 a 7 ramas principales saliendo del núcleo, como máximo,
+        para mantener la claridad (esto no es una regla fija, pero es una guía común de usabilidad).</li>
+    <li><b>Aprovecha colores para destacar o categorizar:</b> PlantUML permite asignar colores de fondo a los
+        nodos fácilmente.
+        Puedes hacerlo de dos maneras: usando la notación inline o definiendo un estilo.
+        Con la notación inline, simplemente se agrega [#Color] justo después del asterisco y antes del texto
+        del nodo.
+        Por ejemplo: <code>*[#lightblue] Idea Central</code> coloreará ese nodo de azul claro.
+        De igual forma, los nodos hijos pueden llevar colores: <code>**[#yellow] Subtema Importante</code>
+        tendría fondo amarillo, etc.
+        Esto ayuda a diferenciar secciones del mapa (por ejemplo, usar un color para cada categoría principal).
+        La otra forma es mediante estilos: usando el bloque <code>&lt;style&gt;</code> de PlantUML se pueden
+        definir clases de estilo para los nodos y luego aplicarlas con
+        <code>&lt;&lt;nombreEstilo&gt;&gt;</code> después del texto.
+        Por simplicidad, muchos usuarios de PlantUML optan por la primera forma (inline), que es rápida.
+        Úsalos con moderación y consistencia: asigna colores significativos
+        (p.ej., todos los nodos relacionados a "Marketing" en verde, "Finanzas" en azul, etc.) para mejorar la
+        comprensión. Un mapa mental visualmente atractivo con colores puede ser más memorable,
+        pero asegúrate de que el contraste sea suficiente para la legibilidad.
+    </li>
+    <pre>@startmindmap
+* Roles en el MCCEMS
+**[#cyan] Función del docente
+***[#lightcyan] Mediador del conocimiento
+***[#lightcyan] Diseño de actividades centradas en competencias
+***[#lightcyan] Evaluación formativa
+**[#yellow] Estudiante como sujeto activo
+***[#lightyellow] Aprendizaje colaborativo
+***[#lightyellow] Aprendizaje autónomo
+***[#lightyellow] Construcción de conocimiento
+@endmindmap</pre>
+    <div class="centrado"><img src="/drautomatica/html/plantuml4.svg" style="transform: scale(0.9);" alt="Descripción"></div>
+    <li><b>Distribuye ramas a la izquierda y derecha si es necesario:</b> De forma predeterminada,
+        PlantUML suele ubicar todas las ramas hacia un lado (generalmente a la derecha del nodo central, como
+        vimos en nuestro ejemplo).
+        Sin embargo, para mapas mentales más grandes puede ser útil aprovechar ambos lados para balancear el
+        diagrama.
+        Existe una sintaxis especial llamada notación aritmética que te permite controlar esto:
+        usando el signo <code>+</code> o <code>-</code> en lugar de <code>*</code> al comienzo de las líneas.
+        En esta notación, los nodos marcados con <code>+</code> se dibujarán como ramas
+        que salen hacia la derecha, mientras que los marcados con <code>-</code> saldrán hacia la izquierda.
+        Por ejemplo, <code>+ Tema A</code> y <code>- Tema B</code> como raíces producirían un mapa con "Tema A"
+        a la derecha y "Tema B" a la izquierda del centro. Del mismo modo, dentro de una misma jerarquía,
+        podrías usar <code>++</code> y <code>--</code> para hijos a derecha e izquierda respectivamente.
+        Esto es útil para crear un mapa mental más equilibrado visualmente, similar a los que se dibujan a mano
+        donde las ideas rodean al centro. Ten en cuenta que, al usar esta notación,
+        debes ser consistente con los niveles (un <code>++</code> es hijo de un <code>+</code>,
+        y un <code>--</code> es hijo de un <code>-</code>, etc.). También es recomendable seguir teniendo un
+        solo nodo central (puedes indicarlo con <code>*</code> o con <code>+/-</code> solo uno de ellos).
+        A fecha reciente, PlantUML ya soporta múltiples raíces, pero manejar una sola hace el diagrama más
+        claro.
+
+        <p>El siguiente código agrega ramas en ambos lados del nodo central:</p>
+        <pre>@startmindmap
+* Idea central
+-- Rama izquierda 1
+-- Rama izquierda 2
+++ Rama derecha 1
+++ Rama derecha 2
+@endmindmap</pre>
+        <div class="centrado"><img src="/drautomatica/html/plantuml3.svg" style="transform: scale(0.9);" alt="Descripción"></div>
+    </li>
+    <li><b>Sé consistente con el estilo de texto:</b> Además de la longitud de las etiquetas, cuida la
+        <b>coherencia</b>.
+        Por ejemplo, si usas sustantivos en un nivel ("Marketing", "Ventas", "Operaciones"),
+        no mezcles con verbos ("Implementar X") en ese mismo nivel; en su lugar, podrías cambiarlo a
+        "Implementación de X".
+        La consistencia gramatical y de formato ayuda a que el mapa se lea más fácilmente.
+        También puedes utilizar mayúsculas/minúsculas de forma consistente (todos los nodos con mayúscula
+        inicial, por ejemplo).
+    </li>
+    <li><b>Evita el cruce excesivo de ramas:</b> Aunque PlantUML posiciona automáticamente los nodos para
+        minimizar cruces,
+        un mapa mental muy denso puede volverse confuso. Si notas que tu diagrama está muy recargado, considera
+        <b>dividir el mapa</b>. A veces es mejor crear dos mapas mentales separados con subtemas específicos
+        que meter absolutamente todo en uno solo. Por ejemplo, si tu mapa mental "Empresa XYZ" tenía una
+        sección entera de "Plan de Marketing" con muchos detalles, podrías hacer un mapa mental independiente
+        solo para "Plan de Marketing" y en el mapa principal dejarlo como un nodo que apunte a ese sub-mapa
+        (conceptualmente, no hay hipervínculos en la imagen, pero en un documento podrías mencionar
+        que existe otro diagrama).
+    </li>
+    <li><b>Usa imágenes o iconos con precaución:</b> En herramientas manuales de mapas mentales se suelen
+        incluir dibujitos o íconos para reforzar ideas. Se pueden embeber sprites o iconos
+        (por ejemplo, usando el estándar <b>Font Awesome</b> a través de la librería de iconos en PlantUML,
+        o directamente con caracteres unicode como 🎓, 📚, etc.), pero esto requiere un poco más de
+        configuración.
+        Dado que este es un tutorial introductorio, no profundizaremos en ello.
+        No obstante, si planeas exportar el diagrama e incorporarlo en una presentación,
+        podrías posteriormente superponer iconos o destacarlos de otra forma.
+        En general, la combinación de visuales atractivos con una buena estructura potenciará la efectividad del
+        mapa mental.</li>
+    <li><b>Revisa y actualiza tu mapa mental:</b> Una ventaja del enfoque basado en texto es que actualizar el
+        diagrama es muy fácil. No temas regenerar tu mapa si ves que alguna idea quedó fuera de lugar.
+        Agrega, quita o reordena nodos en el código y genera nuevamente la imagen.
+        PlantUML no garantiza prevenir incoherencias lógicas (es una herramienta de dibujo, no de validación
+        lógica), así que depende de ti revisar que el contenido tenga sentido.
+        Pregunta si cada elemento está en el nivel adecuado y si realmente aporta al tema central.
+        Un mapa mental es una herramienta de pensamiento; úsalo iterativamente para aclarar tus ideas.</li>
+</ul>
+<p>En conclusión, las buenas prácticas para mapas mentales se centran en <b>claridad</b>, <b>brevedad</b> y
+    <b>organización</b>.
+    Un mapa mental bien diseñado debería, de un vistazo, mostrar la estructura de tu tema:
+    cuál es la idea central, cuáles son las categorías principales, y qué detalles importantes hay en cada
+    categoría. Siguiendo estos consejos, lograrás diagramas más legibles y útiles.
+</p>
+
+
+<h2>Recursos adicionales</h2>
+
+<p>Para seguir aprendiendo y sacarle el máximo partido a PlantUML en la creación de mapas mentales (y otros
+    diagramas),
+    aquí tienes algunos recursos útiles:</p>
+<ul>
+    <li><b>Documentación oficial de PlantUML sobre mapas mentales:</b> La página oficial de PlantUML dedicada a
+        MindMap (mapas mentales) detalla todas las características disponibles, incluyendo ejemplos de sintaxis
+        Org-Mode, Markdown, notación aritmética, uso de colores y más.
+        Es altamente recomendable leerla para descubrir funciones avanzadas no cubiertas en su totalidad aquí
+        (como cajas multilínea, estilos CSS, íconos, etc.). La encontrarás en el sitio de PlantUML (<a
+            href="https://plantuml.com/es/mindmap-diagram"><code>plantuml.com/es/mindmap-diagram</code></a>).
+    </li>
+    <li><b>Editor en línea / Servidor público:</b> Para uso ocasional o compartir diagramas rápidos,
+        recuerda que dispones del servidor público de PlantUML. Además de <a href="https://www.planttext.com/"><code>planttext.com</code></a>,
+        el propio <b>PlantUML Web Server</b> (<a
+            href="https://www.plantuml.com/plantuml/"><code>www.plantuml.com/plantuml</code></a>) permite
+        codificar diagramas en la URL.
+        Incluso, existe un <b>Live Editor</b> comunitario (<a
+            href="https://editor.plantuml.com/"><code>editor.plantuml.com</code></a>) con panel dual
+        código/gráfico que puedes usar sin instalar nada.
+        Estos editores en línea también son muy útiles para colaborar: puedes enviarle a un colega el texto del
+        diagrama y que lo visualice fácilmente, o viceversa.</li>
+    <li>Comunidades y foros: La comunidad de PlantUML es activa y muy dispuesta a ayudar.
+        El foro oficial (PlantUML Q&A) y plataformas como Stack Overflow (con la etiqueta <code>plantuml</code>)
+        contienen muchas preguntas ya resueltas.
+        Si te atascas en cómo lograr algo específico (por ejemplo, "¿cómo centrar el nodo raíz?" o
+        "¿cómo agregar un enlace clickable en un nodo?"), probablemente alguien ya lo haya preguntado.
+        También puedes inspirarte viendo diagramas de ejemplo que otros han creado;
+        la galería en plantuml.com tiene algunos ejemplos interesantes.</li>
+</ul>
+
+<h2>Conclusión</h2>
+
+<p>PlantUML ofrece una forma ágil y escalable de crear mapas mentales:
+    al escribir texto jerárquico en lugar de dibujar manualmente, se gana velocidad,
+    facilidad de edición y trazabilidad en control de versiones.
+    Su sintaxis de asteriscos o notación aritmética permite reflejar claramente la jerarquía de ideas,
+    mientras que el soporte de colores y estilos inline potencia la legibilidad.
+    Estas características hacen de PlantUML una herramienta poderosa y flexible para estructurar visualmente
+    conceptos y proyectos mediante mapas mentales.</p>
+
+<p>Para finalizar, recuerda que la mejor manera de dominar estas herramientas es practicando.
+    Empieza por pequeños mapas mentales de cosas cotidianas (por ejemplo, planifica tu semana,
+    organiza las partes de un proyecto personal, o resume un libro en un mapa mental) usando PlantUML.
+    Verás que con el tiempo encontrarás tu propio estilo y atajos.</p>
+<p>¡Felices diagramas y buena suerte creando tus mapas mentales con PlantUML!</p>
+<hr>
+
+<div class="centrado">Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a><img
+        src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"><img
+        src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"><img
+        src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt=""
+        style="max-width: 1em;max-height:1em;margin-left: .2em;"></div>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
