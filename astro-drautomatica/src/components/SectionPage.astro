@@ -54,6 +54,6 @@ const entries = getEntriesForSection(section);
 
 <BaseLayout title={title} description={description}>
   <Fragment set:html={before} />
-  <EntryList entries={entries} heading={heading} />
+  <EntryList entries={entries} section={section} heading={heading} />
   {after && <Fragment set:html={after} />}
 </BaseLayout>

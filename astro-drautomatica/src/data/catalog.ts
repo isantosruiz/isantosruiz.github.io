@@ -7,7 +7,7 @@ export interface CatalogEntry {
   kind: CatalogEntryKind;
   title: string;
   href: string;
-  html: string;
+  html?: string;
   icon: string;
   articleSlug?: string;
   sections: SectionId[];
@@ -20,7 +20,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "How to Plot Inequalities in MATLAB",
     "href": "https://medium.com/p/f17697fdb8f7/",
-    "html": "<a href=\"https://medium.com/p/f17697fdb8f7/\">How to Plot Inequalities in MATLAB</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio",
@@ -32,7 +31,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Math Notebook: Cuaderno de matemáticas simbólicas",
     "href": "https://mnotebook.vercel.app/",
-    "html": "<a href=\"https://mnotebook.vercel.app/\">Math Notebook: Cuaderno de matemáticas simbólicas</a>✨🆕",
     "icon": "fa-li fa fa-cloud",
     "sections": [
       "inicio"
@@ -46,7 +44,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Gráficas en tiempo real con MATLAB",
     "href": "https://medium.com/p/bd732f5c2c30/",
-    "html": "<a href=\"https://medium.com/p/bd732f5c2c30/\">Gráficas en tiempo real con MATLAB</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -60,7 +57,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Cómo aprenden las máquinas: cinco enfoques del aprendizaje automático",
     "href": "https://medium.com/p/46f0accb297f/",
-    "html": "<a href=\"https://medium.com/p/46f0accb297f/\">Cómo aprenden las máquinas: cinco enfoques del aprendizaje automático</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -74,7 +70,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "¿Qué debe contener la introducción de un artículo científico?",
     "href": "https://medium.com/p/092974a9b4a5/",
-    "html": "<a href=\"https://medium.com/p/092974a9b4a5/\">¿Qué debe contener la introducción de un artículo científico?</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -88,7 +83,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Conectando la placa M5Stack Core2 for AWS con MATLAB",
     "href": "https://medium.com/p/276430eba9e8/",
-    "html": "<a href=\"https://medium.com/p/276430eba9e8/\">Conectando la placa M5Stack Core2 for AWS con MATLAB</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -102,7 +96,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "La teoría de la información en el mundo digital",
     "href": "https://medium.com/p/b5f52913c721/",
-    "html": "<a href=\"https://medium.com/p/b5f52913c721/\">La teoría de la información en el mundo digital</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -116,7 +109,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Cómo sabe un robot móvil dónde está",
     "href": "https://medium.com/p/ebab90f44cd9/",
-    "html": "<a href=\"https://medium.com/p/ebab90f44cd9/\">Cómo sabe un robot móvil dónde está</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -130,7 +122,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Control adaptable basado en un modelo de referencia",
     "href": "https://medium.com/p/34277da598ec",
-    "html": "<a href=\"https://medium.com/p/34277da598ec\">Control adaptable basado en un modelo de referencia</a>✨🆕",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
@@ -1602,7 +1593,6 @@ export const catalogEntries = [
     "kind": "external",
     "title": "Math Notebook: Cuaderno interactivo para matemáticas simbólicas en Python",
     "href": "https://mnotebook.vercel.app/",
-    "html": "<a href=\"https://mnotebook.vercel.app/\">Math Notebook: Cuaderno interactivo para matemáticas simbólicas en Python</a>✨🆕",
     "icon": "fa-li fa fa-cloud",
     "sections": [
       "python"

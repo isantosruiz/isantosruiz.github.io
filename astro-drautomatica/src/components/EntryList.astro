@@ -1,28 +1,59 @@
 ---
-import type { CatalogEntry } from '../lib/catalog';
+import type { CatalogEntry, SectionId } from '../lib/catalog';
 
 interface Props {
   entries: readonly CatalogEntry[];
+  section: SectionId;
   heading?: string;
 }
 
-const { entries, heading = 'Entradas recientes' } = Astro.props;
+const { entries, section, heading = 'Entradas recientes' } = Astro.props;
 const kindLabels = {
   local: 'Artículo local',
   external: 'Enlace externo',
   asset: 'Recurso interno'
 };
+const newEntryLimit = section === 'inicio' ? 8 : 5;
+const simpleAnchorPattern = /^<a\s+href=(["'])[^"']+\1\s*>([\s\S]*?)<\/a>$/i;
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeAttribute(value: string) {
+  return escapeHtml(value);
+}
+
+function renderEntryHtml(entry: CatalogEntry) {
+  const html = entry.html?.replaceAll('✨🆕', '').trim();
+  const simpleAnchor = html?.match(simpleAnchorPattern);
+
+  if (!html) {
+    return `<a href="${escapeAttribute(entry.href)}">${escapeHtml(entry.title)}</a>`;
+  }
+
+  if (simpleAnchor) {
+    return `<a href="${escapeAttribute(entry.href)}">${simpleAnchor[2]}</a>`;
+  }
+
+  return html;
+}
 ---
 
 <section id="articulos-recientes">
   <h2 class="w3-text-grey w3-padding">{heading}</h2>
   <ul class="fa-ul" id="publications">
-    {entries.map((entry) => (
+    {entries.map((entry, index) => (
       <li data-kind={entry.kind}>
         <i class={entry.icon} title={kindLabels[entry.kind]}></i>
-        <Fragment set:html={entry.html} />
+        <Fragment set:html={renderEntryHtml(entry)} />
+        {index < newEntryLimit && <span aria-label="Entrada reciente">✨🆕</span>}
       </li>
     ))}
   </ul>
 </section>
-

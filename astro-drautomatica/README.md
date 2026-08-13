@@ -32,11 +32,9 @@ Cada entrada indica si es contenido local, enlace externo o recurso interno:
   kind: 'local',
   title: 'Mi artículo de modelado',
   href: '/drautomatica/articulos/mi-articulo-modelado/',
-  html: '<a href="/drautomatica/articulos/mi-articulo-modelado/">Mi artículo de modelado</a>',
   icon: 'fa-li fa fa-file-alt',
   articleSlug: 'mi-articulo-modelado',
-  sections: ['modelado'],
-  order: { modelado: 0 }
+  sections: ['modelado', 'inicio']
 }
 ```
 
@@ -44,7 +42,11 @@ Cada entrada indica si es contenido local, enlace externo o recurso interno:
 - `kind: 'external'`: enlace a Medium, MathWorks, GitHub, Vercel u otro sitio externo. No necesita archivo en `html/`.
 - `kind: 'asset'`: recurso interno como PDF, imagen o archivo publicado bajo `/drautomatica/pdf/...` u otra carpeta copiada.
 
-La propiedad `sections` define dónde aparece la entrada. Por ejemplo, `sections: ['modelado', 'inicio']` la muestra en Modelado y en la portada. La propiedad `order` define el orden dentro de cada sección.
+La propiedad `sections` define dónde aparece la entrada. Por ejemplo, `sections: ['modelado', 'inicio']` la muestra en Modelado y en la portada. Para entradas simples no hace falta escribir `html`: Astro genera el enlace con `title` y `href`.
+
+La propiedad `order` es opcional y define el orden dentro de cada sección solo cuando necesitas una posición específica. Si no se especifica `order` para una sección, la entrada se coloca al inicio de esa lista. Si varias entradas no tienen `order`, conservan entre ellas el orden en que aparecen en `catalog.ts`.
+
+El distintivo `✨🆕` no debe escribirse en `html`. Astro lo agrega automáticamente a los primeros 8 elementos de `inicio` y a los primeros 5 elementos de las demás secciones.
 
 Para un artículo local con ecuaciones, el archivo de `html/` debe contener solo el contenido del artículo, no una página HTML completa con `<html>`, `<head>` ni `<body>`. KaTeX se carga desde el layout de Astro.
 
@@ -56,12 +58,12 @@ Para un artículo externo en Medium, agrega solamente una entrada `external` al 
   kind: 'external',
   title: 'Mi post en Medium',
   href: 'https://medium.com/p/...',
-  html: '<a href="https://medium.com/p/...">Mi post en Medium</a>',
   icon: 'fa-li fa-brands fa-medium',
-  sections: ['modelado'],
-  order: { modelado: 1 }
+  sections: ['modelado', 'inicio']
 }
 ```
+
+Usa `html` solo si la entrada necesita marcado adicional, por ejemplo una descripción, un enlace secundario a PDF, una imagen de MathWorks File Exchange o texto en negritas dentro del enlace.
 
 Los archivos legacy como `modelado.html` o `Python.html` se conservan como fuente histórica y para partes introductorias durante esta migración, pero las listas nuevas de publicaciones se gestionan desde el catálogo de Astro.
 
