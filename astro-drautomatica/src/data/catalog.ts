@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "la-educacion-en-tiempos-de-la-ia-generativa",
+    "kind": "external",
+    "title": "La educación en tiempos de la IA generativa",
+    "href": "https://medium.com/p/3fb3dba575cc",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },
+  {
     "id": "inequalities-matlab",
     "kind": "external",
     "title": "How to Plot Inequalities in MATLAB",
@@ -26,6 +37,29 @@ export const catalogEntries = [
       "matlab"
     ]
   },  
+  {
+    "id": "la-ia-destruye-los-libros-para-aprender",
+    "kind": "external",
+    "title": "¿La IA destruye los libros para aprender?",
+    "href": "https://medium.com/p/2306b490f4cd",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },
+  {
+    "id": "diseno-simulacion-e-implementacion-de-filtros-fir-con-cpp-para-esp32",
+    "kind": "external",
+    "title": "Diseño, simulación e implementación de filtros FIR con C++ para ESP32",
+    "href": "https://medium.com/p/e04728191cf1",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "simulacion",
+      "control"
+    ],
+  },
   {
     "id": "math-notebook-cuaderno-de-matematicas-simbolicas",
     "kind": "external",
@@ -87,6 +121,20 @@ export const catalogEntries = [
     ],
   },
   {
+    "id": "syntax-highlighting-code-should-feel-at-home-on-the-web",
+    "kind": "external",
+    "title": "Syntax Highlighting: Code Should Feel at Home on the Web",
+    "href": "https://medium.com/@idelossantosruiz/code-should-feel-at-home-on-the-web-261b9d705647",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "miscelanea",
+      "python",
+      "matlab",
+      "latex"
+    ],
+  },
+  {
     "id": "como-sabe-un-robot-movil-donde-esta",
     "kind": "external",
     "title": "Cómo sabe un robot móvil dónde está",
@@ -94,6 +142,17 @@ export const catalogEntries = [
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
       "inicio"
+    ],
+  },
+  {
+    "id": "maquinas-de-estados-finitos-orden-para-la-logica-secuencial",
+    "kind": "external",
+    "title": "Máquinas de estados finitos: orden para la lógica secuencial",
+    "href": "https://medium.com/@idelossantosruiz/m%C3%A1quinas-de-estados-finitos-orden-para-la-l%C3%B3gica-secuencial-c79bc45a3133",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "control"
     ],
   },
   {
