@@ -163,6 +163,15 @@ export function loadLegacyFragment(filename: string) {
   return rewriteHtml(html);
 }
 
+export function loadSectionIntro(filename: string) {
+  const html = extractBody(fs.readFileSync(path.join(repoRoot, filename), 'utf8'));
+  const withoutListings = html.replace(
+    /<section\s+id=["']articulos-recientes["'][^>]*>[\s\S]*?<\/section>/i,
+    ''
+  );
+  return rewriteHtml(withoutListings);
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs

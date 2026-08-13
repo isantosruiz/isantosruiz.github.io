@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EntryList from './EntryList.astro';
+import { getEntriesForSection, type SectionId } from '../lib/catalog';
+import { loadSectionIntro } from '../lib/legacy';
+
+interface Props {
+  source: string;
+  section: SectionId;
+  title: string;
+  description: string;
+  heading?: string;
+}
+
+const { source, section, title, description, heading } = Astro.props;
+const intro = loadSectionIntro(source);
+const entries = getEntriesForSection(section);
+---
+
+<BaseLayout title={title} description={description}>
+  <Fragment set:html={intro} />
+  <EntryList entries={entries} heading={heading} />
+</BaseLayout>

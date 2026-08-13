@@ -1,0 +1,28 @@
+---
+import type { CatalogEntry } from '../lib/catalog';
+
+interface Props {
+  entries: readonly CatalogEntry[];
+  heading?: string;
+}
+
+const { entries, heading = 'Entradas recientes' } = Astro.props;
+const kindLabels = {
+  local: 'Artículo local',
+  external: 'Enlace externo',
+  asset: 'Recurso interno'
+};
+---
+
+<section id="articulos-recientes">
+  <h2 class="w3-text-grey w3-padding">{heading}</h2>
+  <ul class="fa-ul" id="publications">
+    {entries.map((entry) => (
+      <li data-kind={entry.kind}>
+        <i class={entry.icon} title={kindLabels[entry.kind]}></i>
+        <Fragment set:html={entry.html} />
+      </li>
+    ))}
+  </ul>
+</section>
+

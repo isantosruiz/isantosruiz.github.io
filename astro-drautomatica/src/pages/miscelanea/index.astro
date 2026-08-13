@@ -1,10 +1,12 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { loadLegacyFragment, sections } from '../../lib/legacy';
+import SectionPage from '../../components/SectionPage.astro';
+import { sections } from '../../lib/legacy';
 
 const page = sections.miscelanea;
-const html = loadLegacyFragment(page.source);
 ---
-<BaseLayout title={page.title} description={page.description}>
-  <Fragment set:html={html} />
-</BaseLayout>
+<SectionPage
+  source={page.source}
+  section="miscelanea"
+  title={page.title}
+  description={page.description}
+/>
