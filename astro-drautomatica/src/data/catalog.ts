@@ -835,9 +835,9 @@ export const catalogEntries = [
     }
   },
   {
-    "id": "resolucion-de-ecuaciones-diferenciales-en-python-con-scipy-nbsp",
+    "id": "resolucion-de-ecuaciones-diferenciales-en-python-con-scipy",
     "kind": "external",
-    "title": "Resolución de ecuaciones diferenciales en Python con SciPy &nbsp;",
+    "title": "Resolución de ecuaciones diferenciales en Python con SciPy",
     "href": "https://medium.com/p/b4eb5ed4c188",
     "html": "<a href=\"https://medium.com/p/b4eb5ed4c188\">Resolución de ecuaciones diferenciales en Python con SciPy</a>&nbsp;<a href=\"/drautomatica/pdf/ode_scipy.pdf\"><i class=\"far fa-file-pdf\"></i></a>",
     "icon": "fa-li fa-brands fa-medium",
