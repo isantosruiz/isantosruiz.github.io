@@ -44,7 +44,7 @@ Cada entrada indica si es contenido local, enlace externo o recurso interno:
 
 La propiedad `sections` define dónde aparece la entrada. Por ejemplo, `sections: ['modelado', 'inicio']` la muestra en Modelado y en la portada. Para entradas simples no hace falta escribir `html`: Astro genera el enlace con `title` y `href`.
 
-La propiedad `order` es opcional y define el orden dentro de cada sección solo cuando necesitas una posición específica. Si no se especifica `order` para una sección, la entrada se coloca al inicio de esa lista. Si varias entradas no tienen `order`, conservan entre ellas el orden en que aparecen en `catalog.ts`.
+El orden normal es la posición física de cada entrada en `catalog.ts`: las entradas que aparecen primero en el arreglo se muestran primero en cada sección donde estén incluidas. La propiedad `order` se conserva solo como escape opcional para casos especiales, pero no es necesaria en el catálogo actual.
 
 El distintivo `✨🆕` no debe escribirse en `html`. Astro lo agrega automáticamente a los primeros 8 elementos de `inicio` y a los primeros 5 elementos de las demás secciones.
 

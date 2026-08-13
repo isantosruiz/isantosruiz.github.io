@@ -35,9 +35,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 0
-    }
   },
   {
     "id": "graficas-en-tiempo-real-con-matlab",
@@ -48,9 +45,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 1
-    }
   },
   {
     "id": "como-aprenden-las-maquinas-cinco-enfoques-del-aprendizaje-automatico",
@@ -61,9 +55,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 2
-    }
   },
   {
     "id": "que-debe-contener-la-introduccion-de-un-articulo-cientifico",
@@ -74,9 +65,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 3
-    }
   },
   {
     "id": "conectando-la-placa-m5stack-core2-for-aws-con-matlab",
@@ -87,9 +75,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 4
-    }
   },
   {
     "id": "la-teoria-de-la-informacion-en-el-mundo-digital",
@@ -100,9 +85,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 5
-    }
   },
   {
     "id": "como-sabe-un-robot-movil-donde-esta",
@@ -113,9 +95,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 6
-    }
   },
   {
     "id": "control-adaptable-basado-en-un-modelo-de-referencia",
@@ -126,9 +105,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 7
-    }
   },
   {
     "id": "transformadas-de-laplace-y-z-herramientas-para-resolver-la-dinamica-de-sistemas-",
@@ -140,9 +116,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 8
-    }
   },
   {
     "id": "el-lazo-de-corriente-de-4-20-ma-sin-enredos",
@@ -154,9 +127,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 9
-    }
   },
   {
     "id": "funcion-de-transferencia-una-herramienta-central-en-sistemas-dinamicos-y-control",
@@ -168,9 +138,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 10
-    }
   },
   {
     "id": "icapture-e-isolve-una-propuesta-integrada-para-la-captura-y-analisis-de-circuito",
@@ -182,9 +149,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 11
-    }
   },
   {
     "id": "how-to-turn-a-python-script-into-a-standalone-command-line-tool",
@@ -196,9 +160,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 12
-    }
   },
   {
     "id": "matriz-de-hurwitz-y-tabla-de-routh-dos-herramientas-algebraicas-para-analisis-y-",
@@ -210,9 +171,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 13
-    }
   },
   {
     "id": "senales-sistemas-y-modelos",
@@ -224,9 +182,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 14
-    }
   },
   {
     "id": "pushpull",
@@ -239,9 +194,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 15
-    }
   },
   {
     "id": "biestable",
@@ -254,9 +206,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 16
-    }
   },
   {
     "id": "como-redactar-un-informe-de-practica-de-laboratorio",
@@ -268,9 +217,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 17
-    }
   },
   {
     "id": "understanding-mqtt-the-lightweight-protocol-powering-the-internet-of-things",
@@ -283,10 +229,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 18,
-      "python": 16
-    }
   },
   {
     "id": "el-nuevo-arduino-y-su-modelo-de-doble-cerebro",
@@ -298,9 +240,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 19
-    }
   },
   {
     "id": "escalones-e-impulsos-base-para-el-modelado-de-senales-y-sistemas",
@@ -313,10 +252,6 @@ export const catalogEntries = [
       "inicio",
       "modelado"
     ],
-    "order": {
-      "inicio": 20,
-      "modelado": 0
-    }
   },
   {
     "id": "modelado-del-decaimiento-radiactivo-mediante-ecuaciones-diferenciales",
@@ -329,10 +264,6 @@ export const catalogEntries = [
       "inicio",
       "modelado"
     ],
-    "order": {
-      "inicio": 21,
-      "modelado": 1
-    }
   },
   {
     "id": "transformaciones-lineales-tutorial-paso-a-paso",
@@ -345,10 +276,6 @@ export const catalogEntries = [
       "inicio",
       "matlab"
     ],
-    "order": {
-      "inicio": 22,
-      "matlab": 9
-    }
   },
   {
     "id": "como-escribir-un-articulo-cientifico",
@@ -361,10 +288,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 23,
-      "miscelanea": 0
-    }
   },
   {
     "id": "a-beginner-s-guide-to-writing-latex-macros",
@@ -377,10 +300,6 @@ export const catalogEntries = [
       "inicio",
       "latex"
     ],
-    "order": {
-      "inicio": 24,
-      "latex": 0
-    }
   },
   {
     "id": "mastering-restful-apis-in-python",
@@ -393,10 +312,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 25,
-      "python": 17
-    }
   },
   {
     "id": "how-to-render-latex-in-jupyter-using-ipython",
@@ -410,11 +325,6 @@ export const catalogEntries = [
       "python",
       "latex"
     ],
-    "order": {
-      "inicio": 26,
-      "python": 18,
-      "latex": 1
-    }
   },
   {
     "id": "gemelos-digitales-en-robotica-y-automatizacion",
@@ -430,13 +340,6 @@ export const catalogEntries = [
       "control",
       "optimizacion"
     ],
-    "order": {
-      "inicio": 27,
-      "modelado": 2,
-      "simulacion": 1,
-      "control": 1,
-      "optimizacion": 2
-    }
   },
   {
     "id": "representacion-y-procesamiento-digital-de-imagenes",
@@ -451,12 +354,6 @@ export const catalogEntries = [
       "control",
       "matlab"
     ],
-    "order": {
-      "inicio": 28,
-      "modelado": 4,
-      "control": 2,
-      "matlab": 11
-    }
   },
   {
     "id": "ad-hominem",
@@ -470,10 +367,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 29,
-      "miscelanea": 1
-    }
   },
   {
     "id": "ad-verecundiam",
@@ -487,10 +380,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 30,
-      "miscelanea": 2
-    }
   },
   {
     "id": "ad-populum",
@@ -504,10 +393,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 31,
-      "miscelanea": 3
-    }
   },
   {
     "id": "ad-lazarum",
@@ -521,10 +406,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 32,
-      "miscelanea": 4
-    }
   },
   {
     "id": "falsa-causa",
@@ -538,10 +419,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 33,
-      "miscelanea": 5
-    }
   },
   {
     "id": "falsa-dicotomia",
@@ -555,10 +432,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 34,
-      "miscelanea": 6
-    }
   },
   {
     "id": "pdfcompress-reduce-el-tamano-de-archivos-pdf",
@@ -571,10 +444,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 35,
-      "python": 3
-    }
   },
   {
     "id": "pdf2eps-convierte-archivos-pdf-a-eps",
@@ -587,10 +456,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 36,
-      "python": 4
-    }
   },
   {
     "id": "pdfcrop-recorta-margenes-vacios-en-paginas-pdf",
@@ -603,10 +468,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 37,
-      "python": 5
-    }
   },
   {
     "id": "simplificador-de-expresiones-booleanas",
@@ -619,10 +480,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 38,
-      "python": 6
-    }
   },
   {
     "id": "calculadora-de-integrales",
@@ -635,10 +492,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 39,
-      "python": 7
-    }
   },
   {
     "id": "suma-de-riemann",
@@ -651,10 +504,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 40,
-      "python": 8
-    }
   },
   {
     "id": "calculadora-de-laplace",
@@ -667,10 +516,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 41,
-      "python": 9
-    }
   },
   {
     "id": "resolucion-simbolica-de-ecuaciones",
@@ -683,10 +528,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 42,
-      "python": 10
-    }
   },
   {
     "id": "regresion-lineal-por-minimos-cuadrados",
@@ -699,10 +540,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 43,
-      "python": 11
-    }
   },
   {
     "id": "area-bajo-la-curva-normal",
@@ -715,10 +552,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 44,
-      "python": 12
-    }
   },
   {
     "id": "epanet-network-map",
@@ -731,10 +564,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 45,
-      "python": 13
-    }
   },
   {
     "id": "filtro-de-kalman-tutorial-interactivo",
@@ -747,10 +576,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 46,
-      "python": 14
-    }
   },
   {
     "id": "derivacion-paso-a-paso-tutorial-interactivo",
@@ -763,10 +588,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 47,
-      "python": 15
-    }
   },
   {
     "id": "forma-escalonada-reducida-por-renglones-tutorial-interactivo",
@@ -778,9 +599,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 48
-    }
   },
   {
     "id": "perplexity",
@@ -794,10 +612,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 49,
-      "miscelanea": 14
-    }
   },
   {
     "id": "mindmaps",
@@ -812,11 +626,6 @@ export const catalogEntries = [
       "modelado",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 50,
-      "modelado": 6,
-      "miscelanea": 13
-    }
   },
   {
     "id": "la-energia-conceptos-y-desafios",
@@ -829,10 +638,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 51,
-      "miscelanea": 15
-    }
   },
   {
     "id": "resolucion-de-ecuaciones-diferenciales-en-python-con-scipy",
@@ -844,9 +649,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 52
-    }
   },
   {
     "id": "pueden-las-maquinas-realmente-aprender",
@@ -859,10 +661,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 53,
-      "miscelanea": 7
-    }
   },
   {
     "id": "como-se-prueba-una-hipotesis-estadistica-en-ciencias-e-ingenieria",
@@ -875,10 +673,6 @@ export const catalogEntries = [
       "inicio",
       "matlab"
     ],
-    "order": {
-      "inicio": 54,
-      "matlab": 12
-    }
   },
   {
     "id": "que-es-la-ciencia-y-para-que-sirve",
@@ -891,10 +685,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 55,
-      "miscelanea": 8
-    }
   },
   {
     "id": "la-publicacion-en-acceso-abierto",
@@ -907,10 +697,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 56,
-      "miscelanea": 9
-    }
   },
   {
     "id": "diagramas-en-latex-con-tikz",
@@ -923,10 +709,6 @@ export const catalogEntries = [
       "inicio",
       "latex"
     ],
-    "order": {
-      "inicio": 57,
-      "latex": 2
-    }
   },
   {
     "id": "homogeneous-transformations-in-robotics-a-comprehensive-tutorial-with-examples",
@@ -942,13 +724,6 @@ export const catalogEntries = [
       "control",
       "matlab"
     ],
-    "order": {
-      "inicio": 58,
-      "modelado": 8,
-      "simulacion": 3,
-      "control": 4,
-      "matlab": 13
-    }
   },
   {
     "id": "rendering-latex-in-web-browsers-katex-vs-mathjax",
@@ -961,10 +736,6 @@ export const catalogEntries = [
       "inicio",
       "latex"
     ],
-    "order": {
-      "inicio": 59,
-      "latex": 3
-    }
   },
   {
     "id": "events-in-python",
@@ -978,11 +749,6 @@ export const catalogEntries = [
       "modelado",
       "python"
     ],
-    "order": {
-      "inicio": 60,
-      "modelado": 9,
-      "python": 20
-    }
   },
   {
     "id": "exceptions-in-python",
@@ -995,10 +761,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 61,
-      "python": 21
-    }
   },
   {
     "id": "introduccion-a-duckdb-la-base-de-datos-para-analisis-en-el-escritorio",
@@ -1011,10 +773,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 62,
-      "python": 22
-    }
   },
   {
     "id": "introduccion-practica-al-machine-learning",
@@ -1029,12 +787,6 @@ export const catalogEntries = [
       "control",
       "matlab"
     ],
-    "order": {
-      "inicio": 63,
-      "modelado": 10,
-      "control": 5,
-      "matlab": 14
-    }
   },
   {
     "id": "introduccion-a-los-modelos-de-lenguaje-grande-llms",
@@ -1048,11 +800,6 @@ export const catalogEntries = [
       "modelado",
       "python"
     ],
-    "order": {
-      "inicio": 64,
-      "modelado": 5,
-      "python": 23
-    }
   },
   {
     "id": "graficos-mas-personalizables-en-matlab",
@@ -1065,10 +812,6 @@ export const catalogEntries = [
       "inicio",
       "matlab"
     ],
-    "order": {
-      "inicio": 65,
-      "matlab": 15
-    }
   },
   {
     "id": "solving-difference-equations-using-the-z-transform",
@@ -1084,13 +827,6 @@ export const catalogEntries = [
       "control",
       "matlab"
     ],
-    "order": {
-      "inicio": 66,
-      "modelado": 11,
-      "simulacion": 4,
-      "control": 6,
-      "matlab": 16
-    }
   },
   {
     "id": "solving-ordinary-differential-equations-in-python-with-sympy",
@@ -1107,14 +843,6 @@ export const catalogEntries = [
       "optimizacion",
       "python"
     ],
-    "order": {
-      "inicio": 67,
-      "modelado": 12,
-      "simulacion": 5,
-      "control": 7,
-      "optimizacion": 4,
-      "python": 24
-    }
   },
   {
     "id": "unlocking-python-s-regex-power-a-practical-guide",
@@ -1127,10 +855,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 68,
-      "python": 25
-    }
   },
   {
     "id": "machine-learning-versus-deep-learning",
@@ -1145,12 +869,6 @@ export const catalogEntries = [
       "control",
       "matlab"
     ],
-    "order": {
-      "inicio": 69,
-      "modelado": 13,
-      "control": 8,
-      "matlab": 17
-    }
   },
   {
     "id": "mastering-curve-and-surface-plotting-in-matlab",
@@ -1163,10 +881,6 @@ export const catalogEntries = [
       "inicio",
       "matlab"
     ],
-    "order": {
-      "inicio": 70,
-      "matlab": 18
-    }
   },
   {
     "id": "detectores-de-texto-generado-por-ia-funcionamiento-limites-y-sesgos",
@@ -1179,10 +893,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 71,
-      "miscelanea": 10
-    }
   },
   {
     "id": "optimizacion-global-con-algoritmos-geneticos-en-matlab-un-enfoque-practico",
@@ -1196,11 +906,6 @@ export const catalogEntries = [
       "optimizacion",
       "matlab"
     ],
-    "order": {
-      "inicio": 72,
-      "optimizacion": 0,
-      "matlab": 19
-    }
   },
   {
     "id": "iteradores-y-generadores-en-python",
@@ -1213,10 +918,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 73,
-      "python": 26
-    }
   },
   {
     "id": "simulacion-de-dinamicas-continuas-con-matlab",
@@ -1233,14 +934,6 @@ export const catalogEntries = [
       "optimizacion",
       "matlab"
     ],
-    "order": {
-      "inicio": 74,
-      "modelado": 14,
-      "simulacion": 6,
-      "control": 9,
-      "optimizacion": 5,
-      "matlab": 20
-    }
   },
   {
     "id": "analisis-hidraulico-y-simulacion-de-fugas-en-redes-de-distribucion-de-agua",
@@ -1257,14 +950,6 @@ export const catalogEntries = [
       "optimizacion",
       "matlab"
     ],
-    "order": {
-      "inicio": 75,
-      "modelado": 15,
-      "simulacion": 7,
-      "control": 10,
-      "optimizacion": 6,
-      "matlab": 21
-    }
   },
   {
     "id": "modelado-dinamico-euler-lagrange-y-simulacion-usando-matlab",
@@ -1281,14 +966,6 @@ export const catalogEntries = [
       "optimizacion",
       "matlab"
     ],
-    "order": {
-      "inicio": 76,
-      "modelado": 3,
-      "simulacion": 8,
-      "control": 11,
-      "optimizacion": 1,
-      "matlab": 22
-    }
   },
   {
     "id": "calculo-simbolico-con-sympy",
@@ -1302,11 +979,6 @@ export const catalogEntries = [
       "simulacion",
       "python"
     ],
-    "order": {
-      "inicio": 77,
-      "simulacion": 9,
-      "python": 27
-    }
   },
   {
     "id": "como-escribir-un-articulo-cientifico-en-latex",
@@ -1319,10 +991,6 @@ export const catalogEntries = [
       "inicio",
       "latex"
     ],
-    "order": {
-      "inicio": 78,
-      "latex": 4
-    }
   },
   {
     "id": "programacion-en-c-con-freertos-en-esp32",
@@ -1334,9 +1002,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 79
-    }
   },
   {
     "id": "diagramas-de-clases-uml-con-plantuml",
@@ -1351,12 +1016,6 @@ export const catalogEntries = [
       "miscelanea",
       "python"
     ],
-    "order": {
-      "inicio": 80,
-      "modelado": 16,
-      "miscelanea": 12,
-      "python": 28
-    }
   },
   {
     "id": "domina-las-funciones-lambda-en-python",
@@ -1369,10 +1028,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 81,
-      "python": 29
-    }
   },
   {
     "id": "mastering-iterators-and-generators-in-python-a-practical-guide",
@@ -1385,10 +1040,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 82,
-      "python": 30
-    }
   },
   {
     "id": "mastering-json-in-python-oop-a-practical-guide",
@@ -1402,11 +1053,6 @@ export const catalogEntries = [
       "modelado",
       "python"
     ],
-    "order": {
-      "inicio": 83,
-      "modelado": 17,
-      "python": 31
-    }
   },
   {
     "id": "mas-alla-de-los-contenidos-el-nuevo-rol-del-profesor-en-la-era-de-la-ia-generati",
@@ -1419,10 +1065,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 84,
-      "miscelanea": 11
-    }
   },
   {
     "id": "el-misterio-del-huevo-y-la-gallina",
@@ -1435,10 +1077,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 85,
-      "miscelanea": 16
-    }
   },
   {
     "id": "conoce-la-ingenieria-mecatronica",
@@ -1451,10 +1089,6 @@ export const catalogEntries = [
       "inicio",
       "miscelanea"
     ],
-    "order": {
-      "inicio": 86,
-      "miscelanea": 17
-    }
   },
   {
     "id": "creacion-de-aplicaciones-gui-orientadas-a-objetos-en-matlab-mediante-codigo",
@@ -1468,11 +1102,6 @@ export const catalogEntries = [
       "modelado",
       "matlab"
     ],
-    "order": {
-      "inicio": 87,
-      "modelado": 18,
-      "matlab": 23
-    }
   },
   {
     "id": "comunicacion-serie-entre-matlab-y-micropython",
@@ -1486,11 +1115,6 @@ export const catalogEntries = [
       "python",
       "matlab"
     ],
-    "order": {
-      "inicio": 88,
-      "python": 32,
-      "matlab": 24
-    }
   },
   {
     "id": "dataclass-en-python",
@@ -1503,10 +1127,6 @@ export const catalogEntries = [
       "inicio",
       "python"
     ],
-    "order": {
-      "inicio": 89,
-      "python": 33
-    }
   },
   {
     "id": "expresiones-regulares-en-matlab",
@@ -1518,9 +1138,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 90
-    }
   },
   {
     "id": "una-plantilla-de-papel-milimetrico-con-latex-y-tikz-en-minutos",
@@ -1532,9 +1149,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 91
-    }
   },
   {
     "id": "lo-cortes-no-quita-lo-valiente-pero-si-cuesta-el-costo-millonario-de-ser-amable-",
@@ -1546,9 +1160,6 @@ export const catalogEntries = [
     "sections": [
       "inicio"
     ],
-    "order": {
-      "inicio": 92
-    }
   },
   {
     "id": "resolucion-de-ecuaciones-diferenciales-en-python-con-scipy",
@@ -1564,13 +1175,6 @@ export const catalogEntries = [
       "optimizacion",
       "python"
     ],
-    "order": {
-      "modelado": 7,
-      "simulacion": 2,
-      "control": 3,
-      "optimizacion": 3,
-      "python": 19
-    }
   },
   {
     "id": "control-de-aprendizaje-iterativo",
@@ -1583,10 +1187,6 @@ export const catalogEntries = [
       "simulacion",
       "control"
     ],
-    "order": {
-      "simulacion": 0,
-      "control": 0
-    }
   },
   {
     "id": "math-notebook-cuaderno-interactivo-para-matematicas-simbolicas-en-python",
@@ -1597,9 +1197,6 @@ export const catalogEntries = [
     "sections": [
       "python"
     ],
-    "order": {
-      "python": 0
-    }
   },
   {
     "id": "pdfextract-script-para-extraer-paginas-especificas-de-un-archivo-pdf",
@@ -1611,9 +1208,6 @@ export const catalogEntries = [
     "sections": [
       "python"
     ],
-    "order": {
-      "python": 1
-    }
   },
   {
     "id": "mov2mp4-script-que-convierte-mov-a-mp4-usando-ffmpeg-via-subprocess",
@@ -1625,9 +1219,6 @@ export const catalogEntries = [
     "sections": [
       "python"
     ],
-    "order": {
-      "python": 2
-    }
   },
   {
     "id": "moody-matlab-code-to-plot-the-moody-chart-showing-the-relationship-between-the-f",
@@ -1639,9 +1230,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 0
-    }
   },
   {
     "id": "hurwitz-matlab-function-to-compute-the-hurwitz-matrix-and-the-principal-minors-f",
@@ -1653,9 +1241,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 1
-    }
   },
   {
     "id": "rsolve-a-matlab-function-for-automatically-solving-linear-difference-equations-u",
@@ -1667,9 +1252,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 2
-    }
   },
   {
     "id": "epanetonmap-matlab-code-to-read-epanet-inp-files-and-plot-pipelines-and-junction",
@@ -1681,9 +1263,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 3
-    }
   },
   {
     "id": "getfigdata-matlab-function-to-extract-the-xyz-data-from-a-fig-file",
@@ -1695,9 +1274,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 4
-    }
   },
   {
     "id": "water-properties-matlab-class-to-compute-some-physical-properties-of-water-depen",
@@ -1709,9 +1285,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 5
-    }
   },
   {
     "id": "trapezoidal-matlab-function-to-simulate-linear-dynamic-systems-using-trapezoidal",
@@ -1723,9 +1296,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 6
-    }
   },
   {
     "id": "inequalityplot-matlab-function-to-plot-inequalities-in-2-d-space",
@@ -1737,9 +1307,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 7
-    }
   },
   {
     "id": "friction-and-roughness-matlab-code-to-compute-the-darcy-weisbach-friction-factor",
@@ -1751,9 +1318,6 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 8
-    }
   },
   {
     "id": "gemelos-digitales-en-robotica-y-automatizacion-2",
@@ -1765,8 +1329,5 @@ export const catalogEntries = [
     "sections": [
       "matlab"
     ],
-    "order": {
-      "matlab": 10
-    }
   }
 ] as const satisfies readonly CatalogEntry[];
