@@ -1,6 +1,8 @@
-# DR Automática en Astro
+# drAutomática en Astro
 
 Migración del portal de divulgación de `divulgacion.html` a Astro sin reemplazar el sitio académico raíz.
+
+El nombre visual del sitio debe escribirse como **drAutomática**: `dr` en minúsculas, `A` mayúscula y acento en `á`.
 
 ## Desarrollo local
 
@@ -12,7 +14,7 @@ npm ci
 npm run dev
 ```
 
-El proyecto lee durante `dev` y `build` los archivos legacy que siguen en la raíz del repositorio (`inicio.html`, `control.html`, `MATLAB.html`, etc.). Los HTML propios de `html/*.html` se publican como rutas limpias bajo `/articulos/<slug>/`; los assets de `html/`, `pdf/`, `images/` y logos necesarios se copian al build de DR Automática.
+El proyecto lee durante `dev` y `build` los archivos legacy que siguen en la raíz del repositorio (`inicio.html`, `control.html`, `MATLAB.html`, etc.). Los HTML propios de `html/*.html` se publican como rutas limpias bajo `/articulos/<slug>/`; los assets de `html/`, `pdf/`, `images/` y logos necesarios se copian al build de drAutomática.
 
 ## Publicación
 
