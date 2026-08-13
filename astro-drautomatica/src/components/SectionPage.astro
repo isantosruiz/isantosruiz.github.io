@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EntryList from './EntryList.astro';
 import { getEntriesForSection, type SectionId } from '../lib/catalog';
-import { loadSectionIntro } from '../lib/legacy';
+import { loadSectionIntro, loadSectionIntroParts } from '../lib/legacy';
 
 interface Props {
   source: string;
@@ -10,14 +10,18 @@ interface Props {
   title: string;
   description: string;
   heading?: string;
+  entriesAfterSectionId?: string;
 }
 
-const { source, section, title, description, heading } = Astro.props;
-const intro = loadSectionIntro(source);
+const { source, section, title, description, heading, entriesAfterSectionId } = Astro.props;
+const introParts = entriesAfterSectionId
+  ? loadSectionIntroParts(source, entriesAfterSectionId)
+  : { before: loadSectionIntro(source), after: '' };
 const entries = getEntriesForSection(section);
 ---
 
 <BaseLayout title={title} description={description}>
-  <Fragment set:html={intro} />
+  <Fragment set:html={introParts.before} />
   <EntryList entries={entries} heading={heading} />
+  {introParts.after && <Fragment set:html={introParts.after} />}
 </BaseLayout>

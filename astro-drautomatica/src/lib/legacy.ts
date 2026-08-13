@@ -172,6 +172,25 @@ export function loadSectionIntro(filename: string) {
   return rewriteHtml(withoutListings);
 }
 
+export function loadSectionIntroParts(filename: string, splitAfterSectionId: string) {
+  const intro = loadSectionIntro(filename);
+  const sectionPattern = new RegExp(
+    `(<section\\s+id=["']${splitAfterSectionId}["'][^>]*>[\\s\\S]*?<\\/section>)`,
+    'i'
+  );
+  const match = intro.match(sectionPattern);
+
+  if (!match || typeof match.index !== 'number') {
+    return { before: intro, after: '' };
+  }
+
+  const splitIndex = match.index + match[0].length;
+  return {
+    before: intro.slice(0, splitIndex),
+    after: intro.slice(splitIndex)
+  };
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs
