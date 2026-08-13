@@ -227,6 +227,20 @@ export function removeSectionHeadings(html: string, sectionIds: string[]) {
   }, html);
 }
 
+export function removeSectionLeadingBoldText(html: string, sectionIds: string[]) {
+  return sectionIds.reduce((currentHtml, sectionId) => {
+    const sectionPattern = new RegExp(
+      `(<section\\s+id=["']${sectionId}["'][^>]*>)([\\s\\S]*?)(<\\/section>)`,
+      'i'
+    );
+
+    return currentHtml.replace(sectionPattern, (_match, opening, content, closing) => {
+      const withoutLeadingBold = content.replace(/(<p\b[^>]*>\s*)<b>[^<]+<\/b>\s*/i, '$1');
+      return `${opening}${withoutLeadingBold}${closing}`;
+    });
+  }, html);
+}
+
 export function getArticleSlugs() {
   const htmlDir = path.join(repoRoot, 'html');
   return fs

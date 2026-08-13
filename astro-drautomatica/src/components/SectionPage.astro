@@ -6,6 +6,7 @@ import {
   loadSectionIntro,
   loadSectionIntroParts,
   makeSectionsCollapsible,
+  removeSectionLeadingBoldText,
   removeSectionHeadings
 } from '../lib/legacy';
 
@@ -18,6 +19,7 @@ interface Props {
   entriesAfterSectionId?: string;
   collapsibleSectionIds?: string[];
   hideSectionHeadingIds?: string[];
+  hideSectionLeadBoldIds?: string[];
 }
 
 const {
@@ -28,13 +30,20 @@ const {
   heading,
   entriesAfterSectionId,
   collapsibleSectionIds = [],
-  hideSectionHeadingIds = []
+  hideSectionHeadingIds = [],
+  hideSectionLeadBoldIds = []
 } = Astro.props;
 const introParts = entriesAfterSectionId
   ? loadSectionIntroParts(source, entriesAfterSectionId)
   : { before: loadSectionIntro(source), after: '' };
-const strippedBefore = removeSectionHeadings(introParts.before, hideSectionHeadingIds);
-const strippedAfter = removeSectionHeadings(introParts.after, hideSectionHeadingIds);
+const strippedBefore = removeSectionLeadingBoldText(
+  removeSectionHeadings(introParts.before, hideSectionHeadingIds),
+  hideSectionLeadBoldIds
+);
+const strippedAfter = removeSectionLeadingBoldText(
+  removeSectionHeadings(introParts.after, hideSectionHeadingIds),
+  hideSectionLeadBoldIds
+);
 const before = makeSectionsCollapsible(strippedBefore, collapsibleSectionIds);
 const after = makeSectionsCollapsible(strippedAfter, collapsibleSectionIds);
 const entries = getEntriesForSection(section);
