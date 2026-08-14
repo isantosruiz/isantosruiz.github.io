@@ -11,6 +11,7 @@ fs.mkdirSync(publicDir, { recursive: true });
 const rootAssets = [
   'arm.png',
   'banner.png',
+  'banner-sidebar.jpg',
   'banner_1200x630.png',
   'drAutomatica.png',
   'favicon.png',

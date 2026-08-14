@@ -140,6 +140,7 @@ function rewriteUrl(url: string, sourceDir = '') {
 }
 
 function rewriteHtml(html: string, sourceDir = '') {
+  html = html.replace(/<img\b[^>]*\bsrc=["'][^"']*(?:optistats|freecounterstat)[^"']*["'][^>]*>/gi, '');
   html = html.replace(
     /<a([^>]*?)href=["']javascript:void\(0\)["']([^>]*?)onclick=["']loadContent\(['"]([^'"]+)['"]\)["']([^>]*)>/gi,
     (_match, a, b, target, c) => `<a${a}href="${rewriteUrl(target, sourceDir)}"${b}${c}>`
