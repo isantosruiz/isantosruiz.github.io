@@ -49,6 +49,17 @@ export const catalogEntries = [
     ],
   },
   {
+    "id": "control-automatico",
+    "kind": "external",
+    "title": "Control automático: el arte de gobernar sistemas dinámicos",
+    "href": "https://medium.com/p/0165db0cae85",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "control"
+    ],
+  },
+  {
     "id": "diseno-simulacion-e-implementacion-de-filtros-fir-con-cpp-para-esp32",
     "kind": "external",
     "title": "Diseño, simulación e implementación de filtros FIR con C++ para ESP32",
