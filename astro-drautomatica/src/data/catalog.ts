@@ -16,6 +16,29 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "figure-table-latex",
+    "kind": "external",
+    "title": "Controlling Figure and Table Placement in LaTeX",
+    "href": "https://medium.com/p/a162aa58cbaa",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "latex"
+    ],
+  },  
+  {
+    "id": "pdf-edit-macos",
+    "kind": "external",
+    "title": "How to Edit PDF Files from the macOS Terminal",
+    "href": "https://medium.com/p/1ac0c4121c4d",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "miscelanea",
+      "python"
+    ],
+  },  
+  {
     "id": "la-educacion-en-tiempos-de-la-ia-generativa",
     "kind": "external",
     "title": "La educación en tiempos de la IA generativa",
