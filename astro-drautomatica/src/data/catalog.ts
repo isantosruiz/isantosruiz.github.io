@@ -112,7 +112,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/bd732f5c2c30/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "matlab"
     ],
   },
   {
@@ -122,7 +123,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/46f0accb297f/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "miscelanea"
     ],
   },
   {
@@ -132,7 +134,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/092974a9b4a5/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "miscelanea"
     ],
   },
   {
@@ -142,7 +145,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/276430eba9e8/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "matlab"
     ],
   },
   {
@@ -152,7 +156,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/b5f52913c721/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "miscelanea"
     ],
   },
   {
@@ -176,7 +181,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/ebab90f44cd9/",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "miscelanea"
     ],
   },
   {
@@ -197,7 +203,8 @@ export const catalogEntries = [
     "href": "https://medium.com/p/34277da598ec",
     "icon": "fa-li fa-brands fa-medium",
     "sections": [
-      "inicio"
+      "inicio",
+      "control"
     ],
   },
   {
