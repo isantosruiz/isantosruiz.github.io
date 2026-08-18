@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Resumen del proyecto PAPIIT 2024 para la implementación de un gemelo digital orientado al diagnóstico de la red de agua de la FES Aragón.">
+  <title>Proyecto PAPIIT IT100724</title>
+
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --accent: #2f5d8a;
+      --accent-soft: #eaf1f7;
+      --border: #dce3ea;
+      --max-width: 960px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 3.5rem 0 3rem;
+      background: linear-gradient(135deg, #173a5e 0%, #2f5d8a 100%);
+      color: white;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      line-height: 1.15;
+      font-weight: 750;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 1.25rem 0 0;
+      font-size: clamp(1rem, 2.2vw, 1.18rem);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    main {
+      padding: 3rem 0 4rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(1.4rem, 4vw, 2.4rem);
+      box-shadow: 0 8px 28px rgba(20, 46, 70, 0.06);
+    }
+
+    .summary p {
+      margin: 0 0 1.35rem;
+      font-size: 1.04rem;
+    }
+
+    .summary p:last-child {
+      margin-bottom: 0;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.6rem;
+    }
+
+    .fact {
+      padding: 1rem 1.1rem;
+      border-radius: 10px;
+      background: var(--accent-soft);
+    }
+
+    .fact strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+      color: var(--accent);
+    }
+
+    .fact span {
+      font-size: 0.98rem;
+    }
+
+    footer {
+      padding: 1.4rem 0 2.2rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      header {
+        padding: 3.25rem 0 2.4rem;
+      }
+
+      main {
+        padding-top: 1.5rem;
+      }
+
+      .facts {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <p class="eyebrow">Proyecto de investigación · PAPIIT 2024</p>
+      <h1>Implementación de un Gemelo Digital para el Diagnóstico de la Red de Agua de la FES Aragón</h1>
+      <p class="subtitle">
+        Proyecto desarrollado en la Facultad de Estudios Superiores Aragón de la Universidad Nacional Autónoma de México.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <article class="card">
+      <section class="summary" aria-labelledby="resumen">
+        <h2 id="resumen">Resumen ejecutivo</h2>
+
+        <p>
+          El proyecto <strong>“Implementación de un Gemelo Digital para el Diagnóstico de la Red de Agua de la FES Aragón”</strong> tiene como propósito desarrollar una representación digital de la infraestructura hidráulica de la Facultad de Estudios Superiores Aragón que permita reproducir y analizar su comportamiento operativo. La propuesta integra modelado matemático e hidrodinámico, instrumentación y adquisición de datos, con el objetivo de caracterizar variables como presión y caudal, simular distintos escenarios de operación e identificar comportamientos anómalos asociados con fallas o fugas. El proyecto forma parte del <strong>Programa de Apoyo a Proyectos de Investigación e Innovación Tecnológica (PAPIIT) 2024</strong> de la UNAM y cuenta con el número de registro IT100724.
+        </p>
+
+        <p>
+          Como parte de esta línea de investigación se desarrollan herramientas computacionales para modelar la red hidráulica, contrastar su comportamiento con plataformas de referencia como EPANET y apoyar la determinación de ubicaciones adecuadas para sensores de presión. La información obtenida puede emplearse para la detección y localización de fugas y para evaluar diferentes condiciones de operación. De este modo, el gemelo digital se plantea no sólo como una herramienta de simulación, sino también como una plataforma de apoyo al diagnóstico, monitoreo y gestión eficiente de la red de distribución de agua, con potencial para reducir pérdidas, facilitar las labores de mantenimiento y mejorar la toma de decisiones sobre la infraestructura hidráulica.
+        </p>
+      </section>
+
+      <section class="facts" aria-label="Datos principales del proyecto">
+        <div class="fact">
+          <strong>Programa</strong>
+          <span>PAPIIT 2024</span>
+        </div>
+
+        <div class="fact">
+          <strong>Número de registro</strong>
+          <span>IT100724</span>
+        </div>
+
+        <div class="fact">
+          <strong>Responsable</strong>
+          <span>Flor Lizeth Torres Ortiz</span>
+        </div>
+
+        <div class="fact">
+          <strong>Participación</strong>
+          <span>Colaborador</span>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      Proyecto PAPIIT 2024 · Registro IT100724 · FES Aragón, UNAM.
+    </div>
+  </footer>
+</body>
+</html>
