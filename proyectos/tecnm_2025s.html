@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Resumen ejecutivo del proyecto TecNM 2025 sobre diseño de sistemas de control de crucero adaptativo para vehículos eléctricos.">
+  <title>Proyecto TecNM 2025 · 22553.25-P</title>
+
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --accent: #2f5d8a;
+      --accent-soft: #eaf1f7;
+      --border: #dce3ea;
+      --max-width: 960px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max-width));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 3.5rem 0 3rem;
+      background: linear-gradient(135deg, #173a5e 0%, #2f5d8a 100%);
+      color: white;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.75rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    h1 {
+      max-width: 850px;
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      line-height: 1.15;
+      font-weight: 750;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 1.25rem 0 0;
+      font-size: clamp(1rem, 2.2vw, 1.18rem);
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    main {
+      padding: 3rem 0 4rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: clamp(1.4rem, 4vw, 2.4rem);
+      box-shadow: 0 8px 28px rgba(20, 46, 70, 0.06);
+    }
+
+    .summary p {
+      margin: 0 0 1.35rem;
+      font-size: 1.04rem;
+    }
+
+    .summary p:last-child {
+      margin-bottom: 0;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1.6rem;
+    }
+
+    .fact {
+      padding: 1rem 1.1rem;
+      border-radius: 10px;
+      background: var(--accent-soft);
+    }
+
+    .fact strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+      color: var(--accent);
+    }
+
+    .fact span {
+      font-size: 0.98rem;
+    }
+
+    footer {
+      padding: 1.4rem 0 2.2rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      header {
+        padding: 3.25rem 0 2.4rem;
+      }
+
+      main {
+        padding-top: 1.5rem;
+      }
+
+      .facts {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <p class="eyebrow">Proyecto de investigación · TecNM 2025</p>
+      <h1>Diseño de sistemas de control de crucero adaptativo para vehículos eléctricos</h1>
+      <p class="subtitle">
+        Proyecto orientado al diseño de sistemas de Control de Crucero Adaptativo para vehículos eléctricos ligeros de tres ruedas, desarrollado en el Instituto Tecnológico de Tuxtla Gutiérrez.
+      </p>
+    </div>
+  </header>
+
+  <main class="container">
+    <article class="card">
+      <section class="summary" aria-labelledby="resumen">
+        <h2 id="resumen">Resumen ejecutivo</h2>
+
+        <p>
+          El proyecto <strong>“Diseño de sistemas de control de crucero adaptativo para vehículos eléctricos”</strong>, desarrollado en el marco de la <strong>Convocatoria 2025: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación</strong> del TecNM, tuvo como propósito diseñar e implementar un sistema de Control de Crucero Adaptativo (ACC) para vehículos eléctricos de tres ruedas, considerando explícitamente las variaciones de masa y las condiciones de pendiente. La investigación se enfocó en el modelado de la dinámica longitudinal del vehículo, el diseño de estrategias de control predictivo, robusto y adaptativo, y la definición de una arquitectura de instrumentación capaz de integrar sensores de velocidad, medición inercial, corriente, potencia y proximidad. El sistema fue evaluado mediante simulaciones en MATLAB/Simulink y pruebas controladas, mostrando capacidad para mantener condiciones seguras de operación ante cambios de carga, pendientes y perturbaciones, además de aportar elementos para mejorar la eficiencia energética y el desempeño del vehículo.
+        </p>
+
+        <p>
+          Los resultados establecieron una base metodológica para futuras etapas de implementación experimental integral y para el desarrollo de soluciones de movilidad eléctrica más seguras, eficientes y adaptables a escenarios urbanos y rurales. Aunque la validación física completa del sistema ACC tuvo que posponerse debido a retrasos en la disponibilidad de recursos e insumos, se avanzó en la instrumentación del prototipo, la arquitectura de adquisición de datos y la validación funcional del controlador mediante simulaciones y pruebas controladas. La participación de <strong>Ildeberto de los Santos Ruiz</strong> como colaborador se concentró en la asesoría para el diseño y la instrumentación de los prototipos, aportando su experiencia en diagnóstico de fallas; asimismo, participó como coautor en productos científicos derivados del proyecto. En conjunto, el trabajo fortaleció la formación de estudiantes de licenciatura y posgrado y generó resultados con potencial de aplicación en electromovilidad, control inteligente y sistemas de transporte sustentable.
+        </p>
+        <p>
+          El proyecto se desarrolló en la modalidad de <strong>“Red de Investigación”</strong> con el soporte de la <strong>Red Internacional de Control y Cómputo Aplicados (RICCA)</strong>.
+        </p>
+      </section>
+
+      <section class="facts" aria-label="Datos principales del proyecto">
+        <div class="fact">
+          <strong>Clave del proyecto</strong>
+          <span>22553.25-P</span>
+        </div>
+
+        <div class="fact">
+          <strong>Periodo</strong>
+          <span>1 de enero – 31 de diciembre de 2025</span>
+        </div>
+
+        <div class="fact">
+          <strong>Institución</strong>
+          <span>Instituto Tecnológico de Tuxtla Gutiérrez</span>
+        </div>
+
+        <div class="fact">
+          <strong>Responsable</strong>
+          <span>Samuel Gómez Peñate</span>
+        </div>
+
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      Proyecto TecNM 2025 · Instituto Tecnológico de Tuxtla Gutiérrez.
+    </div>
+  </footer>
+</body>
+</html>
