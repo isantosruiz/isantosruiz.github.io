@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Ildeberto de los Santos Ruiz</title>
+  <meta name="description" content="Perfil académico y profesional de Ildeberto de los Santos Ruiz." />
+  <meta name="theme-color" content="#009688" />
+  <link rel="canonical" href="https://isantosruiz.github.io/" />
+
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Ildeberto de los Santos Ruiz" />
+  <meta property="og:title" content="Ildeberto de los Santos Ruiz | Perfil académico" />
+  <meta property="og:description" content="Profesor e investigador en ingeniería, control automático, modelado, simulación y producción académica." />
+  <meta property="og:url" content="https://isantosruiz.github.io/" />
+  <meta property="og:image" content="https://isantosruiz.github.io/banner_1200x630.png" />
+  <meta property="og:image:secure_url" content="https://isantosruiz.github.io/banner_1200x630.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Ficha visual del perfil académico de Ildeberto de los Santos Ruiz" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Ildeberto de los Santos Ruiz | Perfil académico" />
+  <meta name="twitter:description" content="Profesor e investigador en ingeniería, control automático, modelado, simulación y producción académica." />
+  <meta name="twitter:image" content="https://isantosruiz.github.io/banner_1200x630.png" />
+
+  <link rel="shortcut icon" href="favicon.png" type="image/png" />
+
+  <!-- Framework / Fonts / Icons -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --accent: #009688;
+      --link: #0645ad;
+      --link-hover: #043a79;
+      --btn-primary: #007BFF;
+      --btn-primary-hover: #0056b3;
+      --btn-secondary: #22AADD;
+      --btn-secondary-hover: #0088BB;
+      --title: rgb(0, 32, 64);
+      --card-radius: 6px;
+      --muted: #6b7280;
+      --border: rgba(0, 0, 0, 0.08);
+      --surface: #fff;
+      --page-bg: #f1f1f1;
+      --text: #111827;
+      --text-soft: #374151;
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: var(--accent);
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: var(--accent);
+      --b2h-count-bg: rgba(0, 150, 136, 0.12);
+      --b2h-count-text: #006d77;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --b2h-text: #e8edf5;
+        --b2h-link: #7dd3fc;
+        --b2h-accent: #7dd3fc;
+        --b2h-surface: #111827;
+        --b2h-border: #374151;
+        --b2h-heading: #f3f7ff;
+        --b2h-muted: #b8c7de;
+        --b2h-icon: #91a8ca;
+        --b2h-count-bg: #173756;
+        --b2h-count-text: #bfe2ff;
+      }
+    }
+
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: "Roboto", sans-serif;
+    }
+
+    .page-title {
+      font-family: "Great Vibes", "Allura", cursive;
+      font-size: clamp(2rem, 3.2vw, 3.1rem);
+      color: var(--title);
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .view-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .view-control {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background-color 120ms ease-in-out, color 120ms ease-in-out, transform 120ms ease-in-out;
+    }
+
+    .view-control:hover,
+    .view-control:focus-visible {
+      background: rgba(0, 150, 136, 0.08);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* General links */
+    a {
+      color: inherit;
+    }
+
+    .link-plain {
+      text-decoration: none;
+    }
+
+    .link-plain:hover,
+    .link-plain:focus-visible {
+      text-decoration: underline;
+    }
+    
+    /* Publications links */
+    #publications a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    #publications a:hover,
+    #publications a:focus-visible {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+
+    /* List spacing */
+    #reconocimientos li:not(:last-child),
+    #projects li:not(:last-child) {
+      margin-bottom: 8px;
+    }
+
+    #publications li:not(:last-child) {
+      margin-bottom: 8px;
+    }
+
+    /* Buttons */
+    .boton,
+    .botona {
+      display: inline-block;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 10px;
+      transition: background-color 120ms ease-in-out, transform 120ms ease-in-out;
+      will-change: transform;
+    }
+
+    .boton {
+      padding: 8px 16px;
+      background-color: var(--btn-primary);
+      color: #fff;
+    }
+
+    .boton:hover,
+    .boton:focus-visible {
+      background-color: var(--btn-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .botona {
+      padding: 4px 8px;
+      background-color: var(--btn-secondary);
+      color: #fff;
+      border-radius: 2px;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .botona:hover,
+    .botona:focus-visible {
+      background-color: var(--btn-secondary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* W3 cards polish */
+    .w3-card-4,
+    .w3-card {
+      border-radius: var(--card-radius);
+      overflow: hidden;
+    }
+
+    /* Sticky menu */
+    .sticky-nav {
+      position: sticky;
+      top: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .sticky-nav {
+        position: static;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    /* Publications accordion */
+    .pub-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 8px 0 14px 0;
+    }
+
+    .pub-controls .w3-button {
+      border-radius: 999px;
+    }
+
+    details.pub-year {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: var(--surface);
+    }
+
+    details.pub-year[open] {
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    summary.pub-summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    summary.pub-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .pub-meta {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 0.95em;
+      white-space: nowrap;
+    }
+
+    .pub-year ul {
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+
+    /* Better focus visibility */
+    :focus-visible {
+      outline: 3px solid rgba(0, 150, 136, 0.35);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Small utility */
+    .center-actions {
+      text-align: center;
+    }
+
+    .badge-strip {
+      text-align: center;
+    }
+
+    /* ===== Navegación compacta (chips) ===== */
+    .nav-card .nav-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .nav-card .nav-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      text-decoration: none;
+      color: var(--text-soft);
+      line-height: 1;
+      font-size: 0.95rem;
+    }
+
+    .nav-card .nav-chip i {
+      color: var(--accent);
+      width: auto;
+    }
+
+    .nav-card .nav-chip:hover,
+    .nav-card .nav-chip:focus-visible {
+      background: rgba(0, 150, 136, 0.08);
+      text-decoration: none;
+    }
+
+    /* ===== Navegación móvil (colapsable) ===== */
+    .nav-mobile {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      background: var(--surface);
+    }
+
+    .nav-mobile summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .nav-mobile summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .nav-mobile .nav-mobile-links {
+      margin-top: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-mobile .nav-mobile-links a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-soft);
+    }
+
+    .nav-mobile .nav-mobile-links a i {
+      color: var(--accent);
+      width: 18px;
+      text-align: center;
+    }
+
+    .nav-mobile .nav-mobile-links a:hover,
+    .nav-mobile .nav-mobile-links a:focus-visible {
+      background: rgba(0, 150, 136, 0.08);
+      text-decoration: none;
+    }
+
+    body.dark-mode {
+      --link: #8ab4ff;
+      --link-hover: #b7d1ff;
+      --title: #e6fffb;
+      --muted: #aab4c2;
+      --border: rgba(255, 255, 255, 0.16);
+      --surface: #17212b;
+      --page-bg: #0f1720;
+      --text: #eef5f8;
+      --text-soft: #d2dbe3;
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: #7dd3fc;
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: #91a8ca;
+      --b2h-count-bg: #173756;
+      --b2h-count-text: #bfe2ff;
+      --b2h-button-border: #35557a;
+      --b2h-button-bg: #162a44;
+      --b2h-button-text: #cde8ff;
+      --b2h-button-hover-bg: #1d3859;
+      --b2h-empty-border: #465f83;
+      --b2h-empty-bg: #111b2d;
+      --b2h-empty-text: #aabbd4;
+      background: var(--page-bg) !important;
+      color: var(--text);
+    }
+
+    body.light-mode {
+      --b2h-text: var(--text);
+      --b2h-link: var(--link);
+      --b2h-accent: var(--accent);
+      --b2h-surface: var(--surface);
+      --b2h-border: var(--border);
+      --b2h-heading: var(--text);
+      --b2h-muted: var(--text-soft);
+      --b2h-icon: var(--accent);
+      --b2h-count-bg: rgba(0, 150, 136, 0.12);
+      --b2h-count-text: #006d77;
+    }
+
+    body.dark-mode .w3-white,
+    body.dark-mode .w3-light-grey,
+    body.dark-mode details.pub-year {
+      background-color: var(--surface) !important;
+      color: var(--text) !important;
+    }
+
+    body.dark-mode .w3-text-grey,
+    body.dark-mode .w3-text-theme,
+    body.dark-mode .w3-opacity,
+    body.dark-mode .w3-text-dark-grey {
+      color: var(--text-soft) !important;
+    }
+
+    body.dark-mode .w3-card,
+    body.dark-mode .w3-card-4 {
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    }
+
+    body.dark-mode .w3-light-grey.w3-round-xlarge {
+      background-color: #263241 !important;
+    }
+
+  </style>
+</head>
+
+<body class="w3-light-grey">
+
+  <!-- Page Container -->
+  <div class="w3-content w3-margin-top" style="max-width:1400px;">
+    <header class="w3-row-padding">
+      <div class="topbar w3-padding-16">
+        <h1 class="page-title" id="top">Ildeberto de los Santos Ruiz</h1>
+        <div class="view-controls" aria-label="Controles de visualización">
+          <button class="view-control" id="fullscreenToggle" type="button" aria-label="Activar pantalla completa" title="Pantalla completa">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+          </button>
+          <button class="view-control" id="themeToggle" type="button" aria-label="Activar modo oscuro" title="Modo oscuro">
+            <i class="fa fa-moon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- The Grid -->
+    <main class="w3-row-padding" role="main">
+
+      <!-- Left Column -->
+      <aside class="w3-third" aria-label="Información personal y navegación">
+
+        <!-- Profile card -->
+        <div class="w3-white w3-text-grey w3-card-4">
+          <div class="w3-display-container">
+            <img src="./Foto.jpg" style="width:100%" alt="Fotografía de Ildeberto de los Santos Ruiz" loading="lazy"
+              decoding="async" />
+          </div>
+
+          <div class="w3-container">
+            <p>
+              <i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text-teal" aria-hidden="true"></i>Profesor de
+              tiempo completo
+              <br />
+              <i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-teal" aria-hidden="true"></i>Tuxtla
+              Gutiérrez, MX
+              <br />
+              <i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-teal" aria-hidden="true"></i>
+              ildeberto&#46;dr&#64;tuxtla&#46;tecnm&#46;mx
+            </p>
+
+            <p>
+              <a class="link-plain" href="https://orcid.org/0000-0003-3995-8091" rel="noopener noreferrer">
+                ORCID: 0000-0003-3995-8091
+              </a>
+              <br />
+              <a class="link-plain" href="https://www.webofscience.com/wos/author/record/1886465"
+                rel="noopener noreferrer">
+                WoS ResearcherID: AAD-3298-2019
+              </a>
+              <br />
+              <a class="link-plain" href="https://www.scopus.com/authid/detail.uri?authorId=57203885724"
+                rel="noopener noreferrer">
+                Scopus Author ID: 57203885724
+              </a>
+              <br />
+              <a class="link-plain" href="https://medium.com/@idelossantosruiz" rel="noopener noreferrer">
+                Perfil en Medium: @idelossantosruiz
+              </a>
+            </p>
+
+            <p>
+              <b>Tecnológico Nacional de México</b><br />
+              Instituto Tecnológico de Tuxtla Gutiérrez<br />
+              Departamento de Ingeniería Eléctrica y Electrónica
+              <br />
+              <a href="./horario.html" class="botona">Horario académico</a>
+            </p>
+
+            <hr />
+
+            <p class="w3-large">
+              <b>
+                <i class="fa fa-asterisk fa-fw w3-margin-right w3-text-teal" aria-hidden="true"></i>Habilidades
+                computacionales
+              </b>
+            </p>
+
+            <p>
+              <a href="https://www.mathworks.com/" rel="noopener noreferrer">MATLAB/Simulink</a><br />
+              Certified MATLAB Associate
+              <a class="link-plain" href="./19141249.pdf">19141249</a>
+            </p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Nivel MATLAB/Simulink">
+              <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:100%">100%</div>
+            </div>
+
+            <p>
+              <a href="https://www.w3schools.com/python/python_compiler.asp" rel="noopener noreferrer">Python</a><br />
+              Certified Python Developer
+              <a class="link-plain" href="https://verify.w3schools.com/1PFO7R54Q7" rel="noopener noreferrer">1PFO7R54Q7</a>
+            </p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Nivel Python">
+              <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:100%">100%</div>
+            </div>
+
+            <p><a href="https://www.w3schools.com/cpp/cpp_compiler.asp" rel="noopener noreferrer">C/C++</a></p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Nivel C/C++">
+              <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
+            </div>
+
+            <p><a href="https://www.maplesoft.com/" rel="noopener noreferrer">Maple</a></p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Nivel Maple">
+              <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">90%</div>
+            </div>
+
+            <p><a href="./LaTeX.html">TeX/LaTeX</a></p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Nivel TeX/LaTeX">
+              <div class="w3-container w3-center w3-round-xlarge w3-teal" style="width:90%">
+                <div class="w3-center w3-text-white">90%</div>
+              </div>
+            </div>
+
+            <br />
+
+            <p class="w3-large w3-text-theme">
+              <b><i class="fa fa-globe fa-fw w3-margin-right w3-text-teal" aria-hidden="true"></i>Idiomas</b>
+            </p>
+
+            <p>Español</p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Idioma Español">
+              <div class="w3-round-xlarge w3-center w3-teal" style="width:100%">Nativo</div>
+            </div>
+
+            <p>English</p>
+            <div class="w3-light-grey w3-round-xlarge w3-small" aria-label="Idioma English">
+              <div class="w3-round-xlarge w3-center w3-teal" style="width:70%">B2</div>
+            </div>
+
+            <br />
+          </div>
+        </div>
+
+        <br />
+
+        <!-- Sticky navigation card (chips desktop + collapsible mobile) -->
+        <nav class="w3-white w3-text-grey w3-card-4 sticky-nav nav-card" aria-label="Navegación rápida">
+          <div class="w3-container">
+
+            <!-- Desktop/Tablet: chips -->
+            <div class="w3-hide-small">
+              <p class="w3-large" style="margin-bottom:6px;">
+                <b><i class="fa fa-compass fa-fw w3-margin-right w3-text-teal" aria-hidden="true"></i>Navegación</b>
+              </p>
+
+              <div class="nav-chips" role="navigation" aria-label="Secciones">
+                <a class="nav-chip" href="#reconocimientos-section"><i class="fa fa-award" aria-hidden="true"></i><span>Reconocimientos</span></a>
+                <a class="nav-chip" href="#publicaciones-section"><i class="fa fa-newspaper" aria-hidden="true"></i><span>Publicaciones</span></a>
+                <a class="nav-chip" href="#proyectos-section"><i class="fa fa-diagram-project" aria-hidden="true"></i><span>Proyectos</span></a>
+                <a class="nav-chip" href="#asociaciones-section"><i class="fa fa-shield" aria-hidden="true"></i><span>Asociaciones</span></a>
+                <a class="nav-chip" href="#redes-section"><i class="fa fa-users" aria-hidden="true"></i><span>Redes</span></a>
+                <a class="nav-chip" href="#nombramientos-section"><i class="fa fa-id-badge" aria-hidden="true"></i><span>Nombramientos</span></a>
+                <a class="nav-chip" href="#formacion-section"><i class="fa fa-university" aria-hidden="true"></i><span>Formación</span></a>
+                <a class="nav-chip" href="#experiencia-section"><i class="fa fa-suitcase" aria-hidden="true"></i><span>Experiencia</span></a>
+                <a class="nav-chip" href="#badges-section"><i class="fa fa-certificate" aria-hidden="true"></i><span>Badges</span></a>
+                <a class="nav-chip" href="#top"><i class="fa fa-arrow-up" aria-hidden="true"></i><span>Arriba</span></a>
+              </div>
+
+              <br />
+            </div>
+
+            <!-- Mobile: collapsible -->
+            <details class="nav-mobile w3-hide-medium w3-hide-large" id="navMobile">
+              <summary>
+                <!--
+                <i class="fa fa-compass w3-text-teal" aria-hidden="true"></i>
+                -->
+                <span>Navegación</span>
+                <span style="margin-left:auto;color:var(--muted);font-weight:600;">Toca para abrir</span>
+              </summary>
+
+              <div class="nav-mobile-links" role="navigation" aria-label="Secciones">
+                <a href="#reconocimientos-section"><i class="fa fa-certificate" aria-hidden="true"></i><span>Reconocimientos</span></a>
+                <a href="#publicaciones-section"><i class="fa fa-newspaper" aria-hidden="true"></i><span>Publicaciones</span></a>
+                <a href="#proyectos-section"><i class="fa fa-diagram-project" aria-hidden="true"></i><span>Proyectos</span></a>
+                <a href="#asociaciones-section"><i class="fa fa-shield" aria-hidden="true"></i><span>Asociaciones</span></a>
+                <a href="#redes-section"><i class="fa fa-users" aria-hidden="true"></i><span>Redes</span></a>
+                <a href="#nombramientos-section"><i class="fa fa-id-badge" aria-hidden="true"></i><span>Nombramientos</span></a>
+                <a href="#formacion-section"><i class="fa fa-university" aria-hidden="true"></i><span>Formación</span></a>
+                <a href="#experiencia-section"><i class="fa fa-suitcase" aria-hidden="true"></i><span>Experiencia</span></a>
+                <a href="#badges-section"><i class="fa fa-award" aria-hidden="true"></i><span>Badges</span></a>
+                <a href="#top"><i class="fa fa-arrow-up" aria-hidden="true"></i><span>Ir arriba</span></a>
+              </div>
+            </details>
+
+            <br class="w3-hide-medium w3-hide-large" />
+          </div>
+        </nav>
+
+        <br />
+
+      </aside>
+
+      <!-- Right Column -->
+      <section class="w3-twothird" aria-label="Contenido principal">
+
+        <!-- Reconocimientos -->
+        <section id="reconocimientos-section" class="w3-container w3-card w3-white" aria-labelledby="reconocimientos-title">
+          <h2 id="reconocimientos-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-award fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Reconocimientos recientes
+          </h2>
+          <div class="w3-container w3-margin-bottom">
+            <ul class="fa-ul" id="reconocimientos">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a class="link-plain" href="https://snii.org/ingenierias-y-desarrollo-tecnologico/de-los-santos-ruiz-ildeberto/"><b>Investigador Nacional, nivel I</b>,
+                en el Sistema Nacional de Investigadoras e Investigadores
+                del Consejo Nacional de Humanidades, Ciencias y Tecnologías (CONAHCYT).</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b>Investigador Científico
+                  Honorífico, categoría VI</b>, en el Sistema Estatal de Investigadores
+                del Instituto de Ciencia, Tecnología e Innovación del Estado de Chiapas.</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b>Perfil Deseable</b> en el Programa para el
+                Desarrollo Profesional Docente (PRODEP) Tipo Superior.</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b>Medalla “Maestro Rafael Ramírez”</b>, otorgada por el Gobierno Federal a través de la SEP.</li>
+            </ul>
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Publicaciones -->
+        <section id="publicaciones-section" class="w3-container w3-card w3-white" aria-labelledby="publicaciones-title">
+          <h2 id="publicaciones-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-newspaper fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Publicaciones recientes
+          </h2>
+
+          <script src="https://bib2html.vercel.app/bib2html.js" bib_file="./ildeberto.bib" include_bibtex="false" group_by_year="false" show_boxes="false" author_bold="Santos-Ruiz, I." start_year="2018"></script>
+
+          <p class="center-actions">
+            <a href="./publicaciones.html" class="boton">Todas las publicaciones</a>
+            &nbsp;
+            <a href="./divulgacion.html" class="boton">Divulgación</a>
+          </p>
+        </section>
+
+        <br />
+
+        <!-- Proyectos -->
+        <section id="proyectos-section" class="w3-container w3-card w3-white" aria-labelledby="proyectos-title">
+          <h2 id="proyectos-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-spinner fa-spin fa-3x fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Proyectos de investigación financiados
+          </h2>
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México, TecNM</b></h5>
+            <ul class="fa-ul" id="projects">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2026.html">Plataforma ciberfísica de monitoreo
+                  multivariable en tiempo real para diagnóstico inteligente de fugas en redes hidráulicas</a></b><br>
+                Convocatoria Proyectos de Investigación Científica, Humanística, de Desarrollo Tecnológico e Innovación 2026<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2026-02-13 19:52:46, Dictaminado: 2026-04-17 00:00:00<br>
+                Número de registro: 24806.26-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2025.html">Monitoreo de presiones y diagnóstico
+                  de fugas para la resiliencia en redes de distribución de agua</a></b><br>
+                Convocatoria 2025: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2025-01-29 22:13:42, Dictaminado: 2025-06-27 21:19:06<br>
+                Número de registro: TGTZ-PYR-2025-22359
+              </li>    
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2024.html">Diagnóstico de fugas en redes de
+                  distribución de agua mediante cómputo en la nube y aprendizaje profundo</a></b><br>
+                Convocatoria 2024: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2024-02-07 13:51:00, Dictaminado: 2024-05-28 09:33:27<br>
+                Número de registro: 20212.24-P
+              </li>
+              
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2023.html">Diagnóstico de fugas en redes de
+                  distribución de agua mediante aprendizaje automático</a></b><br>
+                Convocatoria 2023: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2023-02-15 20:41:57, Dictaminado: 2023-06-20 11:39:19<br>
+                Número de registro: 17937.23-P
+              </li>
+              
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2022.html">Gemelo digital para detección y localización
+                  de fugas en redes de distribución de agua</a></b><br>
+                Convocatoria 2022: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2022-02-03 17:50:14, Dictaminado: 2022-05-30 19:51:59<br>
+                Número de registro: 14515.22-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2021.html">Colocación de sensores de presión para
+                  localización de fugas en redes de distribución de agua</a></b><br>
+                Convocatoria 2021: Proyectos de Investigación Científica<br>
+                Responsable: DE LOS SANTOS-RUIZ, ILDEBERTO<br>
+                Sometido: 2021-02-04 23:02:15, Dictaminado: 2021-05-09 16:36:07<br>
+                Número de registro: 11080.21-P
+              </li>
+              
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2026s.html">Control robusto para el movimiento preciso
+                  de manipuladores móviles omnidireccionales aplicados a la agroindustria</a></b><br>
+                Convocatoria Proyectos de Investigación Científica, Humanística, de Desarrollo Tecnológico e Innovación 2026<br>
+                Participación: Colaborador<br>
+                Responsable: GÓMEZ-PEÑATE, SAMUEL<br>
+                Sometido: 2026-02-14 01:48:20, Dictaminado: 2026-04-17 00:00:00<br>
+                Número de registro: Pendiente
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2026c.html">Sistema inteligente modular para la gestión
+                  eficiente de energía en comunidades urbanas</a></b><br>
+                Convocatoria Proyectos de Investigación Científica, Humanística, de Desarrollo Tecnológico e Innovación 2026<br>
+                Participación: Colaborador<br>
+                Responsable: SALGADO-GUTIERREZ, MARIA CATALINA<br>
+                Sometido: 2026-02-12 15:46:16, Dictaminado: 2026-04-17 00:00:00<br>
+                Número de registro: 25674.26-P
+              </li>              
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2025s.html">Diseño de sistemas de control de crucero
+                  adaptativo para vehículos eléctricos</a></b><br>
+                Convocatoria 2025: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Participación: Colaborador<br>
+                Responsable: GÓMEZ-PEÑATE, SAMUEL<br>
+                Sometido: 2025-01-29 22:59:31, Dictaminado: 2025-06-27 21:19:06<br>
+                Número de registro: 22553.25-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2024s.html">Control tolerante a fallas activo de robots
+                  móviles omnidireccionales</a></b><br>
+                Convocatoria 2024: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Participación: Colaborador<br>
+                Responsable: GÓMEZ-PEÑATE, SAMUEL<br>
+                Sometido: 2024-02-09 12:03:05, Dictaminado: 2024-05-28 09:33:27<br>
+                Número de registro: 19268.24-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2023r.html">Diagnóstico de fallos basado en aprendizaje
+                  automático y observadores zonotópicos convexos</a></b><br>
+                Convocatoria 2023: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Participación: Colaborador<br>
+                Responsable: LÓPEZ-ESTRADA, FRANCISCO RONAY<br>
+                Sometido: 2023-02-14 14:23:09, Dictaminado: 2023-06-20 11:39:19<br>
+                Número de registro: 16800.23-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2022r.html">Estrategias de control colaborativo para
+                  sistemas no lineales con representaciones convexas</a></b><br>
+                Convocatoria 2022: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Participación: Colaborador<br>
+                Responsable: LÓPEZ-ESTRADA, FRANCISCO RONAY<br>
+                Sometido: 2022-01-28 10:01:01, Dictaminado: 2022-05-30 19:51:59<br>
+                Número de registro: 14376.22-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2022s.html">Estimación de fallas en actuadores de
+                  sistemas mecatrónicos mediante observadores convexos</a></b><br>
+                Convocatoria 2022: Proyectos de Investigación Científica, Desarrollo Tecnológico e Innovación<br>
+                Participación: Colaborador<br>
+                Responsable: GOMEZ-PEÑATE, SAMUEL<br>
+                Sometido: 2022-02-04 00:10:17, Dictaminado: 2022-05-30 19:51:59<br>
+                Número de registro: 13965.22-P
+              </li>
+
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/tecnm_2021r.html">Estrategias de control para la reducción de
+                  pérdidas de agua en redes de distribución</a></b><br>
+                Convocatoria 2021: Proyectos de Investigación Científica<br>
+                Participación: Colaborador<br>
+                Responsable: LÓPEZ-ESTRADA, FRANCISCO RONAY<br>
+                Sometido: 2021-01-28 13:24:58, Dictaminado: 2021-05-09 16:36:07<br>
+                Número de registro: 10391.21-P
+              </li>
+            </ul>
+
+            <h5 class="w3-opacity"><b>Consejo Nacional de Ciencia y Tecnología, CONACYT</b></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b>Detección y localización de fugas en ductos
+                  mediante técnicas de aprendizaje profundo y análisis en componentes
+                  principales</b><br>
+                Convocatoria de Atención a Problemas Nacionales 2016<br>
+                Participación: Colaborador<br>
+                Responsable Técnico: LÓPEZ-ESTRADA, FRANCISCO RONAY<br>
+                Número de registro: PN2016/3595</li>
+            </ul>
+
+            <h5 class="w3-opacity"><b>Universidad Nacional Autónoma de México, UNAM</b></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/papiit.html">Implementación de un Gemelo Digital para el
+                  Diagnóstico de la Red de Agua de la FES Aragón</a></b><br>
+                Programa de Apoyo a Proyectos de Investigación e Innovación Tecnológica, PAPIIT 2024<br>
+                Participación: Colaborador<br>
+                Responsable: TORRES-ORTIZ, FLOR LIZETH<br>
+                Número de registro: IT100724</li>
+            </ul>
+
+            <h5 class="w3-opacity"><b>Agencia Estatal de Investigación del Gobierno de España</b></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="https://futur.upc.edu/40103163?locale=en">Gestión sostenible y basada en aprendizaje de sistemas multi-recurso de gran escala</a></b><br>
+                Proyectos de Generación de Conocimiento 2023<br>
+                Participación: Colaborador<br>
+                Responsable: BLESA-IZQUIERDO, JOAQUIM<br>
+                Número de registro: PID2023-148840OB-I00</li>
+            </ul>
+            
+            <h5 class="w3-opacity"><b>Secretaría de Ciencia, Humanidades, Tecnología e Innovación, SECIHTI</b></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/ecos_nord.html">Cooperación Franco-Mexicana en el diseño de sistemas de seguridad de vehículos eléctricos automatizados mediante sensores virtuales</a></b><br>
+                ECOS Nord 2025<br>
+                Participación: Colaborador<br>
+                Responsables: LÓPEZ-ESTRADA, FRANCISCO RONAY<br>
+                Número de registro: ECOSNORD-2025-22</li>
+            </ul>
+
+            <h5 class="w3-opacity"><b>Dirección General de Institutos Tecnológicos, DGIT</b></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><b><a href="./proyectos/produce.html">Unidad Móvil de Extracción de Aceites Esenciales de la Flora Chiapaneca</a></b><br>
+                Fundación Produce Chiapas 2001<br>
+                Participación: Colaborador<br>
+                Responsables: JIMÉNEZ-OCAÑA, JORGE CIRO<br>
+                Número de registro: DEPI-0308/01</li>
+            </ul>
+            
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Asociaciones -->
+        <section id="asociaciones-section" class="w3-container w3-card w3-white" aria-labelledby="asociaciones-title">
+          <h2 id="asociaciones-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-shield fa-3x fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Asociaciones profesionales
+          </h2>
+          <div class="w3-container">
+            <h5 class="w3-opacity"><a href="https://www.acm.org/" rel="noopener noreferrer"><b>Association for Computing Machinery, ACM</b></a></h5>
+            <p><a class="link-plain" href="./memcert0B060205030301_00.pdf">Member number: 9137313</a></p>
+
+            <h5 class="w3-opacity"><a href="https://www.ieee.org/" rel="noopener noreferrer"><b>Institute of Electrical and Electronics Engineers, IEEE</b></a></h5>
+            <p><a class="link-plain" href="./MEMIEEE500.pdf">Member number: 92243743</a></p>
+
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://www.ieee-ras.org/" rel="noopener noreferrer">IEEE Robotics and Automation Society</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://www.ieeecss.org/" rel="noopener noreferrer">IEEE Control Systems Society</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://cis.ieee.org/" rel="noopener noreferrer">IEEE Computational Intelligence Society</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://www.ieee-ies.org/" rel="noopener noreferrer">IEEE Industrial Electronics Society</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://signalprocessingsociety.org/" rel="noopener noreferrer">IEEE Signal Processing Society</a></li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i><a href="https://yp.ieee.org/" rel="noopener noreferrer">IEEE Young Professionals</a></li>
+            </ul>
+
+            <h5 class="w3-opacity"><a href="https://www.ifac-control.org/" rel="noopener noreferrer"><b>International Federation of Automatic Control, IFAC</b></a></h5>
+            <p><a class="link-plain" href="./certificate-2024-12-05T00_23_19.pdf">Affiliate</a></p>
+
+            <h5 class="w3-opacity"><a href="https://aaai.org/" rel="noopener noreferrer"><b>Association for the Advancement of Artificial Intelligence, AAAI</b></a></h5>
+            <p><a class="link-plain" href="about:blank">Member ID: 656904</a></p>
+
+            <h5 class="w3-opacity"><a href="https://amca.mx/" rel="noopener noreferrer"><b>Asociación de México de Control Automático, AMCA</b></a></h5>
+            <p><a class="link-plain" href="./amca_membresia_0071.pdf">Miembro 0071</a></p>
+
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Redes -->
+        <section id="redes-section" class="w3-container w3-card w3-white" aria-labelledby="redes-title">
+          <h2 id="redes-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-users fa-3x fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Cuerpos académicos y redes de investigación
+          </h2>
+          <div class="w3-container">
+            <h5 class="w3-opacity"><a href="https://www.grupoturix.com/es" class="link-plain" rel="noopener noreferrer"><b>Cuerpo académico: Turix Dynamics, ITTUXG-CA-11</b></a></h5>
+            <ul class="fa-ul">
+              <li>Área: Ingeniería y Tecnología</li>
+              <li>Disciplina: Automatización y Control</li>
+              <li>Rol: <a class="link-plain" href="./ITTUXG-CA-11.pdf">Miembro</a></li>
+            </ul>
+
+            <h5 class="w3-opacity"><b>Red de investigación: Red Internacional de Control y Cómputo Aplicados, RICCA</b></h5>
+            <ul class="fa-ul">
+              <li>Rol: <a class="link-plain" href="./RICCA.pdf">Miembro</a></li>
+            </ul>
+
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Nombramientos -->
+        <section id="nombramientos-section" class="w3-container w3-card w3-white" aria-labelledby="nombramientos-title">
+          <h2 id="nombramientos-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-id-badge fa-3x fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Nombramientos vigentes
+          </h2>
+          <div class="w3-container">
+            <h5 class="w3-opacity"><a href="https://www.tuxtla.tecnm.mx/" rel="noopener noreferrer"><b>Tecnológico Nacional de México campus Tuxtla Gutiérrez</b></a></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Jefe de Proyectos de Investigación de Ingeniería Mecatrónica</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Presidente del Claustro del Doctorado en Ciencias de la Ingeniería</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Miembro del Comité Editorial</li>
+            </ul>
+
+            <h5 class="w3-opacity"><a href="https://icti.chiapas.gob.mx/" rel="noopener noreferrer"><b>Instituto de Ciencia, Tecnología e Innovación del Estado de Chiapas / Agencia Digital Tecnológica del Estado de Chiapas</b></a></h5>
+            <ul class="fa-ul">
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Integrante de la Comisión Técnica de Vinculación</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Integrante de la Comisión Técnica de Museo y Planetario Tuxtla</li>
+              <li><i class="fa-li fa fa-chevron-right" aria-hidden="true"></i>Integrante de la Comisión Técnica de Formación de Científicos y Tecnólogos</li>
+            </ul>
+
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Formación -->
+        <section id="formacion-section" class="w3-container w3-card w3-white" aria-labelledby="formacion-title">
+          <h2 id="formacion-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-university fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Formación profesional
+          </h2>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Universitat Politècnica de Catalunya · BarcelonaTech</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2017-2021</h6>
+            <h6>Doctor en Automática, Robótica y Visión</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México / I. T. Tuxtla Gutiérrez</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2017-2021</h6>
+            <h6>Doctor en Ciencias de la Ingeniería. Cédula profesional: 12630958</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México / I. T. Tuxtla Gutiérrez</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2012 - 2014</h6>
+            <h6>Maestro en Ciencias en Ingeniería Mecatrónica. Cédula profesional: 8603986</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Instituto Tecnológico de Tuxtla Gutiérrez</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>1990 - 1995</h6>
+            <h6>Ingeniero en Electrónica. Cédula profesional: 2327037</h6>
+            <br />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2025</h6>
+            <h6>Diplomado en Integración de Inteligencia Artificial en Escenarios de Aprendizaje</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2025</h6>
+            <h6>Diplomado en Introducción a la Física Cuántica</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2024</h6>
+            <h6>Diplomado en Ciencia de Datos</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2024</h6>
+            <h6>Diplomado en Agua Limpia y Saneamiento</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2024</h6>
+            <h6>Diplomado en Desarrollo Tecnológico en Salud y Bienestar</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2023</h6>
+            <h6>Diplomado en Cadena de Valor del Litio</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2022</h6>
+            <h6>Diplomado en Aprendizaje Automático</h6>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity"><b>Instituto Tecnológico de Tuxtla Gutiérrez</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>2009</h6>
+            <h6>Diplomado en Formación Docente Basada en Competencias Profesionales</h6>
+            <hr />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Experiencia -->
+        <section id="experiencia-section" class="w3-container w3-card w3-white w3-margin-bottom" aria-labelledby="experiencia-title">
+          <h2 id="experiencia-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Experiencia académica
+          </h2>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity">Profesor de tiempo completo en <b>Tecnológico Nacional de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>Sep. 1995 -
+              <span class="w3-tag w3-teal w3-round">Actual</span>
+            </h6>
+            <p>Actividad: Docencia, investigación, gestión académica.</p>
+            <p>
+            <a href="./asignaturas.html" class="boton">Asignaturas impartidas</a> &nbsp; <a href="./sinodalias.html" class="boton">Sinodalías</a>
+            </p>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity">Profesor de asignatura en <b>Universidad Autónoma de Chiapas</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>Sep. 1995 - Ene. 1997</h6>
+            <p>Actividad: Docencia.</p>
+            <hr />
+          </div>
+
+          <div class="w3-container">
+            <h5 class="w3-opacity">Profesor de asignatura en <b>Universidad del Valle de México</b></h5>
+            <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right" aria-hidden="true"></i>Jun. 2005 - Ene. 2012</h6>
+            <p>Actividad: Docencia.</p>
+            <br />
+          </div>
+        </section>
+
+        <br />
+
+        <!-- Credly badges -->
+        <section id="experiencia-section" class="w3-container w3-card w3-white w3-margin-bottom" aria-labelledby="experiencia-title">
+          <h2 id="experiencia-title" class="w3-text-grey w3-padding-16">
+            <i class="fa fa-certificate fa-fw w3-margin-right w3-xxlarge w3-text-teal" aria-hidden="true"></i>
+            Certificaciones y microcredenciales
+          </h2>
+          <div class="badge-strip">
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="84d7c8f3-6049-4dbe-a592-d8fbf1a0aee6" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="ee4b3ef5-40d2-432e-a11f-bb8fe21bb219" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="988e8a54-09cb-4a4a-8a19-569e0b42805a" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="a29ad317-6790-4add-b340-b4b9d92abe44" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="305af9cf-3396-4964-909d-ed195f1fcd86" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="6edfd4a9-b371-49ea-85ae-82c0e82a594b" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="09cf0e59-1ad3-42fb-88bd-5505da865030" data-share-badge-host="https://www.credly.com"></div>
+            <div data-iframe-width="150" data-iframe-height="270" data-share-badge-id="bf10d2ba-b127-4d7e-86d7-634713df19eb" data-share-badge-host="https://www.credly.com"></div>
+
+            <!-- load once -->
+            <script type="text/javascript" async src="//cdn.credly.com/assets/utilities/embed.js"></script>
+          </div>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <footer class="w3-container w3-teal w3-center w3-margin-top" role="contentinfo">
+    <p>Encuéntrame en las redes sociales: &nbsp;
+    <a href="https://www.facebook.com/idlsantos" aria-label="Facebook" rel="noopener noreferrer"><i class="fa-brands fa-facebook w3-hover-opacity" aria-hidden="true"></i></a>&nbsp;
+    <a href="https://www.instagram.com/idlsantos/" aria-label="Instagram" rel="noopener noreferrer"><i class="fa-brands fa-instagram w3-hover-opacity" aria-hidden="true"></i></a>&nbsp;
+    <a href="https://twitter.com/idlsantos" aria-label="X / Twitter" rel="noopener noreferrer"><i class="fa-brands fa-twitter w3-hover-opacity" aria-hidden="true"></i></a>&nbsp;
+    <a href="https://www.linkedin.com/in/idlsantos/" aria-label="LinkedIn" rel="noopener noreferrer"><i class="fa-brands fa-linkedin w3-hover-opacity" aria-hidden="true"></i></a></p>
+  </footer>
+
+  <script>
+    function pubsOpenAll() {
+      document.querySelectorAll('#publications details.pub-year').forEach(d => d.open = true);
+    }
+    function pubsCloseAll() {
+      document.querySelectorAll('#publications details.pub-year').forEach(d => d.open = false);
+      document.getElementById('publicaciones-title')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    (function () {
+      const themeButton = document.getElementById('themeToggle');
+      const fullscreenButton = document.getElementById('fullscreenToggle');
+      const darkIcon = '<i class="fa fa-sun" aria-hidden="true"></i>';
+      const lightIcon = '<i class="fa fa-moon" aria-hidden="true"></i>';
+      const expandIcon = '<i class="fa fa-expand" aria-hidden="true"></i>';
+      const compressIcon = '<i class="fa fa-compress" aria-hidden="true"></i>';
+
+      function setTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        document.body.classList.toggle('light-mode', !isDark);
+        if (themeButton) {
+          themeButton.innerHTML = isDark ? darkIcon : lightIcon;
+          themeButton.setAttribute('aria-label', isDark ? 'Activar modo claro' : 'Activar modo oscuro');
+          themeButton.setAttribute('title', isDark ? 'Modo claro' : 'Modo oscuro');
+        }
+        try {
+          localStorage.setItem('preferredTheme', isDark ? 'dark' : 'light');
+        } catch (error) {
+          // Local storage can be unavailable in strict privacy modes.
+        }
+      }
+
+      function updateFullscreenButton() {
+        const isFullscreen = Boolean(document.fullscreenElement);
+        if (!fullscreenButton) return;
+        fullscreenButton.innerHTML = isFullscreen ? compressIcon : expandIcon;
+        fullscreenButton.setAttribute('aria-label', isFullscreen ? 'Salir de pantalla completa' : 'Activar pantalla completa');
+        fullscreenButton.setAttribute('title', isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa');
+      }
+
+      let savedTheme = null;
+      try {
+        savedTheme = localStorage.getItem('preferredTheme');
+      } catch (error) {
+        savedTheme = null;
+      }
+      const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+      setTheme(savedTheme === 'dark' || (savedTheme !== 'light' && prefersDark));
+
+      themeButton?.addEventListener('click', () => {
+        setTheme(!document.body.classList.contains('dark-mode'));
+      });
+
+      fullscreenButton?.addEventListener('click', async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await document.documentElement.requestFullscreen();
+          }
+        } catch (error) {
+          fullscreenButton.setAttribute('title', 'Pantalla completa no disponible');
+        } finally {
+          updateFullscreenButton();
+        }
+      });
+
+      document.addEventListener('fullscreenchange', updateFullscreenButton);
+      updateFullscreenButton();
+    })();
+
+    // Opcional UX: cerrar menú móvil al dar click en un enlace
+    (function () {
+      const nav = document.getElementById('navMobile');
+      if (!nav) return;
+      nav.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', () => { nav.open = false; });
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
