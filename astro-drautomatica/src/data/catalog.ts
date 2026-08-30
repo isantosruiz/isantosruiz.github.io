@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "apagando-fuego-sonido",
+    "kind": "external",
+    "title": "Apagando el fuego con sonido",
+    "href": "https://medium.com/p/af27f64c9f08",
+    "icon": "fa-li fa-brands fa-medium",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },  
+  {
     "id": "figure-table-latex",
     "kind": "external",
     "title": "Controlling Figure and Table Placement in LaTeX",
