@@ -327,7 +327,6 @@ samp {
   padding-top: 1rem;
   color: var(--article-muted);
   font-size: 0.86rem;
-  text-align: center;
 }
 
 @media (max-width: 720px) {
