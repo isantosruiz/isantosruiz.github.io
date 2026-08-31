@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Localizando fugas de agua con la teoría de la información</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="python,matlab" defer></script>
+</head>
+
+<body>
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Artículo de divulgación</p>
+        <h1>¿Dónde ponemos el sensor? Localizando fugas de agua con la teoría de la información</h1>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span>
+          <span>Agosto, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>
+          Conoce cómo un algoritmo puede revolucionar la forma en que ubicamos sensores para detectar fugas y salvar
+          millones de litros de agua en nuestras ciudades.
+        </p>
+      </section>
+
+      <h2>El problema de las fugas y cómo localizarlas</h2>
+      <p>El agua es uno de los recursos más valiosos del planeta, y sin embargo, perdemos millones de litros diariamente
+        debido a fugas invisibles bajo nuestras calles. Las redes de distribución de agua (WDN, por sus siglas en
+        inglés) son infraestructuras críticas y complejas. Encontrar una fuga en un complejo entramado de tuberías
+        subterráneas es como buscar una aguja en un pajar.</p>
+
+      <p><img src="./red_agua.jpeg" alt="Red de distribución de agua"
+          style="width: 90%; height: auto; display: block; margin: 0 auto;"></p>
+
+      <p>Para abordar este problema, las empresas de agua instalan sensores a lo largo de la red. Pero aquí surge un
+        obstáculo financiero y logístico: las redes tienen cientos o miles de nodos, y es imposible (y extremadamente
+        costoso) colocar un sensor en cada esquina. Entonces, si solo tenemos presupuesto para instalar unos pocos
+        sensores, <strong>¿cuál es el lugar óptimo para colocarlos?</strong></p>
+
+      <h2>La información está en la presión</h2>
+      <p>Históricamente, los ingenieros se han apoyado en sensores de flujo y de presión ubicados en puntos críticos,
+        como los tanques de suministro. No obstante, esto no es suficiente para localizar con exactitud dónde se ha roto
+        una tubería. Un equipo de investigadores (Santos-Ruiz et al., 2022) propuso una solución novedosa y pragmática:
+        basarse principalmente en <strong>sensores de presión</strong>.</p>
+
+      <p>¿Por qué la presión? Son equipos mucho más baratos, fáciles de instalar y de mantener que los sensores de
+        flujo. Pero, más importante aún, las presiones en los nodos de una red son extremadamente sensibles a las
+        alteraciones provocadas por una fuga en el sistema. Una pequeña rotura genera una “huella” o “firma” como una
+        variación de presión que se propaga por la red.</p>
+
+      <h2>Información mutua, relevancia y redundancia</h2>
+      <p>Decidir en qué nodos específicos colocar estos sensores es un problema matemático titánico. En una red de
+        tamaño mediano con 500 nodos, si queremos colocar solo 10 sensores, existen aproximadamente 2.5 &times;
+        10<sup>20</sup> combinaciones posibles. Intentar calcular todas las opciones llevaría una eternidad. Hasta
+        ahora, la ciencia recurría a algoritmos genéticos o heurísticas que requerían mucho tiempo de computación (horas
+        o días) y que dependían directamente del método de localización de fugas que se usara después.</p>
+
+      <p><em>"En lugar de evaluar todas las combinaciones posibles, el nuevo enfoque selecciona los nodos que aportan la
+          información más útil, descartando aquellos que solo repiten lo que ya sabemos."</em></p>
+
+      <p>El innovador estudio publicado en la revista <em>Sensors</em> aborda este desafío desde una perspectiva
+        completamente distinta: la <strong>teoría de la información de Shannon</strong>. Imagine que cada sensor es un
+        periodista reportando una noticia (la fuga). Si colocamos a dos periodistas en la misma calle, ambos nos
+        contarán exactamente la misma historia y habremos desperdiciado un recurso.</p>
+
+      <p>El algoritmo propuesto evalúa dos métricas fundamentales, que luego se combinan en un único valor denominado
+        <strong>índice de relevancia/redundancia (RRI)</strong>:
+      </p>
+
+      <ul>
+        <li>Con la <strong>relevancia</strong>, $\mathrm{Rel}(x)$, se busca maximizar la cantidad de información útil
+          que un sensor puede aportar sobre el nodo específico donde ocurre la fuga. Matemáticamente, esto se evalúa
+          midiendo la <strong>información mutua</strong> entre la presión del nodo y la posición de la fuga.</li>
+        <li>Con la <strong>redundancia</strong>, $\mathrm{Red}(x)$, se busca minimizar la información solapada. Esto
+          asegura que cada nuevo sensor añadido a la red reporte información que los demás sensores no están captando
+          (evaluando la información mutua entre sensores).</li>
+      </ul>
+
+      <p>La esencia de la optimización en este algoritmo radica en maximizar el siguiente cociente iterativamente para
+        elegir cada nuevo nodo:</p>
+
+      <div class="equation">
+        \[
+        \mathrm{RRI} = \frac{\mathrm{Rel}_y(x)}{\mathrm{Red}_S(x)}
+        \]
+      </div>
+
+      <p>El objetivo es encontrar el nodo $x$ que ofrezca la máxima relevancia respecto a la fuga ($y$) y la mínima
+        redundancia acumulada con el conjunto de sensores ya seleccionados ($S$).</p>
+
+      <h2>Un algoritmo que vence al tiempo</h2>
+      <p>Para lograr esto, los investigadores generaron un conjunto de datos masivo simulando múltiples escenarios de
+        fugas de diferentes tamaños usando el software EPANET. Con estos datos sintéticos, aplicaron un algoritmo de
+        selección heurística (con costo computacional cuadrático) que clasifica los nodos de mayor a menor importancia
+        usando la ecuación descrita.</p>
+
+      <p>Los resultados fueron puestos a prueba en la famosa red de prueba de Hanoi. ¿El veredicto? Mientras que los
+        métodos tradicionales basados en algoritmos genéticos tardaban unos 24 minutos en encontrar la ubicación ideal,
+        <strong>el algoritmo basado en la teoría de la información tardó alrededor de un segundo</strong>. Además, al
+        probar la eficacia de la ubicación del conjunto sensores para localizar fugas con técnicas de inteligencia
+        artificial (como <i>k</i>-NN y QDA), se confirmó que los
+        nodos seleccionados garantizaban un rendimiento superior para detectar y localizar la fuga con precisión casi
+        perfecta.
+      </p>
+
+      <h2>El futuro de la gestión del agua</h2>
+      <p>Este avance es de mucha utilidad para una gestión eficiente del agua potable. Al desvincular el problema de la
+        ubicación de los sensores del método de detección de fugas, se ofrece una herramienta universal y ultrarrápida.
+        Ahora, las ciudades pueden planificar expansiones de su red de monitoreo de forma inteligente, maximizando su
+        inversión y asegurando que cada sensor cuente en la misión vital de preservar nuestra agua.</p>
+
+      <h2>Referencias</h2>
+      <ul>
+        <li>Santos-Ruiz, I., López-Estrada, F. R., Puig, V., Valencia-Palomo, G., & Hernández, H. R. (2022). Pressure
+          Sensor Placement for Leak Localization in Water Distribution Networks Using Information Theory.
+          <i>Sensors</i>,
+          22(2), 443. DOI: <a href="https://doi.org/10.3390/s22020443">10.3390/s22020443</a></li>
+      </ul>
+
+      <footer class="article-footer">
+        <hr>
+        &copy; 2026, Ildeberto de los Santos Ruiz
+      </footer>
+    </article>
+  </main>
+</body>
+
+</html>
