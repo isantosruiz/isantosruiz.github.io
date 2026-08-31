@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "donde-ponemos-sensor",
+    "kind": "external",
+    "title": "¿Dónde ponemos el sensor?",
+    "href": "./html/sensor.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },  
+  {
     "id": "apagando-fuego-sonido",
     "kind": "external",
     "title": "Apagando el fuego con sonido",
