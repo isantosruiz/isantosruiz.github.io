@@ -86,14 +86,23 @@ h4 {
 
 h1 {
   margin: 0;
-  font-size: clamp(1.9rem, 3.4vw, 3.1rem);
+  font-size: 40px;
   font-weight: 600;
 }
 
+.subtitle,
+.article-subtitle {
+  margin: 0.65rem 0 0;
+  color: var(--article-muted);
+  font-size: clamp(1.12rem, 2vw, 1.38rem);
+  font-weight: 400;
+  line-height: 1.38;
+}
+
 h2 {
-  margin: 2.4rem 0 0.8rem;
-  padding-top: 0.7rem;
-  font-size: 1.55rem;
+  margin: 1.85rem 0 0.72rem;
+  padding-top: 0.25rem;
+  font-size: 24px;
 }
 
 h3 {
@@ -159,7 +168,7 @@ figcaption,
 }
 
 .abstract {
-  margin: 28px 0 4px;
+  margin: 22px 0 4px;
   padding: 18px 20px;
   border-left: 4px solid var(--article-accent);
   background: #f0f5f1;
@@ -318,6 +327,7 @@ samp {
   padding-top: 1rem;
   color: var(--article-muted);
   font-size: 0.86rem;
+  text-align: center;
 }
 
 @media (max-width: 720px) {
@@ -340,6 +350,11 @@ samp {
 
   h1 {
     font-size: 2.05rem;
+  }
+
+  .subtitle,
+  .article-subtitle {
+    font-size: 1.08rem;
   }
 
   .equation,
@@ -377,6 +392,11 @@ samp {
 
   h1 {
     font-size: 26pt;
+  }
+
+  .subtitle,
+  .article-subtitle {
+    font-size: 15pt;
   }
 
   button[class*="-code-copy-button"] {
