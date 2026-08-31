@@ -19,7 +19,7 @@ export const catalogEntries = [
     "id": "donde-ponemos-sensor",
     "kind": "external",
     "title": "¿Dónde ponemos el sensor?",
-    "href": "./html/sensor.html",
+    "href": "./html/sensores.html",
     "icon": "fa-li fa fa-file-code",
     "sections": [
       "inicio",
