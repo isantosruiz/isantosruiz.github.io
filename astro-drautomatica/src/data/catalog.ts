@@ -23,7 +23,7 @@ export const catalogEntries = [
     "icon": "fa-li fa fa-file-code",
     "sections": [
       "inicio",
-      "miscelanea"
+      "latex"
     ],
   },  
   {
