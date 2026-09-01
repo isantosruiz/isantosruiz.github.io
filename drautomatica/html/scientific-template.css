@@ -492,4 +492,17 @@ samp {
   pre[class*="-code-pre--copy"] {
     padding-top: 0.36rem !important;
   }
+
+  pre[class*="-code-pre"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    overflow: visible;
+  }
+
+  pre[class*="-code-pre"] code,
+  pre[class*="-code-pre"] .hljs {
+    display: block !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
