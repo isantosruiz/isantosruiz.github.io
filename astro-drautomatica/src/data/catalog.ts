@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "escribir-paquete-latex",
+    "kind": "external",
+    "title": "Cómo escribir tu propio paquete en LaTeX",
+    "href": "https://isantosruiz.github.io/html/paquetes.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },  
+  {
     "id": "donde-ponemos-sensor",
     "kind": "external",
     "title": "¿Dónde ponemos el sensor?",
