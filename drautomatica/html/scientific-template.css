@@ -13,6 +13,8 @@
   --article-table-stripe: #faf8f2;
   --article-warn-bg: #fff7df;
   --article-warn-ink: #7a4a00;
+  --article-code-font: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+    monospace;
   color-scheme: light;
 }
 
@@ -114,10 +116,44 @@ p {
   margin: 0 0 1.05rem;
 }
 
+ul.elegante,
+ul.formal {
+  margin: 1rem 0 1.35rem;
+  padding: 0 0 0 1.25rem;
+  list-style: none;
+}
+
+ul.elegante li,
+ul.formal li {
+  position: relative;
+  margin: 0 0 0.65rem;
+  padding-left: 1.35rem;
+}
+
+ul.elegante li::before,
+ul.formal li::before {
+  content: "";
+  position: absolute;
+  top: 0.84em;
+  left: 0.12rem;
+  width: 0.64rem;
+  height: 0.64rem;
+  background-color: var(--article-accent);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath d='M0 96C0 60.7 28.7 32 64 32h320c35.3 0 64 28.7 64 64v320c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath d='M0 96C0 60.7 28.7 32 64 32h320c35.3 0 64 28.7 64 64v320c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96z'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  transform: translateY(-50%);
+}
+
 ul.references,
 ul.bibliography {
   margin: 1rem 0 1.4rem;
-  padding: 0;
+  padding: 0 0 0 1.25rem;
   list-style: none;
 }
 
@@ -142,6 +178,36 @@ ul.bibliography li::before {
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3Cpath d='M64 0C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zm192 0v128h128L256 0zM112 256h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h160c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+ul.manita {
+  margin: 1rem 0 1.35rem;
+  padding: 0 0 0 1.25rem;
+  list-style: none;
+}
+
+ul.manita li {
+  position: relative;
+  margin: 0 0 0.55rem;
+  padding-left: 1.75rem;
+}
+
+ul.manita li::before {
+  content: "";
+  position: absolute;
+  top: 0.34em;
+  left: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  background-color: var(--article-accent);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M512 199.652c0 23.625-20.65 43.826-44.8 43.826h-99.851c16.34 17.048 18.346 49.766-6.299 70.944 14.288 22.829 2.147 53.017-16.45 62.315C353.574 425.878 322.654 448 272 448c-2.746 0-13.276-.203-16-.195-61.971.168-76.894-31.065-123.731-38.315C120.596 407.683 112 397.599 112 385.786V214.261l.002-.001c.011-18.366 10.607-35.889 28.464-43.845 28.886-12.994 95.413-49.038 107.534-77.323 7.797-18.194 21.384-29.084 40-29.092 34.222-.014 57.752 35.098 44.119 66.908-3.583 8.359-8.312 16.67-14.153 24.918H467.2c23.45 0 44.8 20.543 44.8 43.826zM96 200v192c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V200c0-13.255 10.745-24 24-24h48c13.255 0 24 10.745 24 24zM68 368c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M512 199.652c0 23.625-20.65 43.826-44.8 43.826h-99.851c16.34 17.048 18.346 49.766-6.299 70.944 14.288 22.829 2.147 53.017-16.45 62.315C353.574 425.878 322.654 448 272 448c-2.746 0-13.276-.203-16-.195-61.971.168-76.894-31.065-123.731-38.315C120.596 407.683 112 397.599 112 385.786V214.261l.002-.001c.011-18.366 10.607-35.889 28.464-43.845 28.886-12.994 95.413-49.038 107.534-77.323 7.797-18.194 21.384-29.084 40-29.092 34.222-.014 57.752 35.098 44.119 66.908-3.583 8.359-8.312 16.67-14.153 24.918H467.2c23.45 0 44.8 20.543 44.8 43.826zM96 200v192c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V200c0-13.255 10.745-24 24-24h48c13.255 0 24 10.745 24 24zM68 368c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20z'/%3E%3C/svg%3E");
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
@@ -183,8 +249,8 @@ figcaption,
 }
 
 .equation {
-  margin: 1.45rem 0;
-  padding: 0.45rem 0;
+  margin: 1.05rem 0;
+  padding: 0.2rem 0;
   overflow-x: auto;
 }
 
@@ -278,13 +344,14 @@ figcaption,
 }
 
 pre[class*="-code-pre"] {
-  margin: 1.1rem 0 !important;
-  padding: 0.72rem 0.9rem !important;
+  margin: 1rem 0 !important;
+  padding: 0.36rem 0.48rem !important;
   overflow-x: auto;
   border: 1px solid var(--article-code-rule) !important;
   border-radius: 6px !important;
   background: var(--article-code-bg) !important;
   color: #29251f;
+  font-family: var(--article-code-font);
   font-size: 0.92rem;
   line-height: 1.55 !important;
 }
@@ -292,6 +359,8 @@ pre[class*="-code-pre"] {
 pre[class*="-code-pre"] code,
 pre[class*="-code-pre"] .hljs {
   background: transparent !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
 }
 
 pre[class*="-code-pre--copy"] {
@@ -311,7 +380,7 @@ button[class*="-code-copy-button"] {
 code,
 kbd,
 samp {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family: var(--article-code-font);
 }
 
 :not(pre) > code {
@@ -319,14 +388,32 @@ samp {
   border: 0;
   border-radius: 4px;
   background: #f7f2e9;
-  font-size: 0.9em;
+  font-size: 0.92rem;
+  line-height: 1.35;
 }
 
 .article-footer {
   margin-top: 3rem;
   padding-top: 1rem;
+  border-top: 1px solid rgba(102, 112, 106, 0.22);
   color: var(--article-muted);
   font-size: 0.86rem;
+}
+
+.ccby {
+  line-height: 1.5;
+}
+
+.ccby .ccby-icons {
+  display: inline-flex;
+  gap: 0.25em;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.ccby .ccby-icons img {
+  width: 1em;
+  height: 1em;
 }
 
 @media (max-width: 720px) {
@@ -403,6 +490,6 @@ samp {
   }
 
   pre[class*="-code-pre--copy"] {
-    padding-top: 0.72rem !important;
+    padding-top: 0.36rem !important;
   }
 }
