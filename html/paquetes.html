@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cómo escribir tu propio paquete en LaTeX</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="latex" defer></script>
+</head>
+
+<body>
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Tutorial</p>
+        <h1>Cómo escribir tu propio paquete en LaTeX</h1>
+        <p class="subtitle">Convierte macros dispersas en una herramienta reutilizable para dar consistencia, orden y
+          personalidad a tus documentos.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Si tus documentos de LaTeX ya acumulan comandos repetidos, estilos copiados y un preámbulo difícil de
+          entender, quizá es momento de escribir tu primer paquete. En este tutorial crearás un archivo .sty desde cero,
+          con comandos propios, cajas visuales y opciones de configuración, para reutilizar tus mejores ideas sin
+          repetir código.</p>
+      </section>
+
+      <h2>Introducción</h2>
+      <p>
+        Cuando un documento de LaTeX comienza a crecer, es frecuente que su preámbulo se llene de comandos
+        personalizados: una orden para resaltar conceptos, otra para escribir unidades, una caja para observaciones,
+        colores institucionales, configuraciones de tablas y ajustes tipográficos.
+      </p>
+
+      <p>Al principio parece razonable copiar ese bloque de código de un archivo a otro. Después aparecen los problemas:
+        una mejora debe replicarse manualmente en varios proyectos, distintas versiones de una misma macro producen
+        resultados diferentes y el preámbulo deja de ser legible. La solución natural es crear un paquete propio.</p>
+
+      <p>Un paquete de LaTeX es un archivo con extensión <code>.sty</code> que agrupa comandos, entornos,
+        configuraciones y dependencias reutilizables. No es necesario publicar un paquete en CTAN para aprovechar esta
+        idea: un archivo local puede convertirse en la base común para tus apuntes, artículos, manuales, tesis o
+        materiales docentes.</p>
+
+      <p>En este tutorial construiremos un paquete sencillo llamado <code>misnotas.sty</code>. Tendrá tres funciones:
+      </p>
+
+      <ol>
+        <li>Resaltar conceptos importantes con un color consistente.</li>
+        <li>Escribir una magnitud seguida de su unidad.</li>
+        <li>Crear cajas visuales para ideas, advertencias o notas técnicas.</li>
+      </ol>
+
+      <p>Además, el usuario podrá elegir una paleta de color al cargar el paquete.</p>
+
+      <h2>¿Cuándo conviene crear un paquete?</h2>
+
+      <p>No toda macro merece convertirse en un paquete. Si defines un comando que solo usarás una vez en un documento
+        breve, colocarlo en el preámbulo es suficiente.</p>
+
+      <p>Un paquete empieza a tener sentido cuando ocurre alguna de estas situaciones:</p>
+
+      <ul class="elegante">
+        <li>Usas las mismas órdenes o estilos en varios documentos.</li>
+        <li>Quieres mantener una identidad visual uniforme.</li>
+        <li>Necesitas separar el contenido de un documento de sus detalles de formato.</li>
+        <li>Deseas compartir herramientas de LaTeX con estudiantes, colegas o colaboradores.</li>
+        <li>Tu preámbulo ya parece una colección difícil de mantener.</li>
+      </ul>
+
+      <p>Conviene distinguir un paquete de una clase. Un paquete agrega capacidades a un documento existente; una clase
+        determina su arquitectura general. Por ejemplo, una clase puede definir la estructura completa de una tesis o
+        una revista, mientras que un paquete puede proporcionar colores, comandos matemáticos, cajas, estilos de código
+        o encabezados.</p>
+
+      <h2>El proyecto mínimo</h2>
+
+      <p>Crea una carpeta y coloca dentro dos archivos: <code>main.tex</code> y <code>misnotas.sty</code>. El archivo
+        <code>main.tex</code> será el documento principal. El archivo <code>misnotas.sty</code> contendrá el
+        paquete.
+      </p>
+
+      <p>En Overleaf puedes crear el segundo archivo con la opción <strong>New File</strong> y asignarle exactamente el
+        nombre <code>misnotas.sty</code>. Si ambos archivos están en la misma carpeta, LaTeX encontrará el paquete
+        automáticamente.</p>
+
+      <h2>La identidad de un paquete</h2>
+
+      <p>Todo paquete debe comenzar declarando qué formato de LaTeX requiere y cómo debe identificarse:</p>
+
+      <script type="text/latex">
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{misnotas}[2026/09/01 v1.0 Herramientas para apuntes técnicos]
+      </script>
+
+      <p>La primera línea indica que el paquete utiliza LaTeX2e, que es la base de la mayoría de los documentos
+        actuales.</p>
+
+      <p>La segunda le da un nombre al paquete y registra una fecha, una versión y una breve descripción. La fecha sigue
+        el formato <code>AAAA/MM/DD</code>. Esta información parece secundaria cuando el archivo es pequeño, pero se
+        vuelve muy útil al mantener varias versiones de un paquete o compartirlo con otras personas.</p>
+
+      <h2>Importar dependencias correctamente</h2>
+
+      <p>Dentro de un documento normal usamos <code>\usepackage{...}</code>, pero dentro de un archivo <code>.sty</code>
+        la
+        forma apropiada es <code>\RequirePackage{...}</code>.</p>
+
+      <p>Para nuestro paquete necesitaremos colores, cajas y herramientas matemáticas:</p>
+
+      <script type="text/latex">
+\RequirePackage{xcolor}
+\RequirePackage{tcolorbox}
+\RequirePackage{amsmath}
+      </script>
+
+      <p>El paquete <code>xcolor</code> permite definir y combinar colores; <code>tcolorbox</code> facilita la creación
+        de cajas
+        con bordes, fondo y título; <code>amsmath</code> amplía las herramientas para escribir matemáticas.</p>
+
+      <p>Existe una regla simple: si tu paquete depende de otro, decláralo dentro del propio paquete. Así, quien use
+        <code>misnotas.sty</code> no tendrá que recordar cargar manualmente todas sus dependencias.
+      </p>
+
+      <h2>Nuestro primer paquete completo</h2>
+
+      <p>Guarda el siguiente código en el archivo <code>misnotas.sty</code>:</p>
+
+      <script type="text/latex">
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{misnotas}[2026/09/01 v1.0 Herramientas para apuntes técnicos]
+
+\RequirePackage{xcolor}
+\RequirePackage{tcolorbox}
+\RequirePackage{amsmath}
+
+% Configuracion predeterminada
+\colorlet{mnAccent}{teal!70!black}
+\colorlet{mnSoft}{teal!8}
+
+% Opciones del paquete
+\DeclareOption{verde}{
+  \colorlet{mnAccent}{teal!70!black}
+  \colorlet{mnSoft}{teal!8}
+}
+
+\DeclareOption{azul}{
+  \colorlet{mnAccent}{blue!65!black}
+  \colorlet{mnSoft}{blue!7}
+}
+
+\DeclareOption{ciruela}{
+  \colorlet{mnAccent}{violet!75!black}
+  \colorlet{mnSoft}{violet!8}
+}
+
+\DeclareOption*{%
+  \PackageError{misnotas}{Opción desconocida '\CurrentOption'}%
+    {Las opciones válidas son verde, azul y ciruela.}%
+}
+
+\ProcessOptions\relax
+
+% Comandos publicos
+\NewDocumentCommand{\mnconcepto}{m}{%
+  \textcolor{mnAccent}{\textbf{#1}}%
+}
+
+\NewDocumentCommand{\mnunidad}{m m}{%
+  \ensuremath{#1\,\mathrm{#2}}%
+}
+
+% Entorno para notas destacadas
+\newtcolorbox{mnidea}[1][Idea]{%
+  colback=mnSoft,
+  colframe=mnAccent,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  left=1.2mm,
+  right=1.2mm,
+  top=1mm,
+  bottom=1mm,
+  fonttitle=\bfseries,
+  title={#1}
+}
+
+\PackageInfo{misnotas}{Paquete cargado correctamente}
+\endinput
+      </script>
+
+      <p>Aunque el archivo es corto, ya contiene varios elementos fundamentales de un paquete bien organizado.</p>
+
+      <p>Los colores <code>mnAccent</code> y <code>mnSoft</code> son internos al paquete. El prefijo <code>mn</code>
+        significa “mis notas” y evita conflictos con nombres que otro paquete pudiera usar. Esta costumbre es
+        importante: nombres como <code>\nota</code>, <code>\unidad</code> o <code>\colorprincipal</code> parecen
+        cómodos,
+        pero pueden chocar con comandos definidos en otro proyecto.</p>
+
+      <p>En cambio, los comandos <code>\mnconcepto</code> y <code>\mnunidad</code> son parte de la interfaz pública. Son
+        las órdenes que el usuario del paquete utilizará directamente en sus documentos.</p>
+
+      <p>La instrucción <code>\endinput</code> indica que el archivo termina ahí. Todo lo que quede después será
+        ignorado
+        por LaTeX, lo cual resulta útil si más adelante deseas dejar notas de desarrollo o documentación interna.</p>
+
+      <h2>Cargar el paquete desde un documento</h2>
+
+      <p>Ahora crea el archivo <code>main.tex</code> con este contenido:</p>
+
+      <script type="text/latex">
+\documentclass[11pt]{article}
+
+\usepackage[azul]{misnotas}
+
+\title{Ejemplo de un paquete propio en LaTeX}
+\author{Tu nombre}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Una aplicación sencilla}
+
+La \mnconcepto{sensibilidad} de un instrumento expresa el cambio
+en su salida ante una variación de la entrada. Durante la prueba,
+la presión medida fue de \mnunidad{12.6}{kPa}.
+
+\begin{mnidea}[Regla práctica]
+Una medición no debe presentarse como un valor absolutamente exacto.
+Es importante indicar su unidad, resolución e incertidumbre cuando
+el contexto técnico lo requiera.
+\end{mnidea}
+
+\end{document}
+      </script>
+
+      <p>La línea más importante es esta:</p>
+
+      <script type="text/latex">
+\usepackage[azul]{misnotas}
+      </script>
+
+      <p>Con ella, LaTeX localiza el archivo <code>misnotas.sty</code>, procesa sus dependencias y activa la opción
+        <code>azul</code>.
+      </p>
+
+      <p>El resultado es un documento donde los conceptos importantes aparecen destacados, las unidades se escriben de
+        manera uniforme y las observaciones se presentan dentro de una caja visualmente consistente.</p>
+
+      <h2>Entender las opciones del paquete</h2>
+
+      <p>Las opciones permiten modificar el comportamiento de un paquete al cargarlo. En nuestro caso, las opciones
+        disponibles son:</p>
+
+      <script type="text/latex">
+\usepackage[verde]{misnotas}
+\usepackage[azul]{misnotas}
+\usepackage[ciruela]{misnotas}
+      </script>
+
+      <p>Cada opción redefine dos colores, uno para el acento principal y otro para el fondo suave de las cajas.</p>
+
+      <p>El elemento central es la instrucción <code>\DeclareOption</code>. Su primer argumento es el nombre de la
+        opción;
+        el segundo contiene el código que LaTeX ejecutará si esa opción aparece al cargar el paquete.</p>
+
+      <p>Después de declarar todas las opciones, se utiliza:</p>
+
+      <script type="text/latex">
+\ProcessOptions\relax
+      </script>
+
+      <p>Esta línea ordena a LaTeX procesar las opciones solicitadas. Sin ella, las declaraciones existirían, pero no
+        tendrían efecto.</p>
+
+      <p>También incluimos una opción genérica mediante <code>\DeclareOption*</code>. Si alguien escribe por error:</p>
+
+      <script type="text/latex">
+\usepackage[rojo]{misnotas}
+      </script>
+
+      <p>LaTeX mostrará un error claro y explicará cuáles son las opciones aceptadas. Este detalle puede ahorrar mucho
+        tiempo de depuración, especialmente cuando el paquete comienza a crecer.</p>
+
+      <h2>Crear comandos que expresen intención</h2>
+
+      <p>Una ventaja importante de los paquetes es que permiten escribir documentos en un nivel más cercano a la
+        intención del autor.</p>
+
+      <p>Por ejemplo, el comando:</p>
+
+      <script type="text/latex">
+\mnconcepto{linealidad}
+      </script>
+
+      <p>no solo produce texto en negritas y color. Comunica que <em>linealidad</em> es un concepto que debe destacarse.
+        Si más adelante decides sustituir el color por versalitas, un recuadro o una tipografía distinta, solo modificas
+        la definición dentro del paquete. El contenido de todos tus documentos permanece intacto.</p>
+
+      <p>Algo similar ocurre con:</p>
+
+      <script type="text/latex">
+\mnunidad{5.4}{m/s}
+      </script>
+
+      <p>La orden garantiza un espacio fino entre el número y la unidad, y escribe la unidad en tipografía romana dentro
+        del modo matemático. El documento queda más consistente que si cada magnitud se escribe manualmente.</p>
+
+      <p>La idea es poderosa, porque un buen paquete no solo reduce código repetido, también convierte decisiones de
+        estilo en
+        comandos con significado.</p>
+
+      <h2>Buenas prácticas desde el inicio</h2>
+
+      <p>Un paquete pequeño puede crecer rápidamente. Las siguientes recomendaciones te ayudarán a mantenerlo sano:</p>
+      <ul class="manita">
+
+        <li>Usa nombres específicos. Prefijos como <code>mn</code>, <code>lab</code> o las iniciales de
+          un proyecto reducen la probabilidad de conflictos con paquetes externos.</li>
+
+        <li>Mantén una frontera clara entre interfaz y detalles internos. Los comandos que otras personas usarán deben
+          tener nombres comprensibles y estables. Los colores, contadores o macros auxiliares pueden permanecer como
+          detalles internos.</li>
+
+        <li>No modifiques comandos ajenos sin una razón clara. <code>\renewcommand</code> puede ser útil, pero también
+          puede alterar el comportamiento esperado de otros paquetes. Siempre que sea posible, crea comandos nuevos.
+        </li>
+
+        <li>Incluye mensajes útiles. <code>\PackageInfo</code>, <code>\PackageWarning</code> y
+          <code>\PackageError</code>
+          permiten informar al usuario qué ocurrió durante la compilación. Los errores claros son parte de la calidad de
+          un paquete.
+        </li>
+
+        <li>Actualiza la versión. Cada vez que hagas un cambio importante, modifica la fecha y el identificador en
+          <code>\ProvidesPackage</code>. Es una práctica sencilla que evita confusiones entre copias distintas del mismo
+          archivo.
+        </li>
+
+        <li>Prueba el paquete en un documento mínimo. Un <code>main.tex</code> de pocas líneas es la forma más rápida de
+          comprobar que las dependencias, comandos y opciones funcionan como esperas.</li>
+      </ul>
+
+      <h2>De archivo local a herramienta reutilizable</h2>
+
+      <p>Al principio, puedes colocar <code>misnotas.sty</code> junto al único documento <code>main.tex</code>. Con el
+        tiempo, puedes copiarlo
+        a
+        otros proyectos o conservarlo en una carpeta personal de plantillas.</p>
+
+      <p>También puedes ampliar el paquete con estilos para código, tablas, referencias, teoremas, portadas o diagramas.
+        La clave es no convertirlo en un contenedor caótico de todo lo que has usado alguna vez. Cada comando debe tener
+        una función clara y una justificación práctica.</p>
+
+      <p>Escribir un paquete propio no significa reinventar LaTeX. Antes de crear una solución desde cero, vale la pena
+        revisar si existe un paquete maduro que ya resuelva el problema. Pero cuando necesitas capturar convenciones
+        particulares de tu trabajo, de una asignatura, de un laboratorio o de una colección de documentos, un archivo
+        <code>.sty</code> es una de las herramientas más limpias y útiles que ofrece LaTeX.
+      </p>
+
+      <p>La verdadera ventaja no es tener más código. Es lograr que cada documento exprese mejor sus ideas mientras su
+        formato se mantiene consistente, reutilizable y fácil de evolucionar.</p>
+
+      <p>Para profundizar en el diseño de paquetes, clases y documentos robustos en LaTeX, una referencia especialmente
+        recomendable es <i>The LaTeX Companion</i>, de Frank Mittelbach y Ulrike Fischer.</p>
+
+      <h2>Referencias</h2>
+      <ul class="references">
+        <li>Mittelbach, F., & Fischer, U. (2023). <i>The LaTeX Companion (3rd ed., Parts I–II)</i>. Addison-Wesley
+          Professional.
+        </li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
