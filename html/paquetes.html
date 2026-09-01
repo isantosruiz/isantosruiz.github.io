@@ -25,7 +25,7 @@
 
       <section class="abstract">
         <p>Si tus documentos de LaTeX ya acumulan comandos repetidos, estilos copiados y un preámbulo difícil de
-          entender, quizá es momento de escribir tu primer paquete. En este tutorial crearás un archivo .sty desde cero,
+          entender, quizá es momento de escribir tu primer paquete. En este tutorial crearás un archivo <code>.sty</code> desde cero,
           con comandos propios, cajas visuales y opciones de configuración, para reutilizar tus mejores ideas sin
           repetir código.</p>
       </section>
@@ -33,17 +33,17 @@
       <h2>Introducción</h2>
       <p>
         Cuando un documento de LaTeX comienza a crecer, es frecuente que su preámbulo se llene de comandos
-        personalizados: una orden para resaltar conceptos, otra para escribir unidades, una caja para observaciones,
+        personalizados, como una orden para resaltar conceptos, otra para escribir unidades, una caja para observaciones,
         colores institucionales, configuraciones de tablas y ajustes tipográficos.
       </p>
 
       <p>Al principio parece razonable copiar ese bloque de código de un archivo a otro. Después aparecen los problemas:
         una mejora debe replicarse manualmente en varios proyectos, distintas versiones de una misma macro producen
-        resultados diferentes y el preámbulo deja de ser legible. La solución natural es crear un paquete propio.</p>
+        resultados diferentes y el preámbulo deja de ser legible. La solución natural es <strong>crear un paquete propio</strong>.</p>
 
       <p>Un paquete de LaTeX es un archivo con extensión <code>.sty</code> que agrupa comandos, entornos,
         configuraciones y dependencias reutilizables. No es necesario publicar un paquete en CTAN para aprovechar esta
-        idea: un archivo local puede convertirse en la base común para tus apuntes, artículos, manuales, tesis o
+        idea, ya que un archivo local puede convertirse en la base común para tus apuntes, artículos, manuales, tesis o
         materiales docentes.</p>
 
       <p>En este tutorial construiremos un paquete sencillo llamado <code>misnotas.sty</code>. Tendrá tres funciones:
