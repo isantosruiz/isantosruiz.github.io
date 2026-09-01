@@ -243,7 +243,59 @@
     );
   }
 
+  function renderCcByFooters() {
+    var footers = document.querySelectorAll(".ccby");
+
+    Array.prototype.forEach.call(footers, function (footer) {
+      if (footer.dataset.footerCcbyProcessed === "true") return;
+
+      var licenseUrl =
+        footer.dataset.licenseUrl ||
+        "https://creativecommons.org/licenses/by/4.0/";
+      var licenseLabel =
+        footer.dataset.licenseLabel ||
+        "Creative Commons Attribution 4.0 International";
+      var creditText =
+        footer.dataset.creditText ||
+        "La licencia exige que quienes reutilicen el material otorguen crédito al autor; eso les permite distribuir, remezclar, adaptar y desarrollar el material en cualquier medio o formato, incluso con fines comerciales.";
+
+      footer.textContent = "";
+      footer.dataset.footerCcbyProcessed = "true";
+
+      footer.appendChild(
+        document.createTextNode("Esta obra se publica bajo una licencia ")
+      );
+
+      var link = document.createElement("a");
+      link.href = licenseUrl;
+      link.textContent = licenseLabel;
+      footer.appendChild(link);
+      footer.appendChild(document.createTextNode("."));
+      footer.appendChild(document.createElement("br"));
+      footer.appendChild(document.createTextNode(creditText));
+      footer.appendChild(document.createElement("br"));
+
+      var icons = document.createElement("span");
+      icons.className = "ccby-icons";
+
+      [
+        "https://mirrors.creativecommons.org/presskit/icons/cc.svg",
+        "https://mirrors.creativecommons.org/presskit/icons/by.svg"
+      ].forEach(function (src) {
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = "";
+        img.loading = "lazy";
+        icons.appendChild(img);
+      });
+
+      footer.appendChild(icons);
+    });
+  }
+
   onceReady(function () {
+    renderCcByFooters();
+
     configureMathJax()
       .then(function () {
         return Promise.all([renderTabJaxTables(), loadCodeHighlighters()]);
