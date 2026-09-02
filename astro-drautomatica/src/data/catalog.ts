@@ -29,7 +29,7 @@ export const catalogEntries = [
   {
     "id": "donde-ponemos-sensor",
     "kind": "external",
-    "title": "¿Dónde ponemos el sensor?",
+    "title": "Dónde ponemos los sensores",
     "href": "https://isantosruiz.github.io/html/sensores.html",
     "icon": "fa-li fa fa-file-code",
     "sections": [
