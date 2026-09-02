@@ -49,6 +49,10 @@ a:focus-visible {
   text-underline-offset: 0.18em;
 }
 
+.teal-dark {
+  color: var(--article-accent);
+}
+
 .article-shell {
   width: min(100% - 32px, 980px);
   margin: 40px auto;
