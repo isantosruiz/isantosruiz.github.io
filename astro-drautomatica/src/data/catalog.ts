@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "gemelo-digital-probabilistico",
+    "kind": "external",
+    "title": "Gemelo digital probabilístico",
+    "href": "https://isantosruiz.github.io/html/gemelo.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "modelado"
+    ],
+  },  
+  {
     "id": "escribir-paquete-latex",
     "kind": "external",
     "title": "Cómo escribir tu propio paquete en LaTeX",
