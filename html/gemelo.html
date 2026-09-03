@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gemelo digital probabilístico</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="python,matlab" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Artículo de divulgación</p>
+        <h1>Gemelo digital probabilístico</h1>
+        <p class="subtitle">Una representación virtual capaz de reconocer y cuantificar sus propias incertidumbres</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Los gemelos digitales permiten observar, analizar y anticipar el comportamiento de sistemas físicos. Pero
+          ¿qué sucede cuando las mediciones son imprecisas, los parámetros cambian y el modelo no reproduce
+          perfectamente la realidad? Un gemelo digital probabilístico incorpora esas incertidumbres en lugar de
+          ocultarlas detrás de una predicción única. Este artículo explica en qué consiste este enfoque, cómo se
+          actualiza mediante nuevas mediciones y por qué conocer la confiabilidad de una predicción puede ser tan
+          importante como la predicción misma.</p>
+      </section>
+
+      <h2>Introducción</h2>
+      <p>Los gemelos digitales se emplean cada vez más para supervisar máquinas, procesos e infraestructuras,
+        diagnosticar anomalías y anticipar su comportamiento. Su propósito general es mantener una representación
+        virtual de un sistema físico que pueda actualizarse mediante información procedente de sensores, registros de
+        operación y otras fuentes de datos.</p>
+
+      <p>Sin embargo, ningún sistema real se conoce con absoluta precisión. Las mediciones contienen ruido, algunos
+        parámetros no pueden determinarse exactamente y los modelos matemáticos siempre simplifican, en alguna medida,
+        el fenómeno que pretenden representar. Incluso cuando un modelo reproduce adecuadamente el comportamiento
+        observado, sus predicciones conservan cierto grado de incertidumbre.</p>
+
+      <p>Un gemelo digital probabilístico incorpora estas limitaciones como parte de su funcionamiento. En lugar de
+        producir una única respuesta y presentarla como un valor cierto, representa los posibles estados, parámetros o
+        comportamientos del sistema mediante distribuciones de probabilidad. De este modo, no solo intenta responder qué
+        está ocurriendo o qué podría suceder, sino también con qué probabilidad y con qué grado de confianza.</p>
+
+      <h2>Del resultado único a la distribución de probabilidades</h2>
+
+      <p>Un gemelo digital convencional puede construirse a partir de modelos deterministas. Esto significa que, para
+        unas condiciones de entrada determinadas, genera siempre una respuesta única. En el diagnóstico de una tubería,
+        por ejemplo, podría estimar que una fuga se encuentra a 327 metros de un punto de referencia.</p>
+
+      <p>La respuesta parece precisa, pero deja sin resolver una cuestión fundamental. No indica cuánto puede confiarse
+        en esa ubicación.</p>
+
+      <p>Un gemelo digital probabilístico podría conservar los 327 metros como la posición más probable y, al mismo
+        tiempo, establecer que la fuga se encuentra entre los metros 302 y 354 con una confianza del 95&nbsp;%. La
+        estimación
+        central sigue siendo útil, pero ahora se acompaña de información sobre su precisión y sus posibles variaciones.
+      </p>
+
+      <p>Si $x_f$ representa la posición de la fuga y $\mathbf{y}$ reúne las mediciones disponibles, el resultado puede
+        describirse mediante</p>
+
+      <div class="equation">
+        \[
+        p(x_f\mid\mathbf{y}).
+        \]
+      </div>
+
+      <p>Esta expresión no proporciona solamente un valor para $x_f$, sino una distribución de probabilidad condicionada
+        a las observaciones. A partir de ella es posible identificar la ubicación más probable, calcular un valor
+        esperado, construir intervalos de credibilidad o determinar la probabilidad de que la fuga se encuentre en una
+        sección particular de la tubería.</p>
+
+      <p>En una aplicación práctica, el sistema podría concluir que existe un 70&nbsp;% de probabilidad de que la fuga
+        esté
+        en un tramo, un 20&nbsp;% de que se encuentre en el tramo contiguo y un 10&nbsp;% de que corresponda al resto de
+        la
+        instalación. Esa información resulta mucho más útil para planear inspecciones o excavaciones que una coordenada
+        presentada sin ninguna medida de confianza.</p>
+
+      <h2>La incertidumbre forma parte del sistema</h2>
+
+      <p>La incertidumbre puede aparecer en distintos puntos del gemelo digital. Una fuente evidente son los
+        instrumentos
+        de medición. Todo sensor posee una resolución limitada y está expuesto a ruido, errores de calibración, deriva y
+        perturbaciones externas. Una lectura de presión de 300&nbsp;kPa no significa que la presión real sea
+        exactamente igual a ese valor.</p>
+
+      <p>También existen parámetros que no se conocen con precisión o que cambian durante la operación. En una red de
+        distribución de agua, la rugosidad de las tuberías, las demandas de los usuarios, los diámetros internos
+        efectivos y los coeficientes de descarga pueden diferir de sus valores nominales. En un sistema mecánico ocurre
+        algo semejante con la fricción, las cargas, la rigidez y el desgaste de los componentes.</p>
+
+      <p>A esto se suma la variabilidad propia del proceso. Algunas magnitudes fluctúan incluso cuando el sistema
+        funciona normalmente. La demanda de agua cambia durante el día, las condiciones ambientales modifican la
+        respuesta de una máquina y las cargas de operación rara vez permanecen constantes.</p>
+
+      <p>Por último, está la incertidumbre del propio modelo. Las ecuaciones utilizadas pueden omitir fenómenos
+        secundarios, depender de hipótesis simplificadoras o contener parámetros difíciles de identificar. Por eso, la
+        diferencia entre el modelo y la realidad no debe atribuirse siempre al ruido de los sensores. En ocasiones, la
+        discrepancia revela que la representación física es incompleta.</p>
+
+      <p>Un gemelo digital probabilístico busca integrar estas fuentes de incertidumbre y propagarlas hasta el resultado
+        final. Si existen dudas importantes en las mediciones o en los parámetros, esa falta de certeza debe reflejarse
+        en el diagnóstico o en el pronóstico. Ocultarla detrás de un único valor numérico no la elimina.</p>
+
+      <h2>Aprender de las nuevas mediciones</h2>
+
+      <p>Una característica central de los gemelos digitales es su capacidad para actualizarse conforme reciben
+        información del sistema físico. En un enfoque probabilístico, este proceso suele realizarse mediante métodos
+        bayesianos.</p>
+
+      <p>La actualización puede representarse de manera compacta como</p>
+
+      <div class="equation">
+        \[
+        p(\boldsymbol{\theta}\mid\mathbf{y})
+        \propto
+        p(\mathbf{y}\mid\boldsymbol{\theta})\,p(\boldsymbol{\theta}),
+        \]
+      </div>
+
+      <p>donde $\boldsymbol{\theta}$ contiene los estados o parámetros desconocidos y $\mathbf{y}$ representa las
+        mediciones.</p>
+
+      <p>Antes de incorporar los nuevos datos existe cierto conocimiento sobre los valores posibles de
+        $\boldsymbol{\theta}$. Ese conocimiento puede proceder de especificaciones técnicas, ensayos anteriores,
+        experiencia operativa o resultados históricos. Las nuevas mediciones se comparan con las predicciones del modelo
+        y modifican las probabilidades asignadas inicialmente.</p>
+
+      <p>Supóngase que la rugosidad de una tubería solo se conoce dentro de un intervalo aproximado. Cuando llegan
+        nuevas
+        lecturas de presión y caudal, el gemelo determina qué valores de rugosidad explican mejor el comportamiento
+        observado. Los valores más compatibles ganan probabilidad y los menos plausibles la pierden.</p>
+
+      <p>Cuando las mediciones son numerosas y confiables, la incertidumbre puede disminuir. Si son escasas, ruidosas o
+        contradictorias, el intervalo de valores plausibles permanecerá amplio. El gemelo no debería aparentar una
+        precisión que los datos disponibles no permiten alcanzar.</p>
+
+      <h2>¿Es correcto llamarlo gemelo digital probabilístico?</h2>
+
+      <p>La expresión gemelo digital probabilístico es correcta y corresponde al término inglés <em>probabilistic
+          digital twin</em>. Se utiliza en distintas áreas de la ingeniería, entre ellas la manufactura, el análisis
+        estructural, las tuberías, la gestión de activos y el diseño geotécnico.</p>
+
+      <p>No obstante, el término debe emplearse con cuidado. La presencia de datos ruidosos, variables aleatorias o
+        algoritmos de aprendizaje automático no basta para que un sistema sea probabilístico en sentido riguroso.
+        Tampoco toda simulación probabilística constituye un gemelo digital.</p>
+
+      <p>Para justificar esta denominación debe existir una contraparte física específica, una representación digital
+        vinculada con sus mediciones y algún mecanismo de actualización. Además, la incertidumbre debe modelarse
+        explícitamente y conservarse hasta las etapas de diagnóstico, predicción o toma de decisiones.</p>
+
+      <p>Si únicamente se ejecutan simulaciones con parámetros aleatorios, resulta más preciso hablar de una simulación
+        probabilística. Si se construye un modelo estadístico sin conexión dinámica con un sistema físico particular,
+        puede denominarse modelo probabilístico. La condición de gemelo aparece cuando la representación digital
+        mantiene
+        una relación actualizable con su contraparte física.</p>
+
+      <h2>El papel de las simulaciones de Monte Carlo</h2>
+
+      <p>Los métodos de Monte Carlo son una de las herramientas disponibles para estudiar la incertidumbre. Su idea
+        básica consiste en generar numerosas combinaciones de parámetros, ejecutar el modelo para cada una y analizar la
+        distribución de los resultados.</p>
+
+      <p>Mediante este procedimiento puede estudiarse, por ejemplo, cómo varía la presión de una tubería cuando la
+        demanda, la rugosidad y el caudal de fuga no se conocen exactamente. En lugar de obtener una única curva de
+        presión, se obtiene un conjunto de respuestas posibles y puede calcularse la probabilidad asociada con distintos
+        escenarios.</p>
+
+      <p>Aun así, el uso de Monte Carlo no convierte automáticamente una simulación en gemelo digital probabilístico.
+        Para ello, las distribuciones utilizadas deben relacionarse con el sistema físico, actualizarse mediante
+        mediciones y contribuir a las decisiones finales. Monte Carlo puede formar parte del gemelo, pero no es lo que
+        define su naturaleza.</p>
+
+      <h2>Un ejemplo en el diagnóstico de fugas</h2>
+
+      <p>Considérese una tubería equipada con sensores de presión y caudal. Un enfoque determinista podría utilizar un
+        modelo hidráulico y buscar la posición de fuga que minimice la diferencia entre las presiones medidas y las
+        calculadas. El resultado sería una ubicación única.</p>
+
+      <p>El enfoque probabilístico reconoce que las presiones están afectadas por ruido, que la demanda puede variar y
+        que algunos parámetros hidráulicos no se conocen exactamente. Por eso, la posición y la magnitud de la fuga se
+        representan como variables inciertas. El gemelo compara muchos escenarios con las mediciones disponibles y
+        actualiza la probabilidad de cada uno.</p>
+
+      <p><img src="./tuberia.png" alt="Fuga en una tubería"
+          style="width: 100%; height: auto; display: block; margin: 0 auto;"></p>
+
+
+      <p>El resultado ya no es solamente una coordenada. Puede ser un mapa espacial de probabilidades que muestre las
+        zonas donde la evidencia disponible respalda con mayor fuerza la presencia de una fuga. También puede revelar
+        que
+        dos ubicaciones diferentes producen respuestas hidráulicas muy parecidas y que, por tanto, se necesitan
+        mediciones adicionales para distinguirlas.</p>
+
+      <p>Esta capacidad tiene consecuencias prácticas. Si el costo de inspeccionar o excavar es elevado, conocer la
+        incertidumbre permite priorizar zonas, evaluar riesgos y decidir si conviene actuar inmediatamente o instalar
+        temporalmente un sensor adicional.</p>
+
+      <h2>La incorporación del conocimiento físico</h2>
+
+      <p>Los gemelos digitales probabilísticos también pueden combinarse con aprendizaje automático. Cuando las
+        ecuaciones, restricciones o principios físicos intervienen directamente en la construcción del modelo, puede
+        utilizarse la expresión gemelo digital probabilístico informado por la física.</p>
+
+      <p>En una red hidráulica, el aprendizaje automático puede identificar relaciones complejas entre las mediciones y
+        las condiciones de fuga, mientras que el modelo físico aporta las leyes de conservación de masa y energía. La
+        parte probabilística permite cuantificar cuánto puede confiarse en las estimaciones obtenidas.</p>
+
+      <p>La combinación es atractiva porque aprovecha los datos sin renunciar al conocimiento acumulado sobre el
+        proceso. También ayuda a evitar predicciones incompatibles con el comportamiento físico esperado.</p>
+
+      <p>Sin embargo, conviene reservar la expresión informado por la física para los casos en que ese conocimiento
+        participa realmente en el entrenamiento, la inferencia, la arquitectura o las restricciones del modelo. El
+        simple
+        hecho de entrenar un algoritmo con datos producidos por un simulador no siempre basta para sostener esa
+        denominación.</p>
+
+      <h2>Saber qué se desconoce</h2>
+
+      <p>Dos modelos pueden generar la misma predicción y, aun así, ofrecer niveles de confianza completamente
+        diferentes. Supóngase que ambos estiman que un componente fallará dentro de 100 horas. El primero sitúa el
+        posible tiempo de falla entre 95 y 105 horas, mientras que el segundo lo ubica entre 40 y 180 horas. Aunque la
+        estimación central coincide, las decisiones de mantenimiento deberían ser distintas.</p>
+
+      <p>La incertidumbre permite reconocer cuándo la información es insuficiente, establecer márgenes de seguridad y
+        comparar alternativas en función de su riesgo. También ayuda a determinar qué nueva medición sería más valiosa
+        para reducir las dudas existentes.</p>
+
+      <p>Esta es una de las principales aportaciones del enfoque probabilístico. No se limita a producir una respuesta,
+        sino que informa cuánto respaldo ofrecen los datos y el modelo a esa respuesta.</p>
+
+      <p>Un gemelo digital probabilístico no elimina la incertidumbre ni pretende sustituirla con una cifra
+        aparentemente precisa. La representa, la actualiza y la propaga de manera coherente. Gracias a ello, deja de ser
+        únicamente una réplica virtual del sistema y se convierte en una herramienta para tomar decisiones bajo
+        condiciones reales, donde las mediciones son imperfectas, los parámetros cambian y los modelos nunca reproducen
+        por completo la realidad.</p>
+
+      <p>En este contexto, reconocer lo que no se sabe no es una debilidad del gemelo digital. Es precisamente una de
+        sus capacidades más valiosas.</p>
+
+      <h2>Conclusión</h2>
+
+      <p>El verdadero valor de un gemelo digital probabilístico no consiste solamente en obtener predicciones más
+        sofisticadas,
+        sino en distinguir entre aquello que se conoce con suficiente confianza y aquello que permanece incierto.
+        Al vincular modelos, mediciones y métodos probabilísticos, esta tecnología permite formular diagnósticos más
+        transparentes, anticipar distintos escenarios y tomar decisiones acordes con el riesgo existente.
+        En aplicaciones reales, donde los sensores son imperfectos y los modelos siempre tienen limitaciones, reconocer
+        y
+        cuantificar la incertidumbre no debilita una predicción; la convierte en información técnicamente más útil y
+        confiable.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Nath, P., & Mahadevan, S. (2022). Probabilistic digital twin for additive manufacturing process design and
+          control. <i>Journal of Mechanical Design</i>, 144(9), 091704. DOI:
+          <a href="https://doi.org/10.1115/1.4054521">10.1115/1.4054521</a>
+        </li>
+        <li>Kapteyn, M. G., Pretorius, J. V. R., & Willcox, K. E. (2021). A probabilistic graphical model foundation for
+          enabling predictive digital twins at scale. Nature Computational Science, 1(5), 337–347. DOI:
+          <a href="https://doi.org/10.1038/s43588-021-00069-0">10.1038/s43588-021-00069-0</a></li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
