@@ -64,7 +64,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>Al crear el proyecto aparecerán el archivo <code>platformio.ini</code> y la carpeta <code>src</code>. Sustituye el contenido de <code>platformio.ini</code> por lo siguiente:</p>
 
-      <pre><code class="language-ini">[env:m5stack-core2]
+      <script type="text/ini">[env:m5stack-core2]
 platform = platformio/espressif32
 board = m5stack-core2
 framework = arduino
@@ -72,7 +72,7 @@ framework = arduino
 monitor_speed = 115200
 
 lib_deps =
-    m5stack/M5Unified</code></pre>
+    m5stack/M5Unified</script>
 
       <p>La dependencia M5Unified proporciona una interfaz común para la pantalla, los botones, la alimentación y la IMU. También incorpora la dependencia gráfica M5GFX que necesita la pantalla.</p>
 
@@ -80,8 +80,8 @@ lib_deps =
 
       <p>Abre <code>src/main.cpp</code> y sustituye su contenido por este programa:</p>
 
-      <pre><code class="language-cpp">#include &lt;Arduino.h&gt;
-#include &lt;M5Unified.h&gt;
+      <script type="text/cpp">#include <Arduino.h>
+#include <M5Unified.h>
 
 constexpr uint32_t BAUDRATE = 115200;
 constexpr uint32_t SAMPLE_PERIOD_MS = 1000;
@@ -104,7 +104,7 @@ void setup()
     M5.Display.setTextColor(TFT_WHITE);
     M5.Display.setTextSize(2);
     M5.Display.setCursor(15, 30);
-    M5.Display.println("IMU -&gt; MATLAB");
+    M5.Display.println("IMU -> MATLAB");
 
     imuAvailable = M5.Imu.isEnabled();
 
@@ -129,7 +129,7 @@ void loop()
 
     const uint32_t now = millis();
 
-    if (imuAvailable &amp;&amp; now - lastTransmission &gt;= SAMPLE_PERIOD_MS)
+    if (imuAvailable && now - lastTransmission >= SAMPLE_PERIOD_MS)
     {
         lastTransmission += SAMPLE_PERIOD_MS;
 
@@ -149,7 +149,7 @@ void loop()
     }
 
     delay(1);
-}</code></pre>
+}</script>
 
       <p>La condición basada en <code>millis()</code> evita bloquear el microcontrolador durante un segundo completo. La resta entre valores sin signo conserva además un comportamiento correcto cuando se desborda el contador de <code>millis()</code>.</p>
 
@@ -159,11 +159,11 @@ void loop()
 
       <p>Conecta la tarjeta y ejecuta <strong>PlatformIO: Upload</strong> desde la barra inferior de Visual Studio Code. También puedes hacerlo desde la terminal del proyecto:</p>
 
-      <pre><code class="language-bash">pio run --target upload</code></pre>
+      <script type="text/bash">pio run --target upload</script>
 
       <p>Después abre el monitor serial de PlatformIO:</p>
 
-      <pre><code class="language-bash">pio device monitor</code></pre>
+      <script type="text/bash">pio device monitor</script>
 
       <p>La salida esperada es similar a esta:</p>
 
@@ -177,7 +177,7 @@ IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</code></pre>
 
       <p>Ejecuta la siguiente instrucción para mostrar los puertos disponibles:</p>
 
-      <pre><code class="language-matlab">serialportlist("available")</code></pre>
+      <script type="text/matlab">serialportlist("available")</script>
 
       <p>En Windows aparecerá normalmente un nombre como <code>COM7</code>. En macOS puede verse como <code>/dev/cu.SLAB_USBtoUART</code>, <code>/dev/cu.usbserial-...</code> o <code>/dev/cu.wchusbserial...</code>. En Linux suele utilizarse <code>/dev/ttyUSB0</code> o <code>/dev/ttyACM0</code>.</p>
 
@@ -187,7 +187,7 @@ IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</code></pre>
 
       <p>Crea un archivo llamado <code>m5IMUGauge.m</code> con el código siguiente:</p>
 
-      <pre><code class="language-matlab">function m5IMUGauge(portName)
+      <script type="text/matlab">function m5IMUGauge(portName)
 %M5IMUGAUGE Muestra la inclinación del M5Stack en un Gauge.
 %
 % Ejemplos:
@@ -311,9 +311,9 @@ try
     drawnow limitrate
 
 catch exception
-    if isvalid(device) &amp;&amp; isstruct(device.UserData)
+    if isvalid(device) && isstruct(device.UserData)
         state = device.UserData;
-        if isfield(state, "StatusLabel") &amp;&amp; isvalid(state.StatusLabel)
+        if isfield(state, "StatusLabel") && isvalid(state.StatusLabel)
             state.StatusLabel.Text = "Error: " + string(exception.message);
         end
     end
@@ -332,15 +332,15 @@ if isa(device, "serialport") &amp;&amp; isvalid(device)
 end
 
 delete(fig)
-end</code></pre>
+end</script>
 
       <p>Guarda el archivo y llama a la función con el puerto detectado. Por ejemplo, en Windows:</p>
 
-      <pre><code class="language-matlab">m5IMUGauge("COM7")</code></pre>
+      <script type="text/matlab">m5IMUGauge("COM7")</script>
 
       <p>En macOS, la llamada puede tener esta forma:</p>
 
-      <pre><code class="language-matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</code></pre>
+      <script type="text/matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</script>
 
       <p>Al inclinar el M5Stack alrededor del eje transversal, la aguja reaccionará cuando llegue la siguiente muestra. Como el periodo es de un segundo, la actualización se verá deliberadamente pausada.</p>
 
@@ -348,7 +348,7 @@ end</code></pre>
 
       <p>La instrucción central es:</p>
 
-      <pre><code class="language-matlab">configureCallback(device, "terminator", @updateGauge);</code></pre>
+      <script type="text/matlab">configureCallback(device, "terminator", @updateGauge);</script>
 
       <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code> vigila el flujo de entrada y genera un evento cada vez que encuentra el terminador LF. Entonces llama a <code>updateGauge</code>, que realiza cuatro operaciones:</p>
 
@@ -365,16 +365,16 @@ end</code></pre>
 
       <p>Si se desea mostrar directamente la aceleración en el eje <code>x</code>, cambia los límites del Gauge:</p>
 
-      <pre><code class="language-matlab">gauge.Limits = [-2 2];
-gauge.MajorTicks = -2:0.5:2;</code></pre>
+      <script type="text/matlab">gauge.Limits = [-2 2];
+gauge.MajorTicks = -2:0.5:2;</script>
 
       <p>Después sustituye:</p>
 
-      <pre><code class="language-matlab">state.Gauge.Value = pitch;</code></pre>
+      <script type="text/matlab">state.Gauge.Value = pitch;</script>
 
       <p>por:</p>
 
-      <pre><code class="language-matlab">state.Gauge.Value = max(-2, min(2, ax));</code></pre>
+      <script type="text/matlab">state.Gauge.Value = max(-2, min(2, ax));</script>
 
       <p>Para representar <code>gx</code> puede utilizarse, por ejemplo, un intervalo de \([-250,250]\) grados por segundo. Los límites adecuados dependen del rango del sensor y de la dinámica del experimento.</p>
 
