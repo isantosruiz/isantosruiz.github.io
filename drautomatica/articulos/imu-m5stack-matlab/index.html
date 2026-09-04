@@ -1,0 +1,470 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB | drAutomática</title><meta name="description" content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/imu-m5stack-matlab/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB | drAutomática"><meta property="og:description" content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/imu-m5stack-matlab/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB | drAutomática"><meta name="twitter:description" content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css">
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="ini,cpp,bash,matlab" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Tutorial</p>
+        <h1>Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB</h1>
+        <p class="subtitle">Adquiere aceleraciones y velocidades angulares con el framework de Arduino y actualiza un Gauge de MATLAB mediante eventos del puerto serial.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>En este tutorial programaremos el M5Stack Core2 for AWS desde Visual Studio Code con PlatformIO. El dispositivo leerá su unidad de medición inercial y enviará cada segundo las tres componentes de aceleración y las tres componentes de velocidad angular. MATLAB recibirá cada trama mediante un evento, ejecutará un <em>callback</em> y actualizará un control Gauge sin utilizar un ciclo de consulta continua.</p>
+      </section>
+
+      <h2>Introducción</h2>
+
+      <p>El M5Stack Core2 for AWS integra un microcontrolador ESP32, una pantalla táctil y una unidad de medición inercial, o IMU. Esta última combina un acelerómetro y un giroscopio de tres ejes. El acelerómetro mide las componentes <code>ax</code>, <code>ay</code> y <code>az</code>, mientras que el giroscopio proporciona las velocidades angulares <code>gx</code>, <code>gy</code> y <code>gz</code>.</p>
+
+      <p>La aplicación dividirá el trabajo de manera natural. El ESP32 se encargará de acceder al sensor y respetar el periodo de muestreo. MATLAB interpretará los datos y actualizará la interfaz gráfica.</p>
+
+      <p>Cada segundo, el M5Stack enviará una línea con el formato siguiente:</p>
+
+      <pre><code class="language-text">IMU,ax,ay,az,gx,gy,gz</code></pre>
+
+      <p>Una trama real puede verse así:</p>
+
+      <pre><code class="language-text">IMU,0.012000,-0.034000,0.997000,0.100000,-0.050000,0.020000</code></pre>
+
+      <p>Los tres primeros valores se expresan en unidades de gravedad, mientras que los tres últimos corresponden a grados por segundo.</p>
+
+      <h2>La magnitud que mostrará el Gauge</h2>
+
+      <p>Un Gauge representa una sola magnitud escalar. Para aprovechar las tres componentes del acelerómetro, mostraremos el ángulo de inclinación o <em>pitch</em>:</p>
+
+      <p>\[
+        \theta=\operatorname{atan2}\!\left(-a_x,\sqrt{a_y^2+a_z^2}\right).
+      \]</p>
+
+      <p>Esta expresión estima la orientación respecto a la gravedad y produce un ángulo entre \(-90^\circ\) y \(90^\circ\). Funciona bien cuando el dispositivo está quieto o se mueve lentamente. Durante movimientos rápidos, el acelerómetro también detecta aceleraciones distintas de la gravedad y el resultado deja de representar únicamente la orientación.</p>
+
+      <h2>Preparación de Visual Studio Code y PlatformIO</h2>
+
+      <p>Para realizar la práctica se necesita el M5Stack Core2 for AWS, un cable USB-C con transmisión de datos, Visual Studio Code con la extensión PlatformIO IDE y MATLAB con soporte para el objeto <code>serialport</code>.</p>
+
+      <p>Aunque con frecuencia se le llama simplemente “Visual Studio”, PlatformIO se utiliza en este caso dentro de <strong>Visual Studio Code</strong>.</p>
+
+      <p>En la página principal de PlatformIO, selecciona <strong>New Project</strong> y utiliza esta configuración:</p>
+
+      <ul class="elegante">
+        <li><strong>Name:</strong> <code>M5Stack_IMU_MATLAB</code>.</li>
+        <li><strong>Board:</strong> <code>M5Stack Core2</code>.</li>
+        <li><strong>Framework:</strong> <code>Arduino</code>.</li>
+      </ul>
+
+      <p>PlatformIO identifica la tarjeta mediante <code>m5stack-core2</code>. Esta definición es adecuada para el Core2 for AWS porque su unidad principal utiliza el hardware del Core2. La biblioteca M5Unified detecta la IMU disponible y ofrece una interfaz de alto nivel común para las versiones con MPU6886 y las revisiones que incorporan BMI270.</p>
+
+      <h2>Configuración de PlatformIO</h2>
+
+      <p>Al crear el proyecto aparecerán el archivo <code>platformio.ini</code> y la carpeta <code>src</code>. Sustituye el contenido de <code>platformio.ini</code> por lo siguiente:</p>
+
+      <pre><code class="language-ini">[env:m5stack-core2]
+platform = platformio/espressif32
+board = m5stack-core2
+framework = arduino
+
+monitor_speed = 115200
+
+lib_deps =
+    m5stack/M5Unified</code></pre>
+
+      <p>La dependencia M5Unified proporciona una interfaz común para la pantalla, los botones, la alimentación y la IMU. También incorpora la dependencia gráfica M5GFX que necesita la pantalla.</p>
+
+      <h2>Firmware para leer y transmitir la IMU</h2>
+
+      <p>Abre <code>src/main.cpp</code> y sustituye su contenido por este programa:</p>
+
+      <pre><code class="language-cpp">#include &lt;Arduino.h&gt;
+#include &lt;M5Unified.h&gt;
+
+constexpr uint32_t BAUDRATE = 115200;
+constexpr uint32_t SAMPLE_PERIOD_MS = 1000;
+
+uint32_t lastTransmission = 0;
+bool imuAvailable = false;
+
+void setup()
+{
+    auto cfg = M5.config();
+
+    // Evita que M5.begin() inicialice Serial con otra configuración.
+    cfg.serial_baudrate = 0;
+    cfg.internal_imu = true;
+
+    M5.begin(cfg);
+    Serial.begin(BAUDRATE);
+
+    M5.Display.fillScreen(TFT_BLACK);
+    M5.Display.setTextColor(TFT_WHITE);
+    M5.Display.setTextSize(2);
+    M5.Display.setCursor(15, 30);
+    M5.Display.println("IMU -&gt; MATLAB");
+
+    imuAvailable = M5.Imu.isEnabled();
+
+    if (imuAvailable)
+    {
+        M5.Display.println("Muestreo: 1 s");
+        Serial.println("READY");
+    }
+    else
+    {
+        M5.Display.setTextColor(TFT_RED);
+        M5.Display.println("IMU no encontrada");
+        Serial.println("ERROR,IMU_NOT_AVAILABLE");
+    }
+
+    lastTransmission = millis();
+}
+
+void loop()
+{
+    M5.update();
+
+    const uint32_t now = millis();
+
+    if (imuAvailable &amp;&amp; now - lastTransmission &gt;= SAMPLE_PERIOD_MS)
+    {
+        lastTransmission += SAMPLE_PERIOD_MS;
+
+        // Actualiza la IMU y obtiene la medición más reciente.
+        M5.Imu.update();
+        const auto data = M5.Imu.getImuData();
+
+        Serial.printf(
+            "IMU,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+            data.accel.x,
+            data.accel.y,
+            data.accel.z,
+            data.gyro.x,
+            data.gyro.y,
+            data.gyro.z
+        );
+    }
+
+    delay(1);
+}</code></pre>
+
+      <p>La condición basada en <code>millis()</code> evita bloquear el microcontrolador durante un segundo completo. La resta entre valores sin signo conserva además un comportamiento correcto cuando se desborda el contador de <code>millis()</code>.</p>
+
+      <p><code>M5.Imu.update()</code> solicita una medición reciente. A continuación, <code>M5.Imu.getImuData()</code> devuelve una estructura con los vectores <code>accel</code> y <code>gyro</code>. El programa transmite seis valores con seis cifras decimales y termina cada trama con <code>\n</code>, es decir, con el carácter LF que MATLAB utilizará como terminador.</p>
+
+      <h2>Compilación y carga del firmware</h2>
+
+      <p>Conecta la tarjeta y ejecuta <strong>PlatformIO: Upload</strong> desde la barra inferior de Visual Studio Code. También puedes hacerlo desde la terminal del proyecto:</p>
+
+      <pre><code class="language-bash">pio run --target upload</code></pre>
+
+      <p>Después abre el monitor serial de PlatformIO:</p>
+
+      <pre><code class="language-bash">pio device monitor</code></pre>
+
+      <p>La salida esperada es similar a esta:</p>
+
+      <pre><code class="language-text">READY
+IMU,0.011963,-0.033936,0.997070,0.091553,-0.061035,0.015259
+IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</code></pre>
+
+      <p>Debe aparecer una línea <code>IMU</code> aproximadamente cada segundo. Cierra el monitor antes de abrir MATLAB, ya que dos programas no pueden utilizar simultáneamente el mismo puerto.</p>
+
+      <h2>Identificación del puerto en MATLAB</h2>
+
+      <p>Ejecuta la siguiente instrucción para mostrar los puertos disponibles:</p>
+
+      <pre><code class="language-matlab">serialportlist("available")</code></pre>
+
+      <p>En Windows aparecerá normalmente un nombre como <code>COM7</code>. En macOS puede verse como <code>/dev/cu.SLAB_USBtoUART</code>, <code>/dev/cu.usbserial-...</code> o <code>/dev/cu.wchusbserial...</code>. En Linux suele utilizarse <code>/dev/ttyUSB0</code> o <code>/dev/ttyACM0</code>.</p>
+
+      <p>En macOS conviene elegir el dispositivo <code>/dev/cu.*</code> correspondiente, no el dispositivo <code>/dev/tty.*</code> del mismo convertidor.</p>
+
+      <h2>Interfaz MATLAB con Gauge y callback serial</h2>
+
+      <p>Crea un archivo llamado <code>m5IMUGauge.m</code> con el código siguiente:</p>
+
+      <pre><code class="language-matlab">function m5IMUGauge(portName)
+%M5IMUGAUGE Muestra la inclinación del M5Stack en un Gauge.
+%
+% Ejemplos:
+%   m5IMUGauge("COM7")
+%   m5IMUGauge("/dev/cu.SLAB_USBtoUART")
+
+arguments
+    portName (1,1) string
+end
+
+baudRate = 115200;
+
+% Abrir el puerto y usar LF como terminador de cada trama.
+device = serialport(portName, baudRate, "Timeout", 2);
+configureTerminator(device, "LF");
+
+% Algunas placas ESP32 se reinician al abrir el puerto.
+pause(1.5);
+flush(device);
+
+% Construcción de la interfaz.
+fig = uifigure( ...
+    "Name", "IMU del M5Stack Core2 for AWS", ...
+    "Position", [100 100 520 430]);
+
+layout = uigridlayout(fig, [4 1]);
+layout.RowHeight = {35, "1x", 75, 25};
+layout.Padding = [20 15 20 15];
+
+titleLabel = uilabel(layout, ...
+    "Text", "Ángulo de inclinación", ...
+    "FontSize", 18, ...
+    "FontWeight", "bold", ...
+    "HorizontalAlignment", "center");
+
+gauge = uigauge(layout, "semicircular");
+gauge.Limits = [-90 90];
+gauge.MajorTicks = -90:30:90;
+gauge.Value = 0;
+gauge.ScaleColors = [ ...
+    0.85 0.33 0.10;
+    0.47 0.67 0.19;
+    0.85 0.33 0.10];
+gauge.ScaleColorLimits = [-90 -45; -45 45; 45 90];
+
+rawLabel = uilabel(layout, ...
+    "Text", "Esperando la primera muestra...", ...
+    "FontName", "Courier New", ...
+    "HorizontalAlignment", "center", ...
+    "WordWrap", "on");
+
+statusLabel = uilabel(layout, ...
+    "Text", "Puerto abierto: " + portName, ...
+    "HorizontalAlignment", "center");
+
+% El callback recuperará los controles desde UserData.
+device.UserData = struct( ...
+    "Figure", fig, ...
+    "Gauge", gauge, ...
+    "RawLabel", rawLabel, ...
+    "StatusLabel", statusLabel);
+
+% La figura conserva la referencia al puerto para poder cerrarlo.
+fig.UserData = device;
+fig.CloseRequestFcn = @closeApplication;
+
+% Ejecutar updateGauge cada vez que llegue una línea terminada en LF.
+configureCallback(device, "terminator", @updateGauge);
+
+disp("Interfaz activa. Cierra la ventana para liberar el puerto serial.")
+end
+
+
+function updateGauge(device, ~)
+% Se ejecuta automáticamente cuando se recibe un terminador LF.
+
+try
+    line = strtrim(readline(device));
+    state = device.UserData;
+
+    if ~isvalid(state.Figure)
+        return
+    end
+
+    if line == "READY"
+        state.StatusLabel.Text = "M5Stack listo";
+        return
+    end
+
+    if startsWith(line, "ERROR")
+        state.StatusLabel.Text = line;
+        return
+    end
+
+    values = sscanf(char(line), "IMU,%f,%f,%f,%f,%f,%f");
+
+    if numel(values) ~= 6
+        state.StatusLabel.Text = "Trama ignorada: " + line;
+        return
+    end
+
+    ax = values(1);
+    ay = values(2);
+    az = values(3);
+    gx = values(4);
+    gy = values(5);
+    gz = values(6);
+
+    pitch = atan2d(-ax, hypot(ay, az));
+    pitch = max(state.Gauge.Limits(1), ...
+                min(state.Gauge.Limits(2), pitch));
+
+    state.Gauge.Value = pitch;
+    state.RawLabel.Text = sprintf([ ...
+        "a = [%+.3f  %+.3f  %+.3f] g\n" ...
+        "w = [%+.3f  %+.3f  %+.3f] deg/s"], ...
+        ax, ay, az, gx, gy, gz);
+    state.StatusLabel.Text = "Última muestra: " + ...
+        string(datetime("now", "Format", "HH:mm:ss"));
+
+    drawnow limitrate
+
+catch exception
+    if isvalid(device) &amp;&amp; isstruct(device.UserData)
+        state = device.UserData;
+        if isfield(state, "StatusLabel") &amp;&amp; isvalid(state.StatusLabel)
+            state.StatusLabel.Text = "Error: " + string(exception.message);
+        end
+    end
+end
+end
+
+
+function closeApplication(fig, ~)
+% Desactiva el callback y libera el puerto al cerrar la ventana.
+
+device = fig.UserData;
+
+if isa(device, "serialport") &amp;&amp; isvalid(device)
+    configureCallback(device, "off");
+    delete(device);
+end
+
+delete(fig)
+end</code></pre>
+
+      <p>Guarda el archivo y llama a la función con el puerto detectado. Por ejemplo, en Windows:</p>
+
+      <pre><code class="language-matlab">m5IMUGauge("COM7")</code></pre>
+
+      <p>En macOS, la llamada puede tener esta forma:</p>
+
+      <pre><code class="language-matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</code></pre>
+
+      <p>Al inclinar el M5Stack alrededor del eje transversal, la aguja reaccionará cuando llegue la siguiente muestra. Como el periodo es de un segundo, la actualización se verá deliberadamente pausada.</p>
+
+      <h2>Cómo funciona el callback</h2>
+
+      <p>La instrucción central es:</p>
+
+      <pre><code class="language-matlab">configureCallback(device, "terminator", @updateGauge);</code></pre>
+
+      <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code> vigila el flujo de entrada y genera un evento cada vez que encuentra el terminador LF. Entonces llama a <code>updateGauge</code>, que realiza cuatro operaciones:</p>
+
+      <ol>
+        <li>Lee la línea completa mediante <code>readline</code>.</li>
+        <li>Verifica que la trama comience con <code>IMU</code> y contenga seis valores.</li>
+        <li>Calcula el ángulo de inclinación.</li>
+        <li>Asigna el resultado a <code>state.Gauge.Value</code> y actualiza las etiquetas.</li>
+      </ol>
+
+      <p>El cierre de la ventana tiene su propio callback, <code>closeApplication</code>. Su función es desactivar la recepción asíncrona y eliminar el objeto serial para dejar disponible el puerto.</p>
+
+      <h2>Cambiar la variable mostrada</h2>
+
+      <p>Si se desea mostrar directamente la aceleración en el eje <code>x</code>, cambia los límites del Gauge:</p>
+
+      <pre><code class="language-matlab">gauge.Limits = [-2 2];
+gauge.MajorTicks = -2:0.5:2;</code></pre>
+
+      <p>Después sustituye:</p>
+
+      <pre><code class="language-matlab">state.Gauge.Value = pitch;</code></pre>
+
+      <p>por:</p>
+
+      <pre><code class="language-matlab">state.Gauge.Value = max(-2, min(2, ax));</code></pre>
+
+      <p>Para representar <code>gx</code> puede utilizarse, por ejemplo, un intervalo de \([-250,250]\) grados por segundo. Los límites adecuados dependen del rango del sensor y de la dinámica del experimento.</p>
+
+      <h2>Problemas frecuentes</h2>
+
+      <ul class="manita">
+        <li><strong>MATLAB indica que el puerto está ocupado.</strong> Cierra el monitor serial de PlatformIO y cualquier otra aplicación que esté usando el dispositivo. Si quedó una conexión anterior en MATLAB, ejecuta <code>delete(serialportfind)</code>.</li>
+
+        <li><strong>No aparece ningún puerto.</strong> Comprueba que el cable USB-C sea de datos. Según la revisión de la placa y el sistema operativo, también puede ser necesario instalar el controlador CP210x o CH9102.</li>
+
+        <li><strong>El firmware muestra “IMU no encontrada”.</strong> Actualiza M5Unified desde PlatformIO, comprueba que la tarjeta seleccionada sea M5Stack Core2 y reinicia el dispositivo. El Core2 for AWS original utiliza MPU6886, mientras que revisiones recientes pueden incorporar BMI270.</li>
+
+        <li><strong>MATLAB recibe datos incompletos.</strong> Verifica que ambos programas utilicen 115200 baudios y que MATLAB tenga configurado LF como terminador. El firmware debe enviar exactamente una trama por línea.</li>
+
+        <li><strong>El ángulo tiene el signo contrario.</strong> La orientación de los ejes depende de cómo se coloque físicamente la tarjeta. Elimina el signo negativo de <code>-ax</code> o invierte el resultado de <code>pitch</code>.</li>
+
+        <li><strong>El Gauge responde con retraso.</strong> En este tutorial el retardo es esperado porque el firmware transmite una muestra por segundo. Para una visualización más fluida, cambia <code>SAMPLE_PERIOD_MS</code> a <code>100</code> y trabaja aproximadamente a 10 Hz.</li>
+      </ul>
+
+      <h2>Alcance y posibles mejoras</h2>
+
+      <p>El sistema demuestra una adquisición dirigida por eventos y evita el sondeo continuo desde MATLAB. Para estudiar movimientos rápidos conviene aumentar la frecuencia, agregar una marca de tiempo generada por el ESP32 y, si es necesario, transmitir bloques de muestras o paquetes binarios.</p>
+
+      <p>También puede combinarse el acelerómetro con el giroscopio mediante un filtro complementario o un filtro de Kalman. Esto permite obtener una estimación de orientación más estable que la calculada únicamente a partir de la gravedad.</p>
+
+      <p>La arquitectura puede ampliarse para construir registradores de movimiento, interfaces de instrumentación, detectores de caídas, sistemas de monitoreo y prototipos de control en los que el M5Stack funcione como una extensión física de MATLAB.</p>
+
+      <h2>Bibliografía</h2>
+
+      <ul class="references">
+        <li>M5Stack. <a href="https://github.com/m5stack/M5Unified">M5Unified: Unified library for M5Stack series</a>.</li>
+        <li>PlatformIO. <a href="https://docs.platformio.org/en/latest/boards/espressif32/m5stack-core2.html">M5Stack Core2</a>.</li>
+        <li>MathWorks. <a href="https://www.mathworks.com/help/matlab/ref/serialport.configurecallback.html"><code>configureCallback</code>: Set callback function and trigger condition</a>.</li>
+        <li>MathWorks. <a href="https://www.mathworks.com/help/matlab/ref/uigauge.html"><code>uigauge</code>: Create gauge component</a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby">Esta obra se publica bajo una licencia <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a>.<br>La licencia exige que quienes reutilicen el material otorguen crédito al autor; eso les permite distribuir, remezclar, adaptar y desarrollar el material en cualquier medio o formato, incluso con fines comerciales.</footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
