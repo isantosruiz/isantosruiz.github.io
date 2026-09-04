@@ -156,9 +156,9 @@ void setup()
 
     M5.Display.fillScreen(TFT_BLACK);
     M5.Display.setTextColor(TFT_WHITE);
+    M5.Display.clearDisplay();
     M5.Display.setTextSize(2);
-    M5.Display.setCursor(15, 30);
-    M5.Display.println("IMU -> MATLAB");
+    M5.Display.println("Lectura de IMU");
 
     imuAvailable = M5.Imu.isEnabled();
 
@@ -266,6 +266,8 @@ arguments
     portName (1,1) string
 end
 
+delete(serialportfind)
+
 baudRate = 115200;
 
 % Abrir el puerto serial.
@@ -292,7 +294,7 @@ layout.Padding = [20 15 20 15];
 % Título.
 uilabel(layout, ...
     "Text", "Ángulo de inclinación", ...
-    "FontSize", 18, ...
+    "FontSize", 16, ...
     "FontWeight", "bold", ...
     "HorizontalAlignment", "center");
 
@@ -316,7 +318,6 @@ gauge.ScaleColorLimits = [ ...
 rawLabel = uilabel(layout, ...
     "Text", sprintf( ...
         'a = [---  ---  ---] g\nw = [---  ---  ---] deg/s'), ...
-    "FontName", "Courier New", ...
     "HorizontalAlignment", "center", ...
     "WordWrap", "on");
 
