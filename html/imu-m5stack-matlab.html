@@ -2,79 +2,123 @@
 <html lang="es">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks.">
-  <title>Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB</title>
-  <link rel="stylesheet" href="./scientific-template.css">
-  <script src="./scientific-template.js" data-codehl-languages="ini,cpp,bash,matlab" defer></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="Tutorial para leer la IMU del M5Stack Core2 for AWS con Arduino y PlatformIO, enviar las mediciones por el puerto serial y visualizarlas en un Gauge de MATLAB mediante callbacks.">
+    <title>Lectura de la IMU del M5Stack Core2 for AWS</title>
+    <link rel="stylesheet" href="./scientific-template.css">
+    <script src="./scientific-template.js" data-codehl-languages="ini,cpp,shell,matlab" defer></script>
 </head>
 
 <body class="bookdown-style">
-  <main class="article-shell">
-    <article class="article-inner">
-      <header class="article-header">
-        <p class="article-kicker">Tutorial</p>
-        <h1>Lectura de la IMU del M5Stack Core2 for AWS desde PlatformIO y MATLAB</h1>
-        <p class="subtitle">Adquiere aceleraciones y velocidades angulares con el framework de Arduino y actualiza un Gauge de MATLAB mediante eventos del puerto serial.</p>
-        <div class="article-meta">
-          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
-          <span>Septiembre, 2026</span>
-        </div>
-      </header>
+    <main class="article-shell">
+        <article class="article-inner">
+            <header class="article-header">
+                <p class="article-kicker">Tutorial</p>
+                <h1>Lectura de la IMU del M5Stack Core2 for AWS</h1>
+                <p class="subtitle">Adquiere aceleraciones y velocidades angulares con PlatformIO/Arduino y
+                    actualiza un Gauge de MATLAB mediante eventos del puerto serial.</p>
+                <div class="article-meta">
+                    <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+                    <span>Septiembre, 2026</span>
+                </div>
+            </header>
 
-      <section class="abstract">
-        <p>En este tutorial programaremos el M5Stack Core2 for AWS desde Visual Studio Code con PlatformIO. El dispositivo leerá su unidad de medición inercial y enviará cada segundo las tres componentes de aceleración y las tres componentes de velocidad angular. MATLAB recibirá cada trama mediante un evento, ejecutará un <em>callback</em> y actualizará un control Gauge sin utilizar un ciclo de consulta continua.</p>
-      </section>
+            <section class="abstract">
+                <p>En este tutorial programaremos el M5Stack Core2 for AWS desde Visual Studio Code con PlatformIO. El
+                    dispositivo leerá su unidad de medición inercial y enviará cada segundo las tres componentes de
+                    aceleración y las tres componentes de velocidad angular. MATLAB recibirá cada trama mediante un
+                    evento, ejecutará un <em>callback</em> y actualizará un control Gauge sin utilizar un ciclo de
+                    consulta continua.</p>
+            </section>
 
-      <h2>Introducción</h2>
+            <h2>Introducción</h2>
 
-      <p>El M5Stack Core2 for AWS integra un microcontrolador ESP32, una pantalla táctil y una unidad de medición inercial, o IMU. Esta última combina un acelerómetro y un giroscopio de tres ejes. El acelerómetro mide las componentes <code>ax</code>, <code>ay</code> y <code>az</code>, mientras que el giroscopio proporciona las velocidades angulares <code>gx</code>, <code>gy</code> y <code>gz</code>.</p>
+            <p>El M5Stack Core2 for AWS integra un microcontrolador ESP32, una pantalla táctil y una unidad de medición
+                inercial, o IMU. Esta última combina un acelerómetro y un giroscopio de tres ejes. El acelerómetro mide
+                las componentes <code>ax</code>, <code>ay</code> y <code>az</code>, mientras que el giroscopio
+                proporciona las velocidades angulares <code>gx</code>, <code>gy</code> y <code>gz</code>.</p>
 
-      <p>La aplicación dividirá el trabajo de manera natural. El ESP32 se encargará de acceder al sensor y respetar el periodo de muestreo. MATLAB interpretará los datos y actualizará la interfaz gráfica.</p>
+            <figure>
+                <img src="https://static-cdn.m5stack.com/resource/docs/products/core/core2_for_aws/core2_for_aws_01.webp"
+                    alt="M5Stack Core2 for AWS con sus principales componentes identificados"
+                    style="display: block; width: min(100%, 480px); height: auto; margin: 0 auto;">
+                <figcaption>
+                    M5Stack Core2 for AWS con pantalla táctil, puerto USB-C, base de expansión e IMU integrada.
+                </figcaption>
+            </figure>
 
-      <p>Cada segundo, el M5Stack enviará una línea con el formato siguiente:</p>
+            <p>La aplicación dividirá el trabajo de manera natural. El ESP32 se encargará de acceder al sensor y
+                respetar el periodo de muestreo. MATLAB interpretará los datos y actualizará la interfaz gráfica.</p>
 
-      <pre><code class="language-text">IMU,ax,ay,az,gx,gy,gz</code></pre>
+            <p>Cada segundo, el M5Stack enviará una línea con el formato siguiente:</p>
 
-      <p>Una trama real puede verse así:</p>
+            <script type="text/shell">IMU,ax,ay,az,gx,gy,gz</script>
 
-      <pre><code class="language-text">IMU,0.012000,-0.034000,0.997000,0.100000,-0.050000,0.020000</code></pre>
+            <p>Una trama real puede verse así:</p>
 
-      <p>Los tres primeros valores se expresan en unidades de gravedad, mientras que los tres últimos corresponden a grados por segundo.</p>
+            <script type="text/shell">IMU,0.012000,-0.034000,0.997000,0.100000,-0.050000,0.020000</script>
 
-      <h2>La magnitud que mostrará el Gauge</h2>
+            <p>Los tres primeros valores se expresan en unidades de gravedad, mientras que los tres últimos corresponden
+                a grados por segundo.</p>
 
-      <p>Un Gauge representa una sola magnitud escalar. Para aprovechar las tres componentes del acelerómetro, mostraremos el ángulo de inclinación o <em>pitch</em>:</p>
+            <h2>La magnitud que mostrará el Gauge</h2>
 
-      <p>\[
-        \theta=\operatorname{atan2}\!\left(-a_x,\sqrt{a_y^2+a_z^2}\right).
-      \]</p>
+            <p>Un Gauge representa una sola magnitud escalar. Para aprovechar las tres componentes del acelerómetro,
+                mostraremos el ángulo de inclinación o “pitch”:</p>
 
-      <p>Esta expresión estima la orientación respecto a la gravedad y produce un ángulo entre \(-90^\circ\) y \(90^\circ\). Funciona bien cuando el dispositivo está quieto o se mueve lentamente. Durante movimientos rápidos, el acelerómetro también detecta aceleraciones distintas de la gravedad y el resultado deja de representar únicamente la orientación.</p>
+            <div class="equation">
+                \[
+                \theta=\operatorname{\mbox{atan2}}\!\left(-a_x,\sqrt{a_y^2+a_z^2}\right).
+                \]
+            </div>
 
-      <h2>Preparación de Visual Studio Code y PlatformIO</h2>
+            <p>Esta expresión estima la orientación respecto a la gravedad y produce un ángulo entre \(-90^\circ\) y
+                \(90^\circ\). Funciona bien cuando el dispositivo está quieto o se mueve lentamente; durante movimientos
+                rápidos, el acelerómetro también detecta aceleraciones distintas de la gravedad y el resultado deja de
+                representar únicamente la orientación.</p>
 
-      <p>Para realizar la práctica se necesita el M5Stack Core2 for AWS, un cable USB-C con transmisión de datos, Visual Studio Code con la extensión PlatformIO IDE y MATLAB con soporte para el objeto <code>serialport</code>.</p>
+            <figure>
+                <img src="./IMU.jpg"
+                    alt="Esquema de orientación de los ejes de la IMU en el Core2 for AWS"
+                    style="display: block; width: min(100%, 480px); height: auto; margin: 0 auto;">
+                <figcaption>
+                    Orientación de los ejes de la IMU en el Core2 for AWS.
+                </figcaption>
+            </figure>
 
-      <p>Aunque con frecuencia se le llama simplemente “Visual Studio”, PlatformIO se utiliza en este caso dentro de <strong>Visual Studio Code</strong>.</p>
+            <h2>Preparación de Visual Studio Code y PlatformIO</h2>
 
-      <p>En la página principal de PlatformIO, selecciona <strong>New Project</strong> y utiliza esta configuración:</p>
+            <p>Para realizar la práctica se necesita el M5Stack Core2 for AWS, un cable USB-C con transmisión de datos,
+                Visual Studio Code con la extensión PlatformIO IDE y MATLAB con soporte para el objeto
+                <code>serialport</code>.
+            </p>
 
-      <ul class="elegante">
-        <li><strong>Name:</strong> <code>M5Stack_IMU_MATLAB</code>.</li>
-        <li><strong>Board:</strong> <code>M5Stack Core2</code>.</li>
-        <li><strong>Framework:</strong> <code>Arduino</code>.</li>
-      </ul>
+            <p>Aunque con frecuencia se le llama simplemente “Visual Studio”, PlatformIO se utiliza en este caso dentro
+                de <strong>Visual Studio Code</strong>.</p>
 
-      <p>PlatformIO identifica la tarjeta mediante <code>m5stack-core2</code>. Esta definición es adecuada para el Core2 for AWS porque su unidad principal utiliza el hardware del Core2. La biblioteca M5Unified detecta la IMU disponible y ofrece una interfaz de alto nivel común para las versiones con MPU6886 y las revisiones que incorporan BMI270.</p>
+            <p>En la página principal de PlatformIO, selecciona <strong>New Project</strong> y utiliza esta
+                configuración:</p>
 
-      <h2>Configuración de PlatformIO</h2>
+            <ul class="elegante">
+                <li><strong>Name:</strong> <code>M5Stack_IMU</code>.</li>
+                <li><strong>Board:</strong> <code>M5Stack Core2</code>.</li>
+                <li><strong>Framework:</strong> <code>Arduino</code>.</li>
+            </ul>
 
-      <p>Al crear el proyecto aparecerán el archivo <code>platformio.ini</code> y la carpeta <code>src</code>. Sustituye el contenido de <code>platformio.ini</code> por lo siguiente:</p>
+            <p>PlatformIO identifica la tarjeta mediante <code>m5stack-core2</code>. Esta definición es adecuada para el
+                Core2 for AWS porque su unidad principal utiliza el hardware del Core2. La biblioteca M5Unified detecta
+                la IMU disponible y ofrece una interfaz de alto nivel común para las versiones con MPU6886 y las
+                revisiones que incorporan BMI270.</p>
 
-      <script type="text/ini">[env:m5stack-core2]
-platform = platformio/espressif32
+            <h2>Configuración de PlatformIO</h2>
+
+            <p>Al crear el proyecto aparecerán el archivo <code>platformio.ini</code> y la carpeta <code>src</code>.
+                Sustituye el contenido de <code>platformio.ini</code> por lo siguiente:</p>
+
+            <script type="text/shell">[env:m5stack-core2]
+platform = espressif32
 board = m5stack-core2
 framework = arduino
 
@@ -83,13 +127,14 @@ monitor_speed = 115200
 lib_deps =
     m5stack/M5Unified</script>
 
-      <p>La dependencia M5Unified proporciona una interfaz común para la pantalla, los botones, la alimentación y la IMU. También incorpora la dependencia gráfica M5GFX que necesita la pantalla.</p>
+            <p>La dependencia M5Unified proporciona una interfaz común para la pantalla, los botones, la alimentación y
+                la IMU. También incorpora la dependencia gráfica M5GFX que necesita la pantalla.</p>
 
-      <h2>Firmware para leer y transmitir la IMU</h2>
+            <h2>Firmware para leer y transmitir la IMU</h2>
 
-      <p>Abre <code>src/main.cpp</code> y sustituye su contenido por este programa:</p>
+            <p>Abre <code>src/main.cpp</code> y sustituye su contenido por este programa:</p>
 
-      <script type="text/cpp">#include <Arduino.h>
+            <script type="text/cpp">#include <Arduino.h>
 #include <M5Unified.h>
 
 constexpr uint32_t BAUDRATE = 115200;
@@ -160,43 +205,57 @@ void loop()
     delay(1);
 }</script>
 
-      <p>La condición basada en <code>millis()</code> evita bloquear el microcontrolador durante un segundo completo. La resta entre valores sin signo conserva además un comportamiento correcto cuando se desborda el contador de <code>millis()</code>.</p>
+            <p>La condición basada en <code>millis()</code> evita bloquear el microcontrolador durante un segundo
+                completo. La resta entre valores sin signo conserva además un comportamiento correcto cuando se desborda
+                el contador de <code>millis()</code>.</p>
 
-      <p><code>M5.Imu.update()</code> solicita una medición reciente. A continuación, <code>M5.Imu.getImuData()</code> devuelve una estructura con los vectores <code>accel</code> y <code>gyro</code>. El programa transmite seis valores con seis cifras decimales y termina cada trama con <code>\n</code>, es decir, con el carácter LF que MATLAB utilizará como terminador.</p>
+            <p><code>M5.Imu.update()</code> solicita una medición reciente. A continuación,
+                <code>M5.Imu.getImuData()</code> devuelve una estructura con los vectores <code>accel</code> y
+                <code>gyro</code>. El programa transmite seis valores con seis cifras decimales y termina cada trama con
+                <code>\n</code>, es decir, con el carácter LF que MATLAB utilizará como terminador.
+            </p>
 
-      <h2>Compilación y carga del firmware</h2>
+            <h2>Compilación y carga del firmware</h2>
 
-      <p>Conecta la tarjeta y ejecuta <strong>PlatformIO: Upload</strong> desde la barra inferior de Visual Studio Code. También puedes hacerlo desde la terminal del proyecto:</p>
+            <p>Conecta la tarjeta y ejecuta <strong>PlatformIO: Upload</strong> desde la barra inferior de Visual Studio
+                Code. También puedes hacerlo desde la terminal del proyecto:</p>
 
-      <script type="text/bash">pio run --target upload</script>
+            <script type="text/shell">pio run --target upload</script>
 
-      <p>Después abre el monitor serial de PlatformIO:</p>
+            <p>Después abre el monitor serial de PlatformIO:</p>
 
-      <script type="text/bash">pio device monitor</script>
+            <script type="text/shell">pio device monitor</script>
 
-      <p>La salida esperada es similar a esta:</p>
+            <p>La salida esperada es similar a esta:</p>
 
-      <pre><code class="language-text">READY
+            <script type="text/shell">READY
 IMU,0.011963,-0.033936,0.997070,0.091553,-0.061035,0.015259
-IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</code></pre>
+IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</script>
 
-      <p>Debe aparecer una línea <code>IMU</code> aproximadamente cada segundo. Cierra el monitor antes de abrir MATLAB, ya que dos programas no pueden utilizar simultáneamente el mismo puerto.</p>
+            <p>Debe aparecer una línea <code>IMU</code> aproximadamente cada segundo. Cierra el monitor antes de abrir
+                MATLAB, ya que dos programas no pueden utilizar simultáneamente el mismo puerto.</p>
 
-      <h2>Identificación del puerto en MATLAB</h2>
+            <h2>Identificación del puerto en MATLAB</h2>
 
-      <p>Ejecuta la siguiente instrucción para mostrar los puertos disponibles:</p>
+            <p>Ejecuta la siguiente instrucción para mostrar los puertos disponibles:</p>
 
-      <script type="text/matlab">serialportlist("available")</script>
+            <script type="text/matlab">serialportlist("available")</script>
 
-      <p>En Windows aparecerá normalmente un nombre como <code>COM7</code>. En macOS puede verse como <code>/dev/cu.SLAB_USBtoUART</code>, <code>/dev/cu.usbserial-...</code> o <code>/dev/cu.wchusbserial...</code>. En Linux suele utilizarse <code>/dev/ttyUSB0</code> o <code>/dev/ttyACM0</code>.</p>
+            <p>En Windows aparecerá normalmente un nombre como <code>COM7</code>. En macOS puede verse como
+                <code>/dev/cu.SLAB_USBtoUART</code>, <code>/dev/cu.usbserial-...</code> o
+                <code>/dev/cu.wchusbserial...</code>. En Linux suele utilizarse <code>/dev/ttyUSB0</code> o
+                <code>/dev/ttyACM0</code>.
+            </p>
 
-      <p>En macOS conviene elegir el dispositivo <code>/dev/cu.*</code> correspondiente, no el dispositivo <code>/dev/tty.*</code> del mismo convertidor.</p>
+            <p>En macOS conviene elegir el dispositivo <code>/dev/cu.*</code> correspondiente, no el dispositivo
+                <code>/dev/tty.*</code> del mismo convertidor.
+            </p>
 
-      <h2>Interfaz MATLAB con Gauge y callback serial</h2>
+            <h2>Interfaz MATLAB con Gauge y callback serial</h2>
 
-      <p>Crea un archivo llamado <code>m5IMUGauge.m</code> con el código siguiente:</p>
+            <p>Crea un archivo llamado <code>m5IMUGauge.m</code> con el código siguiente:</p>
 
-      <script type="text/matlab">function m5IMUGauge(portName)
+            <script type="text/matlab">function m5IMUGauge(portName)
 %M5IMUGAUGE Muestra la inclinación del M5Stack en un Gauge.
 %
 % Ejemplos:
@@ -335,7 +394,7 @@ function closeApplication(fig, ~)
 
 device = fig.UserData;
 
-if isa(device, "serialport") &amp;&amp; isvalid(device)
+if isa(device, "serialport") && isvalid(device)
     configureCallback(device, "off");
     delete(device);
 end
@@ -343,86 +402,132 @@ end
 delete(fig)
 end</script>
 
-      <p>Guarda el archivo y llama a la función con el puerto detectado. Por ejemplo, en Windows:</p>
+            <p>Guarda el archivo y llama a la función con el puerto detectado. Por ejemplo, en Windows:</p>
 
-      <script type="text/matlab">m5IMUGauge("COM7")</script>
+            <script type="text/matlab">m5IMUGauge("COM7")</script>
 
-      <p>En macOS, la llamada puede tener esta forma:</p>
+            <p>En macOS, la llamada puede tener esta forma:</p>
 
-      <script type="text/matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</script>
+            <script type="text/matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</script>
 
-      <p>Al inclinar el M5Stack alrededor del eje transversal, la aguja reaccionará cuando llegue la siguiente muestra. Como el periodo es de un segundo, la actualización se verá deliberadamente pausada.</p>
+            <p>Al inclinar el M5Stack alrededor del eje transversal, la aguja reaccionará cuando llegue la siguiente
+                muestra. Como el periodo es de un segundo, la actualización se verá deliberadamente pausada.</p>
 
-      <h2>Cómo funciona el callback</h2>
+            <figure>
+                <img src="./pantalla_imu.png"
+                    alt="Captura de la aplicación MATLAB al arrancar"
+                    style="display: block; width: min(100%, 560px); height: auto; margin: 0 auto;">
+                <figcaption>
+                    Captura de la aplicación MATLAB al arrancar.
+                </figcaption>
+            </figure>
 
-      <p>La instrucción central es:</p>
+            <h2>Cómo funciona el callback</h2>
 
-      <script type="text/matlab">configureCallback(device, "terminator", @updateGauge);</script>
+            <p>La instrucción central es:</p>
 
-      <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code> vigila el flujo de entrada y genera un evento cada vez que encuentra el terminador LF. Entonces llama a <code>updateGauge</code>, que realiza cuatro operaciones:</p>
+            <script type="text/matlab">configureCallback(device, "terminator", @updateGauge);</script>
 
-      <ol>
-        <li>Lee la línea completa mediante <code>readline</code>.</li>
-        <li>Verifica que la trama comience con <code>IMU</code> y contenga seis valores.</li>
-        <li>Calcula el ángulo de inclinación.</li>
-        <li>Asigna el resultado a <code>state.Gauge.Value</code> y actualiza las etiquetas.</li>
-      </ol>
+            <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code> vigila el flujo de
+                entrada y genera un evento cada vez que encuentra el terminador LF. Entonces llama a
+                <code>updateGauge</code>, que realiza cuatro operaciones:
+            </p>
 
-      <p>El cierre de la ventana tiene su propio callback, <code>closeApplication</code>. Su función es desactivar la recepción asíncrona y eliminar el objeto serial para dejar disponible el puerto.</p>
+            <ol>
+                <li>Lee la línea completa mediante <code>readline</code>.</li>
+                <li>Verifica que la trama comience con <code>IMU</code> y contenga seis valores.</li>
+                <li>Calcula el ángulo de inclinación.</li>
+                <li>Asigna el resultado a <code>state.Gauge.Value</code> y actualiza las etiquetas.</li>
+            </ol>
 
-      <h2>Cambiar la variable mostrada</h2>
+            <p>El cierre de la ventana tiene su propio callback, <code>closeApplication</code>. Su función es desactivar
+                la recepción asíncrona y eliminar el objeto serial para dejar disponible el puerto.</p>
 
-      <p>Si se desea mostrar directamente la aceleración en el eje <code>x</code>, cambia los límites del Gauge:</p>
+            <h2>Cambiar la variable mostrada</h2>
 
-      <script type="text/matlab">gauge.Limits = [-2 2];
+            <p>Si se desea mostrar directamente la aceleración en el eje <code>x</code>, cambia los límites del Gauge:
+            </p>
+
+            <script type="text/matlab">gauge.Limits = [-2 2];
 gauge.MajorTicks = -2:0.5:2;</script>
 
-      <p>Después sustituye:</p>
+            <p>Después sustituye:</p>
 
-      <script type="text/matlab">state.Gauge.Value = pitch;</script>
+            <script type="text/matlab">state.Gauge.Value = pitch;</script>
 
-      <p>por:</p>
+            <p>por:</p>
 
-      <script type="text/matlab">state.Gauge.Value = max(-2, min(2, ax));</script>
+            <script type="text/matlab">state.Gauge.Value = max(-2, min(2, ax));</script>
 
-      <p>Para representar <code>gx</code> puede utilizarse, por ejemplo, un intervalo de \([-250,250]\) grados por segundo. Los límites adecuados dependen del rango del sensor y de la dinámica del experimento.</p>
+            <p>Para representar <code>gx</code> puede utilizarse, por ejemplo, un intervalo de \([-250,250]\) grados por
+                segundo. Los límites adecuados dependen del rango del sensor y de la dinámica del experimento.</p>
 
-      <h2>Problemas frecuentes</h2>
+            <h2>Problemas frecuentes</h2>
 
-      <ul class="manita">
-        <li><strong>MATLAB indica que el puerto está ocupado.</strong> Cierra el monitor serial de PlatformIO y cualquier otra aplicación que esté usando el dispositivo. Si quedó una conexión anterior en MATLAB, ejecuta <code>delete(serialportfind)</code>.</li>
+            <ul class="manita">
+                <li><strong>MATLAB indica que el puerto está ocupado.</strong> Cierra el monitor serial de PlatformIO y
+                    cualquier otra aplicación que esté usando el dispositivo. Si quedó una conexión anterior en MATLAB,
+                    ejecuta <code>delete(serialportfind)</code>.</li>
 
-        <li><strong>No aparece ningún puerto.</strong> Comprueba que el cable USB-C sea de datos. Según la revisión de la placa y el sistema operativo, también puede ser necesario instalar el controlador CP210x o CH9102.</li>
+                <li><strong>No aparece ningún puerto.</strong> Comprueba que el cable USB-C sea de datos. Según la
+                    revisión de la placa y el sistema operativo, también puede ser necesario instalar el controlador
+                    CP210x o CH9102.</li>
 
-        <li><strong>El firmware muestra “IMU no encontrada”.</strong> Actualiza M5Unified desde PlatformIO, comprueba que la tarjeta seleccionada sea M5Stack Core2 y reinicia el dispositivo. El Core2 for AWS original utiliza MPU6886, mientras que revisiones recientes pueden incorporar BMI270.</li>
+                <li><strong>El firmware muestra “IMU no encontrada”.</strong> Actualiza M5Unified desde PlatformIO,
+                    comprueba que la tarjeta seleccionada sea M5Stack Core2 y reinicia el dispositivo. El Core2 for AWS
+                    original utiliza MPU6886, mientras que revisiones recientes pueden incorporar BMI270.</li>
 
-        <li><strong>MATLAB recibe datos incompletos.</strong> Verifica que ambos programas utilicen 115200 baudios y que MATLAB tenga configurado LF como terminador. El firmware debe enviar exactamente una trama por línea.</li>
+                <li><strong>MATLAB recibe datos incompletos.</strong> Verifica que ambos programas utilicen 115200
+                    baudios y que MATLAB tenga configurado LF como terminador. El firmware debe enviar exactamente una
+                    trama por línea.</li>
 
-        <li><strong>El ángulo tiene el signo contrario.</strong> La orientación de los ejes depende de cómo se coloque físicamente la tarjeta. Elimina el signo negativo de <code>-ax</code> o invierte el resultado de <code>pitch</code>.</li>
+                <li><strong>El ángulo tiene el signo contrario.</strong> La orientación de los ejes depende de cómo se
+                    coloque físicamente la tarjeta. Elimina el signo negativo de <code>-ax</code> o invierte el
+                    resultado de <code>pitch</code>.</li>
 
-        <li><strong>El Gauge responde con retraso.</strong> En este tutorial el retardo es esperado porque el firmware transmite una muestra por segundo. Para una visualización más fluida, cambia <code>SAMPLE_PERIOD_MS</code> a <code>100</code> y trabaja aproximadamente a 10 Hz.</li>
-      </ul>
+                <li><strong>El Gauge responde con retraso.</strong> En este tutorial el retardo es esperado porque el
+                    firmware transmite una muestra por segundo. Para una visualización más fluida, cambia
+                    <code>SAMPLE_PERIOD_MS</code> a <code>100</code> y trabaja aproximadamente a 10 Hz.
+                </li>
+            </ul>
 
-      <h2>Alcance y posibles mejoras</h2>
+            <h2>Alcance y posibles mejoras</h2>
 
-      <p>El sistema demuestra una adquisición dirigida por eventos y evita el sondeo continuo desde MATLAB. Para estudiar movimientos rápidos conviene aumentar la frecuencia, agregar una marca de tiempo generada por el ESP32 y, si es necesario, transmitir bloques de muestras o paquetes binarios.</p>
+            <p>El sistema demuestra una adquisición dirigida por eventos y evita el sondeo continuo desde MATLAB. Para
+                estudiar movimientos rápidos conviene aumentar la frecuencia, agregar una marca de tiempo generada por
+                el ESP32 y, si es necesario, transmitir bloques de muestras o paquetes binarios.</p>
 
-      <p>También puede combinarse el acelerómetro con el giroscopio mediante un filtro complementario o un filtro de Kalman. Esto permite obtener una estimación de orientación más estable que la calculada únicamente a partir de la gravedad.</p>
+            <p>También puede combinarse el acelerómetro con el giroscopio mediante un filtro complementario o un filtro
+                de Kalman. Esto permite obtener una estimación de orientación más estable que la calculada únicamente a
+                partir de la gravedad.</p>
 
-      <p>La arquitectura puede ampliarse para construir registradores de movimiento, interfaces de instrumentación, detectores de caídas, sistemas de monitoreo y prototipos de control en los que el M5Stack funcione como una extensión física de MATLAB.</p>
+            <p>La arquitectura puede ampliarse para construir registradores de movimiento, interfaces de
+                instrumentación, detectores de caídas, sistemas de monitoreo y prototipos de control en los que el
+                M5Stack funcione como una extensión física de MATLAB.</p>
 
-      <h2>Bibliografía</h2>
+            <h2>Bibliografía</h2>
 
-      <ul class="references">
-        <li>M5Stack. <a href="https://github.com/m5stack/M5Unified">M5Unified: Unified library for M5Stack series</a>.</li>
-        <li>PlatformIO. <a href="https://docs.platformio.org/en/latest/boards/espressif32/m5stack-core2.html">M5Stack Core2</a>.</li>
-        <li>MathWorks. <a href="https://www.mathworks.com/help/matlab/ref/serialport.configurecallback.html"><code>configureCallback</code>: Set callback function and trigger condition</a>.</li>
-        <li>MathWorks. <a href="https://www.mathworks.com/help/matlab/ref/uigauge.html"><code>uigauge</code>: Create gauge component</a>.</li>
-      </ul>
+            <ul class="references">
+                <li>M5Stack. (s. f.). <a href="https://github.com/m5stack/M5Unified"><em>M5Unified: Arduino / ESP-IDF
+                            library for M5Stack series</em></a> [Software]. GitHub. Recuperado el 4 de septiembre de
+                    2026.</li>
+                <li>PlatformIO. (s. f.). <a
+                        href="https://docs.platformio.org/en/latest/boards/espressif32/m5stack-core2.html"><em>M5Stack
+                            Core2</em></a>. <em>PlatformIO Documentation</em>. Recuperado el 4 de septiembre de 2026.
+                </li>
+                <li>The MathWorks, Inc. (s. f.). <a
+                        href="https://www.mathworks.com/help/matlab/ref/serialport.configurecallback.html"><em><code>configureCallback</code>:
+                            Set callback function and trigger condition for communication with serial port
+                            device</em></a>. <em>MATLAB Documentation</em>. Recuperado el 4 de septiembre de 2026.</li>
+                <li>The MathWorks, Inc. (s. f.). <a
+                        href="https://www.mathworks.com/help/matlab/ref/uigauge.html"><em><code>uigauge</code>: Create
+                            gauge component</em></a>. <em>MATLAB Documentation</em>. Recuperado el 4 de septiembre de
+                    2026.</li>
+            </ul>
 
-      <footer class="article-footer ccby">Esta obra se publica bajo una licencia <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a>.<br>La licencia exige que quienes reutilicen el material otorguen crédito al autor; eso les permite distribuir, remezclar, adaptar y desarrollar el material en cualquier medio o formato, incluso con fines comerciales.</footer>
-    </article>
-  </main>
+            <footer class="article-footer ccby"></footer>
+        </article>
+    </main>
 </body>
 
 </html>

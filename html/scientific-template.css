@@ -288,6 +288,10 @@ figcaption,
   line-height: 1.45;
 }
 
+figcaption {
+  text-align: center;
+}
+
 .table-block {
   margin: 1.8rem 0;
 }
