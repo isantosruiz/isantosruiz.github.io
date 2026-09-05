@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Serie Web</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, button {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #disconnectBtn {
+            background-color: #dc3545;
+        }
+        #disconnectBtn:hover {
+            background-color: #bd2130;
+        }
+        #console {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            height: 400px;
+            overflow-y: auto;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .status {
+            font-weight: bold;
+            margin-left: auto;
+        }
+        .connected { color: #28a745; }
+        .disconnected { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Monitor Puerto Serie Web</h2>
+    
+    <div class="controls">
+        <label for="baudrate">Baudios:</label>
+        <select id="baudrate">
+            <option value="9600" selected>9600</option>
+            <option value="115200">115200</option>
+            <option value="4800">4800</option>
+            <option value="19200">19200</option>
+            <option value="38400">38400</option>
+            <option value="57600">57600</option>
+        </select>
+
+        <button id="connectBtn">Conectar</button>
+        <button id="disconnectBtn" disabled>Desconectar</button>
+        <button id="clearBtn">Limpiar Consola</button>
+
+        <span id="statusText" class="status disconnected">Desconectado</span>
+    </div>
+
+    <div id="console">--- Esperando conexión ---</div>
+</div>
+
+<script>
+    let port;
+    let reader;
+    let keepReading = true;
+
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const baudrateSelect = document.getElementById('baudrate');
+    const consoleDiv = document.getElementById('console');
+    const statusText = document.getElementById('statusText');
+
+    // Verificar compatibilidad del navegador
+    if (!('serial' in navigator)) {
+        consoleDiv.textContent = "Error: Tu navegador no soporta la Web Serial API. Prueba con Google Chrome o Microsoft Edge.";
+        connectBtn.disabled = true;
+    }
+
+    async function readFromPort() {
+        const textDecoder = new TextDecoder();
+        while (port.readable && keepReading) {
+            reader = port.readable.getReader();
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        break; 
+                    }
+                    if (value) {
+                        // Decodificar y agregar el texto a la consola
+                        consoleDiv.textContent += textDecoder.decode(value);
+                        // Auto-scroll hacia abajo
+                        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                    }
+                }
+            } catch (error) {
+                console.error("Error leyendo datos del puerto:", error);
+                appendLog(`\n[Error de lectura: ${error.message}]\n`);
+            } finally {
+                reader.releaseLock();
+            }
+        }
+    }
+
+    connectBtn.addEventListener('click', async () => {
+        try {
+            // Solicitar selección de puerto al usuario
+            port = await navigator.serial.requestPort();
+            const baudRate = parseInt(baudrateSelect.value);
+            
+            // Abrir el puerto
+            await port.open({ baudRate });
+            
+            // Actualizar interfaz gráfica
+            keepReading = true;
+            statusText.textContent = "Conectado";
+            statusText.className = "status connected";
+            connectBtn.disabled = true;
+            disconnectBtn.disabled = false;
+            baudrateSelect.disabled = true;
+            consoleDiv.textContent = "[Puerto conectado correctamente]\n";
+
+            // Iniciar ciclo de lectura asíncrono
+            readFromPort();
+
+        } catch (error) {
+            console.error("Error al conectar:", error);
+            appendLog(`\n[Error al conectar: ${error.message}]\n`);
+        }
+    });
+
+    disconnectBtn.addEventListener('click', async () => {
+        await disconnectPort();
+    });
+
+    async function disconnectPort() {
+        keepReading = false;
+        if (reader) {
+            await reader.cancel();
+        }
+        if (port) {
+            await port.close();
+        }
+        statusText.textContent = "Desconectado";
+        statusText.className = "status disconnected";
+        connectBtn.disabled = false;
+        disconnectBtn.disabled = true;
+        baudrateSelect.disabled = false;
+        appendLog(`\n[Puerto desconectado]\n`);
+    }
+
+    clearBtn.addEventListener('click', () => {
+        consoleDiv.textContent = "";
+    });
+
+    function appendLog(message) {
+        consoleDiv.textContent += message;
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
