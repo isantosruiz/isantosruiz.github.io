@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "lectura-imu-m5stack",
+    "kind": "external",
+    "title": "Lectura de la IMU del M5Stack Core2 for AWS",
+    "href": "https://isantosruiz.github.io/html/m5.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "matlab"
+    ],
+  },  
+  {
     "id": "gemelo-digital-probabilistico",
     "kind": "external",
     "title": "Gemelo digital probabilístico",
