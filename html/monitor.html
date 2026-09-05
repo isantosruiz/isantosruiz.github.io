@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Tutorial para crear un monitor serial bidireccional en el navegador con Web Serial API y placas ESP32, Arduino y compatibles." />
+  <title>Cómo crear un monitor serial web con Web Serial API</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="cpp,xml,javascript" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Tutorial</p>
+        <h1>Cómo crear un monitor serial web</h1>
+        <p class="subtitle">Comunica una página HTML con placas ESP32, Arduino y otros dispositivos mediante la Web
+          Serial API.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>
+          Un monitor serial permite observar los mensajes que una placa envía por USB y, cuando hace falta, devolverle
+          comandos desde la computadora. En este tutorial construiremos una versión que funciona directamente en el
+          navegador, donde el usuario selecciona el puerto, elige la velocidad, recibe datos de manera asíncrona y puede
+          enviar texto con distintos finales de línea. El resultado es una herramienta útil para depurar firmware,
+          inspeccionar sensores y controlar prototipos sin instalar una aplicación de escritorio.
+        </p>
+      </section>
+
+      <h2>Por qué usar un monitor serial en el navegador</h2>
+
+      <p>
+        Cuando se programa un ESP32, una placa Arduino o cualquier microcontrolador con comunicación serial, la primera
+        ventana hacia el dispositivo suele ser el monitor serial. El firmware puede imprimir estados de inicialización,
+        lecturas de sensores, mensajes de error y resultados de pruebas. Esa salida convierte en observable un programa
+        que, de otro modo, estaría ejecutándose dentro de una placa sin una interfaz visible.
+      </p>
+
+      <p>
+        Las herramientas tradicionales, como el monitor de Arduino IDE, PlatformIO o una terminal del sistema, cumplen
+        muy bien esa función. Sin embargo, una interfaz web puede ser conveniente cuando se desea compartir una
+        herramienta, integrarla con documentación o combinar la consola con controles gráficos. Un mismo documento HTML
+        puede mostrar botones, campos de entrada, gráficas y comandos específicos para el experimento.
+      </p>
+
+      <p>
+        La página utilizada como referencia para este artículo es la de
+        <a href="https://isantosruiz.github.io/html/serial.html">Serial Studio</a>. Se trata
+        de un monitor bidireccional que muestra lo que llega desde la placa y también permite escribir mensajes hacia ella.
+      </p>
+
+      <figure>
+        <img src="./serial_screen.png" alt="Interfaz de Serial Studio"
+          style="display: block; width: min(100%, 840px); height: auto; margin: 0 auto;">
+        <figcaption>Interfaz de Serial Studio.</figcaption>
+      </figure>
+
+      <h2>Qué es la Web Serial API</h2>
+
+      <p>
+        La Web Serial API es una interfaz del navegador que permite leer y escribir bytes en dispositivos que el sistema
+        operativo presenta como puertos seriales. Una placa conectada mediante USB suele aparecer como un puerto serial,
+        aunque internamente utilice un conversor USB-UART o una interfaz USB nativa.
+      </p>
+
+      <p>
+        La página no recibe los datos a través de un servidor. El navegador solicita permiso para acceder al puerto local
+        y mantiene la comunicación directamente con el dispositivo conectado a la computadora. Esta arquitectura permite
+        publicar la herramienta como una página estática, siempre que se cumplan las condiciones de seguridad del
+        navegador.
+      </p>
+
+      <p>
+        El flujo general tiene cuatro momentos:
+      </p>
+
+      <ol>
+        <li>El usuario pulsa <strong>Conectar</strong> y selecciona un puerto.</li>
+        <li>La página abre el puerto con la velocidad de transmisión elegida.</li>
+        <li>Un lector asíncrono obtiene los bytes y los convierte en texto.</li>
+        <li>El usuario puede enviar texto mediante un escritor y cerrar la conexión cuando termina.</li>
+      </ol>
+
+      <h2>Requisitos</h2>
+
+      <p>Para utilizar el monitor se necesita lo siguiente:</p>
+
+      <ul class="elegante">
+        <li>Una placa con comunicación serial, por ejemplo ESP32, Arduino Uno, RP2040 u otra placa
+          compatible.</li>
+        <li>Un cable USB que permita transferencia de datos. Algunos cables solo sirven para cargar la batería.</li>
+        <li>Un firmware que inicialice el puerto serial y envíe o reciba datos.</li>
+        <li>Un navegador compatible con Web Serial API. La página comprueba la existencia de
+          <code>navigator.serial</code> antes de habilitar la conexión.</li>
+        <li>Una página servida mediante HTTPS cuando se accede desde Internet. Durante el desarrollo, un origen local
+          como <code>http://localhost</code> también puede considerarse contexto seguro en los navegadores que lo
+          permiten.</li>
+        <li>La misma velocidad de transmisión en el firmware y en el monitor, por ejemplo
+          <code>115200</code> baudios.</li>
+      </ul>
+
+      <p>
+        El acceso al puerto siempre requiere una decisión explícita del usuario. La llamada
+        <code>navigator.serial.requestPort()</code> debe ejecutarse como consecuencia de una acción, como pulsar un
+        botón. La página no puede seleccionar silenciosamente cualquier dispositivo conectado.
+      </p>
+
+      <h2>Un firmware mínimo para probar la conexión</h2>
+
+      <p>
+        Antes de escribir el monitor, conviene tener un programa pequeño que produzca una salida reconocible y responda
+        a un mensaje. Este ejemplo utiliza funciones disponibles tanto en Arduino como en muchas variantes de ESP32:
+      </p>
+
+      <script type="text/cpp">const unsigned long intervalo = 1000;
+unsigned long ultimaMuestra = 0;
+int contador = 0;
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("READY");
+}
+
+void loop() {
+  unsigned long ahora = millis();
+
+  if (ahora - ultimaMuestra >= intervalo) {
+    ultimaMuestra = ahora;
+    Serial.print("contador=");
+    Serial.println(contador++);
+  }
+
+  if (Serial.available()) {
+    String mensaje = Serial.readStringUntil('\n');
+    mensaje.trim();
+    Serial.print("eco: ");
+    Serial.println(mensaje);
+  }
+}</script>
+
+      <p>
+        El firmware inicia el puerto a <code>115200</code> baudios, envía una señal inicial y después produce una línea
+        por segundo. También escucha los datos recibidos y devuelve un eco. El monitor no necesita conocer el significado
+        de cada línea: puede mostrar texto arbitrario y dejar que una capa posterior lo interprete como CSV, JSON o un
+        protocolo propio.
+      </p>
+
+      <p>
+        En un proyecto real es importante que cada mensaje tenga un formato definido. Por ejemplo, un sensor podría
+        transmitir <code>IMU,0.012,-0.034,0.997</code> y una interfaz especializada podría separar sus campos para
+        construir una gráfica o una tabla.
+      </p>
+
+      <h2>La estructura HTML de la interfaz</h2>
+
+      <p>
+        La interfaz necesita un selector para los baudios, botones de conexión, un área de consola y controles para
+        enviar información. Los identificadores permiten que JavaScript encuentre cada elemento y modifique su estado.
+      </p>
+
+      <script type="text/xml"><div class="controls">
+  <label for="baudrate">Baudios:</label>
+  <select id="baudrate">
+    <option value="9600" selected>9600</option>
+    <option value="115200">115200</option>
+    <option value="57600">57600</option>
+  </select>
+
+  <button id="connectBtn">Conectar</button>
+  <button id="disconnectBtn" disabled>Desconectar</button>
+  <button id="clearBtn">Limpiar consola</button>
+  <span id="statusText">Desconectado</span>
+</div>
+
+<div id="console">--- Esperando conexión ---</div>
+
+<div class="send-controls">
+  <input type="text" id="txData" placeholder="Escribe el mensaje..." disabled>
+  <label for="lineEnding">Final:</label>
+  <select id="lineEnding" disabled>
+    <option value="none">Ninguno</option>
+    <option value="nl">Nueva línea (\n)</option>
+    <option value="cr">Retorno de carro (\r)</option>
+    <option value="crlf">Ambos (\r\n)</option>
+  </select>
+  <button id="sendBtn" disabled>Enviar</button>
+</div></script>
+
+      <p>
+        En la página publicada, los controles de envío se desactivan hasta que existe una conexión. Así se evita intentar
+        escribir en un puerto que todavía no está abierto. La consola utiliza <code>textContent</code> y
+        <code>white-space: pre-wrap</code> para conservar los saltos de línea sin interpretar el texto recibido como HTML.
+      </p>
+
+      <h2>Detectar compatibilidad y solicitar el puerto</h2>
+
+      <p>
+        El primer paso consiste en detectar la API. Si no existe, el botón de conexión se desactiva y la consola muestra
+        un mensaje que orienta al usuario. Si existe, la selección del puerto se solicita dentro del evento de clic:
+      </p>
+
+      <script type="text/javascript">if (!("serial" in navigator)) {
+  consoleDiv.textContent =
+    "Error: este navegador no soporta la Web Serial API.";
+  connectBtn.disabled = true;
+}
+
+connectBtn.addEventListener("click", async () => {
+  try {
+    port = await navigator.serial.requestPort();
+    const baudRate = Number(baudrateSelect.value);
+    await port.open({ baudRate });
+
+    keepReading = true;
+    toggleUI(true);
+    consoleDiv.textContent = "[Puerto conectado correctamente]\n";
+    readFromPort();
+  } catch (error) {
+    appendLog(`\n[Error al conectar: ${error.message}]\n`);
+  }
+});</script>
+
+      <p>
+        <code>requestPort()</code> devuelve una promesa. Cuando el usuario elige un dispositivo, el resultado es un objeto
+        <code>SerialPort</code>. La llamada <code>open()</code> inicia la comunicación con la velocidad indicada. Si el
+        firmware trabaja a <code>9600</code> y la página abre el puerto a <code>115200</code>, los bytes se interpretarán
+        incorrectamente y la consola mostrará caracteres ilegibles.
+      </p>
+
+      <h2>Leer el puerto como un flujo asíncrono</h2>
+
+      <p>
+        La llegada de datos no debe detener la interfaz. Web Serial utiliza Streams API, por lo que el monitor obtiene un
+        lector y espera los datos con <code>await reader.read()</code>. El navegador resuelve esa espera cada vez que llega
+        un nuevo fragmento.
+      </p>
+
+      <script type="text/javascript">async function readFromPort() {
+  const textDecoder = new TextDecoder();
+
+  while (port.readable && keepReading) {
+    reader = port.readable.getReader();
+
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        if (value) {
+          consoleDiv.textContent += textDecoder.decode(value);
+          consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+      }
+    } catch (error) {
+      appendLog(`\n[Error de lectura: ${error.message}]\n`);
+    } finally {
+      reader.releaseLock();
+    }
+  }
+}</script>
+
+      <p>
+        Un detalle importante es que <code>reader.read()</code> no necesariamente devuelve una línea completa. Puede
+        entregar solo una parte de ella o varias líneas juntas. Por eso la implementación mostrada es adecuada para una
+        consola de texto, pero una aplicación que necesite analizar mensajes debe acumular los fragmentos y separar las
+        tramas mediante un delimitador, normalmente <code>\n</code>.
+      </p>
+
+      <h2>Enviar datos hacia la placa</h2>
+
+      <p>
+        La comunicación serial es bidireccional. Para escribir se obtiene temporalmente un escritor, se convierte el texto
+        a bytes con <code>TextEncoder</code> y se libera el escritor después de terminar. El final de línea se agrega según
+        la selección del usuario.
+      </p>
+
+      <script type="text/javascript">async function sendData(data) {
+  if (!port || !port.writable) {
+    appendLog("\n[Error: el puerto no está listo para escribir]\n");
+    return;
+  }
+
+  const ending = lineEndingSelect.value;
+  if (ending === "nl") data += "\n";
+  if (ending === "cr") data += "\r";
+  if (ending === "crlf") data += "\r\n";
+
+  const encoder = new TextEncoder();
+  const writer = port.writable.getWriter();
+
+  try {
+    await writer.write(encoder.encode(data));
+    appendLog(`\n[Enviado: ${data.trim()}]\n`);
+  } catch (error) {
+    appendLog(`\n[Error al enviar: ${error.message}]\n`);
+  } finally {
+    writer.releaseLock();
+  }
+}</script>
+
+      <p>
+        El terminador debe coincidir con lo que espera el firmware. Muchas implementaciones basadas en
+        <code>readStringUntil('\n')</code> requieren nueva línea; otras esperan retorno de carro o ambos caracteres.
+        Ofrecer las tres opciones evita tener que modificar el monitor cada vez que cambia el protocolo.
+      </p>
+
+      <h2>Desconectar y liberar recursos</h2>
+
+      <p>
+        Cerrar la conexión requiere detener la lectura pendiente, liberar el lector y cerrar el puerto. Si se omite este
+        paso, otra aplicación puede encontrar el dispositivo ocupado hasta que se cierre la pestaña o se desconecte el
+        cable.
+      </p>
+
+      <script type="text/javascript">async function disconnectPort() {
+  keepReading = false;
+
+  if (reader) {
+    await reader.cancel();
+  }
+
+  if (port) {
+    await port.close();
+  }
+
+  toggleUI(false);
+  appendLog("\n[Puerto desconectado]\n");
+}</script>
+
+      <p>
+        <code>reader.cancel()</code> interrumpe la espera de lectura y permite que el bloque <code>finally</code> libere
+        el lector. Después, <code>port.close()</code> cierra la comunicación. La función <code>toggleUI()</code> reactiva
+        el selector de baudios y deshabilita los controles que requieren un puerto abierto.
+      </p>
+
+      <h2>Conservar una interfaz clara</h2>
+
+      <p>
+        La lógica de comunicación debe mantenerse separada de la presentación. La consola solo muestra texto; los botones
+        cambian el estado de la conexión; y una función independiente, como <code>appendLog()</code>, centraliza el
+        desplazamiento automático:
+      </p>
+
+      <script type="text/javascript">function appendLog(message) {
+  consoleDiv.textContent += message;
+  consoleDiv.scrollTop = consoleDiv.scrollHeight;
+}
+
+function toggleUI(isConnected) {
+  statusText.textContent = isConnected ? "Conectado" : "Desconectado";
+  connectBtn.disabled = isConnected;
+  disconnectBtn.disabled = !isConnected;
+  baudrateSelect.disabled = isConnected;
+  txDataInput.disabled = !isConnected;
+  lineEndingSelect.disabled = !isConnected;
+  sendBtn.disabled = !isConnected;
+}</script>
+
+      <p>
+        La salida se agrega mediante <code>textContent</code> en lugar de <code>innerHTML</code>. Así, si la placa envía
+        símbolos como <code>&lt;</code> o una cadena que parece una etiqueta, el navegador la muestra como texto y no la
+        interpreta como contenido de la página.
+      </p>
+
+      <h2>Adaptar el monitor a sensores y comandos</h2>
+
+      <p>
+        Una vez establecida la comunicación, el monitor puede convertirse en la base de una interfaz más específica. Hay
+        dos estrategias frecuentes:
+      </p>
+
+      <ul class="elegante">
+        <li>Conservar la consola y añadir un parser para mensajes delimitados, como CSV, JSON o paquetes con una palabra
+          inicial.</li>
+        <li>Ocultar la consola y actualizar directamente indicadores, gráficas o tablas a partir de cada trama recibida.</li>
+      </ul>
+
+      <p>
+        Por ejemplo, si el firmware envía <code>TEMP,24.6</code>, el código puede separar el nombre de la variable y su
+        valor. Para mensajes JSON, <code>JSON.parse()</code> permite convertir cada línea en un objeto. En ambos casos
+        conviene validar el formato antes de actualizar la interfaz y mostrar los errores en la consola.
+      </p>
+
+      <p>
+        La misma conexión puede utilizarse para enviar comandos: cambiar el periodo de muestreo, activar un actuador,
+        solicitar una lectura inmediata o modificar parámetros de calibración. El protocolo debe documentar claramente los
+        comandos, sus argumentos y la respuesta esperada.
+      </p>
+
+      <h2>Problemas frecuentes</h2>
+
+      <ul class="manita">
+        <li><strong>El navegador no muestra el selector de puertos.</strong> Comprueba que la llamada a
+          <code>requestPort()</code> ocurra después de pulsar un botón, que la página use HTTPS o un origen local permitido
+          y que el navegador implemente Web Serial API.</li>
+        <li><strong>No aparece la placa.</strong> Revisa el cable USB, cierra el monitor de Arduino IDE o PlatformIO y
+          confirma que el sistema operativo haya creado un puerto serial. Algunas placas requieren un controlador para el
+          conversor USB.</li>
+        <li><strong>La consola muestra caracteres extraños.</strong> Usa la misma velocidad en ambos extremos y revisa
+          los parámetros de la conexión. En la mayoría de las placas basta con coincidir en los baudios.</li>
+        <li><strong>La placa recibe el mensaje incompleto.</strong> Selecciona el final de línea que espera el firmware.
+          También verifica que el código de la placa no descarte los caracteres de retorno de carro.</li>
+        <li><strong>La lectura se detiene después de desconectar.</strong> Cancela el lector antes de cerrar el puerto y
+          libera su bloqueo con <code>releaseLock()</code>.</li>
+        <li><strong>La página funciona en un equipo pero no en otro.</strong> La compatibilidad de Web Serial depende del
+          navegador y del sistema operativo. Mantén la detección de características y proporciona un mensaje de error
+          claro.</li>
+      </ul>
+
+      <h2>Seguridad y límites prácticos</h2>
+
+      <p>
+        El permiso se concede por sitio y por dispositivo. El usuario debe seleccionar el puerto desde el diálogo del
+        navegador, y la página solo obtiene acceso a los dispositivos autorizados. Aun así, una página con permiso puede
+        enviar datos a la placa, por lo que conviene conectarse únicamente a sitios de confianza y revisar el código antes
+        de conceder acceso.
+      </p>
+
+      <p>
+        Web Serial no convierte automáticamente cualquier USB en un puerto serial. La placa debe exponer una interfaz
+        compatible con esta API y el sistema operativo debe reconocerla. Tampoco establece por sí sola un protocolo de
+        mensajes: la velocidad, los terminadores, el formato de las tramas y la interpretación de los datos son decisiones
+        del proyecto.
+      </p>
+
+      <h2>Conclusión</h2>
+
+      <p>
+        Un monitor serial web combina una interfaz HTML sencilla con dos ideas esenciales de JavaScript: las promesas para
+        abrir y cerrar el puerto, y los streams para leer datos sin bloquear la página. Con un firmware que envíe líneas
+        bien definidas, esta base puede crecer hasta convertirse en una consola de depuración, un panel de sensores o una
+        interfaz de control para un prototipo.
+      </p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Chrome for Developers. (2020). <a href="https://developer.chrome.com/docs/capabilities/serial"><em>Read
+              from and write to a serial port</em></a>. Recuperado el 5 de septiembre de 2026.</li>
+        <li>Mozilla Developer Network. (2026). <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API"><em>Web Serial API</em></a>.
+          Recuperado el 5 de septiembre de 2026.</li>
+        <li>Santos-Ruiz, I. (2026). <a
+            href="https://isantosruiz.github.io/html/serial.html"><em>Serial Studio</em></a>
+          [Aplicación web]. Recuperado el 5 de septiembre de 2026.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
