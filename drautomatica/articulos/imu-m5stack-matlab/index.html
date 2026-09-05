@@ -8,7 +8,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
                 <p class="article-kicker">Tutorial</p>
                 <h1>Lectura de la IMU del M5Stack Core2 for AWS</h1>
                 <p class="subtitle">Adquiere aceleraciones y velocidades angulares con PlatformIO/Arduino y
-                    actualiza un Gauge de MATLAB mediante eventos del puerto serial.</p>
+                    actualiza un Gauge desde una aplicación MATLAB orientada a objetos.</p>
                 <div class="article-meta">
                     <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
                     <span>Septiembre, 2026</span>
@@ -238,185 +238,154 @@ IMU,0.012207,-0.034180,0.996826,0.106812,-0.045776,0.030518</script>
                 <code>/dev/tty.*</code> del mismo convertidor.
             </p>
 
-            <h2>Interfaz MATLAB con Gauge y callback serial</h2>
+            <h2>Aplicación MATLAB orientada a objetos</h2>
 
-            <p>Crea un archivo llamado <code>m5IMUGauge.m</code> con el código siguiente:</p>
+            <p>Crea un archivo llamado <code>LeerIMU.m</code> con el código siguiente. Antes de ejecutarlo, sustituye
+                el valor de <code>portName</code> por el puerto correspondiente a tu equipo:</p>
 
-            <script type="text/matlab">function m5IMUGauge(portName)
-%M5IMUGAUGE Muestra la inclinación del M5Stack en un Gauge.
-%
-% Ejemplos:
-%   m5IMUGauge("COM7")
-%   m5IMUGauge("/dev/cu.SLAB_USBtoUART")
+            <script type="text/matlab">classdef LeerIMU < handle
+    %M5IMUGAUGE Muestra la inclinación del M5Stack en un Gauge.
 
-arguments
-    portName (1,1) string
-end
+    properties (Access = private)
+        Port
+        Figure
+        Gauge
+        SensorLabel
+        StatusLabel
+    end
 
-delete(serialportfind)
+    methods
+        function app = LeerIMU()
+            % Cambiar por el puerto serial correspondiente.
+            portName = "/dev/cu.usbserial-0237B32D";
+            baudRate = 115200;
 
-baudRate = 115200;
+            % Cerrar puertos abiertos
+            delete(serialportfind)
 
-% Abrir el puerto serial.
-device = serialport(portName, baudRate, "Timeout", 2);
+            % Abrir y configurar el puerto serial.
+            app.Port = serialport(portName, baudRate, "Timeout", 2);
+            configureTerminator(app.Port, "LF");
 
-% Cada trama debe terminar con LF (\n).
-configureTerminator(device, "LF");
+            % Crear la interfaz.
+            app.Figure = uifigure( ...
+                "Name", "IMU del M5Stack Core2 for AWS", ...
+                "Position", [100 100 560 400]);
 
-% Algunas placas ESP32 se reinician al abrir el puerto.
-pause(1.5);
+            layout = uigridlayout(app.Figure, [4 1]);
+            layout.RowHeight = {40, "1x", 60, 40};
 
-% Eliminar datos recibidos durante el reinicio.
-flush(device);
+            uilabel(layout, ...
+                "Text", "Ángulo de inclinación", ...
+                "HorizontalAlignment", "center");
 
-% Construcción de la interfaz.
-fig = uifigure( ...
-    "Name", "IMU del M5Stack Core2 for AWS", ...
-    "Position", [100 100 520 430]);
+            % Crear el Gauge con los colores predeterminados.
+            app.Gauge = uigauge(layout, "semicircular");
+            app.Gauge.Limits = [-90 90];
+            app.Gauge.MajorTicks = -90:30:90;
+            app.Gauge.ScaleColors = [1 0.3 0.3; 1 1 0; 1 0.3 0.3];
+            app.Gauge.ScaleColorLimits = [-90 -45; -45 45; 45 90];
 
-layout = uigridlayout(fig, [4 1]);
-layout.RowHeight = {35, "1x", 75, 25};
-layout.Padding = [20 15 20 15];
+            app.SensorLabel = uilabel(layout, ...
+                "HorizontalAlignment", "center", ...
+                "WordWrap", "on");
 
-% Título.
-uilabel(layout, ...
-    "Text", "Ángulo de inclinación", ...
-    "FontSize", 16, ...
-    "FontWeight", "bold", ...
-    "HorizontalAlignment", "center");
+            app.StatusLabel = uilabel(layout, ...
+                "Text", ...
+                "Puerto abierto. Esperando la primera muestra...", ...
+                "HorizontalAlignment", "center");
 
-% Indicador de inclinación.
-gauge = uigauge(layout, "semicircular");
-gauge.Limits = [-90 90];
-gauge.MajorTicks = -90:30:90;
-gauge.Value = 0;
+            % Configurar los callbacks.
+            app.Figure.CloseRequestFcn = ...
+                @(~, ~) delete(app);
 
-gauge.ScaleColors = [ ...
-    0.85 0.33 0.10;
-    0.47 0.67 0.19;
-    0.85 0.33 0.10];
+            configureCallback( ...
+                app.Port, ...
+                "terminator", ...
+                @(obj, evt) app.updateGauge(obj, evt));
 
-gauge.ScaleColorLimits = [ ...
-    -90 -45;
-    -45  45;
-     45  90];
+            disp("Interfaz activa. Cierra la ventana para liberar el puerto serial.")
+            movegui(app.Figure, "center")
+        end
 
-% Etiqueta destinada exclusivamente a las mediciones.
-rawLabel = uilabel(layout, ...
-    "Text", sprintf( ...
-        'a = [---  ---  ---] g\nw = [---  ---  ---] deg/s'), ...
-    "HorizontalAlignment", "center", ...
-    "WordWrap", "on");
+        function delete(app)
+            % Liberar el puerto serial.
+            if ~isempty(app.Port) && isvalid(app.Port)
+                configureCallback(app.Port, "off");
+                delete(app.Port);
+            end
 
-% Etiqueta destinada al estado de la conexión.
-statusLabel = uilabel(layout, ...
-    "Text", "Puerto abierto. Esperando la primera muestra...", ...
-    "HorizontalAlignment", "center");
+            % Cerrar la ventana.
+            if ~isempty(app.Figure) && isvalid(app.Figure)
+                app.Figure.CloseRequestFcn = [];
+                delete(app.Figure);
+            end
+        end
+    end
 
-% Guardar los controles que utilizará el callback.
-device.UserData = struct( ...
-    "Figure", fig, ...
-    "Gauge", gauge, ...
-    "RawLabel", rawLabel, ...
-    "StatusLabel", statusLabel);
+    methods (Access = private)
+        function updateGauge(app, obj, ~)
+            % Procesar una trama recibida.
 
-% Conservar la referencia al puerto para cerrarlo junto con la figura.
-fig.UserData = device;
-fig.CloseRequestFcn = @closeApplication;
+            line = readline(obj);
 
-% Ejecutar updateGauge cuando se reciba una línea completa.
-configureCallback(device, "terminator", @updateGauge);
+            if isempty(app.Figure) || ~isvalid(app.Figure)
+                return
+            end
 
-disp("Interfaz activa. Cierra la ventana para liberar el puerto serial.")
-end
+            if line == "READY"
+                app.StatusLabel.Text = "M5Stack listo";
+                return
+            end
 
+            if startsWith(line, "ERROR")
+                app.StatusLabel.Text = line;
+                return
+            end
 
-function updateGauge(device, ~)
-%UPDATEGAUGE Procesa una trama recibida por el puerto serial.
+            % Formato esperado: IMU,ax,ay,az,gx,gy,gz
+            values = sscanf(line, "IMU,%f,%f,%f,%f,%f,%f");
 
-line = strtrim(readline(device));
-state = device.UserData;
+            if numel(values) ~= 6
+                app.StatusLabel.Text = "Trama ignorada: " + line;
+                return
+            end
 
-% Verificar que la ventana siga abierta.
-if ~isvalid(state.Figure)
-    return
-end
+            ax = values(1);
+            ay = values(2);
+            az = values(3);
+            gx = values(4);
+            gy = values(5);
+            gz = values(6);
 
-% Mensaje de inicialización enviado por el M5Stack.
-if line == "READY"
-    state.StatusLabel.Text = ...
-        "M5Stack listo. Esperando la primera muestra...";
-    return
-end
+            % Calcular el ángulo de inclinación.
+            pitch = atan2d(-ax, hypot(ay, az));
 
-% Mensaje de error enviado por el M5Stack.
-if startsWith(line, "ERROR")
-    state.StatusLabel.Text = line;
-    return
-end
+            % Limitar el ángulo al intervalo del Gauge.
+            pitch = max(app.Gauge.Limits(1), ...
+                min(app.Gauge.Limits(2), pitch));
 
-% Formato esperado:
-% IMU,ax,ay,az,gx,gy,gz
-values = sscanf(char(line), "IMU,%f,%f,%f,%f,%f,%f");
+            app.Gauge.Value = pitch;
 
-if numel(values) ~= 6
-    state.StatusLabel.Text = "Trama ignorada: " + line;
-    return
-end
+            app.SensorLabel.Text = sprintf( ...
+                ['a = [%+.3f  %+.3f  %+.3f] g\n' ...
+                 'w = [%+.3f  %+.3f  %+.3f] deg/s'], ...
+                ax, ay, az, gx, gy, gz);
 
-% Extraer las mediciones.
-ax = values(1);
-ay = values(2);
-az = values(3);
-gx = values(4);
-gy = values(5);
-gz = values(6);
-
-% Calcular el ángulo de inclinación.
-pitch = atan2d(-ax, hypot(ay, az));
-
-% Limitar el valor al intervalo del Gauge.
-pitch = max( ...
-    state.Gauge.Limits(1), ...
-    min(state.Gauge.Limits(2), pitch));
-
-% Actualizar el Gauge.
-state.Gauge.Value = pitch;
-
-% Actualizar la etiqueta de mediciones.
-state.RawLabel.Text = sprintf( ...
-    ['a = [%+.3f  %+.3f  %+.3f] g\n' ...
-     'w = [%+.3f  %+.3f  %+.3f] deg/s'], ...
-    ax, ay, az, gx, gy, gz);
-
-% Actualizar la etiqueta de estado.
-state.StatusLabel.Text = "Última muestra: " + ...
-    string(datetime("now", "Format", "HH:mm:ss"));
-
-drawnow limitrate
-end
-
-
-function closeApplication(fig, ~)
-%CLOSEAPPLICATION Desactiva el callback y libera el puerto serial.
-
-device = fig.UserData;
-
-if isa(device, "serialport") && isvalid(device)
-    configureCallback(device, "off");
-    delete(device);
-end
-
-delete(fig)
+            app.StatusLabel.Text = ...
+                "Última muestra: " + ...
+                string(datetime("now", "Format", "HH:mm:ss"));
+        end
+    end
 end</script>
 
-            <p>Guarda el archivo y llama a la función con el puerto detectado. Por ejemplo, en Windows:</p>
+            <p>Guarda el archivo y crea una instancia de la clase:</p>
 
-            <script type="text/matlab">m5IMUGauge("COM7")</script>
+            <script type="text/matlab">app = LeerIMU;</script>
 
-            <p>En macOS, la llamada puede tener esta forma:</p>
-
-            <script type="text/matlab">m5IMUGauge("/dev/cu.SLAB_USBtoUART")</script>
+            <p>El constructor abrirá el puerto configurado en <code>portName</code>, creará la interfaz y dejará activo
+                el callback serial. En Windows puedes usar un nombre como <code>"COM7"</code>; en macOS, uno como
+                <code>"/dev/cu.SLAB_USBtoUART"</code>.</p>
 
             <p>Al inclinar el M5Stack alrededor del eje transversal, la aguja reaccionará cuando llegue la siguiente
                 muestra. Como el periodo es de un segundo, la actualización se verá deliberadamente pausada.</p>
@@ -434,10 +403,14 @@ end</script>
 
             <p>La instrucción central es:</p>
 
-            <script type="text/matlab">configureCallback(device, "terminator", @updateGauge);</script>
+            <script type="text/matlab">configureCallback( ...
+    app.Port, ...
+    "terminator", ...
+    @(obj, evt) app.updateGauge(obj, evt));</script>
 
-            <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code> vigila el flujo de
-                entrada y genera un evento cada vez que encuentra el terminador LF. Entonces llama a
+            <p>MATLAB no consulta periódicamente si llegaron datos. El objeto <code>serialport</code>, almacenado en
+                <code>app.Port</code>, vigila el flujo de entrada y genera un evento cada vez que encuentra el
+                terminador LF. La función anónima conserva la referencia a la aplicación y llama al método privado
                 <code>updateGauge</code>, que realiza cuatro operaciones:
             </p>
 
@@ -445,27 +418,28 @@ end</script>
                 <li>Lee la línea completa mediante <code>readline</code>.</li>
                 <li>Verifica que la trama comience con <code>IMU</code> y contenga seis valores.</li>
                 <li>Calcula el ángulo de inclinación.</li>
-                <li>Asigna el resultado a <code>state.Gauge.Value</code> y actualiza las etiquetas.</li>
+                <li>Asigna el resultado a <code>app.Gauge.Value</code> y actualiza las etiquetas.</li>
             </ol>
 
-            <p>El cierre de la ventana tiene su propio callback, <code>closeApplication</code>. Su función es desactivar
-                la recepción asíncrona y eliminar el objeto serial para dejar disponible el puerto.</p>
+            <p>La clase hereda de <code>handle</code>, por lo que sus callbacks trabajan sobre la misma instancia. Al
+                cerrar la ventana se ejecuta <code>delete(app)</code>; este método desactiva la recepción asíncrona,
+                elimina el objeto serial y cierra la interfaz, dejando disponible el puerto.</p>
 
             <h2>Cambiar la variable mostrada</h2>
 
             <p>Si se desea mostrar directamente la aceleración en el eje <code>x</code>, cambia los límites del Gauge:
             </p>
 
-            <script type="text/matlab">gauge.Limits = [-2 2];
-gauge.MajorTicks = -2:0.5:2;</script>
+            <script type="text/matlab">app.Gauge.Limits = [-2 2];
+app.Gauge.MajorTicks = -2:0.5:2;</script>
 
             <p>Después sustituye:</p>
 
-            <script type="text/matlab">state.Gauge.Value = pitch;</script>
+            <script type="text/matlab">app.Gauge.Value = pitch;</script>
 
             <p>por:</p>
 
-            <script type="text/matlab">state.Gauge.Value = max(-2, min(2, ax));</script>
+            <script type="text/matlab">app.Gauge.Value = max(-2, min(2, ax));</script>
 
             <p>Para representar <code>gx</code> puede utilizarse, por ejemplo, un intervalo de \([-250,250]\) grados por
                 segundo. Los límites adecuados dependen del rango del sensor y de la dinámica del experimento.</p>
