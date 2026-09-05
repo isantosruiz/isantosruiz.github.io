@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serial Studio</title>
+    <script>
+        try {
+            if (localStorage.getItem('serial-monitor-theme') === 'dark') {
+                document.documentElement.dataset.theme = 'dark';
+            }
+        } catch (error) {
+            document.documentElement.dataset.theme = 'light';
+        }
+    </script>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #eef2f5;
+            --panel: #ffffff;
+            --panel-elevated: #f7f9fb;
+            --panel-soft: #f2f5f8;
+            --border: #d9e0e7;
+            --border-strong: #c4ced8;
+            --text: #17202a;
+            --muted: #637182;
+            --accent: #3ddc97;
+            --accent-hover: #50e8a8;
+            --accent-soft: rgba(61, 220, 151, 0.12);
+            --focus-ring: rgba(61, 220, 151, 0.16);
+            --brand-color: #526170;
+            --brand-tint: rgba(82, 97, 112, 0.08);
+            --danger: #d94141;
+            --danger-soft: rgba(217, 65, 65, 0.11);
+            --send: #2563eb;
+            --send-hover: #1d4ed8;
+            --control: #ffffff;
+            --control-hover: #edf2f7;
+            --button-hover-border: #aeb9c5;
+            --disabled-text: #8a97a6;
+            --disabled-bg: #e8edf2;
+            --disabled-border: #d7dfe7;
+            --console-bg: #101418;
+            --console-border: #202a33;
+            --console-text: #7ff0b6;
+            --chart-grid: rgba(23, 32, 42, 0.1);
+            --chart-axis: #637182;
+            --chart-tooltip: #17202a;
+            --page-bg:
+                linear-gradient(rgba(23, 32, 42, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(23, 32, 42, 0.035) 1px, transparent 1px),
+                linear-gradient(135deg, #eef2f5 0%, #f8fafc 55%, #e8eef3 100%);
+            --shadow: 0 24px 70px rgba(22, 30, 40, 0.16);
+            --radius: 8px;
+        }
+
+        html[data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #101112;
+            --panel: #181a1c;
+            --panel-elevated: #202225;
+            --panel-soft: #141719;
+            --border: #32363a;
+            --border-strong: #454b50;
+            --text: #f0f2f4;
+            --muted: #a2abb3;
+            --accent: #3ddc97;
+            --accent-hover: #50e8a8;
+            --accent-soft: rgba(61, 220, 151, 0.12);
+            --focus-ring: rgba(61, 220, 151, 0.16);
+            --brand-color: #b8c2cc;
+            --brand-tint: rgba(184, 194, 204, 0.08);
+            --danger: #ff6b6b;
+            --danger-soft: rgba(255, 107, 107, 0.12);
+            --send: #6aa8ff;
+            --send-hover: #82b7ff;
+            --control: #24272a;
+            --control-hover: #2f3337;
+            --button-hover-border: #506074;
+            --disabled-text: #697586;
+            --disabled-bg: #1b1e20;
+            --disabled-border: #30353a;
+            --console-bg: #070908;
+            --console-border: #303b37;
+            --console-text: #79f2b1;
+            --chart-grid: rgba(240, 242, 244, 0.1);
+            --chart-axis: #a2abb3;
+            --chart-tooltip: #f0f2f4;
+            --page-bg:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(135deg, #101112 0%, #151719 55%, #0b0c0d 100%);
+            --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--page-bg);
+            background-size: 40px 40px, 40px 40px, auto;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container {
+            width: min(1000px, 100%);
+            margin: 0 auto;
+            display: grid;
+            grid-template-rows: auto auto auto auto auto;
+            overflow: hidden;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            background: color-mix(in srgb, var(--panel) 92%, transparent);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 38px;
+            height: 38px;
+            place-items: center;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            background:
+                linear-gradient(135deg, var(--brand-tint), rgba(106, 168, 255, 0.05)),
+                var(--control);
+            color: var(--brand-color);
+        }
+
+        .brand-mark svg {
+            display: block;
+            width: 20px;
+            height: 22px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.15rem, 2vw, 1.5rem);
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .app-subtitle {
+            margin: 1px 0 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            padding: 7px 12px;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 14px currentColor;
+        }
+
+        .connected {
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .disconnected {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: minmax(150px, 220px) 1fr;
+            gap: 14px;
+            align-items: end;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            background: var(--panel-soft);
+        }
+
+        .field {
+            display: grid;
+            gap: 7px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-button {
+            width: 34px;
+            min-width: 34px;
+            height: 34px;
+            min-height: 34px;
+            padding: 0;
+            color: var(--text);
+            background: var(--control);
+            border-color: var(--border-strong);
+        }
+
+        .tool-button svg {
+            display: block;
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+        }
+
+        .tool-button .icon-exit-fullscreen,
+        .tool-button .icon-sun {
+            display: none;
+        }
+
+        .tool-button.is-fullscreen .icon-enter-fullscreen,
+        html[data-theme="dark"] .tool-button .icon-moon {
+            display: none;
+        }
+
+        .tool-button.is-fullscreen .icon-exit-fullscreen,
+        html[data-theme="dark"] .tool-button .icon-sun {
+            display: block;
+        }
+
+        .theme-icon {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-radius: 50%;
+            transition: background 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .theme-icon::after {
+            content: "";
+            position: absolute;
+            inset: -2px -2px -2px 7px;
+            border-radius: 50%;
+            background: var(--control);
+            opacity: 0;
+            transition: opacity 0.16s ease;
+        }
+
+        html[data-theme="dark"] .theme-icon {
+            background: currentColor;
+            box-shadow: 0 0 10px rgba(184, 194, 204, 0.18);
+        }
+
+        html[data-theme="dark"] .theme-icon::after {
+            opacity: 1;
+        }
+
+        label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        select, button, input[type="text"] {
+            min-height: 42px;
+            padding: 0 13px;
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            font: inherit;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            background: var(--control);
+            color: var(--text);
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        select:disabled, input[type="text"]:disabled {
+            color: var(--disabled-text);
+            background: var(--disabled-bg);
+            border-color: var(--disabled-border);
+        }
+
+        input[type="text"] {
+            flex: 1 1 280px;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 116px;
+            background: var(--control);
+            color: var(--text);
+            cursor: pointer;
+            font-weight: 700;
+            transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+        }
+
+        button:hover {
+            background: var(--control-hover);
+            border-color: var(--button-hover-border);
+            transform: translateY(-1px);
+        }
+
+        button:focus-visible {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        button:disabled {
+            color: var(--disabled-text);
+            background: var(--disabled-bg);
+            border-color: var(--disabled-border);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #connectBtn {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #062014;
+        }
+
+        #connectBtn:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        #disconnectBtn {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: #ffffff;
+        }
+
+        #disconnectBtn:hover {
+            background: #ff7d7d;
+            border-color: #ff7d7d;
+        }
+
+        #sendBtn {
+            min-width: 96px;
+            background: var(--send);
+            border-color: var(--send);
+            color: #ffffff;
+        }
+
+        #sendBtn:hover {
+            background: var(--send-hover);
+            border-color: var(--send-hover);
+        }
+
+        #connectBtn:disabled,
+        #disconnectBtn:disabled,
+        #sendBtn:disabled {
+            color: var(--disabled-text);
+            background: var(--disabled-bg);
+            border-color: var(--disabled-border);
+        }
+
+        .console-panel {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            min-height: 0;
+            padding: 18px 22px 0;
+            background: var(--panel);
+        }
+
+        .console-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .console-title {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .console-meta {
+            color: var(--muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 0.8rem;
+        }
+
+        #console {
+            height: 330px;
+            margin: 0;
+            overflow-y: auto;
+            padding: 18px;
+            border: 0.5px solid var(--border);
+            border-radius: 0;
+            background:
+                linear-gradient(180deg, var(--accent-soft), transparent 42px),
+                var(--console-bg);
+            color: var(--console-text);
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
+            line-height: 24px;
+            white-space: pre-wrap;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+        }
+
+        .chart-panel {
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 10px;
+            padding: 18px 22px;
+            border-top: 1px solid var(--border);
+            background: var(--panel);
+        }
+
+        .chart-panel[hidden] {
+            display: none;
+        }
+
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .chart-heading {
+            display: grid;
+            gap: 2px;
+        }
+
+        .chart-title {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .chart-meta {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        .chart-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .chart-frame {
+            position: relative;
+            height: 300px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel-elevated);
+        }
+
+        .chart-frame canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chart-legend:empty {
+            display: none;
+        }
+
+        .series-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 32px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--panel-elevated);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 0.86rem;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .series-toggle input {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            accent-color: var(--series-color);
+        }
+
+        .series-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--series-color);
+        }
+
+        .series-toggle:has(input:not(:checked)) {
+            color: var(--muted);
+            opacity: 0.72;
+        }
+
+        .chart-checkbox {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            min-height: 42px;
+            padding: 0 4px;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+            transition: color 0.16s ease;
+        }
+
+        .chart-checkbox:hover {
+            color: var(--text);
+        }
+
+        .chart-checkbox input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--accent);
+        }
+
+        .chart-checkbox:has(input:checked) {
+            color: var(--text);
+        }
+
+        .send-controls {
+            display: grid;
+            grid-template-columns: minmax(240px, 1fr) minmax(150px, 210px) auto;
+            gap: 12px;
+            align-items: end;
+            padding: 16px 22px 18px;
+            border-top: 1px solid var(--border);
+            background: var(--panel-elevated);
+        }
+
+        .send-controls .field:first-child {
+            min-width: 0;
+        }
+
+        .footer {
+            width: min(1000px, 100%);
+            margin: 8px auto 0;
+            color: #687386;
+            font-size: 0.78rem;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .container {
+                width: 100%;
+                min-height: 100vh;
+                margin: 0;
+                border-width: 0;
+                border-radius: 0;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            .app-header,
+            .controls,
+            .console-panel,
+            .chart-panel,
+            .send-controls {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .app-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls,
+            .send-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                justify-content: stretch;
+            }
+
+            .button-group button,
+            #sendBtn {
+                width: 100%;
+            }
+
+            .chart-bar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .chart-actions,
+            .chart-actions button {
+                width: 100%;
+            }
+
+            #console {
+                height: 300px;
+            }
+
+            .footer {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 448 512" focusable="false">
+                    <path fill="currentColor" d="M0 96C0 60.7 28.7 32 64 32l320 0c35.3 0 64 28.7 64 64l0 320c0 35.3-28.7 64-64 64L64 480c-35.3 0-64-28.7-64-64L0 96zm144 4c-24.3 0-44 19.7-44 44l0 48c0 24.3 19.7 44 44 44l32 0c24.3 0 44-19.7 44-44l0-48c0-24.3-19.7-44-44-44l-32 0zm-4 44c0-2.2 1.8-4 4-4l32 0c2.2 0 4 1.8 4 4l0 48c0 2.2-1.8 4-4 4l-32 0c-2.2 0-4-1.8-4-4l0-48zm140-44c-11 0-20 9-20 20c0 9.7 6.9 17.7 16 19.6l0 76.4c0 11 9 20 20 20s20-9 20-20l0-96c0-11-9-20-20-20l-16 0zM132 296c0 9.7 6.9 17.7 16 19.6l0 76.4c0 11 9 20 20 20s20-9 20-20l0-96c0-11-9-20-20-20l-16 0c-11 0-20 9-20 20zm96 24l0 48c0 24.3 19.7 44 44 44l32 0c24.3 0 44-19.7 44-44l0-48c0-24.3-19.7-44-44-44l-32 0c-24.3 0-44 19.7-44 44zm44-4l32 0c2.2 0 4 1.8 4 4l0 48c0 2.2-1.8 4-4 4l-32 0c-2.2 0-4-1.8-4-4l0-48c0-2.2 1.8-4 4-4z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1>Serial Studio</h1>
+                <p class="app-subtitle">Lectura y envío de datos en tiempo real</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button id="themeToggle" class="tool-button" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">
+                <svg class="icon-moon" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                    <path d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"></path>
+                </svg>
+                <svg class="icon-sun" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                    <path d="M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0a96 96 0 1 1-192 0zm224 0a128 128 0 1 0-256 0a128 128 0 1 0 256 0z"></path>
+                </svg>
+            </button>
+            <button id="fullscreenToggle" class="tool-button" type="button" aria-label="Entrar en pantalla completa" aria-pressed="false" title="Entrar en pantalla completa">
+                <svg class="icon-enter-fullscreen" viewBox="0 0 448 512" aria-hidden="true" focusable="false">
+                    <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64v-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32h-96zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64h-64c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32v-96z"></path>
+                </svg>
+                <svg class="icon-exit-fullscreen" viewBox="0 0 448 512" aria-hidden="true" focusable="false">
+                    <path d="M160 64c0-17.7-14.3-32-32-32S96 46.3 96 64v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32v-96c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32h-64V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32v-64h64c17.7 0 32-14.3 32-32s-14.3-32-32-32h-96z"></path>
+                </svg>
+            </button>
+            <span id="statusText" class="status disconnected">Desconectado</span>
+        </div>
+    </header>
+    
+    <!-- Controles de Conexión -->
+    <div class="controls">
+        <div class="field">
+            <label for="baudrate">Baudios</label>
+            <select id="baudrate">
+                <option value="600">600</option>
+                <option value="1200">1200</option>
+                <option value="4800">4800</option>
+                <option value="9600">9600</option>
+                <option value="19200">19200</option>
+                <option value="38400">38400</option>
+                <option value="57600">57600</option>
+                <option value="115200" selected>115200</option>
+            </select>
+        </div>
+
+        <div class="button-group" aria-label="Acciones de conexión">
+            <label class="chart-checkbox" for="chartToggle">
+                <input id="chartToggle" type="checkbox" aria-controls="chartPanel">
+                <span>Graficar</span>
+            </label>
+            <button id="connectBtn">Conectar</button>
+            <button id="disconnectBtn" disabled>Desconectar</button>
+            <button id="clearBtn">Limpiar</button>
+        </div>
+    </div>
+
+    <!-- Terminal de visualización -->
+    <section class="console-panel" aria-label="Consola serial">
+        <div class="console-bar">
+            <div class="console-title">Consola serial</div>
+            <div class="console-meta">RX / TX</div>
+        </div>
+        <div id="console">[Esperando conexión]</div>
+    </section>
+
+    <section id="chartPanel" class="chart-panel" aria-label="Gráfica en tiempo real" hidden>
+        <div class="chart-bar">
+            <div class="chart-heading">
+                <div class="chart-title">Gráfica en tiempo real</div>
+                <div id="chartMeta" class="chart-meta">Esperando datos con formato nombre y valor</div>
+            </div>
+            <div class="chart-actions">
+                <button id="exportCsvBtn" type="button" disabled>CSV</button>
+                <button id="exportPngBtn" type="button" disabled>PNG</button>
+                <button id="exportTikzBtn" type="button" disabled>TiKZ</button>
+                <button id="clearChartBtn" type="button" disabled>Borrar gráfica</button>
+            </div>
+        </div>
+        <div class="chart-frame">
+            <canvas id="realtimeChart"></canvas>
+        </div>
+        <div id="chartLegend" class="chart-legend" aria-label="Series de la gráfica"></div>
+    </section>
+
+    <!-- Controles de Envío de Datos -->
+    <div class="send-controls">
+        <div class="field">
+            <label for="txData">Comando</label>
+            <input type="text" id="txData" placeholder="Escribe el mensaje a enviar" autocomplete="off" disabled>
+        </div>
+        
+        <div class="field">
+            <label for="lineEnding">Final de línea</label>
+            <select id="lineEnding" disabled>
+                <option value="none">Ninguno</option>
+                <option value="nl">LF</option>
+                <option value="cr">CR</option>
+                <option value="crlf">CR + LF</option>
+            </select>
+        </div>
+
+        <button id="sendBtn" disabled>Enviar</button>
+    </div>
+</div>
+<p class="footer">&copy; 2026, Ildeberto de los Santos Ruiz</p>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+    let port;
+    let reader;
+    let keepReading = true;
+
+    // Elementos del DOM
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const baudrateSelect = document.getElementById('baudrate');
+    const consoleDiv = document.getElementById('console');
+    const statusText = document.getElementById('statusText');
+    
+    const txDataInput = document.getElementById('txData');
+    const sendBtn = document.getElementById('sendBtn');
+    const lineEndingSelect = document.getElementById('lineEnding');
+    const themeToggle = document.getElementById('themeToggle');
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    const themeStorageKey = 'serial-monitor-theme';
+    const chartToggle = document.getElementById('chartToggle');
+    const clearChartBtn = document.getElementById('clearChartBtn');
+    const chartPanel = document.getElementById('chartPanel');
+    const chartCanvas = document.getElementById('realtimeChart');
+    const chartMeta = document.getElementById('chartMeta');
+    const chartLegend = document.getElementById('chartLegend');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const exportPngBtn = document.getElementById('exportPngBtn');
+    const exportTikzBtn = document.getElementById('exportTikzBtn');
+    const maxChartPoints = 120;
+    const chartColors = [
+        '#2563eb',
+        '#3ddc97',
+        '#f59e0b',
+        '#dc2626',
+        '#7c3aed',
+        '#0891b2',
+        '#db2777',
+        '#64748b'
+    ];
+
+    let chart;
+    let chartEnabled = false;
+    let chartLineBuffer = "";
+    let chartSampleIndex = 0;
+    let chartStartTime = 0;
+    let chartSamples = [];
+
+    const chartBackgroundPlugin = {
+        id: 'serialStudioBackground',
+        beforeDraw(chartInstance) {
+            const { ctx, width, height } = chartInstance;
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = cssValue('--panel-elevated') || '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
+        }
+    };
+
+    function setTheme(theme, shouldSave = false) {
+        const isDark = theme === 'dark';
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        themeToggle.setAttribute('aria-label', isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro');
+        themeToggle.title = isDark ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro';
+        refreshChartTheme();
+
+        if (shouldSave) {
+            try {
+                localStorage.setItem(themeStorageKey, isDark ? 'dark' : 'light');
+            } catch (error) {
+                console.warn("No se pudo guardar la preferencia de tema:", error);
+            }
+        }
+    }
+
+    function cssValue(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function getChartOptions() {
+        const axisColor = cssValue('--chart-axis');
+        const gridColor = cssValue('--chart-grid');
+        const textColor = cssValue('--text');
+        const panelColor = cssValue('--panel');
+
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            normalized: true,
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: panelColor,
+                    borderColor: gridColor,
+                    borderWidth: 1,
+                    titleColor: textColor,
+                    bodyColor: textColor,
+                    displayColors: true
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Muestra',
+                        color: axisColor
+                    },
+                    ticks: {
+                        color: axisColor,
+                        precision: 0
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: axisColor
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                }
+            }
+        };
+    }
+
+    function ensureChart() {
+        if (!chartEnabled || chart) return Boolean(chart);
+
+        if (!window.Chart) {
+            chartMeta.textContent = "No se pudo cargar el módulo de gráfica";
+            return false;
+        }
+
+        chart = new Chart(chartCanvas, {
+            type: 'line',
+            data: {
+                datasets: []
+            },
+            options: getChartOptions(),
+            plugins: [chartBackgroundPlugin]
+        });
+
+        renderChartLegend();
+        updateChartMeta();
+        return true;
+    }
+
+    function refreshChartTheme() {
+        if (!chart) return;
+        chart.options = getChartOptions();
+        updateChartWindow();
+        chart.update('none');
+    }
+
+    function setChartEnabled(isEnabled) {
+        chartEnabled = isEnabled;
+        chartPanel.hidden = !isEnabled;
+        chartToggle.checked = isEnabled;
+
+        if (isEnabled) {
+            ensureChart();
+        } else {
+            chartLineBuffer = "";
+        }
+
+        updateChartMeta();
+    }
+
+    function updateChartMeta() {
+        if (!chartEnabled) {
+            chartMeta.textContent = "Esperando datos con formato nombre y valor";
+            clearChartBtn.disabled = true;
+            exportCsvBtn.disabled = true;
+            exportPngBtn.disabled = true;
+            exportTikzBtn.disabled = true;
+            return;
+        }
+
+        if (!window.Chart) {
+            chartMeta.textContent = "No se pudo cargar el módulo de gráfica";
+            clearChartBtn.disabled = true;
+            exportCsvBtn.disabled = true;
+            exportPngBtn.disabled = true;
+            exportTikzBtn.disabled = true;
+            return;
+        }
+
+        const seriesCount = chart ? chart.data.datasets.length : 0;
+        const hasSamples = chartSamples.length > 0;
+        clearChartBtn.disabled = seriesCount === 0;
+        exportCsvBtn.disabled = !hasSamples;
+        exportPngBtn.disabled = seriesCount === 0;
+        exportTikzBtn.disabled = seriesCount === 0;
+        chartMeta.textContent = seriesCount
+            ? `${seriesCount} variable${seriesCount === 1 ? '' : 's'} detectada${seriesCount === 1 ? '' : 's'}`
+            : "Esperando datos con formato nombre y valor";
+    }
+
+    function parseMetricLine(line) {
+        const trimmed = line.trim();
+        if (!trimmed) return [];
+
+        const commaParts = trimmed.split(',').map((part) => part.trim()).filter(Boolean);
+        if (commaParts.length > 2) {
+            const name = commaParts[0].replace(/\s+/g, ' ');
+            const values = commaParts.slice(1).map((part) => Number(part.replace(',', '.')));
+            if (!name || values.some((value) => !Number.isFinite(value))) return [];
+
+            return values.map((value, index) => ({
+                name: `${name}_${index + 1}`,
+                value
+            }));
+        }
+
+        const numberPattern = "([-+]?\\d+(?:[\\.,]\\d+)?(?:[eE][-+]?\\d+)?)";
+        const patterns = [
+            new RegExp(`^(.+?)\\s*[:=]\\s*${numberPattern}(?:\\s|$)`),
+            new RegExp(`^([^,]+?)\\s*,\\s*${numberPattern}\\s*$`)
+        ];
+
+        for (const pattern of patterns) {
+            const match = trimmed.match(pattern);
+            if (!match) continue;
+
+            const name = match[1].trim().replace(/\s+/g, ' ');
+            const value = Number(match[2].replace(',', '.'));
+            if (name && Number.isFinite(value)) {
+                return [{ name, value }];
+            }
+        }
+
+        return [];
+    }
+
+    function getDataset(name) {
+        const existing = chart.data.datasets.find((dataset) => dataset.label === name);
+        if (existing) return existing;
+
+        const color = chartColors[chart.data.datasets.length % chartColors.length];
+        const dataset = {
+            label: name,
+            data: [],
+            borderColor: color,
+            backgroundColor: color,
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.25
+        };
+
+        chart.data.datasets.push(dataset);
+        renderChartLegend();
+        return dataset;
+    }
+
+    function renderChartLegend() {
+        if (!chart) {
+            chartLegend.innerHTML = "";
+            return;
+        }
+
+        chartLegend.innerHTML = "";
+
+        chart.data.datasets.forEach((dataset, index) => {
+            const label = document.createElement('label');
+            label.className = 'series-toggle';
+            label.style.setProperty('--series-color', dataset.borderColor);
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = dataset.hidden !== true;
+            checkbox.setAttribute('aria-label', `Mostrar ${dataset.label}`);
+            checkbox.addEventListener('change', () => {
+                dataset.hidden = !checkbox.checked;
+                chart.update('none');
+            });
+
+            const swatch = document.createElement('span');
+            swatch.className = 'series-swatch';
+            swatch.setAttribute('aria-hidden', 'true');
+
+            const text = document.createElement('span');
+            text.textContent = dataset.label;
+
+            label.append(checkbox, swatch, text);
+            chartLegend.append(label);
+        });
+    }
+
+    function updateChartWindow() {
+        if (!chart) return;
+
+        if (chartSampleIndex === 0) {
+            delete chart.options.scales.x.min;
+            delete chart.options.scales.x.max;
+            return;
+        }
+
+        chart.options.scales.x.min = Math.max(0, chartSampleIndex - maxChartPoints);
+        chart.options.scales.x.max = chartSampleIndex - 1;
+    }
+
+    function trimChartData() {
+        if (!chart) return;
+
+        const minVisibleSample = Math.max(0, chartSampleIndex - maxChartPoints);
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data = dataset.data.filter((point) => point.x >= minVisibleSample);
+        });
+    }
+
+    function recordChartSample(sampleIndex, metrics) {
+        if (!chartStartTime) chartStartTime = Date.now();
+
+        const timestamp = Date.now();
+        const values = {};
+        metrics.forEach((metric) => {
+            values[metric.name] = metric.value;
+        });
+
+        chartSamples.push({
+            sample: sampleIndex,
+            timestampMs: timestamp - chartStartTime,
+            timestampIso: new Date(timestamp).toISOString(),
+            values
+        });
+    }
+
+    function addMetricPoint(metric, sampleIndex) {
+        if (!chartEnabled || !ensureChart()) return;
+
+        const dataset = getDataset(metric.name);
+        dataset.data.push({
+            x: sampleIndex,
+            y: metric.value
+        });
+    }
+
+    function processChartText(text) {
+        if (!chartEnabled) return;
+
+        chartLineBuffer += text;
+        const lines = chartLineBuffer.split(/\r\n|\n|\r/);
+        chartLineBuffer = lines.pop() || "";
+
+        for (const line of lines) {
+            const metrics = parseMetricLine(line);
+            if (!metrics.length) continue;
+            if (!ensureChart()) continue;
+
+            const sampleIndex = chartSampleIndex++;
+            recordChartSample(sampleIndex, metrics);
+            metrics.forEach((metric) => addMetricPoint(metric, sampleIndex));
+            trimChartData();
+            updateChartWindow();
+            chart.update('none');
+            updateChartMeta();
+        }
+
+        if (chartLineBuffer.length > 2000) {
+            chartLineBuffer = chartLineBuffer.slice(-2000);
+        }
+    }
+
+    function clearChart() {
+        chartLineBuffer = "";
+        chartSampleIndex = 0;
+        chartStartTime = 0;
+        chartSamples = [];
+
+        if (chart) {
+            chart.data.datasets = [];
+            renderChartLegend();
+            updateChartWindow();
+            chart.update('none');
+        }
+
+        updateChartMeta();
+    }
+
+    function timestampForFile() {
+        return new Date().toISOString().replace(/[:.]/g, '-');
+    }
+
+    function downloadText(filename, text, type) {
+        const blob = new Blob([text], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadUrl(filename, url) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.append(link);
+        link.click();
+        link.remove();
+    }
+
+    function csvCell(value) {
+        const text = String(value ?? "");
+        return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    function exportCsv() {
+        if (!chartSamples.length) return;
+
+        const seriesNames = chart
+            ? chart.data.datasets.map((dataset) => dataset.label)
+            : Array.from(new Set(chartSamples.flatMap((sample) => Object.keys(sample.values))));
+        const header = ['sample', 'timestamp_ms', 'timestamp_iso', ...seriesNames];
+        const rows = chartSamples.map((sample) => [
+            sample.sample,
+            sample.timestampMs,
+            sample.timestampIso,
+            ...seriesNames.map((name) => sample.values[name] ?? "")
+        ]);
+        const csv = [header, ...rows]
+            .map((row) => row.map(csvCell).join(','))
+            .join('\n');
+
+        downloadText(`serial-studio-${timestampForFile()}.csv`, `\ufeff${csv}`, 'text/csv;charset=utf-8');
+    }
+
+    function exportPng() {
+        if (!chart) return;
+        chart.update('none');
+        downloadUrl(`serial-studio-${timestampForFile()}.png`, chart.toBase64Image('image/png', 1));
+    }
+
+    function texEscape(value) {
+        return String(value).replace(/[\\{}$&#_%^~]/g, (char) => {
+            const replacements = {
+                '\\': '\\textbackslash{}',
+                '{': '\\{',
+                '}': '\\}',
+                '$': '\\$',
+                '&': '\\&',
+                '#': '\\#',
+                '_': '\\_',
+                '%': '\\%',
+                '^': '\\textasciicircum{}',
+                '~': '\\textasciitilde{}'
+            };
+            return replacements[char];
+        });
+    }
+
+    function exportTikz() {
+        if (!chart) return;
+
+        const visibleDatasets = chart.data.datasets.filter((dataset) => dataset.hidden !== true && dataset.data.length);
+        if (!visibleDatasets.length) return;
+
+        const lines = [
+            '\\begin{tikzpicture}',
+            '\\begin{axis}[',
+            '  width=12cm,',
+            '  height=7cm,',
+            '  xlabel={Muestra},',
+            '  ylabel={Valor},',
+            '  grid=both,',
+            '  legend pos=outer north east,',
+            '  legend cell align={left}',
+            ']'
+        ];
+
+        visibleDatasets.forEach((dataset) => {
+            const coordinates = dataset.data
+                .map((point) => `(${point.x},${point.y})`)
+                .join(' ');
+            lines.push(`\\addplot+[mark=none, thick] coordinates { ${coordinates} };`);
+            lines.push(`\\addlegendentry{${texEscape(dataset.label)}}`);
+        });
+
+        lines.push('\\end{axis}', '\\end{tikzpicture}', '');
+        downloadText(`serial-studio-${timestampForFile()}.tex`, lines.join('\n'), 'text/plain;charset=utf-8');
+    }
+
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+
+    themeToggle.addEventListener('click', () => {
+        const nextTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        setTheme(nextTheme, true);
+    });
+
+    function syncFullscreenControl() {
+        const isFullscreen = document.fullscreenElement === document.documentElement;
+        const label = isFullscreen ? 'Salir de pantalla completa' : 'Entrar en pantalla completa';
+        fullscreenToggle.classList.toggle('is-fullscreen', isFullscreen);
+        fullscreenToggle.setAttribute('aria-pressed', String(isFullscreen));
+        fullscreenToggle.setAttribute('aria-label', label);
+        fullscreenToggle.title = label;
+    }
+
+    fullscreenToggle.addEventListener('click', async () => {
+        try {
+            if (document.fullscreenElement) {
+                await document.exitFullscreen();
+            } else {
+                await document.documentElement.requestFullscreen();
+            }
+        } catch (error) {
+            console.warn('No se pudo cambiar el modo de pantalla completa:', error);
+        }
+    });
+
+    document.addEventListener('fullscreenchange', syncFullscreenControl);
+    syncFullscreenControl();
+
+    chartToggle.addEventListener('change', () => {
+        setChartEnabled(chartToggle.checked);
+    });
+
+    clearChartBtn.addEventListener('click', clearChart);
+    exportCsvBtn.addEventListener('click', exportCsv);
+    exportPngBtn.addEventListener('click', exportPng);
+    exportTikzBtn.addEventListener('click', exportTikz);
+
+    document.addEventListener('serial-monitor-data', (event) => {
+        processChartText(String(event.detail ?? ""));
+    });
+
+    // Verificar compatibilidad del navegador
+    if (!('serial' in navigator)) {
+        consoleDiv.textContent = "Error: Tu navegador no soporta la Web Serial API. Prueba con Google Chrome o Microsoft Edge.";
+        statusText.textContent = "No compatible";
+        connectBtn.disabled = true;
+    }
+
+    // Función para leer del puerto de forma asíncrona
+    async function readFromPort() {
+        const textDecoder = new TextDecoder();
+        while (port.readable && keepReading) {
+            reader = port.readable.getReader();
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break; 
+                    if (value) {
+                        const receivedText = textDecoder.decode(value, { stream: true });
+                        consoleDiv.textContent += receivedText;
+                        processChartText(receivedText);
+                        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                    }
+                }
+            } catch (error) {
+                console.error("Error leyendo datos del puerto:", error);
+                appendLog(`\n[Error de lectura: ${error.message}]\n`);
+            } finally {
+                reader.releaseLock();
+            }
+        }
+    }
+
+    // Función para enviar datos al puerto
+    async function sendData(data) {
+        if (!port || !port.writable) {
+            appendLog("\n[Error: El puerto no está listo para escribir]\n");
+            return;
+        }
+
+        // Procesar terminación de línea según la selección
+        const ending = lineEndingSelect.value;
+        if (ending === 'nl') data += '\n';
+        else if (ending === 'cr') data += '\r';
+        else if (ending === 'crlf') data += '\r\n';
+
+        const encoder = new TextEncoder();
+        const writer = port.writable.getWriter();
+        
+        try {
+            // Escribir los datos convertidos a Uint8Array
+            await writer.write(encoder.encode(data));
+            appendLog(`\n[Enviado: ${data.trim()}]\n`);
+        } catch (error) {
+            console.error("Error al enviar datos:", error);
+            appendLog(`\n[Error al enviar: ${error.message}]\n`);
+        } finally {
+            writer.releaseLock();
+        }
+    }
+
+    // Evento Conectar
+    connectBtn.addEventListener('click', async () => {
+        try {
+            port = await navigator.serial.requestPort();
+            const baudRate = parseInt(baudrateSelect.value);
+            
+            await port.open({ baudRate });
+            
+            keepReading = true;
+            toggleUI(true);
+            consoleDiv.textContent = "[Puerto conectado correctamente]\n";
+
+            readFromPort();
+
+        } catch (error) {
+            console.error("Error al conectar:", error);
+            appendLog(`\n[Error al conectar: ${error.message}]\n`);
+        }
+    });
+
+    // Evento Desconectar
+    disconnectBtn.addEventListener('click', async () => {
+        await disconnectPort();
+    });
+
+    async function disconnectPort() {
+        keepReading = false;
+        if (reader) {
+            await reader.cancel();
+        }
+        if (port) {
+            await port.close();
+        }
+        toggleUI(false);
+        appendLog(`\n[Puerto desconectado]\n`);
+    }
+
+    // Evento Enviar (al hacer clic o pulsar Enter en el input)
+    sendBtn.addEventListener('click', () => {
+        if (txDataInput.value) {
+            sendData(txDataInput.value);
+            txDataInput.value = ""; // Limpiar campo
+            txDataInput.focus();
+        }
+    });
+
+    txDataInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendBtn.click();
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        consoleDiv.textContent = "";
+    });
+
+    function appendLog(message) {
+        consoleDiv.textContent += message;
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+
+    // Alternar los elementos activos de la interfaz
+    function toggleUI(isConnected) {
+        statusText.textContent = isConnected ? "Conectado" : "Desconectado";
+        statusText.className = isConnected ? "status connected" : "status disconnected";
+        
+        connectBtn.disabled = isConnected;
+        baudrateSelect.disabled = isConnected;
+        
+        disconnectBtn.disabled = !isConnected;
+        txDataInput.disabled = !isConnected;
+        sendBtn.disabled = !isConnected;
+        lineEndingSelect.disabled = !isConnected;
+    }
+</script>
+
+</body>
+</html>
