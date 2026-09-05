@@ -19,7 +19,7 @@ export const catalogEntries = [
     "id": "lectura-imu-m5stack",
     "kind": "external",
     "title": "Lectura de la IMU del M5Stack Core2 for AWS",
-    "href": "https://isantosruiz.github.io/html/m5.html",
+    "href": "https://isantosruiz.github.io/html/imu.html",
     "icon": "fa-li fa fa-file-code",
     "sections": [
       "inicio",
