@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "crear-monitor-serial",
+    "kind": "external",
+    "title": "Cómo crear un monitor serial web",
+    "href": "https://isantosruiz.github.io/html/monitor.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  }, 
+  {
     "id": "lectura-imu-m5stack",
     "kind": "external",
     "title": "Lectura de la IMU del M5Stack Core2 for AWS",
