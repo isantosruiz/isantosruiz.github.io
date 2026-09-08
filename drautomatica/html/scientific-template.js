@@ -201,7 +201,7 @@
       .then(function (payload) {
         output.innerHTML = payload.html;
 
-        if (payload.meta) {
+        if (payload.meta && scriptNode.dataset.showMeta === "true") {
           output.parentNode.appendChild(
             createStatus(
               "Tabla generada: " +
