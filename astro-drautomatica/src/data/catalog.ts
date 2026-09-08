@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "nuevo-mapa-planeta",
+    "kind": "external",
+    "title": "Un nuevo mapa de nuestro planeta",
+    "href": "https://isantosruiz.github.io/html/mapas.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "modelado"
+    ],
+  }, 
+  {
     "id": "crear-monitor-serial",
     "kind": "external",
     "title": "Cómo crear un monitor serial web",
