@@ -1,0 +1,497 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>De la taquería al álgebra lineal: cómo multiplicar matrices renglón por columna | drAutomática</title><meta name="description" content="Una explicación intuitiva de la multiplicación de matrices renglón por columna a partir de los pedidos, precios y calorías de una taquería."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/matrices/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="De la taquería al álgebra lineal: cómo multiplicar matrices renglón por columna | drAutomática"><meta property="og:description" content="Una explicación intuitiva de la multiplicación de matrices renglón por columna a partir de los pedidos, precios y calorías de una taquería."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/matrices/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Una explicación intuitiva de la multiplicación de matrices renglón por columna a partir de los pedidos, precios y calorías de una taquería."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="De la taquería al álgebra lineal: cómo multiplicar matrices renglón por columna | drAutomática"><meta name="twitter:description" content="Una explicación intuitiva de la multiplicación de matrices renglón por columna a partir de los pedidos, precios y calorías de una taquería."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="latex" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Artículo de divulgación</p>
+        <h1>De la taquería al álgebra lineal</h1>
+        <p class="subtitle">Una forma intuitiva de entender el producto renglón por columna</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Te explico paso a paso qué hacemos realmente cuando multiplicamos dos matrices. A partir de un ejemplo cotidiano, veremos cómo se combina cada renglón de la primera matriz con cada columna de la segunda y qué significado tiene cada valor obtenido.</p>
+      </section>
+
+      <h2>Introducción</h2>
+
+      <p>La multiplicación de matrices suele enseñarse mediante una frase que parece sencilla:</p>
+
+      <blockquote>
+        <p><i>Se multiplican renglones por columnas</i>.</p>
+      </blockquote>
+
+      <p>El problema es que memorizar esa instrucción no necesariamente ayuda a comprenderla. ¿Por qué se combina un
+        renglón de la primera matriz con una columna de la segunda? ¿Por qué los productos se suman? ¿Qué representa
+        cada número del resultado?</p>
+
+      <p>Para responder estas preguntas, como ejemplo, imaginemos que gestionamos los pedidos en una taquería.</p>
+
+      <h2>Un pedido convertido en números</h2>
+
+      <p>Supongamos que en una mesa se ordenaron cuatro tacos al pastor, dos tacos de asada y una quesadilla. Podemos representar el
+        pedido mediante un renglón:</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \]
+      </div>
+
+      <p>Cada posición tiene un significado:</p>
+
+      <div class="equation">
+        \[
+        \begin{array}{ccc}
+        \text{pastor} & \text{asada} & \text{quesadilla}
+        \end{array}
+        \]
+      </div>
+
+      <p>Supongamos que los precios unitarios son 18, 22 y 30 pesos, respectivamente. Los colocamos en una columna y
+        conservamos exactamente el mismo orden:</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}
+        \]
+      </div>
+
+      <p>Para calcular el importe de la cuenta, asociamos cada cantidad con su precio:</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}
+        =
+        4(18) + 2(22) +1 (30) = 72 + 44 + 30 = 146.
+        \]
+      </div>
+
+      <p>Por lo tanto, la cuenta de la mesa es de 146 pesos.</p>
+
+      <figure>
+        <img src="/drautomatica/html/tacos.png"
+            alt="Multiplicación de renglón por columna"
+            style="display: block; width: min(100%, 640px); height: auto; margin: 0 auto;">
+        <figcaption>
+            Multiplicación de renglón por columna.
+        </figcaption>
+      </figure>
+
+      <p>Entonces, para multiplicar un renglón por una columna se multiplican las entradas correspondientes y
+        después se suman los resultados. El producto no genera otro renglón ni otra columna, sino un solo número.</p>
+
+      <h2>Ahora usemos dos matrices</h2>
+
+      <p>Supongamos que deseamos registrar los pedidos de dos mesas. La primera ordenó cuatro tacos al pastor, dos de
+        asada y una quesadilla. La segunda pidió tres tacos al pastor, cuatro de asada y dos quesadillas.</p>
+
+      <script type="text/tabjax">
+\begin{tabular}{cccc}
+\hline
+Mesa & Pastor & Asada & Quesadilla \\
+\hline
+Mesa 1 & 4 & 2 & 1 \\
+Mesa 2 & 3 & 4 & 2 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Esta información se representa mediante la matriz</p>
+
+      <div class="equation">
+        \[
+        A=
+        \begin{bmatrix}
+        4 & 2 & 1\\
+        3 & 4 & 2
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>Cada renglón corresponde a una mesa y cada columna representa un producto.</p>
+
+      <p>Ahora reunamos dos datos de cada alimento: su precio y su contenido energético aproximado.</p>
+
+      <script type="text/tabjax">
+\begin{tabular}{lcc}
+\hline
+Producto & Precio unitario & Calorías aproximadas \\
+\hline
+Taco al pastor & 18 pesos & 160 kcal \\
+Taco de asada & 22 pesos & 210 kcal \\
+Quesadilla & 30 pesos & 280 kcal \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La matriz correspondiente es</p>
+
+      <div class="equation">
+        \[
+        B=
+        \begin{bmatrix}
+        18 & 160\\
+        22 & 210\\
+        30 & 280
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>En esta matriz, cada renglón corresponde a uno de los productos y las columnas representan el precio y las
+        calorías.</p>
+
+      <p>El orden es fundamental. Las columnas de \(A\) y los renglones de \(B\) deben referirse a los mismos
+        productos:</p>
+
+      <div class="equation">
+        \[
+        \text{pastor},\quad \text{asada},\quad \text{quesadilla}.
+        \]
+      </div>
+
+      <p>De otro modo, estaríamos multiplicando cantidades por datos que no les corresponden.</p>
+
+      <h2>¿Se pueden multiplicar estas matrices?</h2>
+
+      <p>La matriz \(A\) tiene dos renglones y tres columnas, por lo que su dimensión es \(2\times 3\). La matriz
+        \(B\) tiene tres renglones y dos columnas, así que su dimensión es \(3\times 2\).</p>
+
+      <p>Podemos escribir:</p>
+
+      <div class="equation">
+        \[
+        \underbrace{(2\times 3)}_{A}\,
+        \underbrace{(3\times 2)}_{B}
+        \longrightarrow
+        \underbrace{(2\times 2)}_{AB}.
+        \]
+      </div>
+
+      <p>Los dos números interiores deben coincidir. En este caso ambos son 3 porque tenemos tres tipos de productos.
+        Los números exteriores indican la dimensión de la matriz resultante.</p>
+
+      <p>Por consiguiente, el producto \(AB\) será una matriz de \(2\times 2\):</p>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        c_{11} & c_{12}\\
+        c_{21} & c_{22}
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <h2>El procedimiento renglón por columna</h2>
+
+      <p>La posición de cada resultado indica qué renglón y qué columna debemos combinar.</p>
+
+      <p>Para obtener \(c_{11}\), usamos el primer renglón de \(A\) y la primera columna de \(B\):</p>
+
+      <div class="equation">
+        \[
+        c_{11}
+        =
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>Multiplicamos las entradas correspondientes y sumamos:</p>
+
+      <div class="equation">
+        \[
+        c_{11}=4(18)+2(22)+1(30)=146.
+        \]
+      </div>
+
+      <p>Este número es el costo total del pedido de la primera mesa.</p>
+
+      <p>Para calcular \(c_{12}\), conservamos el primer renglón de \(A\), pero ahora utilizamos la segunda columna
+        de \(B\):</p>
+
+      <div class="equation">
+        \[
+        c_{12}
+        =
+        4(160)+2(210)+1(280)=1340.
+        \]
+      </div>
+
+      <p>El resultado representa las calorías aproximadas consumidas en la primera mesa.</p>
+
+      <p>Continuamos con el segundo renglón de \(A\). Para obtener \(c_{21}\), lo multiplicamos por la primera
+        columna de \(B\):</p>
+
+      <div class="equation">
+        \[
+        c_{21}
+        =
+        3(18)+4(22)+2(30)=202.
+        \]
+      </div>
+
+      <p>Finalmente, combinamos el segundo renglón con la segunda columna:</p>
+
+      <div class="equation">
+        \[
+        c_{22}
+        =
+        3(160)+4(210)+2(280)=1880.
+        \]
+      </div>
+
+      <p>Al reunir los cuatro resultados obtenemos</p>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        146 & 1340\\
+        202 & 1880
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>La matriz resultante puede interpretarse así:</p>
+
+      <script type="text/tabjax">
+\begin{tabular}{lrr}
+\hline
+Mesa & Importe & Calorías aproximadas \\
+\hline
+Mesa 1 & 146 pesos & 1340 kcal \\
+Mesa 2 & 202 pesos & 1880 kcal \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los renglones del resultado conservan el significado de los renglones de la primera matriz, es decir,
+        representan las mesas. Sus columnas adoptan el significado de las columnas de la segunda matriz, ahora
+        representan el importe y las calorías.</p>
+
+      <p>Esta observación permite entender algo importante. La multiplicación matricial no es solamente una sucesión
+        de operaciones aritméticas. También es una forma de relacionar y transformar información.</p>
+
+      <h2>La regla general</h2>
+
+      <p>Si \(A\) es una matriz de dimensión \(m\times n\) y \(B\) es una matriz de dimensión \(n\times p\),
+        entonces el producto</p>
+
+      <div class="equation">
+        \[
+        C=AB
+        \]
+      </div>
+
+      <p>es una matriz de dimensión \(m\times p\).</p>
+
+      <p>Cada entrada \(c_{ij}\) se obtiene multiplicando el renglón \(i\) de \(A\) por la columna \(j\) de
+        \(B\):</p>
+
+      <div class="equation">
+        \[
+        c_{ij}
+        =
+        a_{i1}b_{1j}
+        +a_{i2}b_{2j}
+        +\cdots+
+        a_{in}b_{nj}.
+        \]
+      </div>
+
+      <p>Aunque la fórmula parece más abstracta, expresa exactamente lo que hicimos en la taquería: emparejar
+        cantidades relacionadas, multiplicarlas y sumar sus contribuciones.</p>
+
+      <p>El índice \(i\) selecciona un renglón de la primera matriz. El índice \(j\) selecciona una columna de la
+        segunda. Por eso el valor \(c_{ij}\) ocupa el renglón \(i\) y la columna \(j\) del resultado.</p>
+
+      <h2>Tres errores frecuentes</h2>
+      <ul class="manita">
+
+      <li>El primer error consiste en multiplicar las entradas que ocupan la misma posición. Esa operación existe y se
+        conoce como producto elemento a elemento o producto de Hadamard, pero no es el producto matricial ordinario.</li>
+
+      <li>El segundo es ignorar las dimensiones. Para calcular \(AB\), el número de columnas de \(A\) debe
+        coincidir con el número de renglones de \(B\).</li>
+
+      <li><p>El tercero es cambiar el orden de los datos. Si la primera columna de \(A\) representa tacos al pastor, el
+        primer renglón de \(B\) también debe contener la información de los tacos al pastor.</p>
+
+      <p>Además, el orden de las matrices importa. En general,</p>
+
+      <div class="equation">
+        \[
+        AB\neq BA.
+        \]
+      </div>
+
+      <p>Incluso cuando ambos productos existen, normalmente tienen dimensiones, valores e interpretaciones
+        diferentes.</p></li>
+      </ul>
+
+      <h2>Un ejercicio breve</h2>
+
+      <p>Una tercera mesa pide dos tacos al pastor, un taco de asada y tres quesadillas. Su pedido se representa
+        mediante</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        2 & 1 & 3
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>Usando la misma matriz de precios y calorías, ¿cuál es el importe de la cuenta y cuántas calorías representa
+        aproximadamente el pedido?</p>
+
+      <p>El cálculo es</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        2 & 1 & 3
+        \end{bmatrix}
+        \begin{bmatrix}
+        18 & 160\\
+        22 & 210\\
+        30 & 280
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>Para el importe:</p>
+
+      <div class="equation">
+        \[
+        2(18)+1(22)+3(30)=148.
+        \]
+      </div>
+
+      <p>Para las calorías:</p>
+
+      <div class="equation">
+        \[
+        2(160)+1(210)+3(280)=1370.
+        \]
+      </div>
+
+      <p>El resultado es</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        148 & 1370
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>La mesa deberá pagar 148 pesos y su pedido representa aproximadamente 1370 kilocalorías.</p>
+
+      <h2>Más que una regla mecánica</h2>
+
+      <p>Las matrices permiten organizar información y convertirla en nuevos resultados. En el ejemplo, una matriz
+        describía pedidos y otra contenía características de los productos. Al multiplicarlas obtuvimos, de una sola
+        vez, el importe y las calorías correspondientes a cada mesa.</p>
+
+      <p>Este mismo principio aparece en economía, computación, robótica, procesamiento de imágenes, gráficos
+        tridimensionales e inteligencia artificial. Puede cambiar el contexto, pero la operación fundamental permanece:
+        <strong>cada entrada del resultado surge de aplicar o “distribuir” un renglón sobre una columna</strong>.</p>
+
+      <p>Cuando se comprende esa idea, la multiplicación de matrices deja de ser una receta difícil de recordar y se
+        convierte en una manera natural de relacionar información.</p>
+
+      <h2>Bibliografía</h2>
+
+      <ul class="Bibliografía">
+        <li>Lay, D. C., Lay, S. R., & McDonald, J. J. (2016). <i>Álgebra lineal y sus aplicaciones (5.ª ed.)</i>. Pearson Educación.</li>
+      </ul>
+
+      <p class="caption"><em>El planteamiento de comenzar con una situación cotidiana está inspirado en el video
+          <a href="https://www.youtube.com/watch?v=lqc5oJBMVZk">“À quoi sert une matrice?”</a>, del canal MATHmana.
+          El contexto mexicano, los datos, las matrices y el desarrollo del ejemplo fueron elaborados específicamente
+          para este artículo.</em></p>
+   
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
