@@ -27,6 +27,17 @@ export const catalogEntries = [
     ],
   }, 
   {
+    "id": "taqueria-algebra-lineal",
+    "kind": "external",
+    "title": "De la taquería al álgebra lineal",
+    "href": "https://isantosruiz.github.io/html/matrices.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "modelado"
+    ],
+  }, 
+  {
     "id": "crear-monitor-serial",
     "kind": "external",
     "title": "Cómo crear un monitor serial web",
