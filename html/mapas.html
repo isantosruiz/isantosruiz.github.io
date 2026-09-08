@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="La matemática detrás de las proyecciones de Mercator y Equal Earth: cómo representar una superficie curva en un plano y qué propiedades conserva cada mapa." />
+  <title>Un nuevo mapa de nuestro planeta</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="latex" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Artículo de divulgación</p>
+        <h1>Un nuevo mapa de nuestro planeta</h1>
+        <p class="subtitle">Conoce la matemática detrás de la polémica de los mapas en la ONU</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La reciente resolución de Naciones Unidas sobre la representación de la Tierra en los mapas ha reabierto un debate de más
+          de cuatro siglos. El problema de fondo no es político, sino geométrico: ¿cómo representar una superficie
+          curva sobre un plano sin deformarla?</p>
+      </section>
+
+      <h2>Introducción</h2>
+
+      <p>A primera vista, podría parecer extraño que la representación del planeta llegue hasta la Asamblea General
+        de las Naciones Unidas. Después de todo, sabemos dónde están África, Europa, América y Groenlandia. Las
+        superficies de los países están medidas y sus coordenadas geográficas pueden determinarse con enorme
+        precisión.</p>
+
+      <p>El problema aparece cuando intentamos dibujar todo eso sobre una hoja de papel o una pantalla.</p>
+
+      <p>El 4 de septiembre de 2026, la Asamblea General de la ONU aprobó una resolución promovida por Togo y
+        respaldada por el Grupo Africano para fomentar representaciones cartográficas que reflejen mejor el tamaño
+        relativo de las distintas regiones de la Tierra. La iniciativa recibió 164 votos a favor, seis abstenciones y un voto en
+        contra, el de Estados Unidos.</p>
+
+      <p>Esto no significa que la ONU haya ordenado reemplazar todos los mapas ni que las fronteras vayan a
+        modificarse. La resolución tampoco prohíbe la proyección de Mercator. Su propósito es promover, especialmente
+        en contextos educativos e informativos, proyecciones que representen adecuadamente las áreas relativas de los
+        continentes.</p>
+
+      <p>La controversia tiene una explicación matemática bastante más interesante que la discusión política.</p>
+
+      <h2>El problema comienza con la geometría</h2>
+
+      <p>La Tierra es aproximadamente esférica. Más precisamente, se modela mediante un elipsoide de revolución,
+        mientras que los mapas generalmente son planos.</p>
+
+      <p>Transformar coordenadas geográficas \((\lambda,\varphi)\) —donde \(\lambda\) representa la longitud y \(\varphi\) la latitud— en coordenadas cartesianas
+        \(
+        (x,y)
+        \)
+requiere una función de transformación</p>
+
+      <div class="equation">
+        \[
+        f:(\lambda,\varphi) \longrightarrow (x,y).
+        \]
+      </div>
+
+      <p>A esta transformación la llamamos <strong>proyección cartográfica</strong>.</p>
+
+      <p>El inconveniente fundamental es que no existe una transformación de una superficie esférica a un plano que
+        conserve simultáneamente todas sus propiedades geométricas.</p>
+
+      <p>Por eso, cualquier proyección debe sacrificar algo. Puede conservar razonablemente bien los ángulos, las áreas, ciertas distancias o algunas direcciones, pero
+        no todo al mismo tiempo.</p>
+
+      <p>Por lo tanto, no deberíamos preguntarnos cuál es el mapa correcto, sino <strong>qué propiedad queremos
+          preservar y para qué utilizaremos el mapa</strong>.</p>
+
+      <h2>Mercator nunca fue diseñada para comparar continentes</h2>
+
+      <p>La proyección de Mercator fue presentada por Gerardus Mercator en 1569. Su extraordinario éxito histórico
+        se debe a una propiedad matemática muy útil para la navegación.</p>
+
+      <p>En su versión esférica puede expresarse mediante
+
+      <div class="equation">
+        \[
+        \begin{align*}
+        x &= R(\lambda-\lambda_0), \\
+        y &= R\ln\left[
+        \tan\left(
+        \frac{\pi}{4}+\frac{\varphi}{2}
+        \right)
+        \right],
+        \end{align*}
+        \]
+      </div>
+      donde \(R\) es el radio de la esfera utilizada como modelo y \(\lambda_0\) es el meridiano central.</p>
+
+      <p>La ecuación de la segunda componente es particularmente reveladora. La coordenada \(y\) no aumenta linealmente con la
+        latitud. Conforme nos aproximamos a los polos, crece cada vez más rápidamente.</p>
+
+      <p>De hecho,
+      <div class="equation">
+        \[
+        \lim_{\varphi\rightarrow \pm\pi/2}y=\pm\infty.
+        \]
+      </div>
+      </p>
+
+      <p>Por esta razón los polos ni siquiera pueden representarse regularmente en una proyección de Mercator.</p>
+
+      <p>Esta deformación no es un error accidental. Es precisamente lo que permite obtener una de las
+        características que hicieron tan útil a Mercator para la navegación.</p>
+
+      <p>La proyección es <strong>conforme</strong>, es decir, conserva localmente los ángulos. Las líneas de rumbo
+        constante (loxodromias) aparecen como líneas rectas, una propiedad extraordinariamente práctica para los
+        navegantes de los siglos posteriores a su aparición.</p>
+
+      <p>Sin embargo, la conservación de los ángulos trae consigo una distorsión de las áreas.</p>
+
+      <h2>La distorsión puede calcularse</h2>
+
+      <p>En la proyección esférica de Mercator, el factor de escala local depende de la latitud aproximadamente
+        como
+      <div class="equation">
+        \[
+        k = \sec\varphi=\frac{1}{\cos\varphi}.
+        \]
+      </div>
+      </p>
+
+      <p>Como la escala se amplifica en dos direcciones, el factor de distorsión de área es
+      <div class="equation">
+        \[
+        K = \sec^2\varphi
+        =\frac{1}{\cos^2\varphi}.
+        \]
+      </div>
+      </p>
+
+      <p>Esto permite cuantificar el problema:</p>
+      <ul class="manita">
+      <li>En el ecuador, \(\varphi=0^\circ\). Por lo tanto, \(K=1\). No existe amplificación local del área.</li>
+
+      <li>A una latitud de \(45^\circ\), \(K={1}/{\cos^2(45^\circ)}=2\). El área local aparece duplicada.</li>
+
+      <li>A una latitud de \(60^\circ\), \(K={1}/{\cos^2(60^\circ)}=4\). La amplificación ya es de cuatro veces.</li>
+
+      <li>A una latitud de \(80^\circ\), \(K \approx 33\). La distorsión crece rápidamente al acercarnos a los polos.</li>
+        </ul>
+
+      <p>Esto explica por qué las regiones situadas en latitudes altas adquieren una presencia visual desproporcionada
+        en un mapamundi de Mercator.</p>
+
+      <h2>El ejemplo de Groenlandia y África</h2>
+
+      <p>En muchos mapas de Mercator, Groenlandia parece tener dimensiones comparables con las del continente
+        africano, pero la realidad es muy diferente.</p>
+
+      <p>Groenlandia tiene aproximadamente \(2.17\textsf{ millones de km}^2\), mientras que África posee alrededor de
+        \(30.3\textsf{ millones de km}^2\).</p>
+
+      <p>Por lo tanto,
+      <div class="equation">
+        \[
+        \frac{\textsf{Área de África}}{\textsf{Área de Groenlandia}}
+        \approx
+        \frac{30.3}{2.17}
+        \approx 14.
+        \]
+      </div>
+      </p>
+
+      <p>Entonces, África tiene casi catorce veces la superficie de Groenlandia.</p>
+
+      <figure>
+        <img src="./groenlandia_africa.png" alt="Groenlandia y África según Mercator"
+          style="display: block; width: min(100%, 720px); height: auto; margin: 0 auto;">
+        <figcaption>Groenlandia y África según Mercator.</figcaption>
+      </figure>
+
+      <p>No es que Mercator haya calculado incorrectamente las superficies. Simplemente no fue diseñada para
+        conservarlas. Por eso, utilizarla para comparar visualmente el tamaño de continentes equivale a utilizar un instrumento fuera de
+        las condiciones para las que fue diseñado.</p>
+
+      <h2>Una proyección que conserva las áreas</h2>
+
+      <p>La resolución de la ONU ha dado visibilidad a la proyección <strong>Equal Earth</strong>, presentada en 2018 por
+        Bojan Šavrič, Tom Patterson y Bernhard Jenny. Su característica esencial es que pertenece a la familia de las
+        proyecciones equivalentes o <strong>de igual área</strong>.</p>
+
+      <figure>
+        <img src="./equal_earth.png" alt="Mercator versus Equal Earth"
+          style="display: block; width: min(100%, 840px); height: auto; margin: 0 auto;">
+        <figcaption>Mercator <i>versus</i> Equal Earth.</figcaption>
+      </figure>
+
+
+      <p>Esto significa que mantiene proporcionalidad entre las áreas representadas en el mapa y las correspondientes
+        áreas sobre la Tierra.</p>
+
+      <p>Si dos regiones tienen superficies reales \(A_1\) y \(A_2\), una proyección equivalente busca preservar
+        la relación
+      <div class="equation">
+        \[
+        \frac{A_1}{A_2}
+        =
+        \frac{A'_1}{A'_2},
+        \]
+      </div>
+      donde \(A'_1\) y \(A'_2\) son las áreas que observamos sobre el mapa.</p>
+
+      <p>África puede entonces compararse visualmente con Groenlandia, Europa, América del Norte o cualquier otra
+        región sin introducir la enorme amplificación latitudinal característica de Mercator.</p>
+
+      <p>Pero Equal Earth también deforma. Para conservar las áreas debe sacrificar otras propiedades, principalmente la forma, las distancias y
+        determinadas relaciones angulares. Y esto no es un error, es una consecuencia inevitable de representar una superficie curva en dos
+        dimensiones.</p>
+
+      <h2>No existe la proyección perfecta</h2>
+
+      <p>Este es quizá el aspecto científico más importante de toda la discusión.</p>
+
+      <p>Decir que Equal Earth es simplemente una proyección «correcta» y Mercator una proyección «incorrecta» sería
+        una simplificación excesiva, porque resuelven problemas diferentes.</p>
+
+      <p>Mercator es conforme y resulta especialmente apropiada cuando interesa preservar ángulos locales y
+        direcciones. Equal Earth es equivalente y resulta mucho más apropiada cuando queremos comparar visualmente
+        superficies.</p>
+
+      <p>La elección depende del propósito. Un mapa para navegación marítima, un atlas escolar, un mapa estadístico de población, una aplicación
+        meteorológica y una visualización de emisiones de carbono no necesariamente deberían emplear la misma
+        proyección.</p>
+
+      <p>En cartografía, <strong>la precisión no puede evaluarse sin especificar primero qué magnitud queremos
+          preservar</strong>.</p>
+
+      <h2>La importancia en la educación</h2>
+
+      <p>Aquí es donde la discusión adquiere especial relevancia.</p>
+
+      <p>Una persona que observa repetidamente un mapamundi termina construyendo una representación mental de las
+        dimensiones relativas del planeta.</p>
+
+      <p>Si el mapa utilizado exagera sistemáticamente las regiones de altas latitudes, esa distorsión puede
+        convertirse inadvertidamente en conocimiento geográfico intuitivo.</p>
+
+      <p>El problema no consiste en que los estudiantes aprendan una superficie numérica equivocada. Un libro puede
+        indicar correctamente que África tiene unos 30 millones de kilómetros cuadrados.</p>
+
+      <p>Es un problema de percepción. Podemos leer que África es catorce veces mayor que Groenlandia y, al mismo tiempo, observar diariamente un
+        mapa en el que ambas parecen comparables.</p>
+
+      <p>Para enseñar geografía mundial, demografía, recursos naturales, cambio climático o distribución territorial,
+        una proyección equivalente puede ser más coherente con la información cuantitativa que pretendemos
+        comunicar.</p>
+
+      <p>La posición mexicana durante la discusión resulta particularmente interesante desde el punto de vista
+        técnico:
+        México votó a favor y señaló ante la Asamblea General que Equal Earth constituye una alternativa para
+        representar globalmente las áreas porque conserva las proporciones de las masas continentales. Al mismo
+        tiempo, la delegación mexicana subrayó algo esencial desde la cartografía: cualquier mapa implica compromisos
+        entre distancia, dirección, área y forma.</p>
+
+      <p>Esa observación resume muy bien el problema. No necesitamos sustituir un supuesto mapa incorrecto por otro supuesto mapa perfecto. Necesitamos
+        seleccionar conscientemente la representación apropiada para cada aplicación.</p>
+
+      <h2>La ONU no cambiará el mapa de la Tierra</h2>
+
+      <p>No lo hará, en el sentido literal. Los continentes seguirán teniendo las mismas coordenadas, las fronteras no se modifican por esta resolución
+        y Mercator continuará siendo matemáticamente válida para las aplicaciones en las que sus propiedades sean
+        convenientes.</p>
+
+      <p>Lo que probablemente cambiará, al menos gradualmente, es <strong>qué proyección consideramos apropiada
+          para representar nuestro planeta en contextos generales, educativos e informativos</strong>.</p>
+
+      <p>La resolución de la ONU no resuelve un problema geométrico que lleva siglos siendo conocido. Ninguna
+        resolución podría hacerlo.</p>
+
+      <p>Lo que hace es llamar la atención sobre una decisión que muchas veces pasa inadvertida. Cada vez que convertimos la superficie aproximadamente esférica de nuestro planeta en un rectángulo,
+        estamos eligiendo qué propiedades conservar y cuáles deformar.</p>
+
+      <p>En ese sentido, un mapa no es simplemente un dibujo reducido de la Tierra, es un modelo matemático de la Tierra.
+        Y, como ocurre con cualquier modelo matemático, antes de preguntarnos si es correcto debemos hacer una
+        pregunta más importante: <strong>¿correcto para qué?</strong></p>
+
+      <h2>Bibliografía</h2>
+
+      <ul class="references">
+        <li>Šavrič, B., Patterson, T., &amp; Jenny, B. (2019). The Equal Earth map projection.
+          <em>International Journal of Geographical Information Science, 33</em>(3), 454–465.
+          <a href="https://doi.org/10.1080/13658816.2018.1504949">https://doi.org/10.1080/13658816.2018.1504949</a></li>
+        <li>Snyder, J. P. (1987). <a href="https://pubs.usgs.gov/publication/pp1395">Map projections — A working manual</a>. U.S. Geological Survey Professional
+          Paper 1395. U.S. Government Printing Office.</li>
+        <li>United Nations General Assembly. (2026). <a href="https://docs.un.org/A/80/L.104">Correct the Map: Rebalancing global cartographic
+            representation and promoting equitable representation of the world’s regions, particularly Africa</a>.
+          Eightieth session, United Nations.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
