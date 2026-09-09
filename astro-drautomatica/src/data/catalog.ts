@@ -18,7 +18,7 @@ export const catalogEntries = [
   {
     "id": "mexico-ante-pisa",
     "kind": "external",
-    "title": "México ante PISA",
+    "title": "México ante la prueba PISA",
     "href": "https://isantosruiz.github.io/html/pisa.html",
     "icon": "fa-li fa fa-file-code",
     "sections": [
