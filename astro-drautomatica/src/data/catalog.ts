@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "mexico-ante-pisa",
+    "kind": "external",
+    "title": "México ante PISA",
+    "href": "https://isantosruiz.github.io/html/pisa.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "miscelanea"
+    ],
+  },   
+  {
     "id": "nuevo-mapa-planeta",
     "kind": "external",
     "title": "Un nuevo mapa de nuestro planeta",
