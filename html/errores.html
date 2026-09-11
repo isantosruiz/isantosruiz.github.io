@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Cómo calcular la propagación de incertidumbres en instrumentación: reglas prácticas, caída de presión en un filtro y medición de flujo másico." />
+  <title>Propagación de errores en instrumentación</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación industrial</p>
+        <h1>Propagación de errores en instrumentación</h1>
+        <p class="subtitle">Cómo se combinan las incertidumbres al calcular una magnitud a partir de otras mediciones</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La incertidumbre de una medición no desaparece al introducir su valor en una fórmula: se transmite al
+          resultado calculado. Este artículo presenta la base matemática de esa propagación y las reglas prácticas
+          para sumas, restas, productos, cocientes y potencias. A través de dos aplicaciones industriales, la caída
+          de presión en un filtro y el cálculo del flujo másico de un gas, se muestra cómo obtener la incertidumbre
+          final y cómo interpretar su importancia al evaluar un proceso.</p>
+      </section>
+
+      <h2>Medir también implica reconocer la incertidumbre</h2>
+
+      <p>En la instrumentación industrial, ninguna medición es absolutamente exacta. Cada sensor, transmisor o
+        indicador aporta incertidumbre debido a factores como su calibración, resolución, tolerancias de fabricación
+        y condiciones ambientales. Una lectura de presión, temperatura o caudal debe entenderse junto con la
+        incertidumbre que la acompaña.</p>
+
+      <p>Muchas variables de interés no se miden directamente, sino que se calculan combinando otras mediciones.
+        Es el caso de la caída de presión en un filtro, obtenida por diferencia entre dos presiones, o del flujo
+        másico de un gas, calculado a partir del caudal volumétrico y la densidad. Las incertidumbres de las entradas
+        se propagan al resultado mediante esa relación matemática. Evaluarlas ayuda a fundamentar decisiones de
+        operación, seguridad, eficiencia y control de calidad.</p>
+
+      <p>Aunque el tema suele llamarse <em>propagación de errores</em>, conviene distinguir entre el error de una
+        medición y la incertidumbre asociada a ella. Aquí calcularemos <strong>incertidumbres</strong>, siguiendo
+        el enfoque de combinación descrito por el <a href="#ref-nist">NIST (2023)</a>. Usaremos $u(X)$ para la
+        incertidumbre estándar de $X$ y reservaremos $\Delta P$ para una diferencia física de presiones.</p>
+
+      <h2>La base matemática</h2>
+
+      <p>Supongamos que una magnitud $Z$ depende de dos mediciones $X$ e $Y$:</p>
+
+      <div class="equation">
+        \[
+        Z = f(X,Y).
+        \]
+      </div>
+
+      <p>Si las entradas no están correlacionadas y una aproximación lineal de la función es adecuada, sus
+        incertidumbres estándar se combinan mediante la <strong>raíz de la suma de los cuadrados</strong>,
+        conocida como RSS por sus siglas en inglés. La expresión se obtiene a partir de una expansión de Taylor
+        de primer orden:</p>
+
+      <div class="equation">
+        \[
+        u(Z) \approx
+        \sqrt{
+          \left(\frac{\partial f}{\partial X}\,u(X)\right)^2
+          +
+          \left(\frac{\partial f}{\partial Y}\,u(Y)\right)^2
+        }.
+        \]
+      </div>
+
+      <p>Las derivadas parciales se evalúan en los valores medidos y actúan como <strong>coeficientes de
+          sensibilidad</strong>: indican cuánto cambia el resultado cuando varía cada entrada. Por eso no basta
+        con sumar las incertidumbres de los instrumentos; primero hay que considerar cómo intervienen en el
+        cálculo.</p>
+
+      <p>En los ejemplos siguientes se supone que las incertidumbres indicadas ya están expresadas como
+        incertidumbres estándar y que las entradas son independientes.</p>
+
+      <h2>Reglas prácticas</h2>
+
+      <h3>Sumas y restas: combinar incertidumbres absolutas</h3>
+
+      <p>Cuando $Z=X+Y$ o $Z=X-Y$, los coeficientes de sensibilidad tienen magnitud uno. En ambos casos:</p>
+
+      <div class="equation">
+        \[
+        u(Z) = \sqrt{u(X)^2+u(Y)^2}.
+        \]
+      </div>
+
+      <p>Las incertidumbres deben expresarse en unidades compatibles con las magnitudes que se suman o restan.
+        <strong>Restar dos lecturas no significa restar sus incertidumbres</strong>: bajo el supuesto de
+        independencia, las contribuciones se combinan en cuadratura.</p>
+
+      <h3>Productos y cocientes: combinar incertidumbres relativas</h3>
+
+      <p>Para $Z=XY$ o $Z=X/Y$, resulta más cómodo trabajar con incertidumbres relativas:</p>
+
+      <div class="equation">
+        \[
+        \frac{u(Z)}{|Z|} \approx
+        \sqrt{
+          \left(\frac{u(X)}{|X|}\right)^2
+          +
+          \left(\frac{u(Y)}{|Y|}\right)^2
+        }.
+        \]
+      </div>
+
+      <p>Estas razones son adimensionales y pueden expresarse como fracciones o porcentajes, siempre de forma
+        consistente. La forma relativa requiere valores nominales distintos de cero.</p>
+
+      <h3>Potencias: considerar el exponente</h3>
+
+      <p>Si $Z=X^n$, con $n$ constante y sin incertidumbre, la regla de primer orden es:</p>
+
+      <div class="equation">
+        \[
+        \frac{u(Z)}{|Z|} \approx |n|\,\frac{u(X)}{|X|}.
+        \]
+      </div>
+
+      <p>Así, elevar una medición al cuadrado duplica aproximadamente su incertidumbre relativa. El valor absoluto
+        del exponente permite aplicar la misma expresión a potencias negativas, dentro del dominio de la función.</p>
+
+      <h2>Ejemplo 1: caída de presión en un filtro</h2>
+
+      <p>Para monitorear la obstrucción de un filtro en una tubería de agua se instalan dos manómetros analógicos:
+        uno antes del filtro, que mide $P_1$, y otro después, que mide $P_2$. La caída de presión se obtiene mediante
+        una resta:</p>
+
+      <div class="equation">
+        \[
+        \Delta P = P_1-P_2.
+        \]
+      </div>
+
+      <ul class="elegante">
+        <li>Presión de entrada: $P_1=150\,\mathrm{kPa}$, con $u(P_1)=3\,\mathrm{kPa}$.</li>
+        <li>Presión de salida: $P_2=120\,\mathrm{kPa}$, con $u(P_2)=2\,\mathrm{kPa}$.</li>
+      </ul>
+
+      <p>El valor nominal de la caída de presión es:</p>
+
+      <div class="equation">
+        \[
+        \Delta P = (150-120)\,\mathrm{kPa}=30\,\mathrm{kPa}.
+        \]
+      </div>
+
+      <p>Como se trata de una diferencia entre entradas independientes, combinamos las incertidumbres absolutas:</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        u(\Delta P)
+          &= \sqrt{u(P_1)^2+u(P_2)^2} \\
+          &= \sqrt{3^2+2^2}\,\mathrm{kPa} \\
+          &= \sqrt{13}\,\mathrm{kPa}
+           \approx 3.61\,\mathrm{kPa}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Redondeando la incertidumbre a dos cifras significativas y el valor nominal a la misma posición decimal,
+        podemos expresar el resultado como:</p>
+
+      <div class="equation">
+        \[
+        \Delta P=(30.0\pm3.6)\,\mathrm{kPa}.
+        \]
+      </div>
+
+      <p>La incertidumbre absoluta resultante es mayor que la de cualquiera de los dos instrumentos por separado.
+        Además, representa aproximadamente un <strong>12% de la caída de presión calculada</strong>, aunque las
+        incertidumbres relativas de las lecturas originales son de solo 2% y 1.67%. Esto ilustra una dificultad
+        importante: al restar dos valores próximos, la diferencia puede tener una incertidumbre relativa elevada.</p>
+
+      <h2>Ejemplo 2: flujo másico de un gas</h2>
+
+      <p>Un sistema de control calcula el flujo másico de gas, $\dot m$, multiplicando el caudal volumétrico $Q$
+        medido por un medidor de vórtice y la densidad $\rho$ medida por un densitómetro:</p>
+
+      <div class="equation">
+        \[
+        \dot m = Q\rho.
+        \]
+      </div>
+
+      <p>La magnitud medida en $\mathrm{m^3/h}$ es un <strong>caudal volumétrico</strong>, no un volumen.
+        La densidad debe corresponder a las mismas condiciones de presión y temperatura a las que está referido
+        ese caudal.</p>
+
+      <ul class="elegante">
+        <li>Caudal volumétrico: $Q=50\,\mathrm{m^3/h}$, con incertidumbre relativa de 1.5%, equivalente a
+          $u(Q)=0.75\,\mathrm{m^3/h}$.</li>
+        <li>Densidad: $\rho=1.2\,\mathrm{kg/m^3}$, con incertidumbre relativa de 2.0%, equivalente a
+          $u(\rho)=0.024\,\mathrm{kg/m^3}$.</li>
+      </ul>
+
+      <p>El flujo másico nominal es:</p>
+
+      <div class="equation">
+        \[
+        \dot m = 50\,\frac{\mathrm{m^3}}{\mathrm{h}}
+        \times 1.2\,\frac{\mathrm{kg}}{\mathrm{m^3}}
+        =60\,\mathrm{kg/h}.
+        \]
+      </div>
+
+      <p>Para el producto combinamos las incertidumbres relativas. Escritas como fracciones:</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \frac{u(\dot m)}{|\dot m|}
+          &\approx \sqrt{(0.015)^2+(0.020)^2} \\
+          &= 0.025 = 2.5\%.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Para recuperar la incertidumbre absoluta, multiplicamos esa fracción por el valor nominal:</p>
+
+      <div class="equation">
+        \[
+        u(\dot m)\approx60\,\mathrm{kg/h}\times0.025
+        =1.5\,\mathrm{kg/h}.
+        \]
+      </div>
+
+      <p>Por lo tanto, el resultado es:</p>
+
+      <div class="equation">
+        \[
+        \dot m=(60.0\pm1.5)\,\mathrm{kg/h}.
+        \]
+      </div>
+
+      <p>La incertidumbre relativa combinada es de <strong>2.5%</strong>. No es la suma aritmética de 1.5% y 2.0%,
+        sino su combinación en cuadratura, bajo los supuestos indicados.</p>
+
+      <h2>Resumen de fórmulas</h2>
+
+      <p>Las siguientes expresiones corresponden a entradas no correlacionadas. En productos, cocientes y potencias
+        se utiliza la aproximación de primer orden; las formas relativas requieren denominadores distintos de cero.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Reglas de propagación de incertidumbres.">
+\begin{tabular}{lll}
+\hline
+Operación & Modelo & Incertidumbre combinada \\
+\hline
+Suma o resta & $Z=X\pm Y$ & $u(Z)=\sqrt{u(X)^2+u(Y)^2}$ \\
+Producto & $Z=XY$ & $\frac{u(Z)}{|Z|}\approx\sqrt{\left(\frac{u(X)}{X}\right)^2+\left(\frac{u(Y)}{Y}\right)^2}$ \\
+Cociente & $Z=X/Y$ & $\frac{u(Z)}{|Z|}\approx\sqrt{\left(\frac{u(X)}{X}\right)^2+\left(\frac{u(Y)}{Y}\right)^2}$ \\
+Potencia & $Z=X^n$ & $\frac{u(Z)}{|Z|}\approx|n|\frac{u(X)}{|X|}$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <h2>Antes de aplicar las fórmulas</h2>
+
+      <ul class="manita">
+        <li><strong>Identifica qué expresa la especificación.</strong> Una tolerancia máxima o una incertidumbre
+          expandida no equivale automáticamente a una incertidumbre estándar.</li>
+        <li><strong>Revisa la correlación.</strong> Si las entradas comparten fuentes de incertidumbre, deben
+          considerarse términos de covarianza.</li>
+        <li><strong>Evalúa la aproximación.</strong> Una función muy no lineal o incertidumbres grandes pueden
+          requerir otro método de propagación.</li>
+        <li><strong>Explica el resultado.</strong> Aquí el símbolo $\pm$ acompaña a una incertidumbre estándar:
+          no representa un error máximo garantizado ni, por sí solo, un intervalo del 95%.</li>
+      </ul>
+
+      <h2>Conclusiones</h2>
+
+      <p>Calcular una variable indirecta exige evaluar tanto su valor nominal como la incertidumbre que recibe de
+        las mediciones de entrada. En sumas y restas se combinan incertidumbres absolutas; en productos y cocientes,
+        relativas; y en potencias interviene la magnitud del exponente.</p>
+
+      <p>Los ejemplos muestran por qué esta evaluación importa en la práctica: una caída de presión de
+        $30\,\mathrm{kPa}$ puede tener una incertidumbre relativa cercana al 12%, mientras un flujo másico de
+        $60\,\mathrm{kg/h}$ resulta con una incertidumbre de $1.5\,\mathrm{kg/h}$. La calidad del resultado
+        depende tanto de los instrumentos como de la operación matemática que los relaciona.</p>
+
+      <h2>Referencia complementaria</h2>
+
+      <ul class="references">
+        <li id="ref-nist">National Institute of Standards and Technology. (2023, 1 de marzo).
+          <em><a href="https://www.nist.gov/pml/nist-technical-note-1297/nist-tn-1297-5-combined-standard-uncertainty">NIST
+              TN 1297: 5. Combined standard uncertainty</a></em>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
