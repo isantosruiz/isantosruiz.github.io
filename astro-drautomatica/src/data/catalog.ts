@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "propagacion-errores-instrumentacion",
+    "kind": "external",
+    "title": "Propagación de errores en instrumentación",
+    "href": "https://isantosruiz.github.io/html/errores.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "control"
+    ],
+  },   
+  {
     "id": "mexico-ante-pisa",
     "kind": "external",
     "title": "México ante la prueba PISA",
