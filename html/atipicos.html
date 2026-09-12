@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Una medición extraña puede ser un error o una pista. Cómo interpretar los datos atípicos con el criterio de Chauvenet sin borrar información valiosa." />
+  <title>El dato que no encaja</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Estadística y medición</p>
+        <h1>El dato que no encaja</h1>
+        <p class="subtitle">¿Un error que debemos descartar o una pista que merece atención?</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>En una serie de mediciones, un valor muy distinto de los demás puede cambiar el promedio y despertar
+          sospechas. Pero que un dato resulte incómodo no significa que sea incorrecto. Mediante un ejemplo
+          de medición del período de un péndulo, exploramos el criterio de Chauvenet para cuantificar qué tan inusual
+          es una observación. Su principal enseñanza no es aprender a borrar datos, sino distinguir entre una señal
+          estadística de alerta y una razón suficiente para excluir una medición.</p>
+      </section>
+
+      <h2>Un péndulo y una lectura desconcertante</h2>
+
+      <p>Imagina que estás midiendo el período de un péndulo. Las primeras lecturas son bastante parecidas: cada
+        oscilación tarda algo menos de 4 segundos. Entonces aparece un resultado de apenas 1.8 segundos que rompe la regularidad.
+        ¿Falló el cronómetro? ¿Anotaste mal? ¿O sucedió algo que todavía no entiendes?</p>
+
+      <figure>
+        <img src="./atipicos-experimento.png" width="1536" height="1024"
+          alt="Ilustración de un péndulo en un laboratorio y una mano que sostiene un cronómetro marcando 3.80 segundos."
+          style="width: 100%; max-width: 600px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Medición del período de un péndulo con un cronómetro.</figcaption>
+      </figure>
+
+      <p>Consideremos seis mediciones del período, expresadas en segundos
+        (<a href="#ref-taylor">Taylor, 2022</a>):</p>
+
+      <div class="equation">
+        \[
+        3.8;\quad 3.5;\quad 3.9;\quad 3.9;\quad 3.4;\quad 1.8.
+        \]
+      </div>
+
+      <p>Con las seis lecturas, el promedio es aproximadamente 3.38 segundos. Pero, si excluimos la
+        última, sube a 3.70 segundos. La decisión sobre un único dato cambia de forma considerable
+        nuestra respuesta a una pregunta aparentemente sencilla: ¿cuánto tarda el péndulo en completar una
+        oscilación?</p>
+
+      <figure>
+        <img src="./atipicos-pendulo.png" width="1597" height="985"
+          alt="Seis mediciones del período de un péndulo. Cinco están entre 3.4 y 3.9 segundos y la sexta vale 1.8. El promedio de todas es 3.38 segundos; sin la sexta, es 3.70."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. El efecto de una sola lectura sobre el promedio. Las líneas horizontales muestran
+          ambos promedios.</figcaption>
+      </figure>
+
+      <h2>Extraño no significa falso</h2>
+
+      <p>Un <strong>dato atípico</strong> (<em>outlier</em>, en inglés) es una observación que se aparta de forma llamativa del patrón de los
+        demás datos. Esa descripción no explica su causa. Puede haber un error de transcripción, una falla del
+        instrumento o una alteración de las condiciones del experimento. También puede tratarse de una
+        fluctuación poco frecuente pero legítima, o de un fenómeno que nuestro modelo no contempla.</p>
+
+      <p>Si descubres que el cronómetro se detuvo durante la última medición, tienes una razón experimental para
+        invalidarla. Es distinto de eliminarla porque reduce la elegancia de una gráfica. En el primer caso existe
+        evidencia sobre cómo se obtuvo el dato; en el segundo, solo sabemos que no se parece a sus vecinos.</p>
+
+      <p>De ahí surge un dilema: conservar una medición incorrecta puede distorsionar el análisis, pero
+          descartar una medición auténtica puede ocultar lo más interesante del experimento. Una prueba
+        estadística ayuda a examinar la discrepancia, pero no identifica por sí sola lo que ocurrió.</p>
+
+      <p>Conviene distinguir entre <strong>señalar</strong> una observación para investigarla,
+        <strong>contrastar</strong> su compatibilidad con un modelo y <strong>adaptar el análisis</strong> para
+        reducir su influencia. Ninguna de esas decisiones implica, por sí misma, borrar el dato
+        (<a href="#ref-nist">NIST, 2012</a>).</p>
+
+      <h2>Una regla para medir la sospecha</h2>
+
+      <p>El criterio de Chauvenet parte de una pregunta: si todas las mediciones procedieran de una misma
+        distribución normal, ¿cuántos resultados tan alejados como el sospechoso esperaríamos encontrar en una
+        muestra de este tamaño?</p>
+
+      <p>Primero calculamos la media $\overline{x}$ y la desviación estándar muestral $s$ usando todos los
+          datos, incluido el que nos parece extraño. Para $N$ mediciones:</p>
+
+      <div class="equation">
+        \[
+        \overline{x}=\frac{1}{N}\sum_{i=1}^{N}x_i,
+        \qquad
+        s=\sqrt{\frac{1}{N-1}\sum_{i=1}^{N}(x_i-\overline{x})^2}.
+        \]
+      </div>
+
+      <p>La media describe el centro del conjunto y la desviación estándar, su dispersión. Con ellas expresamos
+        la distancia del dato sospechoso, $x_{\mathrm{sosp}}$, en unidades de esa dispersión:</p>
+
+      <div class="equation">
+        \[
+        t=\frac{|x_{\mathrm{sosp}}-\overline{x}|}{s}.
+        \]
+      </div>
+
+      <p>Un valor $t=2$ significa que la lectura está a dos desviaciones estándar de la media. No importa si está
+        por arriba o por abajo: el valor absoluto trata ambas posibilidades de la misma manera. Aquí $t$ es una
+        distancia estandarizada, no una prueba de Student.</p>
+
+      <p>Después consultamos la distribución normal para estimar la probabilidad de observar una desviación
+        al menos tan grande, contando las dos colas:</p>
+
+      <div class="equation">
+        \[
+        p=2\bigl[1-\Phi(t)\bigr],
+        \]
+      </div>
+
+      <p>donde $\Phi$ es la función de distribución acumulada de una normal estándar. Finalmente multiplicamos
+        por el tamaño de la muestra:</p>
+
+      <div class="equation">
+        \[
+        n_{\mathrm{esp}}=Np.
+        \]
+      </div>
+
+      <p>La regla convencional de Chauvenet considera rechazable el dato si el número esperado de observaciones
+        tan extremas es menor que media unidad:</p>
+
+      <div class="equation">
+        \[
+        n_{\mathrm{esp}}&lt;\frac{1}{2}.
+        \]
+      </div>
+
+      <p>Esto no significa que existan “medias mediciones”. Es una expectativa: al repetir muchas series del mismo
+        tamaño bajo ese modelo, el promedio de resultados tan extremos sería inferior a uno por cada dos series.
+        El umbral de 0.5 es una convención del criterio, no una frontera física entre verdad y error.</p>
+
+      <h2>¿Qué ocurre con los 1.8 segundos?</h2>
+
+      <p>Para las seis mediciones del péndulo obtenemos:</p>
+
+      <div class="equation">
+        \[
+        \overline{x}\approx3.383\,\mathrm{s},
+        \qquad s\approx0.804\,\mathrm{s}.
+        \]
+      </div>
+
+      <p>La distancia estandarizada del valor sospechoso es:</p>
+
+      <div class="equation">
+        \[
+        t\approx\frac{|1.8-3.383|}{0.804}\approx1.97.
+        \]
+      </div>
+
+      <p>En el modelo normal, una desviación de esa magnitud o mayor tiene una probabilidad bilateral aproximada
+        de 4.88%. Al considerar las seis lecturas:</p>
+
+      <div class="equation">
+        \[
+        n_{\mathrm{esp}}\approx6\times0.0488\approx0.293.
+        \]
+      </div>
+
+      <p>Como $0.293&lt;0.5$, la lectura cumple el criterio de rechazo. La conclusión prudente es que
+        <strong>merece una revisión y podría considerarse su exclusión</strong>, no que hayamos demostrado que el
+        cronómetro falló. En particular, ese 4.88% no es la probabilidad de que la medición sea correcta o errónea:
+        describe resultados extremos bajo el modelo supuesto.</p>
+
+      <p>Los cálculos se han realizado sin redondear los valores intermedios; los resultados mostrados se
+        presentan con unas pocas cifras para facilitar su lectura.</p>
+
+      <h2>Lo raro depende de cuántas veces mires</h2>
+
+      <p>Encontrar un resultado poco frecuente entre seis intentos no tiene el mismo significado que encontrarlo
+        entre mil. Bajo una normal, aproximadamente 4.55% de las observaciones se apartan al menos dos desviaciones
+        estándar de la media verdadera. En mil mediciones esperaríamos alrededor de 45 con esa característica.
+        No sería razonable tratarlas a todas como equivocaciones.</p>
+
+      <p>Por eso Chauvenet ajusta la exigencia al tamaño de la muestra: cuanto mayor sea $N$, más lejos debe
+        encontrarse una observación para cumplir la regla. Estos son algunos umbrales aproximados de $t$:</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Distancia que debe superar un dato para cumplir el criterio de Chauvenet.">
+\begin{tabular}{rr}
+\hline
+Número de mediciones, $N$ & Umbral, en desviaciones estándar \\
+\hline
+6 & 1.73 \\
+10 & 1.96 \\
+20 & 2.24 \\
+100 & 2.81 \\
+1000 & 3.48 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los valores provienen de resolver $2N[1-\Phi(t)]=0.5$. Son una ayuda para interpretar el criterio,
+        no una garantía de que el modelo normal describa nuestro experimento.</p>
+
+      <h2>La cuenta que conviene hacer dos veces</h2>
+
+      <p>Cuando no hay una causa externa clara, una estrategia útil es realizar el análisis
+        con el dato sospechoso y sin él. En lugar de ocultar una decisión discutible, hacemos visible cuánto depende
+        de ella la conclusión (<a href="#ref-taylor">Taylor, 2022</a>).</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Análisis de sensibilidad del ejemplo del péndulo.">
+\begin{tabular}{lrrr}
+\hline
+Conjunto & $N$ & Media (s) & Desviación estándar (s) \\
+\hline
+Todas las lecturas & 6 & 3.383 & 0.804 \\
+Sin la lectura de 1.8 s & 5 & 3.700 & 0.235 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Al retirar la lectura, el promedio aumenta unos 0.32 segundos y la dispersión disminuye mucho. Eso
+        describe la influencia del dato, no demuestra que el segundo resultado sea más verdadero.
+        La tabla muestra desviaciones estándar de las lecturas, no incertidumbres de sus medias.</p>
+
+      <p>Si una conclusión importante cambia al incluir una sola observación, esa sensibilidad debe aparecer en
+        el informe. Puede indicar que hace falta reunir más evidencia, no que debamos elegir el conjunto que
+        produce la respuesta más conveniente.</p>
+
+      <p>También existe otra alternativa a simplemente conservar o eliminar el dato atípico: emplear <strong>métodos estadísticos
+          robustos</strong>, que limiten la influencia de observaciones extremas. Su elección debe responder al
+        objetivo del análisis y no a la búsqueda de un resultado favorable
+        (<a href="#ref-nist">NIST, 2012</a>).</p>
+
+      <h2>La trampa de limpiar hasta que todo encaje</h2>
+
+      <p>El criterio tiene límites importantes. Con pocas mediciones, la desviación estándar es una estimación
+        poco estable: un pequeño cambio en ella puede modificar bastante la probabilidad calculada. Además,
+        una distribución asimétrica, con colas más largas que las de una normal, o una mezcla de condiciones
+        experimentales puede producir valores alejados sin que exista una falla de medición.</p>
+
+      <p>Hay otra tentación: eliminar un punto, recalcular la dispersión y repetir la prueba sobre los que quedan.
+        A medida que el conjunto se estrecha, nuevas observaciones pueden parecer sospechosas. Esa aplicación
+        sucesiva del criterio con estadísticas recalculadas no está justificada. Recalcular el resultado
+          después de una exclusión justificada no equivale a iniciar otra ronda de eliminación
+        (<a href="#ref-taylor">Taylor, 2022</a>).</p>
+
+      <p>Si varios puntos resultan extraños, conviene revisar el experimento completo. Quizá hubo un cambio de
+        instrumento, dos regímenes de funcionamiento o una tendencia temporal. El procedimiento para un único
+        sospechoso no debe convertirse en una orden automática para borrar varios.</p>
+
+      <p>Además, varios valores extremos pueden “enmascararse” al alterar el centro y la dispersión
+        usados para detectarlos. Un procedimiento mal elegido también puede señalar observaciones legítimas.
+        Por eso las pruebas deben complementarse con una inspección gráfica
+        (<a href="#ref-nist">NIST, 2012</a>).</p>
+
+      <h2>Antes de descartar una medición</h2>
+
+      <ul class="manita">
+        <li><strong>Busca una explicación experimental.</strong> Revisa unidades, transcripciones, horarios,
+          cambios de instrumento y condiciones de adquisición.</li>
+        <li><strong>Repite la medición cuando sea posible.</strong> Una nueva observación puede aportar más
+          información que otra regla aplicada a los mismos pocos datos.</li>
+        <li><strong>Examina el patrón completo.</strong> Representa los datos y comprueba si hay tendencias,
+          grupos o cambios en el tiempo que cuestionen el modelo.</li>
+        <li><strong>Compara ambas conclusiones.</strong> Explica qué cambia al conservar o excluir la observación
+          y evita elegir el criterio después de ver qué resultado te favorece.</li>
+        <li><strong>Conserva el registro original.</strong> Excluir un dato del cálculo no requiere borrarlo de la
+          fuente. Documenta cuál se excluyó, la razón y el procedimiento utilizado.</li>
+      </ul>
+
+      <h2>Una alerta, no una sentencia</h2>
+
+      <p>El valor del criterio de Chauvenet está en reemplazar una impresión vaga por la pregunta cuantificable de
+        ¿qué tan inusual es esta observación bajo nuestros supuestos? Su límite es igualmente importante, porque ninguna
+        operación matemática puede recuperar, por sí sola, lo que ocurrió en el laboratorio.</p>
+
+      <p>Ante el dato que no encaja, la mejor primera reacción no es borrarlo, sino prestar atención. Puede ser
+        una equivocación. Puede ser una fluctuación legítima. O puede estar mostrando que nuestra explicación del
+        experimento todavía está incompleta.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li id="ref-nist">NIST. (2012).
+          <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm">Detection of outliers</a>.
+          En <em>NIST/SEMATECH e-Handbook of statistical methods</em> (sección 1.3.5.17). National Institute of Standards and Technology (NIST). DOI: <a href="https://doi.org/10.18434/M32189">10.18434/M32189</a></li>
+        <li id="ref-taylor">Taylor, J. R. (2022).
+          <em><a href="https://mitpress.mit.edu/9781940380087/an-introduction-to-error-analysis/">An introduction to
+              error analysis: The study of uncertainties in physical measurements</a></em>
+          (3rd ed.). University Science Books.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
