@@ -16,6 +16,17 @@ export interface CatalogEntry {
 
 export const catalogEntries = [
   {
+    "id": "dato-no-encaja",
+    "kind": "external",
+    "title": "El dato que no encaja",
+    "href": "https://isantosruiz.github.io/html/atipicos.html",
+    "icon": "fa-li fa fa-file-code",
+    "sections": [
+      "inicio",
+      "modelado"
+    ],
+  }, 
+  {
     "id": "propagacion-errores-instrumentacion",
     "kind": "external",
     "title": "Propagación de errores en instrumentación",
