@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Una explicación intuitiva del producto de matrices mediante pedidos, precios y calorías de una taquería." />
+  <title>De la taquería al álgebra lineal</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="latex" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+
+      <header class="article-header">
+        <p class="article-kicker">Artículo de divulgación</p>
+        <h1>De la taquería al álgebra lineal</h1>
+        <p class="subtitle">Qué significa multiplicar matrices renglón por columna</p>
+
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Septiembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>
+          La multiplicación de matrices suele aprenderse como una receta, aunque detrás
+          del procedimiento existe una idea sencilla. Cada resultado combina cantidades
+          relacionadas y suma sus aportaciones. Un pedido en una taquería permite descubrir
+          esta estructura antes de expresarla mediante fórmulas generales.
+        </p>
+      </section>
+
+      <h2>Introducción</h2>
+
+      <p>Una de las instrucciones más conocidas del álgebra lineal dice lo siguiente.</p>
+
+      <blockquote>
+        <p><i>Para multiplicar matrices se combinan renglones con columnas.</i></p>
+      </blockquote>
+
+      <p>
+        La frase permite recordar el procedimiento, pero deja abiertas varias preguntas.
+        ¿Por qué se elige un renglón de la primera matriz y una columna de la segunda?
+        ¿Por qué se suman los productos? ¿Qué representa cada número obtenido?
+      </p>
+
+      <p>
+        Estas preguntas se entienden mejor mediante un caso concreto. Gilbert Strang
+        ha señalado el valor didáctico de comenzar el estudio del álgebra lineal con
+        ejemplos específicos, de modo que las ideas aparezcan antes de la definición
+        completamente abstracta. Siguiendo ese principio, imaginemos que necesitamos
+        procesar los pedidos de una taquería.
+      </p>
+
+      <h2>Un pedido convertido en números</h2>
+
+      <p>
+        En una mesa se ordenaron cuatro tacos al pastor, dos tacos de asada y una
+        quesadilla. El pedido puede representarse mediante un renglón.
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \]
+      </div>
+
+      <p>La posición de cada cantidad indica el alimento al que corresponde.</p>
+
+      <div class="equation">
+        \[
+        \begin{array}{ccc}
+        \text{pastor} & \text{asada} & \text{quesadilla}
+        \end{array}
+        \]
+      </div>
+
+      <p>
+        Supongamos que sus precios unitarios son 18, 22 y 30 pesos. Para calcular
+        correctamente la cuenta, debemos conservar el mismo orden al escribirlos
+        en una columna.
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}
+        \]
+      </div>
+
+      <p>
+        Cada cantidad se multiplica por el precio del producto correspondiente.
+        Después se suman las tres aportaciones.
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}
+        =
+        4(18)+2(22)+1(30)
+        =146.
+        \]
+      </div>
+
+      <p>La cuenta de la mesa es de 146 pesos.</p>
+
+      <figure>
+        <img src="./tacos.png"
+          alt="Cálculo del importe de un pedido mediante la multiplicación de un renglón por una columna"
+          style="display: block; width: min(100%, 760px); height: auto; margin: 0 auto;">
+        <figcaption>
+          Las cantidades del pedido se relacionan con los precios colocados en el mismo orden.
+        </figcaption>
+      </figure>
+
+      <h2>Una suma ponderada</h2>
+
+      <p>
+        El cálculo anterior recibe el nombre de <i>producto punto</i>. Se multiplican
+        las entradas que ocupan posiciones correspondientes y después se suman los
+        resultados. Como el primer vector contiene cantidades y el segundo contiene
+        precios unitarios, también podemos interpretarlo como una suma ponderada.
+      </p>
+
+      <p>
+        Los cuatro tacos al pastor aportan 72 pesos a la cuenta, los dos tacos de asada
+        aportan 44 y la quesadilla añade 30. La suma es necesaria porque buscamos el
+        importe total, no tres costos separados.
+      </p>
+
+      <p>
+        El producto de un renglón de dimensión \(1\times 3\) y una columna de dimensión
+        \(3\times 1\) produce un solo valor.
+      </p>
+
+      <div class="equation">
+        \[
+        \underbrace{(1\times 3)}_{\text{pedido}}\,
+        \underbrace{(3\times 1)}_{\text{precios}}
+        \longrightarrow
+        \underbrace{(1\times 1)}_{\text{importe}}.
+        \]
+      </div>
+
+      <h2>Varias mesas y varios datos</h2>
+
+      <p>
+        Consideremos ahora dos mesas. La primera hizo el pedido anterior, mientras que
+        la segunda pidió tres tacos al pastor, cuatro de asada y dos quesadillas.
+      </p>
+
+      <script type="text/tabjax">
+\begin{tabular}{cccc}
+\hline
+Mesa & Pastor & Asada & Quesadilla \\
+\hline
+Mesa 1 & 4 & 2 & 1 \\
+Mesa 2 & 3 & 4 & 2 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los dos pedidos se reúnen en la matriz</p>
+
+      <div class="equation">
+        \[
+        A=
+        \begin{bmatrix}
+        4 & 2 & 1\\
+        3 & 4 & 2
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        Cada renglón corresponde a una mesa y cada columna representa un producto.
+        La matriz no es solamente un arreglo de seis números. Sus renglones y columnas
+        tienen un significado preciso.
+      </p>
+
+      <p>
+        Reunamos ahora dos datos de cada alimento, su precio y su contenido energético
+        aproximado.
+      </p>
+
+      <script type="text/tabjax">
+\begin{tabular}{lcc}
+\hline
+Producto & Precio unitario & Calorías aproximadas \\
+\hline
+Taco al pastor & 18 pesos & 160 kcal \\
+Taco de asada & 22 pesos & 210 kcal \\
+Quesadilla & 30 pesos & 280 kcal \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Esta información puede escribirse como</p>
+
+      <div class="equation">
+        \[
+        B=
+        \begin{bmatrix}
+        18 & 160\\
+        22 & 210\\
+        30 & 280
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        Los renglones de \(B\) corresponden a los alimentos y sus columnas contienen
+        dos atributos diferentes. La primera columna reúne los precios y la segunda,
+        las calorías.
+      </p>
+
+      <h2>Las dimensiones también tienen significado</h2>
+
+      <p>
+        La matriz \(A\) tiene dimensión \(2\times 3\) porque describe dos mesas y
+        tres productos. La matriz \(B\) tiene dimensión \(3\times 2\) porque contiene
+        tres productos y dos atributos.
+      </p>
+
+      <div class="equation">
+        \[
+        \underbrace{
+        (2\ \text{mesas}\times 3\ \text{productos})
+        }_{A}
+        \;
+        \underbrace{
+        (3\ \text{productos}\times 2\ \text{atributos})
+        }_{B}
+        \longrightarrow
+        \underbrace{
+        (2\ \text{mesas}\times 2\ \text{atributos})
+        }_{AB}.
+        \]
+      </div>
+
+      <p>
+        Los números interiores no solo coinciden numéricamente. Ambos representan
+        la misma lista de productos y conservan el mismo orden. Esta correspondencia
+        permite relacionar las cantidades de cada alimento con sus precios y calorías.
+      </p>
+
+      <p>
+        La categoría compartida se recorre durante el cálculo y sus aportaciones se
+        suman. Los significados exteriores permanecen. Por eso los renglones del
+        resultado representarán mesas y las columnas representarán atributos.
+      </p>
+
+      <h2>El procedimiento renglón por columna</h2>
+
+      <p>
+        El producto \(AB\) tendrá dos renglones y dos columnas. Podemos representarlo
+        inicialmente mediante entradas desconocidas.
+      </p>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        c_{11} & c_{12}\\
+        c_{21} & c_{22}
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        Para obtener \(c_{11}\), se combina el primer renglón de \(A\), correspondiente
+        a la primera mesa, con la primera columna de \(B\), que contiene los precios.
+      </p>
+
+      <div class="equation">
+        \[
+        c_{11}
+        =
+        \begin{bmatrix}
+        4 & 2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix}
+        =
+        4(18)+2(22)+1(30)
+        =
+        146.
+        \]
+      </div>
+
+      <p>El valor \(c_{11}\) es el importe del pedido de la primera mesa.</p>
+
+      <p>
+        Para calcular \(c_{12}\), se conserva el primer renglón de \(A\), pero ahora
+        se emplea la segunda columna de \(B\).
+      </p>
+
+      <div class="equation">
+        \[
+        c_{12}
+        =
+        4(160)+2(210)+1(280)
+        =
+        1340.
+        \]
+      </div>
+
+      <p>Este resultado representa las calorías aproximadas de la primera mesa.</p>
+
+      <p>
+        Los dos valores restantes se obtienen con el segundo renglón de \(A\).
+      </p>
+
+      <div class="equation">
+        \[
+        c_{21}
+        =
+        3(18)+4(22)+2(30)
+        =
+        202,
+        \]
+      </div>
+
+      <div class="equation">
+        \[
+        c_{22}
+        =
+        3(160)+4(210)+2(280)
+        =
+        1880.
+        \]
+      </div>
+
+      <p>Al reunir los cuatro productos punto obtenemos</p>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        146 & 1340\\
+        202 & 1880
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <script type="text/tabjax">
+\begin{tabular}{lrr}
+\hline
+Mesa & Importe & Calorías aproximadas \\
+\hline
+Mesa 1 & 146 pesos & 1340 kcal \\
+Mesa 2 & 202 pesos & 1880 kcal \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>
+        Los renglones del resultado conservan el significado de los renglones de
+        \(A\). Sus columnas, en cambio, heredan el significado de las columnas de
+        \(B\). El producto convierte una tabla de pedidos en una tabla de importes
+        y calorías.
+      </p>
+
+      <h2>Qué se está sumando</h2>
+
+      <p>
+        Existe otra forma de observar el mismo cálculo. En vez de construir el resultado
+        entrada por entrada, podemos separar la contribución de cada alimento.
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        AB={}&
+        \underbrace{
+        \begin{bmatrix}
+        4\\
+        3
+        \end{bmatrix}
+        \begin{bmatrix}
+        18 & 160
+        \end{bmatrix}
+        }_{\text{pastor}}
+        +
+        \underbrace{
+        \begin{bmatrix}
+        2\\
+        4
+        \end{bmatrix}
+        \begin{bmatrix}
+        22 & 210
+        \end{bmatrix}
+        }_{\text{asada}}\\[6pt]
+        &+
+        \underbrace{
+        \begin{bmatrix}
+        1\\
+        2
+        \end{bmatrix}
+        \begin{bmatrix}
+        30 & 280
+        \end{bmatrix}
+        }_{\text{quesadilla}}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Cada alimento genera una matriz con su aportación a las dos mesas.</p>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        72 & 640\\
+        54 & 480
+        \end{bmatrix}
+        +
+        \begin{bmatrix}
+        44 & 420\\
+        88 & 840
+        \end{bmatrix}
+        +
+        \begin{bmatrix}
+        30 & 280\\
+        60 & 560
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <div class="equation">
+        \[
+        AB=
+        \begin{bmatrix}
+        146 & 1340\\
+        202 & 1880
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        Esta descomposición aclara por qué se suman los productos. El resultado final
+        acumula las contribuciones del pastor, la asada y la quesadilla. En álgebra
+        lineal, la multiplicación de una columna por un renglón recibe el nombre de
+        <i>producto exterior</i>. Un producto de matrices puede construirse como una
+        suma de estos productos exteriores.
+      </p>
+
+      <h2>Procesar varias columnas a la vez</h2>
+
+      <p>
+        La primera columna de \(B\) es el vector de precios y la segunda es el vector
+        de calorías. Denotémoslos mediante
+      </p>
+
+      <div class="equation">
+        \[
+        \mathbf{p}=
+        \begin{bmatrix}
+        18\\
+        22\\
+        30
+        \end{bmatrix},
+        \qquad
+        \mathbf{e}=
+        \begin{bmatrix}
+        160\\
+        210\\
+        280
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>La matriz \(B\) puede verse como la unión de ambos vectores.</p>
+
+      <div class="equation">
+        \[
+        B=
+        \begin{bmatrix}
+        \mathbf{p} & \mathbf{e}
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>Por consiguiente,</p>
+
+      <div class="equation">
+        \[
+        AB
+        =
+        A
+        \begin{bmatrix}
+        \mathbf{p} & \mathbf{e}
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+        A\mathbf{p} & A\mathbf{e}
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        La primera columna del resultado contiene los importes de todas las mesas,
+        mientras que la segunda contiene sus calorías. La matriz \(A\) aplica la misma
+        operación de agregación a cada columna de información.
+      </p>
+
+      <p>
+        Esta lectura por columnas ocupa un lugar central en la exposición de Gilbert
+        Strang. Si las columnas de \(B\) son \(\mathbf{b}_1,\mathbf{b}_2,\ldots,
+        \mathbf{b}_p\), entonces las columnas de \(AB\) son
+        \(A\mathbf{b}_1,A\mathbf{b}_2,\ldots,A\mathbf{b}_p\).
+      </p>
+
+      <h2>La regla general</h2>
+
+      <p>
+        Si \(A\) tiene dimensión \(m\times n\) y \(B\) tiene dimensión \(n\times p\),
+        el producto
+      </p>
+
+      <div class="equation">
+        \[
+        C=AB
+        \]
+      </div>
+
+      <p>es una matriz de dimensión \(m\times p\).</p>
+
+      <div class="equation">
+        \[
+        \underbrace{(m\times n)}_{A}\,
+        \underbrace{(n\times p)}_{B}
+        \longrightarrow
+        \underbrace{(m\times p)}_{C}.
+        \]
+      </div>
+
+      <p>
+        La entrada situada en el renglón \(i\) y la columna \(j\) se obtiene mediante
+      </p>
+
+      <div class="equation">
+        \[
+        c_{ij}
+        =
+        a_{i1}b_{1j}
+        +a_{i2}b_{2j}
+        +\cdots+
+        a_{in}b_{nj}
+        =
+        \sum_{k=1}^{n}a_{ik}b_{kj}.
+        \]
+      </div>
+
+      <p>
+        El índice \(k\) recorre la dimensión compartida. En el ejemplo de la taquería,
+        ese índice representa los alimentos. La fórmula puede leerse como
+      </p>
+
+      <div class="equation">
+        \[
+        \text{resultado}_{ij}
+        =
+        \sum_{\text{producto }k}
+        \bigl(\text{cantidad de }k\text{ en la mesa }i\bigr)
+        \bigl(\text{atributo }j\text{ de }k\bigr).
+        \]
+      </div>
+
+      <p>
+        La notación general expresa el mismo razonamiento empleado para calcular una
+        cuenta. Se emparejan datos relacionados, se multiplican y después se acumulan
+        sus contribuciones.
+      </p>
+
+      <h2>El orden no puede cambiarse</h2>
+
+      <p>La multiplicación de matrices no es conmutativa. En general,</p>
+
+      <div class="equation">
+        \[
+        AB\neq BA.
+        \]
+      </div>
+
+      <p>
+        En nuestro ejemplo, \(AB\) tiene dimensión \(2\times 2\), mientras que \(BA\)
+        tendría dimensión \(3\times 3\). Ambos productos pueden calcularse desde un
+        punto de vista puramente algebraico, pero no describen la misma operación.
+      </p>
+
+      <p>
+        Existe además una diferencia entre compatibilidad numérica y compatibilidad
+        semántica. En \(BA\), las dimensiones interiores coinciden porque ambas valen
+        2. Sin embargo, las columnas de \(B\) representan precio y calorías, mientras
+        que los renglones de \(A\) representan mesas. Estas categorías no guardan la
+        correspondencia necesaria. El cálculo produce números, pero no una tabla con
+        significado claro dentro del problema.
+      </p>
+
+      <p>
+        Por tanto, comprobar las dimensiones es indispensable, aunque no suficiente.
+        También debemos verificar qué representa cada renglón y cada columna.
+      </p>
+
+      <h2>Multiplicar también es encadenar transformaciones</h2>
+
+      <p>
+        En la taquería, una matriz transforma cantidades de productos en importes y
+        calorías. En otros problemas, las matrices pueden transformar coordenadas,
+        señales, imágenes o conjuntos de variables.
+      </p>
+
+      <p>
+        Supongamos que una matriz \(T_1\) transforma un vector \(\mathbf{x}\) y después
+        otra matriz \(T_2\) actúa sobre el resultado. El proceso completo se escribe como
+      </p>
+
+      <div class="equation">
+        \[
+        T_2(T_1\mathbf{x})
+        =
+        (T_2T_1)\mathbf{x}.
+        \]
+      </div>
+
+      <p>
+        El producto \(T_2T_1\) representa las dos transformaciones reunidas en una sola.
+        La operación situada a la derecha actúa primero. Esta propiedad explica tanto
+        la utilidad de la multiplicación matricial como la importancia de conservar
+        el orden.
+      </p>
+
+      <p>
+        El mismo principio aparece al combinar rotaciones y escalados en gráficos
+        digitales, al relacionar sistemas de coordenadas en robótica y al encadenar
+        capas en modelos de aprendizaje automático.
+      </p>
+
+      <h2>Errores frecuentes</h2>
+
+      <ul class="manita">
+        <li>
+          Multiplicar las entradas que ocupan la misma posición. Esa operación se
+          denomina producto de Hadamard y no corresponde al producto matricial ordinario.
+        </li>
+
+        <li>
+          Ignorar las dimensiones. El número de columnas de la primera matriz debe
+          coincidir con el número de renglones de la segunda.
+        </li>
+
+        <li>
+          Alterar el orden de las categorías. Si una columna representa tacos al pastor,
+          el renglón relacionado de la otra matriz debe representar ese mismo producto.
+        </li>
+
+        <li>
+          Suponer que la coincidencia de dimensiones garantiza una interpretación
+          válida. Las categorías interiores también deben tener el mismo significado.
+        </li>
+      </ul>
+
+      <h2>Un ejercicio breve</h2>
+
+      <p>
+        Una tercera mesa pide dos tacos al pastor, un taco de asada y tres quesadillas.
+        Su pedido se representa mediante
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        2 & 1 & 3
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        Usando la misma matriz de precios y calorías, determinemos el importe de la
+        cuenta y su contenido energético aproximado.
+      </p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        2 & 1 & 3
+        \end{bmatrix}
+        \begin{bmatrix}
+        18 & 160\\
+        22 & 210\\
+        30 & 280
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>El importe se obtiene mediante</p>
+
+      <div class="equation">
+        \[
+        2(18)+1(22)+3(30)=148.
+        \]
+      </div>
+
+      <p>Para las calorías calculamos</p>
+
+      <div class="equation">
+        \[
+        2(160)+1(210)+3(280)=1370.
+        \]
+      </div>
+
+      <p>El resultado completo es</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        148 & 1370
+        \end{bmatrix}.
+        \]
+      </div>
+
+      <p>
+        La mesa deberá pagar 148 pesos y su pedido representa aproximadamente
+        1370 kilocalorías.
+      </p>
+
+      <h2>Más que una receta</h2>
+
+      <p>
+        La multiplicación de matrices permite combinar información organizada alrededor
+        de una categoría compartida. En nuestro ejemplo, una matriz describía las
+        cantidades solicitadas en cada mesa y otra reunía las propiedades de los
+        alimentos. El producto relacionó ambas tablas y generó nuevos resultados.
+      </p>
+
+      <p>
+        El procedimiento renglón por columna muestra cómo se calcula cada entrada.
+        La lectura por columnas explica cómo una matriz procesa varios vectores a la
+        vez, mientras que la suma de productos exteriores permite identificar la
+        aportación de cada componente. No son operaciones distintas, sino diferentes
+        formas de comprender el mismo producto.
+      </p>
+
+      <p>
+        Esta es la idea que permanece al pasar de una cuenta de tacos a problemas de
+        economía, ingeniería, robótica, computación o aprendizaje automático. Una matriz
+        deja de ser una tabla estática cuando se utiliza para relacionar, agregar o
+        transformar información.
+      </p>
+
+      <h2>Bibliografía</h2>
+
+      <ul class="references">
+        <li>
+          Lay, D. C., Lay, S. R., &amp; McDonald, J. J. (2016).
+          <i>Álgebra lineal y sus aplicaciones</i> (5.ª ed.).
+          Pearson Educación.
+        </li>
+
+        <li>
+          Margalit, D., &amp; Rabinoff, J. (2019).
+          <i>Interactive Linear Algebra</i>.
+          Georgia Institute of Technology.
+          <a href="https://textbooks.math.gatech.edu/ila/">
+            https://textbooks.math.gatech.edu/ila/
+          </a>
+        </li>
+
+        <li>
+          OpenStax. (2022).
+          <i>Precálculo 2ed</i>, sección 9.5, Matrices y operaciones con matrices.
+          Rice University.
+          <a href="https://openstax.org/books/prec%C3%A1lculo-2ed/pages/9-5-matrices-y-operaciones-con-matrices">
+            https://openstax.org/books/precálculo-2ed/pages/9-5-matrices-y-operaciones-con-matrices
+          </a>
+        </li>
+
+        <li>
+          Strang, G. (2009).
+          Starting with two matrices.
+          <i>Mathematics Magazine, 82</i>(4), 278–283.
+          <a href="https://doi.org/10.4169/193009809X468742">
+            https://doi.org/10.4169/193009809X468742
+          </a>
+        </li>
+
+        <li>
+          Strang, G. (2023).
+          <i>Introduction to Linear Algebra</i> (6th ed.).
+          Wellesley-Cambridge Press.
+        </li>
+
+        <li>
+          The MathWorks, Inc. (s.f.).
+          <i>Matrix Algebra Refresher</i>.
+          <a href="https://www.mathworks.com/help/finance/matrix-algebra-refresher.html">
+            https://www.mathworks.com/help/finance/matrix-algebra-refresher.html
+          </a>
+        </li>
+      </ul>
+
+      <p>
+        El planteamiento inicial de representar una situación cotidiana mediante
+        matrices también está inspirado en el video
+        <a href="https://www.youtube.com/watch?v=lqc5oJBMVZk">
+          “À quoi sert une matrice?”
+        </a>
+        del canal MATHmana.
+      </p>
+
+      <footer class="article-footer ccby"></footer>
+
+    </article>
+  </main>
+</body>
+
+</html>
