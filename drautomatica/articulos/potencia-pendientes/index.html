@@ -1,0 +1,591 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Subir una pendiente exige más que potencia | drAutomática</title><meta name="description" content="Cómo estimar la fuerza y la potencia que necesita un vehículo para subir una pendiente, distinguiendo las pérdidas, el par disponible y los límites de adherencia."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/potencia-pendientes/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Subir una pendiente exige más que potencia | drAutomática"><meta property="og:description" content="Cómo estimar la fuerza y la potencia que necesita un vehículo para subir una pendiente, distinguiendo las pérdidas, el par disponible y los límites de adherencia."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/potencia-pendientes/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Cómo estimar la fuerza y la potencia que necesita un vehículo para subir una pendiente, distinguiendo las pérdidas, el par disponible y los límites de adherencia."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Subir una pendiente exige más que potencia | drAutomática"><meta name="twitter:description" content="Cómo estimar la fuerza y la potencia que necesita un vehículo para subir una pendiente, distinguiendo las pérdidas, el par disponible y los límites de adherencia."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="matlab" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Física e ingeniería</p>
+        <h1>Subir una pendiente exige más que potencia</h1>
+        <p class="subtitle">Cómo la masa, la velocidad, el terreno y la adherencia determinan lo que un vehículo puede hacer cuesta arriba</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Junio, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La potencia anunciada de un motor no basta para saber cómo se comportará un vehículo en una
+          subida. También importan la masa transportada, la inclinación del camino, la velocidad y las
+          condiciones de rodadura. A partir de un balance de fuerzas, desarrollamos una estimación de
+          la potencia requerida y distinguimos lo que llega a las ruedas de lo que entrega el motor
+          y consume la batería. Un ejemplo numérico permite comparar superficies y velocidades,
+          mientras que el análisis del par, la adherencia y el régimen térmico muestra por qué una
+          cuenta de kilowatts es necesaria, pero no suficiente, para evaluar la capacidad de ascenso.</p>
+      </section>
+
+      <h2>Las preguntas que deja una subida</h2>
+
+      <p>Tras el anuncio del vehículo eléctrico Olinia, algunos de mis estudiantes plantearon preguntas
+        sobre la relación entre la potencia del motor, el peso del vehículo y las pendientes que podría
+        superar. Son preguntas razonables. La cifra de potencia suele ocupar un lugar destacado en una
+        ficha técnica, pero dice poco si no se acompaña de una carga, una velocidad y unas condiciones
+        de operación.</p>
+
+      <p>El propósito de este artículo no es evaluar Olinia ni atribuirle especificaciones. Tomaremos
+        aquella conversación como punto de partida para estudiar un vehículo hipotético. El modelo
+        servirá para estimar órdenes de magnitud y detectar comparaciones engañosas, sin sustituir un
+        estudio de diseño o una prueba de desempeño.</p>
+
+      <p>Conviene separar dos preguntas. Una es si el vehículo puede producir suficiente fuerza para
+        subir; otra, a qué velocidad puede sostener el ascenso. La potencia relaciona ambas mediante
+        $P=Fv$. Reducir la velocidad disminuye la potencia mecánica requerida, pero no elimina la
+        fuerza necesaria para vencer la gravedad.</p>
+
+      <h2>Una pendiente del 15 % no equivale a 15 grados</h2>
+
+      <p>La pendiente porcentual compara el desnivel vertical $h$ con la distancia horizontal $b$,
+        no con la longitud recorrida sobre el camino. Escribiremos $p$ para su valor numérico en
+        porcentaje y $q$ para la razón correspondiente. Así, una pendiente del 15 % significa
+        $p=15$ y $q=0.15$.</p>
+
+      <div class="equation">
+        \[
+        q=\frac{p}{100}=\frac{h}{b}=\tan\theta,
+        \qquad
+        \sin\theta=\frac{q}{\sqrt{1+q^2}},
+        \qquad
+        \cos\theta=\frac{1}{\sqrt{1+q^2}}.
+        \]
+      </div>
+
+      <p>Estas relaciones se obtienen de un triángulo rectángulo y evitan tener que calcular primero
+        el ángulo. Para el 15 %, resultan $\theta\approx8.53^\circ$ y
+        $\sin\theta\approx0.14834$. Una pendiente del 100 % corresponde a $45^\circ$,
+        no a una pared vertical.</p>
+
+      <p>En cálculos rápidos es frecuente usar $\sin\theta\approx q$ y $\cos\theta\approx1$.
+        La aproximación es razonable en pendientes moderadas, aunque no es una identidad. Al 15 %
+        sobreestima en torno al 1.12 % la suma de las resistencias gravitatoria y de rodadura de
+        nuestro modelo; al 20 %, la diferencia ronda el 1.98 %.</p>
+
+      <h2>Las fuerzas que el vehículo debe compensar</h2>
+
+      <p>Trabajaremos con la masa total $m$, incluidos el vehículo, sus baterías, pasajeros y carga.
+        Si la masa en vacío ya incluye la batería, no debe sumarse otra vez. La masa se mide en
+        kilogramos; el peso es una fuerza, $W=mg$, medida en newtons. Para $m=1200$ kg y
+        $g=9.81\,\mathrm{m/s^2}$, el peso es $11772$ N.</p>
+
+      <p>Consideraremos una pendiente localmente recta, un vehículo que avanza cuesta arriba y
+        fuerzas proyectadas sobre la dirección del camino. Supondremos que las ruedas mantienen
+        contacto con el suelo y despreciaremos la sustentación aerodinámica y las oscilaciones
+        verticales. La velocidad $v$ será la medida <strong>sobre el camino</strong>, no su
+        componente horizontal.</p>
+
+      <figure>
+        <img src="/drautomatica/html/pendientes-fuerzas.png" width="1165" height="668"
+          alt="Esquema de un vehículo sobre una pendiente. La tracción apunta cuesta arriba, la rodadura y el arrastre cuesta abajo, el peso verticalmente hacia abajo y la reacción normal perpendicular al camino."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Direcciones de las fuerzas del modelo longitudinal.
+          Las fuerzas se representan en un punto común para facilitar su lectura; el esquema no
+          describe sus momentos ni el reparto de cargas entre ejes. Las flechas no están a escala.</figcaption>
+      </figure>
+
+      <h3>La gravedad y la reacción del suelo</h3>
+
+      <p>La componente del peso paralela a la carretera se opone al ascenso. La componente
+        perpendicular determina, bajo nuestras hipótesis, la reacción normal total $N$ del suelo.</p>
+
+      <div class="equation">
+        \[
+        F_g=mg\sin\theta,
+        \qquad N\approx mg\cos\theta.
+        \]
+      </div>
+
+      <p>No todo el peso tira del vehículo cuesta abajo. En una pendiente del 15 %, la fuerza
+        gravitatoria longitudinal del ejemplo es aproximadamente $1746$ N, bastante menor que
+        los $11772$ N de su peso. La distinción entre las componentes longitudinal y normal es
+        también la base de modelos de dinámica vehicular más detallados
+        (<a href="#ref-vehicle">MathWorks, 2026c</a>).</p>
+
+      <h3>La rodadura también consume esfuerzo</h3>
+
+      <p>Las llantas y el terreno se deforman al rodar. Parte de esa deformación disipa energía,
+        incluso si no hay un deslizamiento visible. Una primera aproximación representa ese
+        efecto con un coeficiente adimensional $C_{rr}$.</p>
+
+      <div class="equation">
+        \[
+        F_{rr}=C_{rr}N\approx C_{rr}mg\cos\theta.
+        \]
+      </div>
+
+      <p>El coeficiente constante es una simplificación. La presión de inflado, la carga, la
+        velocidad y el estado del terreno pueden modificar la rodadura; existen modelos que
+        incorporan esas dependencias (<a href="#ref-rolling">MathWorks, 2026b</a>).
+        Usaremos $C_{rr}=0.015$ como valor ilustrativo de referencia, no como una propiedad
+        universal del pavimento.</p>
+
+      <p>En arena, lodo o suelo deformable, un único coeficiente puede resultar insuficiente.
+        El hundimiento, el deslizamiento y la interacción entre la llanta y el suelo requieren
+        un tratamiento más específico. Tampoco debe confundirse $C_{rr}$ con el coeficiente
+        de adherencia, que limita la fuerza que las llantas pueden transmitir sin patinar.</p>
+
+      <h3>El aire importa cada vez más al aumentar la velocidad</h3>
+
+      <p>En ausencia de viento, modelaremos el arrastre mediante</p>
+
+      <div class="equation">
+        \[
+        F_a=\frac12\rho C_d A_f v^2,
+        \]
+      </div>
+
+      <p>donde $\rho$ es la densidad del aire, $C_d$ el coeficiente de arrastre y $A_f$ el área
+        frontal. El coeficiente y el área deben corresponder a la misma convención de referencia
+        (<a href="#ref-nasa">NASA, 2025</a>). Con viento de frente de rapidez $u$, el término
+        $v^2$ se sustituye por $(v+u)^2$. La fuerza depende de la velocidad relativa al aire,
+        aunque la potencia mecánica que debe entregar el vehículo sigue calculándose con su
+        velocidad sobre el suelo.</p>
+
+      <p>Al duplicar $v$ sin viento, la fuerza aerodinámica se cuadruplica y su contribución a la
+        potencia se multiplica por ocho. No hay una velocidad universal a partir de la cual
+        debamos incluirla. Lo adecuado es comparar su magnitud con las otras fuerzas.</p>
+
+      <h2>Del balance de fuerzas a la potencia</h2>
+
+      <p>Sea $F_t$ la fuerza de tracción necesaria y $a=\mathrm{d}v/\mathrm{d}t$ la aceleración
+        longitudinal. La segunda ley de Newton permite escribir</p>
+
+      <div class="equation">
+        \[
+        F_t-F_g-F_{rr}-F_a=ma,
+        \]
+      </div>
+
+      <p>de donde resulta</p>
+
+      <div class="equation">
+        \[
+        F_t=mg(\sin\theta+C_{rr}\cos\theta)
+        +\frac12\rho C_d A_fv^2+ma.
+        \]
+      </div>
+
+      <p>El término $ma$ no es una nueva resistencia del terreno. Expresa la fuerza neta que
+        necesitamos para cambiar la velocidad. Aquí solo se incluye la inercia traslacional;
+        un análisis de aceleración más preciso debe considerar también las inercias de ruedas,
+        motor y transmisión. A velocidad constante, $a=0$ y ese término desaparece.</p>
+
+      <p>Sin deslizamiento apreciable y bajo las simplificaciones anteriores, la potencia
+        mecánica requerida en las ruedas es $P_{\mathrm{ruedas}}=F_tv$. Usando la pendiente
+        porcentual, obtenemos una expresión que conserva la geometría exacta del modelo.</p>
+
+      <div class="equation">
+        \[
+        \boxed{
+        P_{\mathrm{ruedas}}=
+        v\left[mg\frac{q+C_{rr}}{\sqrt{1+q^2}}
+        +\frac12\rho C_d A_fv^2+ma\right],
+        \qquad q=\frac{p}{100}.
+        }
+        \]
+      </div>
+
+      <p>La consistencia de unidades evita errores grandes. Debemos usar $m$ en kg, $v$ en m/s,
+        $a$ en $\mathrm{m/s^2}$, $\rho$ en $\mathrm{kg/m^3}$ y $A_f$ en $\mathrm{m^2}$.
+        El resultado queda en watts porque $\mathrm{N\,m/s}=\mathrm{W}$.
+        Para convertir una velocidad de km/h a m/s se divide entre 3.6; para pasar de watts
+        a kilowatts, entre 1000.</p>
+
+      <h2>La potencia cambia según dónde se mida</h2>
+
+      <p>La expresión anterior indica lo que debe llegar a las ruedas. Si queremos compararla
+        con una ficha técnica, necesitamos saber qué representa la potencia anunciada.
+        <strong>La potencia mecánica del motor y la potencia eléctrica tomada de la batería
+          no son la misma magnitud.</strong></p>
+
+      <p>Definamos $\eta_t$ como la eficiencia mecánica desde el eje del motor hasta las ruedas,
+        y $\eta_e$ como la eficiencia del inversor y el motor desde la entrada eléctrica hasta
+        ese eje. La eficiencia conjunta es $\eta=\eta_e\eta_t$. Durante el funcionamiento
+        como motor y para un punto de operación con potencia útil positiva,</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        P_{\mathrm{eje}}&amp;=\frac{P_{\mathrm{ruedas}}}{\eta_t},\\
+        P_{\mathrm{tracci\acute{o}n,el}}&amp;=\frac{P_{\mathrm{ruedas}}}{\eta_e\eta_t},\\
+        P_{\mathrm{bater\acute{i}a}}&amp;=P_{\mathrm{tracci\acute{o}n,el}}+P_{\mathrm{aux}}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>$P_{\mathrm{aux}}$ reúne consumos adicionales referidos a los bornes de la batería,
+        como climatización y electrónica. No estamos incluyendo pérdidas internas de la batería
+        ni de recarga desde la red. La rodadura ya aparece en el balance de fuerzas, de modo que
+        no debe contarse otra vez dentro de las pérdidas de transmisión.</p>
+
+      <p>Una eficiencia constante facilita una estimación inicial, pero en la práctica cambia
+        con el par, la velocidad de giro y la temperatura. Cerca del reposo conviene modelar
+        directamente las pérdidas, pues puede haber corriente y calentamiento aun con potencia
+        mecánica nula. Los modelos de accionamientos eléctricos distinguen estas pérdidas y
+        los límites de operación del motor (<a href="#ref-motor">MathWorks, 2026a</a>).</p>
+
+      <h2>Un vehículo de 1200 kg en una pendiente del 15 %</h2>
+
+      <p>Supongamos un ascenso a $20$ km/h, sin viento y a velocidad constante. Los parámetros
+        de la tabla 1 son hipótesis de trabajo elegidas para el ejemplo. No proceden de una
+        ficha técnica de Olinia ni describen un vehículo específico.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Parámetros del ejemplo numérico.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Símbolo & Valor \\
+\hline
+Masa total & $m$ & $1200\,\mathrm{kg}$ \\
+Pendiente porcentual & $p$ & $15$ \\
+Velocidad de ascenso & $v$ & $20\,\mathrm{km/h}$ \\
+Coeficiente de rodadura & $C_{rr}$ & $0.015$ \\
+Densidad del aire & $\rho$ & $1.2\,\mathrm{kg/m^3}$ \\
+Coeficiente de arrastre & $C_d$ & $0.32$ \\
+Área frontal & $A_f$ & $2.2\,\mathrm{m^2}$ \\
+Eficiencia conjunta & $\eta$ & $0.85$ \\
+Eficiencia de transmisión & $\eta_t$ & $0.95$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La velocidad equivale a $5.5556$ m/s y la geometría da
+        $\sin\theta\approx0.14834$ y $\cos\theta\approx0.98894$.
+        Con estos valores, las contribuciones son</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        F_g&amp;\approx1746.3\,\mathrm{N},\\
+        F_{rr}&amp;\approx174.6\,\mathrm{N},\\
+        F_a&amp;\approx13.0\,\mathrm{N},\\
+        F_t&amp;\approx1933.9\,\mathrm{N}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>La gravedad domina en este caso. El aire aporta menos del 1 % de la fuerza total,
+        mientras que la rodadura equivale al 10 % de la contribución gravitatoria.
+        Al multiplicar por la velocidad y separar los niveles de potencia, obtenemos</p>
+
+      <div class="equation">
+        \[
+        P_{\mathrm{ruedas}}\approx10.74\,\mathrm{kW},\qquad
+        P_{\mathrm{eje}}\approx11.31\,\mathrm{kW},\qquad
+        P_{\mathrm{tracci\acute{o}n,el}}\approx12.64\,\mathrm{kW}.
+        \]
+      </div>
+
+      <p>Por tanto, la cifra cercana a 13 kW representa aquí la <strong>demanda eléctrica de
+        tracción</strong>, sin auxiliares. No es la potencia mecánica mínima que deba figurar
+        en la placa del motor. Tampoco hemos añadido un margen de diseño ni comprobado que el
+        sistema pueda sostener ese esfuerzo durante toda la subida.</p>
+
+      <p>Si además se pidiera una aceleración instantánea de $0.5\,\mathrm{m/s^2}$ a esa misma
+        velocidad, la fuerza aumentaría en $600$ N y la demanda eléctrica calculada crecería
+        unos $3.92$ kW. El resultado seguiría omitiendo las inercias rotacionales.</p>
+
+      <h3>Cuándo basta una cuenta rápida</h3>
+
+      <p>Para velocidad constante, arrastre pequeño y pendiente moderada, podemos simplificar
+        la potencia eléctrica de tracción como</p>
+
+      <div class="equation">
+        \[
+        P_{\mathrm{tracci\acute{o}n,el}}
+        \approx\frac{mgv}{\eta}\left(\frac{p}{100}+C_{rr}\right).
+        \]
+      </div>
+
+      <p>Con los datos del ejemplo resulta $12.70$ kW. La cercanía con $12.64$ kW es útil, pero
+        parcialmente se debe a que dos aproximaciones se compensan. Simplificar la trigonometría
+        aumenta el resultado, mientras que omitir el aire lo reduce. Esa coincidencia no debe
+        extrapolarse a velocidades o pendientes mayores.</p>
+
+      <h2>El terreno y la velocidad cambian la exigencia</h2>
+
+      <p>Para explorar la sensibilidad al terreno, mantendremos todas las condiciones anteriores
+        y cambiaremos únicamente $C_{rr}$. Los valores 0.050 y 0.080 representan escenarios
+        ilustrativos de rodadura media y alta, como podría ocurrir al pasar a superficies menos
+        firmes. No son límites certificados ni una clasificación universal de terracerías.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Comparación a 20 km/h en una pendiente del 15 %, con geometría exacta y arrastre aerodinámico. La potencia eléctrica no incluye auxiliares.">
+\begin{tabular}{lrrr}
+\hline
+Escenario & $C_{rr}$ & Ruedas (kW) & Tracción eléctrica (kW) \\
+\hline
+Pavimento de referencia & 0.015 & 10.74 & 12.64 \\
+Rodadura media & 0.050 & 13.01 & 15.30 \\
+Rodadura alta & 0.080 & 14.95 & 17.59 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>El último escenario exige cerca de un 39 % más potencia que el de referencia.
+        La pendiente no cambió, pero el vehículo debe compensar una resistencia adicional.
+        En un terreno real también podría disminuir la adherencia, un efecto que esta tabla
+        no representa.</p>
+
+      <figure>
+        <img src="/drautomatica/html/pendientes-potencia.png" width="1392" height="995"
+          alt="Potencia eléctrica de tracción frente a velocidad para tres coeficientes de rodadura. Las tres curvas crecen con la velocidad y la de mayor rodadura requiere más potencia. Los puntos señalan los resultados a 20 km/h."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. Cada punto corresponde a un ascenso a velocidad constante.
+          Se mantienen la masa de 1200 kg, la pendiente del 15 % y la eficiencia conjunta de 0.85.
+          Los marcadores indican los valores de la tabla 2.</figcaption>
+      </figure>
+
+      <p>Para una pendiente y un terreno fijos, sin viento ni aceleración, la dependencia se
+        resume en</p>
+
+      <div class="equation">
+        \[
+        P_{\mathrm{tracci\acute{o}n,el}}(v)=\frac{c_0v+c_2v^3}{\eta},
+        \qquad
+        c_0=mg\frac{q+C_{rr}}{\sqrt{1+q^2}},
+        \quad c_2=\frac12\rho C_dA_f.
+        \]
+      </div>
+
+      <p>La gravedad y la rodadura aportan la parte lineal; el aire, la cúbica. En el escenario
+        de referencia, pasar de 20 a 50 km/h eleva la demanda eléctrica de $12.64$ a $32.72$ kW.
+        La velocidad compatible con una potencia disponible se encuentra igualando ambas,
+        siempre que el motor, la transmisión y la adherencia permitan ese punto de operación.</p>
+
+      <h2>El par y la adherencia ponen otros límites</h2>
+
+      <p>Cuando $v$ tiende a cero, el producto $F_tv$ también lo hace, aunque la fuerza requerida
+        siga siendo grande. Por eso no podemos concluir que cualquier motor sirve para subir
+        si se avanza suficientemente despacio. El arranque exige par, y las llantas deben poder
+        transmitirlo al suelo.</p>
+
+      <p>Para un radio efectivo de rueda $r$, el par total requerido en las ruedas motrices,
+        despreciando su aceleración angular, es</p>
+
+      <div class="equation">
+        \[
+        \tau_{\mathrm{ruedas}}\approx F_tr.
+        \]
+      </div>
+
+      <p>Con $r=0.30$ m, el caso de referencia necesita unos $580$ N m en el conjunto de ruedas
+        motrices, no en cada rueda. Una reducción de transmisión aumenta el par en las ruedas
+        a costa de su velocidad de giro. Si $i=\omega_m/\omega_r$ es la relación de reducción,</p>
+
+      <div class="equation">
+        \[
+        \tau_{\mathrm{ruedas}}\approx\eta_t i\tau_m,
+        \qquad \omega_m=\frac{iv}{r}.
+        \]
+      </div>
+
+      <p>La transmisión no crea potencia. El motor debe poder entregar el par $\tau_m$ a la
+        velocidad angular $\omega_m$ correspondiente; conocer solo su potencia máxima no
+        determina esa capacidad.</p>
+
+      <p>La adherencia impone además una cota aproximada</p>
+
+      <div class="equation">
+        \[
+        F_t\leq\mu N_{\mathrm{motriz}},
+        \]
+      </div>
+
+      <p>donde $\mu$ es el coeficiente de adherencia y $N_{\mathrm{motriz}}$ la carga normal
+        sobre las ruedas que impulsan el vehículo. No siempre coincide con $mg\cos\theta$.
+        El reparto de masa, la inclinación y la aceleración modifican las cargas de los ejes.</p>
+
+      <p>Incluso si toda la carga normal estuviera disponible para traccionar, el ejemplo a
+        20 km/h requeriría $\mu\gtrsim0.166$. Si solo una parte de la carga recae sobre las
+        ruedas motrices, la exigencia es mayor. Un motor más potente no resuelve por sí solo
+        la falta de adherencia.</p>
+
+      <h2>Subir despacio no elimina la energía necesaria</h2>
+
+      <p>Elevar una masa un desnivel $h$ aumenta su energía potencial en $mgh$. La relación
+        puede comprobarse integrando la potencia gravitatoria, porque
+        $\mathrm{d}h/\mathrm{d}t=v\sin\theta$.</p>
+
+      <div class="equation">
+        \[
+        E_g=\int mgv\sin\theta\,\mathrm{d}t=mgh.
+        \]
+      </div>
+
+      <p>Elevar 1200 kg un desnivel de 100 m requiere $1.1772$ MJ, equivalentes a $0.327$ kWh
+        de energía potencial. Esa cantidad no disminuye por tardar más en subir.
+        El consumo de la batería será distinto porque incluye rodadura, aire y pérdidas,
+        además de los auxiliares, que funcionan durante más tiempo si el recorrido es más lento.</p>
+
+      <p>También importa cuánto dura el esfuerzo. Una potencia pico disponible durante unos
+        segundos no equivale a una potencia continua sostenible en una subida prolongada.
+        La refrigeración, la temperatura, la tensión disponible y los límites de corriente
+        pueden reducir lo que el sistema entrega. Los accionamientos se caracterizan por
+        regiones de par y velocidad admisibles, con límites diferentes para funcionamiento
+        continuo e intermitente (<a href="#ref-motor">MathWorks, 2026a</a>).</p>
+
+      <h2>Reproducir el cálculo en MATLAB</h2>
+
+      <p>El siguiente bloque calcula las fuerzas y las potencias de los tres escenarios.
+        El <a href="/drautomatica/html/potencia_pendientes.m" download>archivo completo, potencia_pendientes.m</a>,
+        añade las instrucciones que generan las dos figuras del artículo. Utiliza MATLAB
+        R2020a o posterior y no requiere toolboxes adicionales.</p>
+
+<script type="text/matlab">
+%% Estimación de fuerza y potencia
+% Ejemplo hipotético; los parámetros no describen un vehículo comercial.
+% MATLAB R2020a o posterior. No requiere toolboxes adicionales.
+m = 1200;                    % Masa total, kg
+g = 9.81;                    % Aceleración de la gravedad, m/s^2
+p = 15;                      % Pendiente porcentual: 15 significa 15 %
+v_kmh = 20;
+v = v_kmh/3.6;               % Velocidad sobre el camino, m/s
+a = 0;                       % Aceleración longitudinal, m/s^2
+rho = 1.2;                   % Densidad del aire, kg/m^3
+Cd = 0.32;
+Af = 2.2;                    % Área frontal, m^2
+eta = 0.85;                  % Eficiencia de bornes de batería a ruedas
+eta_t = 0.95;                % Eficiencia mecánica de la transmisión
+Crr = [0.015; 0.050; 0.080]; % Escenarios ilustrativos de rodadura
+
+q = p/100;
+sinTheta = q/sqrt(1+q^2);
+cosTheta = 1/sqrt(1+q^2);
+theta = atan(q);
+N = m*g*cosTheta;
+Fpendiente = m*g*sinTheta;
+Frodadura = Crr*N;
+Faire = 0.5*rho*Cd*Af*v^2;    % Sin viento
+Ftraccion = Fpendiente + Frodadura + Faire + m*a;
+Pruedas = Ftraccion*v;
+Peje = Pruedas/eta_t;
+Ptraccion = Pruedas/eta;      % Potencia eléctrica, sin auxiliares
+
+escenario = {'Pavimento de referencia'; ...
+    'Rodadura media'; 'Rodadura alta'};
+resultados = table(escenario,Crr,Ftraccion,Pruedas/1000, ...
+    Ptraccion/1000,'VariableNames', ...
+    {'Escenario','Crr','Fuerza_N','Ruedas_kW','Traccion_kW'});
+disp(resultados)
+fprintf('Ángulo de la pendiente: %.4f grados\n',theta*180/pi)
+fprintf('Potencia en el eje, caso de referencia: %.3f kW\n',Peje(1)/1000)
+</script>
+
+      <p>Las eficiencias se introducen como fracciones, no como porcentajes. Si se cambia $a$,
+        el primer bloque evalúa la potencia instantánea a la velocidad indicada; las curvas
+        del archivo completo siguen representando ascensos estacionarios con $a=0$.
+        Para modelar una maniobra completa habría que resolver la evolución temporal y usar
+        los límites reales del sistema.</p>
+
+      <h2>Qué pedirle a una afirmación de capacidad de ascenso</h2>
+
+      <p>Una especificación como “sube pendientes del 15 %” queda incompleta si no se acompaña
+        de las condiciones bajo las cuales se obtuvo. Para interpretarla conviene conocer</p>
+
+      <ul class="elegante">
+        <li>La masa total de ensayo, incluidos ocupantes y carga.</li>
+        <li>La velocidad sostenida y si la prueba exige arrancar desde el reposo.</li>
+        <li>La superficie, su estado y las condiciones de los neumáticos.</li>
+        <li>La duración del ascenso, la temperatura y el estado de carga de la batería.</li>
+        <li>El punto donde se especifica la potencia y si corresponde a un régimen pico o continuo.</li>
+        <li>El par disponible, la relación de transmisión y la carga sobre las ruedas motrices.</li>
+      </ul>
+
+      <p>El balance presentado establece una demanda idealizada para un punto de operación.
+        Seleccionar un motor requiere contrastarla con datos de funcionamiento, añadir márgenes
+        justificados y verificar el comportamiento del vehículo completo. No existe un margen
+        porcentual único que sustituya ese análisis.</p>
+
+      <h2>Una estimación útil empieza por una pregunta precisa</h2>
+
+      <p>La pregunta no es simplemente cuántos kilowatts tiene un vehículo, sino qué fuerza puede
+        transmitir, a qué velocidad y durante cuánto tiempo. El balance de fuerzas permite
+        ordenar esas exigencias y entender por qué la carga, el terreno y la rapidez de ascenso
+        cambian tanto el resultado.</p>
+
+      <p>Para nuestro vehículo hipotético, la subida de referencia exige unos 10.74 kW mecánicos
+        en las ruedas. Llegar hasta esa cifra es el comienzo del análisis. Distinguir las pérdidas,
+        comprobar el par y la adherencia y respetar los límites térmicos es lo que permite pasar
+        de una cuenta orientativa a una evaluación de ingeniería.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li id="ref-motor">MathWorks. (2026a).
+          <em><a href="https://www.mathworks.com/help/sps/ref/motordrivesystemlevel.html">Motor &amp; Drive
+              (System Level)</a></em>. Documentación de Simscape Electrical.</li>
+        <li id="ref-rolling">MathWorks. (2026b).
+          <em><a href="https://www.mathworks.com/help/sdl/ref/rollingresistance.html">Rolling resistance</a></em>.
+          Documentación de Simscape Driveline.</li>
+        <li id="ref-vehicle">MathWorks. (2026c).
+          <em><a href="https://www.mathworks.com/help/sdl/ref/vehiclebody.html">Vehicle body</a></em>.
+          Documentación de Simscape Driveline.</li>
+        <li id="ref-nasa">National Aeronautics and Space Administration. (2025).
+          <em><a href="https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/drag-equation/">Drag equation</a></em>.
+          Glenn Research Center.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
