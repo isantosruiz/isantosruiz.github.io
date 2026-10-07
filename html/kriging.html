@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Una introducción autocontenida al kriging ordinario, desde sus aplicaciones y el semivariograma hasta la interpolación de presiones, su incertidumbre y su implementación en Python." />
+  <title>Kriging: estimar lo que no medimos</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="python" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Kriging: estimar lo que no medimos</h1>
+        <p class="subtitle">De la dependencia espacial a los mapas de presión e incertidumbre en redes de agua.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Medir una variable en todos los puntos de una región es imposible.
+          El kriging permite estimar sus valores en lugares no instrumentados a partir
+          de mediciones dispersas y de un modelo de su variación espacial. Además de
+          una predicción, proporciona una medida de incertidumbre. Desarrollaremos los
+          fundamentos del kriging ordinario, la construcción del semivariograma y la
+          obtención de los pesos mediante un sistema de ecuaciones lineales. Un ejemplo
+          completo con tres sensores de presión mostrará cómo realizar los cálculos
+          simbólicos en Python y extenderlos a una malla para producir mapas. Finalmente,
+          examinaremos las precauciones necesarias para aplicar esta herramienta en
+          redes de distribución de agua, donde la cercanía geográfica y la conexión
+          hidráulica no siempre coinciden.</p>
+      </section>
+
+      <h2>Un mapa a partir de unas cuantas mediciones</h2>
+
+      <p>Un sensor informa sobre lo que sucede en el lugar donde está instalado. Un
+        mapa, en cambio, pretende describir una región completa. Entre ambas cosas hay
+        una pregunta estadística fundamental: ¿qué podemos afirmar sobre los lugares
+        que no hemos medido? El kriging responde combinando los datos disponibles con
+        un modelo de la manera en que una variable cambia en el espacio.</p>
+
+      <p>Esta idea aparece en aplicaciones muy distintas. En minería, las muestras de
+        algunos sondeos ayudan a estimar la concentración de un mineral en el subsuelo.
+        En agricultura, los análisis de suelo permiten construir mapas de nutrientes
+        o humedad. En estudios ambientales, una red de estaciones proporciona información
+        sobre la concentración de contaminantes. En meteorología e hidrología, las
+        observaciones puntuales sirven para estimar temperaturas, precipitaciones o
+        niveles de agua subterránea. En cada caso cambian la variable y las condiciones
+        físicas, pero permanece el problema de inferir una distribución espacial a
+        partir de datos incompletos.</p>
+
+      <p>El atractivo del kriging no se limita a rellenar los espacios en blanco.
+        También permite cuantificar, bajo el modelo adoptado, cuánto desconocemos en
+        cada lugar. Un mapa de valores estimados y un mapa de incertidumbre contestan
+        preguntas diferentes y conviene leerlos juntos.</p>
+
+      <h2>Presiones donde no hay sensores</h2>
+
+      <p>En una red de distribución de agua potable no es viable instalar y
+        mantener un sensor de presión en cada nodo. Quedan puntos sin instrumentación
+        en los que interesa conocer la presión para evaluar el servicio, planear nuevas
+        mediciones o complementar un diagnóstico del funcionamiento de la red. Si
+        contamos con observaciones en algunos lugares, podemos plantear una estimación
+        espacial en los demás.</p>
+
+      <p>Consideraremos primero un caso idealizado con sensores situados en un plano.
+        Las lecturas corresponderán al mismo instante o a un mismo régimen de operación,
+        y se tratarán como observaciones sin error instrumental. Estas hipótesis hacen
+        transparente el cálculo. Más adelante discutiremos qué debe cambiar cuando
+        intervienen tuberías, diferencias de elevación, válvulas y sensores imperfectos.</p>
+
+      <p>El procedimiento reúne herramientas de álgebra lineal y probabilidad. Los
+        productos internos combinarán mediciones y pesos; una matriz describirá la
+        relación espacial entre sensores; y un sistema de ecuaciones resolverá una
+        optimización con restricciones. No basta, sin embargo, con que el sistema tenga
+        solución. También debe ser razonable el modelo físico y estadístico que lo origina.</p>
+
+      <h2>De los valores medidos a un modelo espacial</h2>
+
+      <p>Representaremos por $Z(P)$ la variable aleatoria asociada al punto $P$ y por
+        $z(P)$ su valor observado. La distinción entre mayúscula y minúscula separa el
+        modelo probabilístico de una medición concreta. En nuestro ejemplo, $Z(P)$ será
+        la presión y $z(P_i)$ la lectura del sensor situado en $P_i$.</p>
+
+      <p>El conjunto de variables ${Z(P)}$ recibe el nombre de <strong>campo aleatorio</strong>.
+        La idea no es que la posición sea aleatoria, sino que nuestros conocimientos
+        incompletos sobre la variable se representan mediante probabilidades. Dos
+        posiciones pueden contener información parcialmente redundante si sus valores
+        tienden a variar de forma relacionada.</p>
+
+      <h3>Qué significa que un lugar esté cerca</h3>
+
+      <p>Un promedio ponderado por el inverso de la distancia, conocido como IDW,
+        asigna mayor influencia a los puntos próximos mediante una regla geométrica.
+        El kriging incorpora, además, un modelo de dependencia espacial y considera
+        cómo se relacionan los sensores entre sí. Dos sensores muy próximos uno del
+        otro pueden aportar información redundante, aunque ambos estén cerca del
+        objetivo. Por ello, no basta con calcular sus distancias al punto de interés.</p>
+
+      <p>Existen diferentes modalidades. El <strong>kriging simple</strong> supone una
+        media conocida; el <strong>kriging ordinario</strong> trabaja con una media
+        constante, pero desconocida; y el <strong>kriging universal</strong> permite
+        representar una tendencia mediante funciones de la posición u otras variables.
+        Aquí desarrollaremos el kriging ordinario. Esta clasificación y su relación
+        con la predicción espacial se presentan en
+        <a href="https://www.paulamoraga.com/book-spatial/kriging.html">Moraga (2023)</a>.</p>
+
+      <h3>El semivariograma</h3>
+
+      <p>Una forma de describir la variación espacial consiste en estudiar las
+        diferencias entre valores. Si los incrementos tienen media cero, definimos la
+        <strong>semivarianza</strong> entre dos puntos como</p>
+
+      <div class="equation">
+        \[
+        \gamma(P_i,P_j)
+        =\frac12\operatorname{Var}\!\left[Z(P_i)-Z(P_j)\right]
+        =\frac12\mathbb{E}\!\left[\bigl(Z(P_i)-Z(P_j)\bigr)^2\right].
+        \]
+      </div>
+
+      <p>La igualdad entre varianza y segundo momento utiliza precisamente que la
+        diferencia tiene esperanza cero. Cuando la media es constante, esa condición
+        se cumple. Una semivarianza pequeña indica que, según el modelo, las diferencias
+        entre ambos puntos suelen ser pequeñas. Si la presión se expresa en psi, la
+        semivarianza se expresa en $\mathrm{psi}^2$.</p>
+
+      <p>La <strong>estacionariedad intrínseca</strong> supone que la media de los
+        incrementos es cero y que su varianza depende del desplazamiento entre los
+        puntos, no de su ubicación absoluta. Si además no hay una dirección preferente,
+        hablamos de <strong>isotropía</strong> y podemos escribir
+        $\gamma(P_i,P_j)=\gamma(h)$, donde $h=\|P_i-P_j\|_2$ es la distancia.
+        La función $\gamma(h)$ es el semivariograma. Algunos textos llaman variograma
+        a $2\gamma(h)$; aquí mantendremos explícitamente la convención con el factor
+        $1/2$.</p>
+
+      <p>Con suficientes observaciones se puede estimar un semivariograma experimental.
+        Agrupamos pares de puntos cuyas separaciones estén en un intervalo alrededor
+        de $h$ y calculamos</p>
+
+      <div class="equation">
+        \[
+        \widehat\gamma(h)=\frac{1}{2|N_h|}
+        \sum_{(i,j)\in N_h}\bigl[z(P_i)-z(P_j)\bigr]^2.
+        \]
+      </div>
+
+      <p>$N_h$ es el conjunto de pares seleccionados y $|N_h|$ su número. Cada par se
+        cuenta una sola vez. Después se ajusta un modelo teórico compatible con esos
+        valores, con el conocimiento del fenómeno y con las condiciones matemáticas
+        de una semivarianza válida. Si existe una tendencia marcada, conviene modelarla
+        antes de interpretar las diferencias como variación aleatoria espacial.</p>
+
+      <p>En modelos acotados suelen aparecer tres parámetros. El <strong>efecto pepita</strong>
+        describe un salto entre la semivarianza en distancia cero y su límite al
+        aproximarse a cero desde distancias positivas; puede representar variación a
+        escalas no resueltas o error de medición. La <strong>meseta</strong> es el nivel
+        al que llega la semivarianza, y el <strong>alcance</strong> caracteriza la distancia
+        a la que se alcanza o se aproxima a ese nivel. No todos los modelos tienen
+        meseta o alcance finitos.</p>
+
+        <section class="remark">
+          <p>El término “efecto pepita” proviene de la minería de oro —cuna de la geoestadística—
+            y hace alusión al escenario donde una perforación golpea directamente una pepita de oro
+            y otra hecha a escasos centímetros no lo hace,
+            generando una diferencia abrupta de concentración a una distancia casi nula.</p>
+          <p>En teoría, la diferencia de valor entre dos puntos separados por una distancia cero
+            debería ser cero. Pero debido a la existencia de estas “pepitas”
+            (variaciones abruptas a escalas más pequeñas que la distancia de muestreo),
+            existe una discontinuidad matemática.</p>
+        </section>
+
+      <h3>Un modelo lineal con unidades consistentes</h3>
+
+      <p>Para concentrarnos en el procedimiento algebraico utilizaremos el modelo</p>
+
+      <div class="equation">
+        \[
+        \gamma(P_i,P_j)=c\,\|P_i-P_j\|_2,\qquad c&gt;0.
+        \]
+      </div>
+
+      <p>Este semivariograma crece linealmente con la distancia, no tiene meseta y
+        satisface $\gamma(P_i,P_i)=0$. Es un modelo válido de incrementos en el espacio
+        euclidiano. No presupone una covarianza estacionaria de varianza finita en
+        todo un plano ilimitado; la formulación mediante incrementos evita exigir
+        esa hipótesis más fuerte.</p>
+
+      <p>Expresaremos las coordenadas en unidades de longitud, abreviadas ul, y
+        elegiremos $c=1\;\mathrm{psi}^2/\mathrm{ul}$. Así, el valor numérico de la
+        semivarianza coincidirá con el de la distancia, aunque sus unidades sean
+        diferentes. El subíndice $2$ de la norma indica distancia euclidiana, no
+        distancia elevada al cuadrado.</p>
+
+      <p>Esta pendiente se adopta para un ejemplo hipotético; no se estima a partir
+        de los tres sensores que utilizaremos. Con tan pocos puntos no sería razonable
+        presentar el modelo como una caracterización estadística fiable de una red real.</p>
+
+      <h2>Los pesos de una predicción insesgada</h2>
+
+      <p>Sean $P_1,\ldots,P_n$ las posiciones instrumentadas y $P_0$ el punto donde
+        deseamos estimar la variable. Buscamos una combinación lineal</p>
+
+      <div class="equation">
+        \[
+        \widehat Z(P_0)=\sum_{i=1}^{n}w_i Z(P_i),
+        \qquad
+        \widehat z(P_0)=\mathbf{w}^{\mathsf T}\mathbf{z},
+        \]
+      </div>
+
+      <p>donde $\mathbf{w}=[w_1,\ldots,w_n]^{\mathsf T}$ y
+        $\mathbf{z}=[z(P_1),\ldots,z(P_n)]^{\mathsf T}$. Para una geometría y un
+        semivariograma fijados, el predictor es lineal en las mediciones. Esto no
+        significa que el mapa resultante sea un plano ni que sus contornos sean rectas.</p>
+
+      <p>En el kriging ordinario suponemos una media desconocida $\mu$ común a las
+        posiciones consideradas. La esperanza del error es entonces</p>
+
+      <div class="equation">
+        \[
+        \mathbb{E}\!\left[\widehat Z(P_0)-Z(P_0)\right]
+        =\mu\left(\sum_{i=1}^{n}w_i-1\right).
+        \]
+      </div>
+
+      <p>Para que sea cero cualquiera que sea esa media, imponemos</p>
+
+      <div class="equation">
+        \[
+        \sum_{i=1}^{n}w_i=1,
+        \qquad\text{es decir,}\qquad
+        \mathbf{1}^{\mathsf T}\mathbf{w}=1.
+        \]
+      </div>
+
+      <p>El vector $\mathbf{1}$ contiene $n$ unos. La restricción también garantiza
+        que el método reproduzca un campo constante. Ser insesgado significa que
+        el error tiene esperanza cero bajo las hipótesis del modelo, no que cada
+        predicción coincida con el valor verdadero.</p>
+
+      <p>No imponemos $w_i\geq 0$. Los pesos de kriging pueden ser negativos y la
+        predicción puede quedar fuera del intervalo de los valores observados. Aunque
+        a menudo se hable de un promedio ponderado, en general se trata de una
+        combinación afín, no necesariamente de un promedio convexo.</p>
+
+      <h2>De la incertidumbre a un sistema lineal</h2>
+
+      <h3>La varianza que queremos minimizar</h3>
+
+      <p>Definamos la matriz de semivarianzas entre sensores y el vector de
+        semivarianzas respecto del objetivo mediante</p>
+
+      <div class="equation">
+        \[
+        \boldsymbol{\Gamma}_{ij}=\gamma(P_i,P_j),
+        \qquad
+        \boldsymbol{\gamma}_0=
+        \begin{bmatrix}\gamma(P_1,P_0)\\ \vdots\\ \gamma(P_n,P_0)\end{bmatrix}.
+        \]
+      </div>
+
+      <p>La matriz $\boldsymbol{\Gamma}$ es simétrica y su diagonal es cero. Es una
+        matriz de <strong>semivarianzas</strong>, no de covarianzas. Esta distinción es
+        importante tanto para los signos de las ecuaciones como para elegir un método
+        de resolución numérica.</p>
+
+      <p>Con pesos que suman uno, el error puede escribirse como una combinación de
+        incrementos respecto de $P_0$. Si llamamos $\Delta_i=Z(P_i)-Z(P_0)$, tenemos</p>
+
+      <div class="equation">
+        \[
+        e=\widehat Z(P_0)-Z(P_0)=\sum_i w_i\Delta_i,
+        \qquad
+        \operatorname{Cov}(\Delta_i,\Delta_j)
+        =\gamma(P_i,P_0)+\gamma(P_j,P_0)-\gamma(P_i,P_j).
+        \]
+      </div>
+
+      <p>La segunda igualdad se obtiene de la identidad
+        $2\operatorname{Cov}(U,V)=\operatorname{Var}(U)+\operatorname{Var}(V)
+        -\operatorname{Var}(U-V)$. Al sustituirla en la varianza de la suma y utilizar
+        $\sum_iw_i=1$, resulta</p>
+
+      <div class="equation">
+        \[
+        \sigma_k^2(\mathbf{w})
+        =2\mathbf{w}^{\mathsf T}\boldsymbol{\gamma}_0
+        -\mathbf{w}^{\mathsf T}\boldsymbol{\Gamma}\mathbf{w}.
+        \]
+      </div>
+
+      <p>Como el error tiene media cero, su varianza coincide con su error cuadrático
+        medio. Minimizar esta expresión equivale a buscar, dentro de la familia de
+        predictores lineales insesgados, el que tenga menor error cuadrático esperado.
+        Ese es el sentido preciso de la palabra <strong>óptimo</strong>; no garantiza
+        superioridad frente a cualquier método ni frente a un modelo físico mejor
+        informado.</p>
+
+      <h3>La restricción y el multiplicador de Lagrange</h3>
+
+      <p>Introducimos un multiplicador $\lambda$ para imponer la suma de pesos. Con
+        una convención de signos que mantendremos en todo el desarrollo, el lagrangiano es</p>
+
+      <div class="equation">
+        \[
+        \mathcal{L}(\mathbf{w},\lambda)=
+        2\mathbf{w}^{\mathsf T}\boldsymbol{\gamma}_0
+        -\mathbf{w}^{\mathsf T}\boldsymbol{\Gamma}\mathbf{w}
+        -2\lambda\left(\mathbf{1}^{\mathsf T}\mathbf{w}-1\right).
+        \]
+      </div>
+
+      <p>Igualar a cero sus derivadas respecto de los pesos y del multiplicador conduce a</p>
+
+      <div class="equation">
+        \[
+        \boldsymbol{\Gamma}\mathbf{w}+\lambda\mathbf{1}
+        =\boldsymbol{\gamma}_0,
+        \qquad
+        \mathbf{1}^{\mathsf T}\mathbf{w}=1.
+        \]
+      </div>
+
+      <p>$\lambda$ es una incógnita del problema, no un parámetro de penalización
+        que debamos ajustar. Tampoco es el peso de una medición adicional. Su función
+        es hacer compatible el mínimo con la restricción de insesgamiento.</p>
+
+      <div class="equation">
+        \[
+        \underbrace{\begin{bmatrix}
+        \boldsymbol{\Gamma}&amp;\mathbf{1}\\
+        \mathbf{1}^{\mathsf T}&amp;0
+        \end{bmatrix}}_{\mathbf{A}}\,
+        \underbrace{\begin{bmatrix}\mathbf{w}\\\lambda\end{bmatrix}}_{\phantom{|}\mathbf{u}\phantom{|}}
+        =
+        \underbrace{\begin{bmatrix}\boldsymbol{\gamma}_0\\1\end{bmatrix}}_{\phantom{|}\mathbf{b}\phantom{|}}.
+        \]
+      </div>
+
+      <p>Es un sistema de $n+1$ ecuaciones con $n+1$ incógnitas. Escrito entrada por
+        entrada, adopta la forma</p>
+
+      <div class="equation">
+        \[
+        \begin{bmatrix}
+        \gamma(P_1,P_1)&amp;\gamma(P_1,P_2)&amp;\cdots&amp;\gamma(P_1,P_n)&amp;1\\
+        \gamma(P_2,P_1)&amp;\gamma(P_2,P_2)&amp;\cdots&amp;\gamma(P_2,P_n)&amp;1\\
+        \vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\
+        \gamma(P_n,P_1)&amp;\gamma(P_n,P_2)&amp;\cdots&amp;\gamma(P_n,P_n)&amp;1\\
+        1&amp;1&amp;\cdots&amp;1&amp;0
+        \end{bmatrix}
+        \begin{bmatrix}w_1\\w_2\\\vdots\\w_n\\\lambda\end{bmatrix}
+        =\begin{bmatrix}\gamma(P_1,P_0)\\\gamma(P_2,P_0)\\\vdots\\\gamma(P_n,P_0)\\1\end{bmatrix}.
+        \]
+      </div>
+
+      <h3>Por qué el modelo de semivarianza importa</h3>
+
+      <p>Para que estas ecuaciones representen una minimización válida, no es
+        suficiente inventar una función positiva que valga cero en el origen. Una
+        semivarianza admisible debe satisfacer, para cualquier conjunto finito de
+        puntos, la condición</p>
+
+      <div class="equation">
+        \[
+        \mathbf{a}^{\mathsf T}\boldsymbol{\Gamma}\mathbf{a}\leq 0
+        \quad\text{si}\quad\mathbf{1}^{\mathsf T}\mathbf{a}=0.
+        \]
+      </div>
+
+      <p>Esta propiedad se llama <strong>semidefinitud negativa condicional</strong>.
+        Su consecuencia es concreta. Si modificamos unos pesos óptimos en una dirección
+        $\mathbf{a}$ cuya suma sea cero, seguimos cumpliendo la restricción. El cambio
+        en la varianza es $-\mathbf{a}^{\mathsf T}\boldsymbol{\Gamma}\mathbf{a}$,
+        que no puede ser negativo. Por tanto, no obtenemos una varianza menor. La
+        desigualdad estricta para toda dirección admisible no nula garantiza la
+        unicidad de los pesos.</p>
+
+      <p>La matriz ampliada $\mathbf{A}$ es simétrica, pero no es una matriz de
+        covarianza positiva definida. Un solucionador general mediante factorización
+        LU es apropiado; no debemos aplicarle directamente una factorización de
+        Cholesky suponiendo que posee aquella propiedad.</p>
+
+      <h2>La incertidumbre también sale del sistema</h2>
+
+      <p>Una vez resuelto el sistema, la presión estimada se calcula con
+        $\widehat z(P_0)=\mathbf{w}^{\mathsf T}\mathbf{z}$. Para obtener su varianza
+        no hace falta repetir toda la expresión cuadrática. Multiplicando la primera
+        ecuación del sistema por $\mathbf{w}^{\mathsf T}$ encontramos</p>
+
+      <div class="equation">
+        \[
+        \mathbf{w}^{\mathsf T}\boldsymbol{\Gamma}\mathbf{w}+\lambda
+        =\mathbf{w}^{\mathsf T}\boldsymbol{\gamma}_0.
+        \]
+      </div>
+
+      <p>Al sustituir en la varianza, resulta la fórmula compacta</p>
+
+      <div class="equation">
+        \[
+        \sigma_k^2
+        =\mathbf{w}^{\mathsf T}\boldsymbol{\gamma}_0+\lambda
+        =\begin{bmatrix}\mathbf{w}^{\mathsf T}&amp;\lambda\end{bmatrix}
+        \begin{bmatrix}\boldsymbol{\gamma}_0\\1\end{bmatrix}
+        =\mathbf{u}^{\mathsf T}\mathbf{b}.
+        \]
+      </div>
+
+      <p>Esta igualdad utiliza los pesos y el multiplicador que resuelven el sistema;
+        no vale para un vector arbitrario de incógnitas. El signo de $\lambda$ depende
+        de la convención adoptada en el lagrangiano. Con el sistema escrito aquí,
+        el multiplicador se <em>suma</em>.</p>
+
+      <p>Los pesos son adimensionales y tanto $\lambda$ como $\sigma_k^2$ tienen
+        unidades de presión al cuadrado. La raíz cuadrada
+        $\sigma_k=\sqrt{\sigma_k^2}$ es la desviación estándar del error de predicción,
+        también llamada <strong>error estándar de kriging</strong>, y se expresa en
+        las mismas unidades que la presión.</p>
+
+      <h2>Tres sensores y un punto sin instrumentar</h2>
+
+      <p>Consideremos las siguientes posiciones y lecturas. Deseamos estimar la
+        presión en $P_0=(2,2)$, donde no hay un sensor.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Datos del ejemplo. Las coordenadas están en unidades de longitud y las presiones, en psi.">
+\begin{tabular}{lccc}
+\hline
+Punto & $x$ & $y$ & Presión (psi) \\
+\hline
+$P_1$ & 0 & 0 & 30 \\
+$P_2$ & 4 & 0 & 28 \\
+$P_3$ & 0 & 3 & 35 \\
+$P_0$ & 2 & 2 & Desconocida \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los sensores forman un triángulo rectángulo con lados de longitudes $3$,
+        $4$ y $5$. Las distancias desde el objetivo son
+        $\|P_1-P_0\|_2=2\sqrt2$, $\|P_2-P_0\|_2=2\sqrt2$ y
+        $\|P_3-P_0\|_2=\sqrt5$. Con la pendiente elegida, las matrices numéricas son</p>
+
+      <div class="equation">
+        \[
+        \mathbf{A}=\begin{bmatrix}
+        0&amp;4&amp;3&amp;1\\
+        4&amp;0&amp;5&amp;1\\
+        3&amp;5&amp;0&amp;1\\
+        1&amp;1&amp;1&amp;0
+        \end{bmatrix},
+        \qquad
+        \mathbf{b}=\begin{bmatrix}2\sqrt2\\2\sqrt2\\\sqrt5\\1\end{bmatrix},
+        \qquad
+        \mathbf{z}=\begin{bmatrix}30\\28\\35\end{bmatrix}.
+        \]
+      </div>
+
+      <p>El determinante numérico de $\mathbf{A}$ es $-44$, distinto de cero. Existe
+        una única solución, que podemos expresar algebraicamente como
+        $\mathbf{u}=\mathbf{A}^{-1}\mathbf{b}$. Sus valores aproximados son</p>
+
+      <div class="equation">
+        \[
+        \mathbf{w}\approx\begin{bmatrix}
+        0.146496\\0.382165\\0.471338
+        \end{bmatrix},
+        \qquad\lambda\approx-0.114249\;\mathrm{psi}^2.
+        \]
+      </div>
+
+      <p>La suma de los pesos exactos es uno. Aunque $P_1$ y $P_2$ están a la misma
+        distancia de $P_0$, sus pesos no coinciden. Sus relaciones con el tercer
+        sensor son diferentes, y el sistema utiliza toda esa información espacial.</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \widehat z(P_0)
+        &amp;=30w_1+28w_2+35w_3\\
+        &amp;=31+2\sqrt2-\sqrt5\\
+        &amp;\approx31.592359\;\mathrm{psi}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>La varianza y el error estándar resultan</p>
+
+      <div class="equation">
+        \[
+        \sigma_k^2\approx2.434977\;\mathrm{psi}^2,
+        \qquad
+        \sigma_k\approx1.560441\;\mathrm{psi}.
+        \]
+      </div>
+
+      <h3>Una particularidad geométrica del ejemplo</h3>
+
+      <p>El punto $P_0$ está dentro del rectángulo que contiene a los sensores, pero
+        fuera del triángulo que forman. En el primer cuadrante, el interior de ese
+        triángulo satisface $x/4+y/3\leq1$. Para $(2,2)$ obtenemos $7/6&gt;1$.
+        Por tanto, aunque usemos un método habitualmente llamado de interpolación,
+        esta predicción es una <strong>extrapolación respecto de la envolvente convexa
+        de los sensores</strong>.</p>
+
+      <p>Que todos los pesos hayan resultado positivos no cambia esa ubicación.
+        Los pesos de kriging no son, en general, coordenadas baricéntricas capaces
+        de reproducir exactamente cualquier función lineal de la posición. La
+        restricción del kriging ordinario reproduce constantes, no tendencias
+        espaciales arbitrarias.</p>
+
+      <h2>Resolución simbólica en Python</h2>
+
+      <p>SymPy permite conservar las distancias como números exactos, incluidos los
+        radicales, hasta el momento de mostrar los resultados. NumPy y Matplotlib
+        servirán después para calcular y dibujar una malla. Las tres bibliotecas se
+        pueden instalar con <code>python -m pip install sympy numpy matplotlib</code>.
+        El <a href="./kriging_ejemplo.py" download>programa completo</a> reúne los
+        siguientes bloques, que se ejecutan en el orden en que aparecen.</p>
+
+      <h3>Geometría, semivarianzas y solución</h3>
+
+      <script type="text/python">
+import sympy as sp
+
+P1 = sp.Point(0, 0)
+P2 = sp.Point(4, 0)
+P3 = sp.Point(0, 3)
+P0 = sp.Point(2, 2)
+z = sp.Matrix([30, 28, 35])
+c = sp.Integer(1)  # Valor numérico en psi^2/ul
+
+
+def gamma(punto_a, punto_b):
+    return c * punto_a.distance(punto_b)
+
+
+# Matriz ampliada de semivarianzas, no de covarianzas.
+A = sp.Matrix([
+    [gamma(P1, P1), gamma(P1, P2), gamma(P1, P3), 1],
+    [gamma(P2, P1), gamma(P2, P2), gamma(P2, P3), 1],
+    [gamma(P3, P1), gamma(P3, P2), gamma(P3, P3), 1],
+    [1,             1,             1,             0],
+])
+b = sp.Matrix([
+    gamma(P1, P0), gamma(P2, P0), gamma(P3, P0), 1
+])
+
+detA = A.det()
+if detA == 0:
+    raise ValueError("Matriz singular. No existe solución única.")
+
+u = A.LUsolve(b).applyfunc(sp.simplify)
+w = u[0:3, 0]
+multiplicador = u[3]
+z0 = sp.simplify(w.dot(z))
+varianza_kriging = sp.simplify(u.dot(b))
+error_estandar = sp.sqrt(varianza_kriging)
+      </script>
+
+      <p>La clase <code>Point</code> representa las posiciones y su método
+        <code>distance</code> calcula la distancia euclidiana. Con las coordenadas
+        enteras utilizadas aquí, SymPy mantiene una representación exacta. De este
+        modo no introducimos aproximaciones decimales en cada paso del álgebra.</p>
+
+      <p><code>A.LUsolve(b)</code> resuelve el sistema sin construir explícitamente
+        la inversa. La expresión <code>A.inv() * b</code> es equivalente cuando
+        $\mathbf{A}$ es invertible, pero resolver el sistema directamente es la
+        opción habitual, especialmente al trabajar con aritmética numérica.</p>
+
+      <p>La selección <code>u[0:3, 0]</code> extrae las primeras tres filas de la
+        única columna de <code>u</code>; el límite superior del intervalo no se
+        incluye. Así obtenemos el subvector de pesos, mientras que
+        <code>u[3]</code> recupera el multiplicador. El método <code>dot</code>
+        calcula un producto interno y devuelve un escalar. Por ejemplo,
+        <code>u.dot(b)</code> equivale a <code>(u.T * b)[0]</code>.</p>
+
+      <h3>Un reporte de los resultados</h3>
+
+      <script type="text/python">
+print("=" * 48)
+print("REPORTE DE INTERPOLACIÓN GEOESTADÍSTICA")
+print("=" * 48)
+print(f"Determinante de A: {detA}")
+for i, peso in enumerate(w, start=1):
+    print(f"w{i}: {float(peso):.6f}")
+print(f"Suma de comprobación: {float(sum(w)):.6f}")
+print(f"Multiplicador: {float(multiplicador):.6f} psi²")
+print(f"Presión estimada en P0: {float(z0):.6f} psi")
+print(f"Incertidumbre (varianza): {float(varianza_kriging):.6f} psi²")
+print(f"Error estándar: {float(error_estandar):.6f} psi")
+print("=" * 48)
+      </script>
+
+      <p>El reporte muestra una presión de $31.592359$ psi y un error estándar de
+        $1.560441$ psi. Las conversiones con <code>float</code> solo se utilizan al
+        imprimir; las variables simbólicas conservan sus valores exactos. Los seis
+        decimales facilitan comprobar el programa y no representan la resolución
+        física de unos sensores reales.</p>
+
+      <h2>Qué pasa cuando la matriz es singular</h2>
+
+      <p>Si colocamos dos sensores en la misma coordenada, por ejemplo al asignar
+        <code>P2 = P1</code> antes de construir la matriz, las filas correspondientes
+        de $\mathbf{A}$ son idénticas en este modelo sin ruido. La matriz pierde
+        rango, su determinante es cero y deja de haber una solución única para
+        todos los pesos. No significa necesariamente que el sistema sea incompatible;
+        puede tener infinitas soluciones.</p>
+
+      <p>La comprobación del programa detecta ese caso y lanza el
+        <code>ValueError</code> con el mensaje indicado. Si se intentara invertir
+        directamente una matriz singular sin esa comprobación, SymPy podría lanzar
+        <code>NonInvertibleMatrixError</code>. Son dos situaciones distintas, aunque
+        ambas avisan de que no existe una inversa.</p>
+
+      <p>Las mediciones repetidas en un mismo sitio no se resuelven desplazando
+        artificialmente un sensor en el mapa. Pueden combinarse cuando ello tenga
+        sentido experimental, o incorporarse mediante un modelo de error de medición.
+        Si difieren, esas diferencias contienen información sobre repetibilidad,
+        calibración o variación temporal que el modelo sin ruido no representa.</p>
+
+      <p>Con matrices numéricas, dos posiciones casi coincidentes también pueden
+        producir un problema mal condicionado. En ese caso, comprobar únicamente
+        si el determinante es exactamente cero no basta. Conviene examinar el
+        condicionamiento, el escalado de las variables y la sensibilidad de la
+        solución. La prueba simbólica del determinante es útil aquí por el tamaño
+        pequeño y los datos exactos del ejemplo.</p>
+
+      <h2>Del punto aislado al mapa completo</h2>
+
+      <p>Para construir un mapa repetimos el cálculo en una malla de objetivos.
+        Las posiciones de los sensores y el semivariograma permanecen fijos, por
+        lo que $\mathbf{A}$ no cambia. Solo cambia el vector de distancias al
+        objetivo y, con él, el miembro derecho. Podemos reunir todos esos vectores
+        como columnas de una matriz $\mathbf{B}$ y resolver de una vez</p>
+
+      <div class="equation">
+        \[
+        \mathbf{A}\mathbf{U}=\mathbf{B}.
+        \]
+      </div>
+
+      <p>Cada columna de $\mathbf{U}$ contiene los pesos y el multiplicador para
+        una posición. Esto aprovecha la misma factorización de $\mathbf{A}$ para
+        varios miembros derechos. El ejemplo utiliza una malla de
+        $241\times201$ puntos que incluye las posiciones de los tres sensores
+        y el objetivo $P_0$.</p>
+
+      <p>La matriz <code>distancias</code> tiene una fila por sensor y una columna
+        por objetivo. La última fila de <code>B</code> contiene unos para imponer
+        el insesgamiento en todas las predicciones. En <code>U * B</code> la
+        multiplicación es elemento a elemento; sumar por columnas reproduce el
+        producto $\mathbf{u}^{\mathsf T}\mathbf{b}$ en cada ubicación.</p>
+
+      <p>Una varianza matemáticamente válida no puede ser negativa. El código
+        tolera únicamente pequeños residuos de redondeo y los sustituye por cero
+        antes de calcular la raíz. Un valor negativo apreciable provoca un error
+        para evitar ocultar una inconsistencia del modelo o del cálculo.</p>
+
+      <figure>
+        <img src="./kriging-presion.png" width="1760" height="1210"
+          alt="Mapa de presión estimada por kriging en la región de x entre -1 y 5 e y entre -1 y 4. Los sensores P1, P2 y P3 delimitan un triángulo discontinuo; el objetivo P0 está fuera de ese triángulo."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Presión estimada con el semivariograma lineal. La
+          línea discontinua delimita la envolvente convexa de los sensores; no
+          representa tuberías. En $P_0$ se obtienen aproximadamente $31.59$ psi.</figcaption>
+      </figure>
+
+      <p>El mapa no contiene nuevas mediciones entre los sensores. Cada color
+        procede de la combinación de tres lecturas bajo un mismo modelo. La
+        apariencia continua de la superficie no debe confundirse con una cobertura
+        experimental igualmente densa.</p>
+
+      <figure>
+        <img src="./kriging-incertidumbre.png" width="1760" height="1210"
+          alt="Mapa del error estándar de kriging. La incertidumbre es cero en los tres sensores bajo el modelo sin ruido y aumenta hacia las zonas con menor cobertura."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. Error estándar de kriging, expresado en psi. En
+          $P_0$ vale aproximadamente $1.56$ psi. La incertidumbre nula en los
+          sensores responde a la hipótesis de observaciones exactas.</figcaption>
+      </figure>
+
+      <h3>Código para calcular y graficar la malla</h3>
+
+      <p>Este bloque es autocontenido. Define los tres sensores, construye la malla
+        ampliada y resuelve el sistema para sus $48\,441$ puntos antes de mostrar
+        ambos mapas en pantalla. Puede ejecutarse por sí solo, sin reutilizar
+        variables de los bloques anteriores. Los ejes conservan la misma escala
+        para no deformar las distancias y las variables se representan con
+        tipografía matemática.</p>
+
+      <script type="text/python">
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
+
+puntos = np.array([[0, 0], [4, 0], [0, 3]], dtype=float)
+valores = np.array([30, 28, 35], dtype=float)
+c = 1.0  # Pendiente del semivariograma en psi^2/ul.
+n = len(puntos)
+
+distancias_sensores = np.linalg.norm(
+    puntos[:, None, :] - puntos[None, :, :], axis=2
+)
+A_num = np.block([
+    [c * distancias_sensores, np.ones((n, 1))],
+    [np.ones((1, n)), np.zeros((1, 1))],
+])
+
+# La misma malla se utiliza para resolver el kriging y dibujar los mapas.
+x_malla = np.linspace(-1, 5, 241)
+y_malla = np.linspace(-1, 4, 201)
+X, Y = np.meshgrid(x_malla, y_malla)
+objetivos = np.column_stack((X.ravel(), Y.ravel()))
+distancias = np.linalg.norm(
+    puntos[:, None, :] - objetivos[None, :, :], axis=2
+)
+B = np.vstack((c * distancias, np.ones(objetivos.shape[0])))
+U = np.linalg.solve(A_num, B)
+presiones = (valores @ U[:n, :]).reshape(X.shape)
+varianzas = np.sum(U * B, axis=0).reshape(X.shape)
+
+# Solo se corrigen residuos negativos del orden del redondeo numérico.
+tolerancia = 1e-10 * max(1.0, np.max(np.abs(B)))
+if np.min(varianzas) < -tolerancia:
+    raise ValueError("Varianza negativa: revise el modelo y el sistema.")
+desviaciones = np.sqrt(np.maximum(varianzas, 0.0))
+
+plt.rcParams.update({
+    "font.family": "DejaVu Sans",
+    "font.size": 12,
+    "mathtext.fontset": "stix",
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+})
+
+mapas = [
+    (presiones, "viridis", "Presión estimada (psi)",
+     float(presiones.min()), float(presiones.max())),
+    (desviaciones, "YlGnBu", "Error estándar (psi)",
+     0, float(desviaciones.max())),
+]
+
+for campo, paleta, etiqueta, minimo, maximo in mapas:
+    fig, ax = plt.subplots(figsize=(8.0, 5.5), layout="constrained")
+    imagen = ax.pcolormesh(
+        X, Y, campo, cmap=paleta, shading="auto", vmin=minimo, vmax=maximo
+    )
+    ax.plot([0, 4, 0, 0], [0, 0, 3, 0], "--", color="white", lw=1.5)
+    ax.scatter(puntos[:, 0], puntos[:, 1], s=55, c="white",
+               edgecolors="#202c32", linewidths=1.3, zorder=4, clip_on=False)
+    ax.scatter([2], [2], s=75, marker="X", c="white",
+               edgecolors="#202c32", linewidths=1.0, zorder=4)
+    etiquetas = [
+        ((0, 0), (12, 12), r"$P_1$ · 30 psi", "left", "bottom"),
+        ((4, 0), (-12, 12), r"$P_2$ · 28 psi", "right", "bottom"),
+        ((0, 3), (12, -12), r"$P_3$ · 35 psi", "left", "top"),
+        ((2, 2), (12, 8), r"$P_0$", "left", "bottom"),
+    ]
+    for punto, desplazamiento, texto, horizontal, vertical in etiquetas:
+        anotacion = ax.annotate(
+            texto, punto, xytext=desplazamiento, textcoords="offset points",
+            ha=horizontal, va=vertical, color="#17282c", fontsize=12.5
+        )
+        anotacion.set_path_effects([pe.withStroke(linewidth=3, foreground="white")])
+    ax.set(xlim=(x_malla[0], x_malla[-1]), ylim=(y_malla[0], y_malla[-1]),
+           xlabel=r"$x$ (ul)", ylabel=r"$y$ (ul)")
+    ax.set_aspect("equal")
+    barra = fig.colorbar(imagen, ax=ax, shrink=0.86, pad=0.035)
+    barra.set_label(etiqueta)
+    barra.outline.set_visible(False)
+
+plt.show()
+      </script>
+
+      <h2>Cómo interpretar el mapa de incertidumbre</h2>
+
+      <p>En el modelo sin ruido, estimar en la posición de un sensor reproduce su
+        lectura y da varianza cero. Se puede comprobar sin cálculo numérico. Si
+        $P_0=P_j$, el vector que asigna peso uno al sensor $j$ y cero a los demás,
+        junto con $\lambda=0$, resuelve el sistema. No significa que los sensores
+        sean físicamente perfectos; significa que así los hemos representado.</p>
+
+      <p>Para un semivariograma fijado, la varianza de kriging depende de la
+        geometría de muestreo y de ese modelo, no de los valores particulares de
+        $\mathbf{z}$. Si cambiáramos las tres presiones manteniendo las posiciones
+        y el semivariograma, cambiaría el primer mapa, pero no el segundo. Cuando
+        los parámetros del semivariograma se estiman con los datos, existe una
+        dependencia indirecta que esta observación no elimina.</p>
+
+      <p>También importa la escala del semivariograma. Si multiplicamos todas sus
+        semivarianzas por un factor positivo, los pesos se mantienen, mientras que
+        el multiplicador y la varianza se multiplican por ese factor. Por ejemplo,
+        cuadruplicar la pendiente $c$ no modifica la presión estimada, pero duplica
+        el error estándar. Un mapa de presión visualmente convincente no basta para
+        justificar la incertidumbre que lo acompaña.</p>
+
+      <p>El error estándar tampoco es el error observado, pues desconocemos la
+        presión verdadera en $P_0$. Ni siquiera garantiza que el error absoluto sea
+        menor que $1.56$ psi. Si, adicionalmente, el modelo de error fuera gaussiano
+        y sus parámetros estuvieran correctamente especificados, podríamos usar
+        un intervalo predictivo basado en el error normal:</p>
+
+      <div class="equation">
+        \[
+        \widehat z(P_0)\pm1.96\,\sigma_k
+        \approx[28.53,\;34.65]\;\mathrm{psi}.
+        \]
+      </div>
+
+      <p>Ese intervalo tendría una cobertura nominal del 95 % bajo aquellas
+        hipótesis. Aquí ilustra la interpretación de la desviación estándar, no
+        constituye una garantía para una red real. La incertidumbre por estimar
+        el semivariograma, por errores de los sensores o por una estructura espacial
+        mal representada requiere tratamiento adicional.</p>
+
+      <h2>En una red de agua, la distancia no lo explica todo</h2>
+
+      <p>El ejemplo anterior describe puntos en un plano, no una red hidráulica
+        completa. Dos sensores instalados en calles paralelas podrían estar separados
+        por apenas 10 metros en línea recta, mientras que el recorrido que los conecta
+        por tuberías mide 400 metros y pasa por tres codos y una válvula. La distancia
+        euclidiana por sí sola no describe esa conectividad ni los elementos que
+        condicionan la pérdida de carga.</p>
+
+      <p>Esto no vuelve inútil toda interpolación euclidiana. Puede ser una aproximación
+        razonable en ciertas zonas y condiciones de operación, siempre que los datos
+        la respalden. Lo que no corresponde es suponer que dos presiones deben ser
+        casi iguales solo porque sus sensores aparecen juntos en el mapa.</p>
+
+      <h3>Distancias sobre el grafo de tuberías</h3>
+
+      <p>Una red puede representarse mediante un grafo cuyos nodos son conexiones
+        y cuyos enlaces son tuberías. Una posible medida de separación es la longitud
+        del camino más corto entre dos puntos del grafo. Incorpora conectividad que
+        la distancia en línea recta omite, pero no representa necesariamente la
+        influencia hidráulica efectiva. En una red mallada puede haber varios
+        recorridos, y los caudales se distribuyen según las condiciones de toda la red.</p>
+
+      <p>Además, sustituir una distancia euclidiana por una distancia de caminos
+        mínimos dentro de cualquier fórmula no garantiza un semivariograma admisible.
+        Hay que conservar la condición de semidefinitud negativa condicional, o
+        construir una covarianza válida sobre el grafo. Las restricciones dependen
+        tanto de la función como de la métrica y de la estructura de la red. El trabajo
+        de <a href="https://doi.org/10.1214/19-AOS1896">Anderes, Møller y Rasmussen
+        (2020)</a> desarrolla precisamente esta cuestión para covarianzas sobre
+        grafos y sus aristas.</p>
+
+      <p>En la práctica, la longitud de tubería es solo una parte del problema.
+        También importan los diámetros, la rugosidad, los caudales, las demandas,
+        los niveles de los depósitos, la operación de bombas y las aperturas de
+        válvulas. Una distancia topológica no sustituye las ecuaciones de conservación
+        ni las relaciones de pérdida de carga.</p>
+
+      <h3>Presión, elevación y tendencias</h3>
+
+      <p>Dos puntos conectados pueden tener presiones diferentes debido a su
+        elevación. Una magnitud útil para distinguir esa contribución es la carga
+        piezométrica, expresada como</p>
+
+      <div class="equation">
+        \[
+        H(P)=h_e(P)+\frac{p(P)}{\rho g},
+        \]
+      </div>
+
+      <p>donde $h_e$ es la elevación respecto de un datum común, $p$ la presión,
+        $\rho$ la densidad del agua y $g$ la aceleración de la gravedad. Si se
+        utilizan metros y unidades del Sistema Internacional, la presión debe
+        convertirse a pascales antes de calcular $p/(\rho g)$; no se sustituyen
+        directamente los valores en psi. La carga piezométrica no incluye el término
+        cinético de la carga total.</p>
+
+      <p>Si existe una tendencia de presión asociada con la elevación o con la
+        operación de la red, una media constante puede resultar inadecuada. Es
+        posible incorporar esa tendencia mediante kriging universal o interpolar
+        residuos respecto de un modelo de referencia. Si $m(P)$ es una predicción
+        hidráulica de presión, por ejemplo, podemos trabajar con</p>
+
+      <div class="equation">
+        \[
+        r_i=z(P_i)-m(P_i),
+        \qquad
+        \widehat z(P_0)=m(P_0)+\sum_i w_i r_i.
+        \]
+      </div>
+
+      <p>En ese caso se modela la dependencia espacial de los residuos, no la de
+        las presiones brutas. El modelo de referencia y sus errores también deben
+        evaluarse. La corrección estadística, por sí sola, no garantiza que el
+        resultado satisfaga exactamente todas las ecuaciones hidráulicas.</p>
+
+      <h2>De un ejercicio reproducible a una aplicación fiable</h2>
+
+      <p>Antes de usar el kriging para tomar decisiones conviene seguir una
+        secuencia de comprobaciones que vaya más allá de obtener un mapa continuo.</p>
+
+      <ul class="elegante">
+        <li><strong>Precisar qué se predice.</strong> No es lo mismo estimar la
+          presión física en un punto que predecir la próxima lectura de un sensor
+          con ruido. La incertidumbre instrumental debe entrar en el modelo
+          correspondiente.</li>
+        <li><strong>Sincronizar y revisar los datos.</strong> Mezclar lecturas de
+          horas o regímenes distintos puede convertir cambios temporales en
+          aparentes diferencias espaciales. También deben revisarse unidades,
+          calibración, coordenadas y valores anómalos.</li>
+        <li><strong>Examinar tendencias y direcciones.</strong> Una estructura
+          espacial puede variar con la elevación, la dirección o la zona de
+          operación. La isotropía y la media constante son hipótesis que se
+          evalúan, no propiedades automáticas de los datos.</li>
+        <li><strong>Ajustar un modelo admisible.</strong> El semivariograma debe
+          describir razonablemente la variación observada y respetar las
+          condiciones matemáticas de la geometría utilizada.</li>
+        <li><strong>Validar fuera del ajuste.</strong> Reservar mediciones o
+          retirar sensores por turnos permite comparar predicciones con valores
+          conocidos. Si se ajustan parámetros, ese ajuste debe hacerse sin
+          utilizar los datos reservados. Con tres sensores la validación es
+          demasiado limitada para sostener conclusiones generales.</li>
+        <li><strong>Evaluar también la incertidumbre.</strong> Además del sesgo
+          y del error cuadrático, interesa comprobar si los errores observados
+          son coherentes con las desviaciones estándar anunciadas.</li>
+        <li><strong>Respetar el dominio físico.</strong> En una red, los objetivos
+          de interés son los nodos y las tuberías pertinentes. Colorear todo un
+          rectángulo es útil para este ejemplo geométrico, pero no convierte
+          cada píxel en un punto real de la infraestructura.</li>
+      </ul>
+
+      <p>El mapa de incertidumbre puede orientar la colocación de nuevos sensores,
+        aunque también deben considerarse la accesibilidad, los costos y la relevancia
+        operativa de cada ubicación. Una predicción anómala puede justificar una
+        investigación; no identifica por sí sola una fuga ni su causa.</p>
+
+      <h3>Kriging en plataformas geoespaciales</h3>
+
+      <p>Google Earth Engine ofrece el método
+        <a href="https://developers.google.com/earth-engine/apidocs/ee-featurecollection-kriging"><code>ee.FeatureCollection.kriging</code></a>
+        para transformar observaciones puntuales en una imagen de predicciones.
+        Su documentación incluye un ejemplo de temperatura del aire y permite
+        configurar modelos de semivariograma exponencial, gaussiano o esférico,
+        junto con sus parámetros y un radio de búsqueda. Es una opción para
+        integrar la interpolación en proyectos de análisis geoespacial.</p>
+
+      <p>El modelo lineal empleado aquí no figura entre las formas que acepta
+        directamente ese método. Por tanto, trasladar el ejercicio a esa plataforma
+        requiere elegir y justificar un modelo compatible, no copiar los números
+        sin más. Disponer de una herramienta de cálculo no elimina la necesidad
+        de revisar los supuestos ni incorpora automáticamente la topología hidráulica.</p>
+
+      <h2>Estimar también es reconocer lo que falta</h2>
+
+      <p>El kriging ordinario convierte una hipótesis sobre la variación espacial
+        en pesos de predicción mediante un sistema lineal. La suma de los pesos
+        impone insesgamiento para una media constante desconocida; la minimización
+        de la varianza selecciona los pesos; y el mismo sistema proporciona una
+        medida de incertidumbre. El ejemplo de tres sensores permite seguir cada
+        paso desde las distancias hasta una presión de $31.59$ psi con un error
+        estándar de $1.56$ psi bajo el modelo adoptado.</p>
+
+      <p>Su utilidad práctica depende de que la estructura espacial represente el
+        fenómeno que queremos estudiar. En redes de agua, eso exige atender tanto
+        a la geometría como a la hidráulica y a la calidad de las mediciones.
+        El resultado más valioso no es simplemente una superficie sin huecos,
+        sino una estimación acompañada de supuestos explícitos, incertidumbre
+        interpretable y comprobaciones experimentales.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Anderes, E., Møller, J., &amp; Rasmussen, J. G. (2020).
+          <a href="https://doi.org/10.1214/19-AOS1896">Isotropic covariance functions
+          on graphs and their edges</a>. <em>The Annals of Statistics, 48</em>(4),
+          2478–2503. https://doi.org/10.1214/19-AOS1896</li>
+        <li>Google. (2023, 6 de octubre).
+          <a href="https://developers.google.com/earth-engine/apidocs/ee-featurecollection-kriging"><em>ee.FeatureCollection.kriging</em></a>.
+          Google Earth Engine. https://developers.google.com/earth-engine/apidocs/ee-featurecollection-kriging</li>
+        <li>Moraga, P. (2023).
+          <a href="https://www.paulamoraga.com/book-spatial/"><em>Spatial statistics
+          for data science: Theory and practice with R</em></a>. Chapman &amp; Hall/CRC.
+          https://www.paulamoraga.com/book-spatial/</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
