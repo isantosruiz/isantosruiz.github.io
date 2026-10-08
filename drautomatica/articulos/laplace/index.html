@@ -24,7 +24,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
           problemas de ingeniería. Un circuito RC y un mecanismo
           masa–resorte–amortiguador servirán para relacionar polos, transitorios,
           entradas retardadas y valores de equilibrio con el comportamiento real.
-          Los ejemplos reproducibles en MATLAB y Python/SymPy incluyen
+          Los ejemplos reproducibles en MATLAB y Python incluyen
           comprobaciones de las ecuaciones y de los estados iniciales.</p>
       </section>
 
@@ -54,7 +54,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <div class="equation">
         \[
-        \underbrace{\text{Modelo diferencial en }t}_{\text{con condiciones iniciales}}
+        \underbrace{\:\text{Modelo diferencial en }t\:}_{\text{con condiciones iniciales}}
         \xrightarrow{\;\mathscr{L}\;}
         \text{Ecuación algebraica en }s
         \xrightarrow{\;\text{despeje}\;}
@@ -64,7 +64,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         \]
       </div>
 
-      <p>En mecatrónica, este procedimiento permite estudiar vibraciones,
+      <p>Este procedimiento permite estudiar vibraciones,
         circuitos, accionamientos y sensores, así como diseñar controladores.
         Además de producir una solución explícita, muestra qué determina la
         rapidez de una respuesta, por qué aparecen oscilaciones y cuándo un
@@ -76,21 +76,21 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>Usaremos la <strong>transformada unilateral de Laplace</strong>, adecuada
         para problemas que comienzan en un instante de referencia $t=0$. Su
-        definición es</p>
+        definición es
 
       <div class="equation">
         \[
         F(s)=\mathscr{L}\{f(t)\}
         =\int_{0^-}^{\infty}f(t)e^{-st}\,\mathrm{d}t,
-        \qquad s=\sigma+j\omega,\qquad j^2=-1.
         \]
       </div>
+      donde $s=\sigma+j\omega$ es una variable compleja.</p>
 
       <p>Las letras mayúsculas identificarán las transformadas de las señales
         correspondientes. Así, $x(t)$ y $X(s)$ representan la misma evolución en
         dominios diferentes. El límite $0^-$ indica que se incluye cualquier
         impulso aplicado exactamente en el origen. Para funciones ordinarias
-        sin impulsos, la integral coincide con la que comienza en cero.</p>
+        sin impulsos, la integral desde $t=0^-$ coincide con la que comienza en $t=0$.</p>
 
       <p>El factor exponencial puede escribirse como
         $e^{-st}=e^{-\sigma t}e^{-j\omega t}$. La parte real $\sigma$ introduce
@@ -129,7 +129,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
           de estado, coinciden con los valores $0^+$.</p>
       </aside>
 
-      <h3>El regreso al dominio temporal</h3>
+      <h3>El regreso al dominio del tiempo</h3>
 
       <p>La operación inversa se escribe
         $f(t)=\mathscr{L}^{-1}\{F(s)\}$. Formalmente, bajo las hipótesis de
@@ -145,7 +145,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
       </div>
 
       <p>No necesitaremos evaluar esa integral de variable compleja para resolver
-        los modelos de este tutorial. Utilizaremos pares conocidos, propiedades
+        los modelos de este tutorial. Utilizaremos parejas conocidas, propiedades
         y fracciones parciales. La integral explica por qué existe un camino de
         vuelta; las tablas permiten recorrerlo de una forma práctica. En los
         resultados temporales se entiende $t\geq0$ y, cuando corresponda una
@@ -153,7 +153,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         en un único punto de discontinuidad no modifica una transformada
         ordinaria.</p>
 
-      <h2>Calcular transformadas desde la definición</h2>
+      <h2>Calcular transformadas a partir de la definición</h2>
 
       <h3>Una exponencial decreciente</h3>
 
@@ -163,13 +163,11 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <div class="equation">
         \[
-        \begin{aligned}
         \mathscr{L}\{e^{-at}\}
-        &amp;=\int_0^\infty e^{-(s+a)t}\,\mathrm{d}t\\
-        &amp;=\left[-\frac{e^{-(s+a)t}}{s+a}\right]_0^\infty
-        =\frac{1}{s+a},
+        = \int_0^\infty e^{-(s+a)t}\,\mathrm{d}t
+        = \left[-\frac{e^{-(s+a)t}}{s+a}\right]_0^\infty
+        = \frac{1}{s+a},
         \qquad \operatorname{Re}(s)&gt;-a.
-        \end{aligned}
         \]
       </div>
 
@@ -177,7 +175,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         $\operatorname{Re}(s+a)&gt;0$. La condición no es un adorno agregado
         después del cálculo; justifica el paso que hace finita la integral.
         Para una amplitud $A$, la transformada es $A/(s+a)$. Si hacemos
-        $a=0$, obtenemos el par básico del escalón unitario,
+        $a=0$, obtenemos la pareja básica del escalón unitario,
         $\mathscr{L}\{u(t)\}=1/s$, con $\operatorname{Re}(s)&gt;0$.</p>
 
       <p>Una constante en el tiempo no se transforma en la misma constante.
@@ -193,24 +191,23 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <div class="equation">
         \[
-        \begin{aligned}
         \mathscr{L}\{t\}
-        &amp;=\int_0^\infty t e^{-st}\,\mathrm{d}t\\
-        &amp;=\left[-\frac{t e^{-st}}{s}\right]_0^\infty
+        = \int_0^\infty t e^{-st}\,\mathrm{d}t
+        = \left[-\frac{t e^{-st}}{s}\right]_0^\infty
         +\frac{1}{s}\int_0^\infty e^{-st}\,\mathrm{d}t
-        =\frac{1}{s^2},\qquad \operatorname{Re}(s)&gt;0.
-        \end{aligned}
+        = \frac{1}{s^2},\qquad \operatorname{Re}(s)&gt;0.
         \]
       </div>
 
       <p>La exponencial decrece más rápido de lo que crece el factor $t$, por
-        lo que el término de frontera vuelve a ser cero. Repitiendo el
-        procedimiento se obtiene
-        $\mathscr{L}\{t^n\}=n!/s^{n+1}$ para enteros $n\geq0$.
-        Una referencia de posición que aumenta a velocidad constante $v$
-        se escribe $vt$ y tiene transformada $v/s^2$.</p>
+        lo que el término de frontera vuelve a ser cero. 
+        Como ejemplo, una referencia de posición que aumenta a velocidad constante $v_0$
+        se escribe $v_0t$ y tiene transformada $v_0/s^2$.</p>
 
-      <h2>Cómo utilizar una tabla de transformadas</h2>
+      <p>Repitiendo el procedimiento anterior se obtiene
+        $\mathscr{L}\{t^n\}=n!/s^{n+1}$ para enteros $n\geq0$.</p>
+
+      <h2>Tabla de transformadas</h2>
 
       <p>Una tabla se lee en ambas direcciones. De izquierda a derecha permite
         transformar una entrada; de derecha a izquierda permite reconocer la
@@ -219,7 +216,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         Los parámetros $a$ y $\omega$ son reales, $a&gt;0$, $\omega&gt;0$,
         y $n$ es un entero no negativo.</p>
 
-      <script type="text/tabjax" data-caption="Tabla 1. Pares básicos de transformadas unilaterales de Laplace.">
+      <script type="text/tabjax" data-caption="Tabla 1. Parejas básicas de transformadas unilaterales de Laplace.">
 \begin{tabular}{lll}
 \hline
 Señal temporal & Transformada & Convergencia \\
@@ -243,7 +240,7 @@ $\delta(t)$ & $1$ & Todo $s$ finito \\
         impulso mecánico es $J$, medido en $\mathrm{N\,s}$. La transformada
         igual a uno utiliza la convención $0^-$ de nuestra definición.</p>
 
-      <p>Antes de reconocer un par hay que ajustar sus factores. Por ejemplo,</p>
+      <p>Antes de reconocer una pareja de transformadas hay que ajustar sus factores. Por ejemplo,</p>
 
       <div class="equation">
         \[
@@ -253,7 +250,7 @@ $\delta(t)$ & $1$ & Todo $s$ finito \\
         \]
       </div>
 
-      <p>El numerador del par del seno debe ser su frecuencia angular.
+      <p>El numerador de la pareja del seno debe ser su frecuencia angular.
         Reconocer solamente el denominador y olvidar ese factor produce una
         respuesta con amplitud incorrecta. Por la misma razón,
         $4/(s+2)^3$ corresponde a $2t^2e^{-2t}$ y no a $4t^2e^{-2t}$,
@@ -463,13 +460,13 @@ $\delta(t)$ & $1$ & Todo $s$ finito \\
         \mathscr{L}\{e^{-at}f(t)\}=F(s+a).
         \]
       </div>
-      <p>Esta propiedad explica los pares de oscilaciones amortiguadas de la
+      <p>Esta propiedad explica las parejas de transformadas de oscilaciones amortiguadas de la
         tabla. Si $F(s)$ converge para $\operatorname{Re}(s)&gt;\alpha$,
         la expresión desplazada converge para
         $\operatorname{Re}(s)&gt;\alpha-a$. No debe confundirse este cambio
         con un retardo temporal, que introduce una exponencial de $s$.</p>
 
-      <p>Otras dos identidades permiten generar pares nuevos sin volver a
+      <p>Otras dos identidades permiten generar parejas nuevas sin volver a
         integrar desde cero,</p>
       <div class="equation">
         \[
@@ -888,7 +885,7 @@ Velocidad inicial & $v_0$ & $0\,\mathrm{m/s}$ \\
         más breve, pero ambas describen exactamente la misma memoria del
         sistema.</p>
 
-      <h2>Transformadas e inversas con MATLAB y SymPy</h2>
+      <h2>Transformadas e inversas con MATLAB y Python</h2>
 
       <p>Los programas simbólicos permiten reproducir los cálculos sin
         aproximar las expresiones a números de punto flotante desde el
@@ -916,8 +913,9 @@ Velocidad inicial & $v_0$ & $0\,\mathrm{m/s}$ \\
         Archivo completo: <a href="/drautomatica/html/laplace_transformadas.m" download><code>laplace_transformadas.m</code></a>.</p>
 
       <script type="text/matlab">
-% Transformadas y fracciones parciales. Requiere Symbolic Math Toolbox.
-clear;
+% Transformadas y fracciones parciales.
+% Requiere Symbolic Math Toolbox.
+clear
 syms t positive
 syms s
 
@@ -1033,11 +1031,12 @@ print("\nEscalón retardado:", retardo)
       <h3>Modelo y gráficas en MATLAB</h3>
 
       <p>Archivo completo: <a href="/drautomatica/html/laplace_sistemas.m" download><code>laplace_sistemas.m</code></a>.
-        No se necesita Control System Toolbox para este programa.</p>
+        No se necesita <em>Control System Toolbox</em> para este programa.</p>
 
       <script type="text/matlab">
-% Modelos RC y mecánico. Requiere Symbolic Math Toolbox.
-clear;
+% Modelos de circuito RC y masa-resorte-amortiguador.
+% Requiere Symbolic Math Toolbox.
+clear
 syms t positive
 syms s X
 
@@ -1099,7 +1098,7 @@ xlabel('Tiempo (s)'); ylabel('Posición (m)'); grid on;
         que aceptan los arreglos de NumPy.</p>
 
       <script type="text/python">
-"""Modelos RC y masa-resorte-amortiguador mediante Laplace."""
+"""Modelos de circuito RC y masa-resorte-amortiguador."""
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -1312,7 +1311,7 @@ plt.show()
 
       <ul class="references">
         <li>Massachusetts Institute of Technology, Department of Mechanical
-          Engineering. (s. f.). <a href="https://web.mit.edu/2.14/www/Handouts/FreqDom.pdf"><em>Introduction
+          Engineering. (2004). <a href="https://web.mit.edu/2.14/www/Handouts/FreqDom.pdf"><em>Introduction
           to frequency domain processing</em></a> [Notas del curso 2.14,
           Analysis and Design of Feedback Control Systems].</li>
         <li>The MathWorks, Inc. (2026a). <a href="https://www.mathworks.com/help/symbolic/sym.ilaplace.html"><em>ilaplace:
@@ -1321,9 +1320,9 @@ plt.show()
           Laplace transform</em></a>. Symbolic Math Toolbox documentation.</li>
         <li>The MathWorks, Inc. (2026c). <a href="https://www.mathworks.com/help/symbolic/sym.partfrac.html"><em>partfrac:
           Partial fraction decomposition</em></a>. Symbolic Math Toolbox documentation.</li>
-        <li>SymPy Development Team. (s. f.-a). <a href="https://docs.sympy.org/latest/modules/integrals/integrals.html"><em>Integrals</em></a>.
+        <li>SymPy Development Team. (2025a). <a href="https://docs.sympy.org/latest/modules/integrals/integrals.html"><em>Integrals</em></a>.
           SymPy 1.14.0 documentation.</li>
-        <li>SymPy Development Team. (s. f.-b). <a href="https://docs.sympy.org/latest/modules/polys/reference.html#sympy.polys.partfrac.apart"><em>Polynomials
+        <li>SymPy Development Team. (2025b). <a href="https://docs.sympy.org/latest/modules/polys/reference.html#sympy.polys.partfrac.apart"><em>Polynomials
           manipulation module reference</em></a>. SymPy 1.14.0 documentation.</li>
       </ul>
 
