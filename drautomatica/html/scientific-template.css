@@ -256,6 +256,22 @@ figcaption,
   margin-top: 0.75rem;
 }
 
+.remark {
+  margin: 1.25rem 0;
+  padding: 0.9rem 1rem;
+  border: 0;
+  border-radius: 6px;
+  background: #fff2e6;
+}
+
+.remark > :first-child {
+  margin-top: 0;
+}
+
+.remark > :last-child {
+  margin-bottom: 0;
+}
+
 .equation {
   margin: 1.05rem 0;
   padding: 0.2rem 0;
@@ -288,7 +304,8 @@ figcaption,
   line-height: 1.45;
 }
 
-figcaption {
+figcaption,
+.table-caption {
   text-align: center;
 }
 
@@ -503,7 +520,7 @@ body.bookdown-style h2 {
 body.bookdown-style h3 {
   margin-top: 1.5em;
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 body.bookdown-style p {
@@ -632,6 +649,13 @@ body.bookdown-style .article-footer {
   .subtitle,
   .article-subtitle {
     font-size: 15pt;
+  }
+
+  .remark {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   button[class*="-code-copy-button"] {
