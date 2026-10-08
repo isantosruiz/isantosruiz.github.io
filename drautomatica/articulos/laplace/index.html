@@ -1,0 +1,1386 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Transformadas de Laplace: de las ecuaciones al comportamiento físico | drAutomática</title><meta name="description" content="Tutorial de transformadas de Laplace para ingeniería mecatrónica. Definición, inversas, fracciones parciales, condiciones iniciales, convolución y solución de modelos físicos con MATLAB y Python/SymPy."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/laplace/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Transformadas de Laplace: de las ecuaciones al comportamiento físico | drAutomática"><meta property="og:description" content="Tutorial de transformadas de Laplace para ingeniería mecatrónica. Definición, inversas, fracciones parciales, condiciones iniciales, convolución y solución de modelos físicos con MATLAB y Python/SymPy."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/laplace/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Tutorial de transformadas de Laplace para ingeniería mecatrónica. Definición, inversas, fracciones parciales, condiciones iniciales, convolución y solución de modelos físicos con MATLAB y Python/SymPy."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Transformadas de Laplace: de las ecuaciones al comportamiento físico | drAutomática"><meta name="twitter:description" content="Tutorial de transformadas de Laplace para ingeniería mecatrónica. Definición, inversas, fracciones parciales, condiciones iniciales, convolución y solución de modelos físicos con MATLAB y Python/SymPy."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="matlab,python" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Matemáticas para la ingeniería</p>
+        <h1>Transformadas de Laplace: de las ecuaciones al comportamiento físico</h1>
+        <p class="subtitle">Una guía para resolver modelos dinámicos, interpretar sus respuestas y comprobar los resultados con MATLAB y SymPy.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Las ecuaciones diferenciales describen cómo un sistema físico almacena,
+          intercambia y disipa energía. La transformada de Laplace permite estudiar
+          esas ecuaciones en un dominio donde derivar e integrar se traduce en
+          operaciones algebraicas, sin perder la información de las condiciones
+          iniciales. Partiremos de su definición, calcularemos transformadas e
+          inversas y construiremos las propiedades necesarias para resolver
+          problemas de ingeniería. Un circuito RC y un mecanismo
+          masa–resorte–amortiguador servirán para relacionar polos, transitorios,
+          entradas retardadas y valores de equilibrio con el comportamiento real.
+          Los ejemplos reproducibles en MATLAB y Python/SymPy incluyen
+          comprobaciones de las ecuaciones y de los estados iniciales.</p>
+      </section>
+
+      <h2>Qué es una transformada y por qué resulta útil</h2>
+
+      <p>Al conectar un motor, la velocidad no cambia instantáneamente. Al aplicar
+        una fuerza a un mecanismo, su posición depende tanto de la fuerza como de
+        la inercia, la fricción y la energía que ya tenía almacenada. De manera
+        semejante, un capacitor necesita tiempo para cambiar su tensión. En todos
+        esos casos interesa conocer una función del tiempo y no solamente un
+        valor de equilibrio.</p>
+
+      <p>Una <strong>transformada</strong> es una operación que representa una
+        función mediante otra función, definida en un dominio diferente. No es
+        una aproximación por sí misma. Si se cumplen las condiciones de existencia
+        e inversión, ambas representaciones contienen la información necesaria
+        para recuperar la señal en los puntos donde es continua. La ventaja de
+        cambiar de representación es que algunas operaciones difíciles en un
+        dominio se vuelven sencillas en el otro.</p>
+
+      <p>Los logaritmos ofrecen una analogía elemental, pues convierten productos
+        en sumas. La transformada de Laplace hace algo distinto y más amplio con
+        funciones. Convierte las derivadas de una ecuación diferencial lineal
+        con coeficientes constantes en expresiones que contienen potencias de
+        una variable compleja $s$. Podemos entonces despejar algebraicamente la
+        incógnita y regresar al tiempo mediante la transformada inversa.</p>
+
+      <div class="equation">
+        \[
+        \underbrace{\text{Modelo diferencial en }t}_{\text{con condiciones iniciales}}
+        \xrightarrow{\;\mathscr{L}\;}
+        \text{Ecuación algebraica en }s
+        \xrightarrow{\;\text{despeje}\;}
+        X(s)
+        \xrightarrow{\;\mathscr{L}^{-1}\;}
+        x(t).
+        \]
+      </div>
+
+      <p>En mecatrónica, este procedimiento permite estudiar vibraciones,
+        circuitos, accionamientos y sensores, así como diseñar controladores.
+        Además de producir una solución explícita, muestra qué determina la
+        rapidez de una respuesta, por qué aparecen oscilaciones y cuándo un
+        sistema puede alcanzar un régimen permanente. El paso al dominio $s$
+        no reemplaza las leyes físicas; reorganiza las ecuaciones obtenidas a
+        partir de ellas.</p>
+
+      <h2>Del tiempo a la variable compleja</h2>
+
+      <p>Usaremos la <strong>transformada unilateral de Laplace</strong>, adecuada
+        para problemas que comienzan en un instante de referencia $t=0$. Su
+        definición es</p>
+
+      <div class="equation">
+        \[
+        F(s)=\mathscr{L}\{f(t)\}
+        =\int_{0^-}^{\infty}f(t)e^{-st}\,\mathrm{d}t,
+        \qquad s=\sigma+j\omega,\qquad j^2=-1.
+        \]
+      </div>
+
+      <p>Las letras mayúsculas identificarán las transformadas de las señales
+        correspondientes. Así, $x(t)$ y $X(s)$ representan la misma evolución en
+        dominios diferentes. El límite $0^-$ indica que se incluye cualquier
+        impulso aplicado exactamente en el origen. Para funciones ordinarias
+        sin impulsos, la integral coincide con la que comienza en cero.</p>
+
+      <p>El factor exponencial puede escribirse como
+        $e^{-st}=e^{-\sigma t}e^{-j\omega t}$. La parte real $\sigma$ introduce
+        una ponderación exponencial y la parte imaginaria $\omega$ una
+        ponderación oscilatoria. Cada valor de $s$ produce un número complejo
+        obtenido a partir de toda la evolución posterior a cero. Por tanto,
+        <strong>transformar no significa sustituir $t$ por $s$</strong>.
+        Si $t$ se mide en segundos, $s$ tiene dimensiones de inverso de tiempo;
+        si $f$ se mide en metros, $F$ tiene unidades de metro multiplicado
+        por segundo, es decir, $\mathrm{m\,s}$.</p>
+
+      <h3>La región de convergencia forma parte del resultado</h3>
+
+      <p>La integral impropia no converge necesariamente para cualquier $s$.
+        Una condición suficiente habitual es que $f$ sea continua por tramos
+        en cada intervalo finito y de orden exponencial, de modo que
+        $|f(t)|\leq M e^{\alpha t}$ para tiempos suficientemente grandes.
+        En ese caso la integral converge absolutamente para
+        $\operatorname{Re}(s)&gt;\alpha$. Ese semiplano pertenece a su
+        <strong>región de convergencia</strong>.</p>
+
+      <p>Una señal que crece como $e^{2t}$ sí tiene transformada, aunque su
+        evolución sea inestable; basta con tomar $\operatorname{Re}(s)&gt;2$.
+        En cambio, $e^{t^2}$ crece demasiado rápido para que un factor
+        $e^{-\sigma t}$ con $\sigma$ finito haga converger la integral.
+        Existencia de la transformada y estabilidad física son cuestiones
+        diferentes.</p>
+
+      <aside class="remark">
+        <p><strong>El estado anterior al encendido no desaparece.</strong> La
+          transformada unilateral estudia la evolución desde cero, pero un
+          capacitor puede estar cargado y una masa puede estar en movimiento
+          antes de aplicar la entrada. Esos datos se introducen mediante las
+          condiciones iniciales. Usaremos valores $0^-$ en las reglas de
+          derivación; si no hay una excitación impulsiva que provoque un salto
+          de estado, coinciden con los valores $0^+$.</p>
+      </aside>
+
+      <h3>El regreso al dominio temporal</h3>
+
+      <p>La operación inversa se escribe
+        $f(t)=\mathscr{L}^{-1}\{F(s)\}$. Formalmente, bajo las hipótesis de
+        inversión correspondientes, puede calcularse con la integral de
+        Bromwich</p>
+
+      <div class="equation">
+        \[
+        f(t)=\frac{1}{2\pi j}
+        \int_{c-j\infty}^{c+j\infty}F(s)e^{st}\,\mathrm{d}s,
+        \qquad c\text{ dentro del semiplano de convergencia}.
+        \]
+      </div>
+
+      <p>No necesitaremos evaluar esa integral de variable compleja para resolver
+        los modelos de este tutorial. Utilizaremos pares conocidos, propiedades
+        y fracciones parciales. La integral explica por qué existe un camino de
+        vuelta; las tablas permiten recorrerlo de una forma práctica. En los
+        resultados temporales se entiende $t\geq0$ y, cuando corresponda una
+        representación causal, la señal es cero para $t&lt;0$. El valor asignado
+        en un único punto de discontinuidad no modifica una transformada
+        ordinaria.</p>
+
+      <h2>Calcular transformadas desde la definición</h2>
+
+      <h3>Una exponencial decreciente</h3>
+
+      <p>Sea $f(t)=e^{-at}$, con $a&gt;0$. Es la forma que aparece, por ejemplo,
+        en la descarga de un capacitor. Sustituyendo directamente en la
+        definición,</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \mathscr{L}\{e^{-at}\}
+        &amp;=\int_0^\infty e^{-(s+a)t}\,\mathrm{d}t\\
+        &amp;=\left[-\frac{e^{-(s+a)t}}{s+a}\right]_0^\infty
+        =\frac{1}{s+a},
+        \qquad \operatorname{Re}(s)&gt;-a.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>El término evaluado en infinito se anula precisamente porque
+        $\operatorname{Re}(s+a)&gt;0$. La condición no es un adorno agregado
+        después del cálculo; justifica el paso que hace finita la integral.
+        Para una amplitud $A$, la transformada es $A/(s+a)$. Si hacemos
+        $a=0$, obtenemos el par básico del escalón unitario,
+        $\mathscr{L}\{u(t)\}=1/s$, con $\operatorname{Re}(s)&gt;0$.</p>
+
+      <p>Una constante en el tiempo no se transforma en la misma constante.
+        Una tensión de 5 V aplicada desde cero se representa mediante
+        $5u(t)$ y su transformada es $5/s$. Omitir ese divisor cambiaría
+        un escalón por un impulso.</p>
+
+      <h3>Una rampa</h3>
+
+      <p>Para $f(t)=t$, la integral se resuelve por partes. Tomamos como
+        factores $t$ y $e^{-st}\mathrm{d}t$, cuya primitiva es
+        $-e^{-st}/s$. Entonces</p>
+
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \mathscr{L}\{t\}
+        &amp;=\int_0^\infty t e^{-st}\,\mathrm{d}t\\
+        &amp;=\left[-\frac{t e^{-st}}{s}\right]_0^\infty
+        +\frac{1}{s}\int_0^\infty e^{-st}\,\mathrm{d}t
+        =\frac{1}{s^2},\qquad \operatorname{Re}(s)&gt;0.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>La exponencial decrece más rápido de lo que crece el factor $t$, por
+        lo que el término de frontera vuelve a ser cero. Repitiendo el
+        procedimiento se obtiene
+        $\mathscr{L}\{t^n\}=n!/s^{n+1}$ para enteros $n\geq0$.
+        Una referencia de posición que aumenta a velocidad constante $v$
+        se escribe $vt$ y tiene transformada $v/s^2$.</p>
+
+      <h2>Cómo utilizar una tabla de transformadas</h2>
+
+      <p>Una tabla se lee en ambas direcciones. De izquierda a derecha permite
+        transformar una entrada; de derecha a izquierda permite reconocer la
+        solución temporal. En la tabla siguiente, las funciones ordinarias
+        se consideran para $t\geq0$, con extensión causal cuando sea necesaria.
+        Los parámetros $a$ y $\omega$ son reales, $a&gt;0$, $\omega&gt;0$,
+        y $n$ es un entero no negativo.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Pares básicos de transformadas unilaterales de Laplace.">
+\begin{tabular}{lll}
+\hline
+Señal temporal & Transformada & Convergencia \\
+\hline
+$u(t)$ & $1/s$ & $\operatorname{Re}(s)>0$ \\
+$t^n$ & $n!/s^{n+1}$ & $\operatorname{Re}(s)>0$ \\
+$e^{-at}$ & $1/(s+a)$ & $\operatorname{Re}(s)>-a$ \\
+$t^n e^{-at}$ & $n!/(s+a)^{n+1}$ & $\operatorname{Re}(s)>-a$ \\
+$\cos(\omega t)$ & $s/(s^2+\omega^2)$ & $\operatorname{Re}(s)>0$ \\
+$\sin(\omega t)$ & $\omega/(s^2+\omega^2)$ & $\operatorname{Re}(s)>0$ \\
+$e^{-at}\cos(\omega t)$ & $(s+a)/((s+a)^2+\omega^2)$ & $\operatorname{Re}(s)>-a$ \\
+$e^{-at}\sin(\omega t)$ & $\omega/((s+a)^2+\omega^2)$ & $\operatorname{Re}(s)>-a$ \\
+$\delta(t)$ & $1$ & Todo $s$ finito \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La delta de Dirac $\delta(t)$ es una distribución, no una función
+        ordinaria con una altura finita. Representa un impulso de área unitaria.
+        Por ejemplo, una fuerza $J\delta(t)$ idealiza un golpe muy breve cuyo
+        impulso mecánico es $J$, medido en $\mathrm{N\,s}$. La transformada
+        igual a uno utiliza la convención $0^-$ de nuestra definición.</p>
+
+      <p>Antes de reconocer un par hay que ajustar sus factores. Por ejemplo,</p>
+
+      <div class="equation">
+        \[
+        \mathscr{L}^{-1}\left\{\frac{6}{s^2+9}\right\}
+        =2\mathscr{L}^{-1}\left\{\frac{3}{s^2+3^2}\right\}
+        =2\sin(3t).
+        \]
+      </div>
+
+      <p>El numerador del par del seno debe ser su frecuencia angular.
+        Reconocer solamente el denominador y olvidar ese factor produce una
+        respuesta con amplitud incorrecta. Por la misma razón,
+        $4/(s+2)^3$ corresponde a $2t^2e^{-2t}$ y no a $4t^2e^{-2t}$,
+        debido al factorial $2!$.</p>
+
+      <h2>La inversa mediante fracciones parciales</h2>
+
+      <p>Al despejar la solución de un modelo lineal aparece con frecuencia una
+        función racional $F(s)=N(s)/D(s)$. La descomposición en fracciones
+        parciales la convierte en una suma de términos de la tabla. Primero
+        se simplifican los factores comunes y se comprueba que la fracción
+        sea estrictamente propia, es decir, que el grado del numerador sea
+        menor que el del denominador.</p>
+
+      <p>Si no lo es, se realiza la división de polinomios antes de continuar.
+        La parte polinómica tiene una interpretación especial en la inversa
+        causal. Una constante en $s$ corresponde a un impulso en el tiempo,
+        y potencias positivas de $s$ corresponden a sus derivadas. No conviene
+        tratar esos términos como señales ordinarias.</p>
+
+      <h3>Polos reales distintos</h3>
+
+      <p>Consideremos</p>
+      <div class="equation">
+        \[
+        F(s)=\frac{2}{s(s+1)(s+2)}
+        =\frac{A}{s}+\frac{B}{s+1}+\frac{C}{s+2}.
+        \]
+      </div>
+
+      <p>Multiplicando por el denominador común obtenemos una identidad
+        polinómica que debe cumplirse para todo $s$,</p>
+      <div class="equation">
+        \[
+        2=A(s+1)(s+2)+Bs(s+2)+Cs(s+1).
+        \]
+      </div>
+
+      <p>Evaluarla en $s=0$, $s=-1$ y $s=-2$ elimina dos incógnitas a la vez.
+        Resulta $A=1$, $B=-2$ y $C=1$. Ahora cada término tiene una inversa
+        inmediata,</p>
+      <div class="equation">
+        \[
+        f(t)=1-2e^{-t}+e^{-2t},\qquad t\geq0.
+        \]
+      </div>
+
+      <p>Podemos comprobar que $f(0^+)=0$ y que $f(t)\to1$. Estas
+        comprobaciones no sustituyen el cálculo, pero detectan con rapidez
+        muchos errores de signo. Para un polo simple $p$, su coeficiente
+        también se obtiene como
+        $\lim_{s\to p}(s-p)F(s)$. Esa regla no proporciona por sí sola
+        todos los coeficientes de un polo repetido.</p>
+
+      <h3>Polos repetidos</h3>
+
+      <p>Un factor $(s+a)^r$ exige incluir todas las potencias desde uno hasta
+        $r$. Por ejemplo,</p>
+      <div class="equation">
+        \[
+        \frac{s+3}{(s+2)^2}
+        =\frac{A}{s+2}+\frac{B}{(s+2)^2}
+        =\frac{1}{s+2}+\frac{1}{(s+2)^2}.
+        \]
+      </div>
+      <p>La inversa es $f(t)=e^{-2t}+te^{-2t}$. En general,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}^{-1}\left\{\frac{1}{(s+a)^r}\right\}
+        =\frac{t^{r-1}}{(r-1)!}e^{-at},\qquad r=1,2,\ldots
+        \]
+      </div>
+
+      <h3>Polos complejos conjugados</h3>
+
+      <p>No es necesario trabajar con coeficientes complejos para obtener una
+        respuesta real. Si el denominador contiene una cuadrática irreducible,
+        completamos el cuadrado y acomodamos el numerador. Así,</p>
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \frac{s+3}{s^2+2s+5}
+        &amp;=\frac{(s+1)+2}{(s+1)^2+2^2}\\
+        &amp;=\frac{s+1}{(s+1)^2+2^2}
+        +\frac{2}{(s+1)^2+2^2}.
+        \end{aligned}
+        \]
+      </div>
+      <p>La tabla permite identificar</p>
+      <div class="equation">
+        \[
+        f(t)=e^{-t}\cos(2t)+e^{-t}\sin(2t).
+        \]
+      </div>
+      <p>Los polos $-1\pm2j$ anticipan esa forma. La parte real negativa
+        produce el decaimiento exponencial y la parte imaginaria determina
+        la frecuencia angular de la oscilación. Más adelante veremos la misma
+        estructura en un mecanismo amortiguado.</p>
+
+      <h2>Propiedades que convierten el cálculo en álgebra</h2>
+
+      <h3>Linealidad</h3>
+
+      <p>La integral de una suma es la suma de las integrales, por lo que</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{a f(t)+b g(t)\}=aF(s)+bG(s).
+        \]
+      </div>
+      <p>Esta propiedad permite transformar cada término de un modelo por
+        separado y también invertir una suma de fracciones parciales.
+        La igualdad vale donde convergen las transformadas involucradas;
+        determinadas cancelaciones pueden ampliar la región del resultado.</p>
+
+      <h3>Derivadas y condiciones iniciales</h3>
+
+      <p>Para una función suficientemente regular, la integración por partes
+        da, tomando $s$ suficientemente a la derecha para anular la frontera
+        en infinito,</p>
+      <div class="equation">
+        \[
+        \begin{aligned}
+        \mathscr{L}\{\dot f(t)\}
+        &amp;=\left[f(t)e^{-st}\right]_{0^-}^{\infty}
+        +s\int_{0^-}^{\infty}f(t)e^{-st}\,\mathrm{d}t\\
+        &amp;=sF(s)-f(0^-).
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Si hay saltos, la misma regla se interpreta en el sentido de
+        distribuciones, incluyendo sus impulsos. Aplicándola de nuevo,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{\ddot f(t)\}
+        =s^2F(s)-s f(0^-)-\dot f(0^-).
+        \]
+      </div>
+      <p>Para una derivada de orden $n$, la expresión general es</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{f^{(n)}(t)\}
+        =s^nF(s)-\sum_{r=0}^{n-1}s^{n-1-r}f^{(r)}(0^-).
+        \]
+      </div>
+
+      <p>Esta es la propiedad central para resolver ecuaciones diferenciales.
+        Una ecuación de segundo orden necesita dos datos iniciales porque
+        aparecen tanto la posición como la velocidad. Omitir esos términos
+        equivale a cambiar el problema por otro que comienza en reposo.
+        Solo con condiciones iniciales nulas podemos abreviar la derivación
+        como una multiplicación por $s$.</p>
+
+      <h3>Integración y memoria acumulada</h3>
+
+      <p>Si $q(t)=\int_0^t f(\tau)\,\mathrm{d}\tau$, entonces
+        $\dot q=f$ y $q(0)=0$. Al transformar la derivada obtenemos
+        $sQ(s)=F(s)$, de donde</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\left\{\int_0^t f(\tau)\,\mathrm{d}\tau\right\}
+        =\frac{F(s)}{s}.
+        \]
+      </div>
+      <p>Un integrador con valor inicial $q_0$ necesita el término adicional
+        $q_0/s$. Por ejemplo, si la corriente de un capacitor entra por su
+        terminal positivo,</p>
+      <div class="equation">
+        \[
+        v_C(t)=V_0+\frac{1}{C}\int_0^t i(\tau)\,\mathrm{d}\tau
+        \quad\Longrightarrow\quad
+        V_C(s)=\frac{V_0}{s}+\frac{I(s)}{Cs}.
+        \]
+      </div>
+      <p>El término inicial representa la carga que ya estaba almacenada.
+        El factor $1/(Cs)$ no incluye esa información por sí solo.</p>
+
+      <h3>Retardos y encendidos posteriores</h3>
+
+      <p>El escalón $u(t-T)$ vale cero antes de $T$ y uno después de $T$.
+        Si toda una señal se retrasa $T\geq0$,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{f(t-T)u(t-T)\}=e^{-sT}F(s).
+        \]
+      </div>
+      <p>Puede comprobarse cambiando la variable de integración a
+        $\tau=t-T$. El límite inferior pasa a cero y el factor
+        $e^{-sT}$ queda fuera de la integral. Por ejemplo,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}^{-1}\left\{\frac{e^{-3s}}{s+2}\right\}
+        =e^{-2(t-3)}u(t-3).
+        \]
+      </div>
+      <p>No es lo mismo retrasar una señal que simplemente recortarla.
+        $f(t)u(t-T)$ conserva la edad de la señal, mientras
+        $f(t-T)u(t-T)$ la hace comenzar desde su origen en $T$.
+        Por ejemplo, $\mathscr{L}\{t\,u(t-T)\}
+        =e^{-sT}(1/s^2+T/s)$.</p>
+
+      <h3>Desplazamiento en frecuencia y otras reglas útiles</h3>
+
+      <p>Multiplicar por una exponencial desplaza la variable de la transformada,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{e^{-at}f(t)\}=F(s+a).
+        \]
+      </div>
+      <p>Esta propiedad explica los pares de oscilaciones amortiguadas de la
+        tabla. Si $F(s)$ converge para $\operatorname{Re}(s)&gt;\alpha$,
+        la expresión desplazada converge para
+        $\operatorname{Re}(s)&gt;\alpha-a$. No debe confundirse este cambio
+        con un retardo temporal, que introduce una exponencial de $s$.</p>
+
+      <p>Otras dos identidades permiten generar pares nuevos sin volver a
+        integrar desde cero,</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{t f(t)\}=-\frac{\mathrm{d}F}{\mathrm{d}s},
+        \qquad
+        \mathscr{L}\{f(at)\}=\frac{1}{a}F\!\left(\frac{s}{a}\right),
+        \quad a&gt;0.
+        \]
+      </div>
+      <p>La primera se obtiene derivando bajo el signo de integral dentro de
+        la región de convergencia; la segunda, mediante un cambio de variable.
+        Un aumento de $a$ en $f(at)$ comprime la evolución temporal y modifica
+        la escala de frecuencias. Estas reglas resultan útiles al comparar
+        modelos con constantes de tiempo diferentes.</p>
+
+      <h2>Convolución, la respuesta construida a partir de impulsos</h2>
+
+      <p>Un sistema dinámico conserva memoria. La salida actual depende de la
+        entrada presente y de las entradas anteriores que todavía producen
+        efectos. Para dos señales causales, su convolución se define por</p>
+      <div class="equation">
+        \[
+        (f*g)(t)=\int_0^t f(\tau)g(t-\tau)\,\mathrm{d}\tau.
+        \]
+      </div>
+
+      <p>Al transformar esta integral y cambiar el orden de integración,
+        siempre que la convergencia lo permita, resulta</p>
+      <div class="equation">
+        \[
+        \mathscr{L}\{f*g\}=F(s)G(s).
+        \]
+      </div>
+
+      <p>La importancia física aparece al identificar $h(t)$ como la
+        respuesta impulsiva de un sistema lineal e invariante en el tiempo
+        que parte de estado cero. Si su entrada es $r(t)$,</p>
+      <div class="equation">
+        \[
+        y(t)=\int_0^t h(t-\tau)r(\tau)\,\mathrm{d}\tau
+        \quad\Longleftrightarrow\quad
+        Y(s)=H(s)R(s).
+        \]
+      </div>
+
+      <p>Cada porción de entrada aplicada alrededor de $\tau$ genera una
+        respuesta desplazada $h(t-\tau)$, ponderada por la intensidad de esa
+        porción. La integral suma todas esas contribuciones. Por eso una
+        memoria representada por una integral en el tiempo se convierte en
+        un producto en el dominio transformado.</p>
+
+      <p>Por ejemplo, para $h(t)=e^{-2t}$ y una entrada unitaria,</p>
+      <div class="equation">
+        \[
+        y(t)=\int_0^t e^{-2(t-\tau)}\,\mathrm{d}\tau
+        =\frac{1-e^{-2t}}{2},
+        \qquad Y(s)=\frac{1}{s(s+2)}.
+        \]
+      </div>
+
+      <aside class="remark">
+        <p><strong>Producto y convolución son operaciones distintas.</strong>
+          En general, $\mathscr{L}\{f(t)g(t)\}\neq F(s)G(s)$.
+          Esa confusión impediría tratar correctamente términos no lineales
+          como $x(t)^2$. La transformada no convierte automáticamente una
+          ecuación no lineal en una ecuación algebraica sencilla para $X(s)$.</p>
+      </aside>
+
+      <h2>Qué podemos saber sin calcular toda la inversa</h2>
+
+      <h3>Teorema del valor inicial</h3>
+
+      <p>Para una señal ordinaria con límite derecho finito y con la
+        regularidad necesaria para transformar su derivada, sin impulsos
+        en el origen,</p>
+      <div class="equation">
+        \[
+        f(0^+)=\lim_{s\to+\infty}sF(s).
+        \]
+      </div>
+      <p>El límite se toma sobre el eje real positivo. Es una forma rápida
+        de verificar la condición inicial de una solución transformada.
+        Para $F(s)=2/[s(s+1)(s+2)]$ da cero, como obtuvimos mediante la
+        inversa. No debe aplicarse sin más a una señal que contenga una
+        delta, pues esta no tiene un valor inicial finito ordinario.</p>
+
+      <h3>Teorema del valor final</h3>
+
+      <p>Cuando se cumplen sus hipótesis, el valor de régimen permanente se
+        obtiene mediante</p>
+      <div class="equation">
+        \[
+        \lim_{t\to\infty}f(t)=\lim_{s\to0^+}sF(s).
+        \]
+      </div>
+
+      <p>En los casos racionales estrictamente propios que aparecen aquí,
+        una condición suficiente práctica es que, después de simplificar,
+        <strong>todos los polos de $sF(s)$ tengan parte real estrictamente
+        negativa</strong>. Equivalentemente, $F(s)$ puede tener polos
+        estables y, a lo sumo, un polo simple en el origen. Esto excluye
+        oscilaciones persistentes, crecimiento exponencial y rampas sin
+        límite. La necesidad de que la respuesta se estabilice también se
+        discute en las
+        <a href="https://web.mit.edu/2.14/www/Handouts/FreqDom.pdf">notas de análisis de sistemas del MIT</a>.</p>
+
+      <p>Para el ejemplo anterior, los polos de $sF(s)$ son $-1$ y $-2$.
+        Por tanto,</p>
+      <div class="equation">
+        \[
+        f(\infty)=\lim_{s\to0}\frac{2}{(s+1)(s+2)}=1.
+        \]
+      </div>
+
+      <p>Ahora consideremos $f(t)=\cos t$, cuya transformada es
+        $F(s)=s/(s^2+1)$. El cálculo formal
+        $\lim_{s\to0}s^2/(s^2+1)=0$ existe, pero la señal nunca converge
+        a cero ni a ninguna otra constante. Los polos $\pm j$ incumplen
+        la condición del teorema.</p>
+
+      <aside class="remark">
+        <p><strong>El límite algebraico no demuestra que exista un equilibrio.</strong>
+          Primero se examinan los polos y después se evalúa el límite.
+          Además, una cancelación en una respuesta particular no demuestra
+          por sí sola estabilidad interna de todo el sistema; puede ocultar
+          modos que otra entrada o condición inicial sí excitaría.</p>
+      </aside>
+
+      <h2>Resolver un modelo físico paso a paso</h2>
+
+      <p>El procedimiento comienza antes de transformar. Hay que definir la
+        variable de salida, elegir los sentidos positivos y escribir una
+        ecuación dimensionalmente consistente. La entrada debe describirse
+        como una función del tiempo y las condiciones iniciales tienen que
+        corresponder al instante de referencia elegido.</p>
+
+      <ol>
+        <li>Establecer la ecuación diferencial, sus parámetros y los valores iniciales.</li>
+        <li>Transformar todos los términos, incluida la entrada y los términos de frontera de las derivadas.</li>
+        <li>Despejar la transformada de la incógnita.</li>
+        <li>Separar términos mediante álgebra, fracciones parciales o propiedades de desplazamiento.</li>
+        <li>Aplicar la inversa y verificar la ecuación, las condiciones iniciales y el comportamiento físico.</li>
+      </ol>
+
+      <p>La última verificación es importante incluso cuando se utiliza
+        software simbólico. Una expresión puede ser una inversa correcta de
+        una ecuación que modela mal la conexión eléctrica o el sentido de
+        una fuerza.</p>
+
+      <h2>Un circuito RC con carga inicial</h2>
+
+      <p>Consideremos una resistencia $R$ en serie con un capacitor $C$,
+        alimentados por una tensión $v_{\mathrm{in}}(t)$. La salida es la
+        tensión del capacitor $v_C(t)$, positiva en el terminal donde entra
+        la corriente. La ley de Kirchhoff y la relación constitutiva del
+        capacitor proporcionan</p>
+      <div class="equation">
+        \[
+        v_{\mathrm{in}}=Ri+v_C,\qquad
+        i=C\frac{\mathrm{d}v_C}{\mathrm{d}t}
+        \quad\Longrightarrow\quad
+        RC\frac{\mathrm{d}v_C}{\mathrm{d}t}+v_C=v_{\mathrm{in}}.
+        \]
+      </div>
+
+      <p>Sea $v_C(0^-)=V_0$ y apliquemos un escalón
+        $v_{\mathrm{in}}(t)=V_su(t)$. Una fuente finita conectada a través
+        de una resistencia positiva no produce una corriente impulsiva,
+        por lo que la tensión del capacitor es continua al conectar.</p>
+      <div class="equation">
+        \[
+        RC\,[sV_C(s)-V_0]+V_C(s)=\frac{V_s}{s}.
+        \]
+      </div>
+
+      <p>Al definir la constante de tiempo $\tau=RC$, despejar y separar
+        los términos,</p>
+      <div class="equation">
+        \[
+        V_C(s)=\frac{V_s/s+\tau V_0}{\tau s+1}
+        =\frac{V_s}{s}+\frac{V_0-V_s}{s+1/\tau}.
+        \]
+      </div>
+
+      <p>La tensión resulta</p>
+      <div class="equation">
+        \[
+        v_C(t)=V_s+(V_0-V_s)e^{-t/\tau}.
+        \]
+      </div>
+
+      <p>Con $R=1\,\mathrm{k\Omega}$, $C=100\,\mu\mathrm{F}$,
+        $V_s=5\,\mathrm{V}$ y $V_0=1\,\mathrm{V}$ tenemos
+        $\tau=0.1\,\mathrm{s}$ y</p>
+      <div class="equation">
+        \[
+        v_C(t)=5-4e^{-10t}\quad[\mathrm{V}],
+        \qquad t\text{ en segundos}.
+        \]
+      </div>
+
+      <figure>
+        <img src="/drautomatica/html/laplace-rc.png" width="1500" height="740"
+          alt="Carga de un capacitor desde 1 V hasta 5 V. En una constante de tiempo de 0.1 s alcanza aproximadamente 3.53 V."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Respuesta del circuito RC. En $t=\tau$ se ha
+          completado aproximadamente el 63.2 % del cambio total de tensión,
+          no el 63.2 % del valor final.</figcaption>
+      </figure>
+
+      <p>En $t=0$ recuperamos 1 V; en régimen permanente obtenemos 5 V.
+        Después de $5\tau=0.5\,\mathrm{s}$ permanece solo el
+        $e^{-5}\approx0.67\,\%$ de la diferencia inicial respecto al
+        equilibrio. El polo $-1/\tau=-10\,\mathrm{s}^{-1}$ expresa la
+        rapidez de ese decaimiento. El mismo tipo de ecuación aparece en
+        aproximaciones de primer orden de sensores térmicos y actuadores.</p>
+
+      <h2>Un mecanismo masa–resorte–amortiguador</h2>
+
+      <p>Una masa $m$ se desplaza horizontalmente, un resorte de rigidez $k$
+        ejerce una fuerza restauradora y un amortiguador viscoso de coeficiente
+        $b$ se opone a la velocidad. Tomamos $x=0$ en la posición de equilibrio
+        sin fuerza aplicada y positivo hacia la derecha. El movimiento
+        satisface la segunda ley de Newton,</p>
+      <div class="equation">
+        \[
+        m\ddot x(t)+b\dot x(t)+kx(t)=F(t).
+        \]
+      </div>
+
+      <figure>
+        <img src="/drautomatica/html/laplace-mecanismo.png" width="1500" height="560"
+          alt="Masa m conectada a una pared mediante un resorte k y un amortiguador b en paralelo. La fuerza F(t) y la coordenada x(t) son positivas hacia la derecha."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. Modelo mecánico de un grado de libertad.
+          El resorte y el amortiguador actúan sobre el mismo desplazamiento.
+          Los apoyos se idealizan sin fricción adicional.</figcaption>
+      </figure>
+
+      <p>Con $x(0^-)=x_0$ y $\dot x(0^-)=v_0$, su transformación completa es</p>
+      <div class="equation">
+        \[
+        m(s^2X-sx_0-v_0)+b(sX-x_0)+kX=F(s).
+        \]
+      </div>
+
+      <p>Por tanto,</p>
+      <div class="equation">
+        \[
+        X(s)=
+        \underbrace{\frac{F(s)}{ms^2+bs+k}}_{\text{respuesta a la entrada, estado inicial cero}}
+        +\underbrace{\frac{(ms+b)x_0+mv_0}{ms^2+bs+k}}_{\text{respuesta al estado inicial, entrada cero}}.
+        \]
+      </div>
+
+      <p>Esta separación tiene un significado físico concreto. El primer
+        sumando es lo que haría la fuerza si la masa comenzara en reposo
+        en $x=0$; el segundo es lo que haría la energía inicial sin aplicar
+        fuerza externa. Su suma resuelve el problema completo. La respuesta
+        debida a la entrada puede contener tanto un transitorio como un
+        término permanente; no es sinónimo de régimen permanente.</p>
+
+      <h3>Un ejemplo con oscilación amortiguada</h3>
+
+      <p>Utilicemos los siguientes valores en unidades SI.</p>
+      <script type="text/tabjax" data-caption="Tabla 2. Parámetros del ejemplo mecánico.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Símbolo & Valor \\
+\hline
+Masa & $m$ & $1\,\mathrm{kg}$ \\
+Amortiguamiento viscoso & $b$ & $2\,\mathrm{N\,s/m}$ \\
+Rigidez & $k$ & $5\,\mathrm{N/m}$ \\
+Amplitud del escalón de fuerza & $F_0$ & $5\,\mathrm{N}$ \\
+Posición inicial & $x_0$ & $0.2\,\mathrm{m}$ \\
+Velocidad inicial & $v_0$ & $0\,\mathrm{m/s}$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La masa se mantiene inicialmente desplazada y se libera al aplicar
+        $F(t)=5u(t)$. La fuerza cambia de forma escalonada, no impulsiva,
+        de modo que posición y velocidad permanecen continuas en cero.
+        Sustituyendo los valores numéricos,</p>
+      <div class="equation">
+        \[
+        X(s)=\frac{5}{s(s^2+2s+5)}
+        +\frac{0.2s+0.4}{s^2+2s+5}.
+        \]
+      </div>
+
+      <p>El denominador se escribe $(s+1)^2+4$. Para el término debido a
+        la fuerza, las fracciones parciales dan</p>
+      <div class="equation">
+        \[
+        \frac{5}{s(s^2+2s+5)}
+        =\frac{1}{s}-\frac{s+2}{(s+1)^2+4}.
+        \]
+      </div>
+      <p>Separando $s+2=(s+1)+1$ y aplicando la tabla,</p>
+      <div class="equation">
+        \[
+        \begin{aligned}
+        x_{\mathrm{entrada}}(t)
+        &amp;=1-e^{-t}\left(\cos2t+\frac{1}{2}\sin2t\right),\\
+        x_{\mathrm{inicial}}(t)
+        &amp;=0.2e^{-t}\left(\cos2t+\frac{1}{2}\sin2t\right),\\
+        x(t)&amp;=1-0.8e^{-t}\left(\cos2t+\frac{1}{2}\sin2t\right).
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Las posiciones se expresan en metros y $t$ en segundos. En $t=0$
+        obtenemos $x=0.2$ y $\dot x=0$. Para $t&gt;0$, la derivada es
+        $\dot x(t)=2e^{-t}\sin2t$. Sustituyendo sus derivadas en la ecuación
+        se recupera $\ddot x+2\dot x+5x=5$. Finalmente,
+        $x(\infty)=1\,\mathrm{m}$, de acuerdo con el equilibrio estático
+        $kx=F_0$.</p>
+
+      <figure>
+        <img src="/drautomatica/html/laplace-respuesta.png" width="1500" height="860"
+          alt="Respuesta total de la masa, con sus componentes por fuerza aplicada y por estado inicial. La posición comienza en 0.2 m, sobrepasa 1 m y converge a ese equilibrio."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 3. Superposición de las respuestas a la entrada y
+          al estado inicial. Ambas componentes incluyen oscilaciones que
+          decaen con el tiempo.</figcaption>
+      </figure>
+
+      <h3>Polos, amortiguamiento y función de transferencia</h3>
+
+      <p>Con condiciones iniciales nulas, la relación entre salida y entrada
+        define la función de transferencia,</p>
+      <div class="equation">
+        \[
+        \begin{aligned}
+        H(s)&amp;=\left.\frac{X(s)}{F(s)}\right|_{x_0=v_0=0}
+        =\frac{1}{ms^2+bs+k}
+        =\frac{1/m}{s^2+2\zeta\omega_n s+\omega_n^2},\\[0.5em]
+        \omega_n&amp;=\sqrt{\frac{k}{m}},\qquad
+        \zeta=\frac{b}{2\sqrt{mk}}.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>La frecuencia natural $\omega_n$ y la razón de amortiguamiento
+        $\zeta$ reúnen el efecto de los tres parámetros físicos. En el
+        ejemplo, $\omega_n=\sqrt5\,\mathrm{rad/s}$,
+        $\zeta=1/\sqrt5$ y los polos son $-1\pm2j$, en
+        $\mathrm{s}^{-1}$. La frecuencia amortiguada es
+        $\omega_d=\omega_n\sqrt{1-\zeta^2}=2\,\mathrm{rad/s}$.
+        El sistema es subamortiguado porque $0&lt;\zeta&lt;1$.</p>
+
+      <p>Para $\zeta=1$ aparece el caso críticamente amortiguado, con un
+        polo doble; para $\zeta&gt;1$, dos polos reales negativos y una
+        respuesta natural no oscilatoria. Si $b=0$, el modelo ideal no
+        disipa energía y conserva oscilaciones. En ese caso no sería válido
+        asignar un valor final a la respuesta al escalón mediante el teorema.</p>
+
+      <p>Con $b&gt;0$ y $k&gt;0$, el valor final del ejemplo puede verificarse
+        directamente sobre su $X(s)$ completo. El producto $sX(s)$ tiene
+        solo los polos estables $-1\pm2j$ y su límite es uno. La ganancia
+        estática $H(0)=1/k$ expresa la flexibilidad mecánica, en
+        $\mathrm{m/N}$, y no una ganancia adimensional.</p>
+
+      <h2>Una fuerza que se aplica y después se retira</h2>
+
+      <p>Un actuador puede empujar durante un intervalo y luego dejar de
+        hacerlo. Para estudiar ese caso consideremos un <strong>segundo
+        experimento que comienza en reposo</strong>, con los mismos
+        parámetros $m$, $b$ y $k$, pero $x_0=v_0=0$. La entrada es un pulso
+        rectangular de amplitud $F_0$ y duración $T$,</p>
+      <div class="equation">
+        \[
+        F(t)=F_0[u(t)-u(t-T)],\qquad
+        F(s)=\frac{F_0}{s}(1-e^{-sT}).
+        \]
+      </div>
+
+      <p>Si llamamos $g(t)$ a la respuesta desde el reposo al escalón de
+        amplitud $F_0$, el principio de superposición y la propiedad de
+        retardo proporcionan inmediatamente</p>
+      <div class="equation">
+        \[
+        x_{\mathrm{pulso}}(t)=g(t)-g(t-T)u(t-T),
+        \qquad
+        g(t)=1-e^{-t}\left(\cos2t+\frac12\sin2t\right)
+        \quad(t\geq0),
+        \]
+      </div>
+      <p>donde la expresión numérica de $g$ corresponde a $F_0=5$ N.
+        El segundo término resta la respuesta de un escalón que comienza
+        en $T$; no reinicia el estado del mecanismo. Con $T=2$ s, la masa
+        sigue moviéndose después de retirar la fuerza porque todavía
+        almacena energía cinética y elástica.</p>
+
+      <figure>
+        <img src="/drautomatica/html/laplace-pulso.png" width="1500" height="1080"
+          alt="Pulso de fuerza de 5 N entre cero y dos segundos, y desplazamiento de la masa. Tras retirar la fuerza la masa oscila y vuelve a cero."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 4. Respuesta a una fuerza de duración limitada.
+          La fuerza salta en $T=2$ s, mientras posición y velocidad siguen
+          siendo continuas; la aceleración sí cambia bruscamente.</figcaption>
+      </figure>
+
+      <p>El mismo resultado puede obtenerse por convolución. Para el modelo
+        numérico, $H(s)=1/[(s+1)^2+4]$ y
+        $h(t)=\tfrac12e^{-t}\sin2t$ para $t\geq0$. Entonces</p>
+      <div class="equation">
+        \[
+        x_{\mathrm{pulso}}(t)
+        =F_0\int_0^{\min(t,T)}h(t-\tau)\,\mathrm{d}\tau.
+        \]
+      </div>
+      <p>La integral suma solo las contribuciones producidas mientras la
+        fuerza estuvo activa. La forma con escalones retardados suele ser
+        más breve, pero ambas describen exactamente la misma memoria del
+        sistema.</p>
+
+      <h2>Transformadas e inversas con MATLAB y SymPy</h2>
+
+      <p>Los programas simbólicos permiten reproducir los cálculos sin
+        aproximar las expresiones a números de punto flotante desde el
+        principio. Aun así, hay que indicar las variables y los supuestos.
+        Un resultado simbólico no sustituye la revisión de la región de
+        convergencia ni de las condiciones de un teorema.</p>
+
+      <h3>MATLAB</h3>
+
+      <p>Se requiere <strong>Symbolic Math Toolbox</strong>. Las funciones
+        <a href="https://www.mathworks.com/help/symbolic/sym.laplace.html"><code>laplace</code></a>
+        e <a href="https://www.mathworks.com/help/symbolic/sym.ilaplace.html"><code>ilaplace</code></a>
+        calculan las transformadas directa e inversa. Especificamos siempre
+        las variables de origen y destino para evitar que el programa las
+        elija por defecto. Declaramos $t&gt;0$ para presentar las expresiones
+        ordinarias posteriores al encendido; $s$ se deja como variable
+        simbólica sin restringirla a valores reales.</p>
+
+      <p>El siguiente ejemplo reproduce las transformadas básicas y las tres
+        inversas calculadas antes. La función
+        <a href="https://www.mathworks.com/help/symbolic/sym.partfrac.html"><code>partfrac</code></a>
+        descompone las expresiones racionales. Su modo predeterminado
+        conserva los coeficientes racionales exactos y, en estos ejemplos,
+        deja sin separar la cuadrática irreducible.
+        Archivo completo: <a href="/drautomatica/html/laplace_transformadas.m" download><code>laplace_transformadas.m</code></a>.</p>
+
+      <script type="text/matlab">
+% Transformadas y fracciones parciales. Requiere Symbolic Math Toolbox.
+clear;
+syms t positive
+syms s
+
+funciones = [exp(-2*t), t, exp(-t)*sin(2*t)];
+for f = funciones
+    disp('Función y transformada:');
+    disp(f);
+    disp(simplify(laplace(f,t,s)));
+end
+
+ejemplos = [2/(s*(s+1)*(s+2)), ...
+            (s+3)/(s+2)^2, ...
+            (s+3)/(s^2+2*s+5)];
+for F = ejemplos
+    f = simplify(ilaplace(F,s,t));
+    disp('Fracciones parciales e inversa para t > 0:');
+    disp(partfrac(F,s));
+    disp(f);
+    assert(isAlways(simplify(laplace(f,t,s)-F) == 0));
+end
+
+syms tr real
+disp('Escalón retardado:');
+disp(ilaplace(exp(-2*s)/s,s,tr));
+      </script>
+
+      <p>Las tres transformadas son, respectivamente, $1/(s+2)$, $1/s^2$
+        y $2/[(s+1)^2+4]$. Sus semiplanos de convergencia son
+        $\operatorname{Re}(s)&gt;-2$, $\operatorname{Re}(s)&gt;0$ y
+        $\operatorname{Re}(s)&gt;-1$. La salida habitual de
+        <code>laplace</code> no presenta esos semiplanos junto con la
+        expresión; debemos conservarlos en la interpretación matemática.
+        Las instrucciones <code>assert</code> comprueban que transformar
+        cada inversa recupera la expresión de partida.</p>
+
+      <h3>Python con SymPy</h3>
+
+      <p>SymPy es una biblioteca de cálculo simbólico. Para ejecutar todos
+        los ejemplos de este artículo se necesitan también NumPy y
+        Matplotlib, instalables mediante
+        <code>python -m pip install sympy numpy matplotlib</code>.
+        La documentación de
+        <a href="https://docs.sympy.org/latest/modules/integrals/integrals.html#sympy.integrals.transforms.laplace_transform"><code>laplace_transform</code></a>
+        especifica que el resultado contiene la expresión, la abscisa del
+        semiplano de convergencia y las condiciones adicionales. Conservamos
+        esa información en el primer bucle.</p>
+
+      <p>Archivo completo: <a href="/drautomatica/html/laplace_transformadas.py" download><code>laplace_transformadas.py</code></a>.</p>
+
+      <script type="text/python">
+"""Transformadas y fracciones parciales con SymPy."""
+import sympy as sp
+
+t = sp.symbols("t", positive=True)
+s = sp.symbols("s")
+
+for f in (sp.exp(-2*t), t, sp.exp(-t)*sp.sin(2*t)):
+    F, a, condicion = sp.laplace_transform(f, t, s)
+    print("f(t) =", f)
+    print("F(s) =", F, "; Re(s) >", a, "; condición:", condicion)
+
+ejemplos = (
+    2/(s*(s + 1)*(s + 2)),
+    (s + 3)/(s + 2)**2,
+    (s + 3)/(s**2 + 2*s + 5),
+)
+for F in ejemplos:
+    f = sp.simplify(sp.inverse_laplace_transform(F, s, t))
+    print("\nFracciones parciales:", sp.apart(F, s))
+    print("Inversa para t > 0:", f)
+    comprobacion = sp.laplace_transform(f, t, s, noconds=True)
+    assert sp.simplify(comprobacion - F) == 0
+
+# Un tiempo real permite representar explícitamente el encendido retardado.
+tr = sp.symbols("tr", real=True)
+retardo = sp.inverse_laplace_transform(sp.exp(-2*s)/s, s, tr)
+print("\nEscalón retardado:", retardo)
+      </script>
+
+      <p>La función <code>apart</code> realiza la descomposición en fracciones
+        parciales. Puede dejar intacta una fracción con denominador
+        cuadrático irreducible; eso no impide calcular su inversa.
+        Además, una simplificación trigonométrica puede devolver
+        $\sqrt2e^{-t}\sin(2t+\pi/4)$ en lugar de
+        $e^{-t}[\cos2t+\sin2t]$. Son expresiones equivalentes.</p>
+
+      <aside class="remark">
+        <p><strong>El valor del escalón en el origen.</strong> Con un tiempo
+          real sin la hipótesis de positividad, una inversa causal puede
+          incluir <code>Heaviside(t)</code>. Los sistemas simbólicos suelen
+          asignar $u(0)=1/2$ por convención. Eso no significa que la tensión
+          o la posición física inicial valgan la mitad. Para comprobar el
+          estado inmediatamente después de conectar se calcula el límite
+          derecho $t\to0^+$, como se hace en los siguientes programas.</p>
+      </aside>
+
+      <h2>Resolver y graficar los modelos completos</h2>
+
+      <p>Los dos programas siguientes son independientes de los anteriores.
+        Cada uno define los parámetros, construye la ecuación transformada,
+        despeja $X(s)$, calcula la inversa y verifica tanto el modelo como
+        sus condiciones iniciales. Después dibuja la respuesta al escalón
+        con desplazamiento inicial y el segundo experimento con un pulso
+        desde el reposo.</p>
+
+      <p>Para mantener los coeficientes exactos, $0.2$ se representa como
+        $1/5$ simbólico. La conversión a valores numéricos ocurre solo al
+        evaluar las curvas. La comprobación de la ecuación diferencial se
+        hace para $t&gt;0$, donde la fuerza del primer experimento es
+        constante; no se está diferenciando artificialmente una extensión
+        causal para verificar el estado previo al encendido.</p>
+
+      <h3>Modelo y gráficas en MATLAB</h3>
+
+      <p>Archivo completo: <a href="/drautomatica/html/laplace_sistemas.m" download><code>laplace_sistemas.m</code></a>.
+        No se necesita Control System Toolbox para este programa.</p>
+
+      <script type="text/matlab">
+% Modelos RC y mecánico. Requiere Symbolic Math Toolbox.
+clear;
+syms t positive
+syms s X
+
+R = sym(1000); C = sym(1)/10000;
+V0 = sym(1); Vin = sym(5);
+Vc = (Vin/s + R*C*V0)/(R*C*s + 1);
+vc = simplify(ilaplace(Vc,s,t));
+assert(isAlways(simplify(R*C*diff(vc,t) + vc - Vin) == 0));
+assert(isAlways(limit(vc,t,0,'right') == V0));
+disp('Tensión del capacitor:'); disp(vc);
+
+m = sym(1); b = sym(2); k = sym(5); F0 = sym(5);
+x0 = sym(1)/5; v0 = sym(0);
+ecuacion = m*(s^2*X-s*x0-v0) + b*(s*X-x0) + k*X == F0/s;
+Xs = simplify(solve(ecuacion,X));
+H = 1/(m*s^2+b*s+k);
+Xentrada = H*F0/s;
+Xinicial = H*((m*s+b)*x0+m*v0);
+x = simplify(ilaplace(Xs,s,t));
+xe = simplify(ilaplace(Xentrada,s,t));
+xi = simplify(ilaplace(Xinicial,s,t));
+assert(isAlways(simplify(m*diff(x,t,2)+b*diff(x,t)+k*x-F0) == 0));
+assert(isAlways(limit(x,t,0,'right') == x0));
+assert(isAlways(limit(diff(x,t),t,0,'right') == v0));
+assert(isAlways(simplify(x-xe-xi) == 0));
+disp('X(s) y x(t):'); disp(Xs); disp(x);
+disp('Polos:'); disp(solve(m*s^2+b*s+k == 0,s));
+disp('Posición final:'); disp(limit(s*Xs,s,0));
+
+tt = linspace(0,8,1601);
+fx = matlabFunction(x,'Vars',t);
+fe = matlabFunction(xe,'Vars',t);
+fi = matlabFunction(xi,'Vars',t);
+figure;
+plot(tt,fx(tt),tt,fe(tt),'--',tt,fi(tt),':','LineWidth',1.5);
+xlabel('Tiempo (s)'); ylabel('Posición (m)'); grid on;
+legend('Respuesta total','Debida a la fuerza', ...
+       'Debida al estado inicial','Location','best');
+
+% Segundo experimento: pulso de 5 N durante 2 s, desde el reposo.
+T = 2;
+xp = fe(tt);
+activos = tt >= T;
+xp(activos) = xp(activos) - fe(tt(activos)-T);
+figure;
+tiledlayout(2,1);
+nexttile;
+stairs(tt,double(F0)*(tt<T),'LineWidth',1.5);
+ylabel('Fuerza (N)'); grid on;
+nexttile;
+plot(tt,xp,'LineWidth',1.5);
+xlabel('Tiempo (s)'); ylabel('Posición (m)'); grid on;
+      </script>
+
+      <h3>Modelo y gráficas en Python/SymPy</h3>
+
+      <p>Archivo completo: <a href="/drautomatica/html/laplace_sistemas.py" download><code>laplace_sistemas.py</code></a>.
+        <code>lambdify</code> convierte las expresiones simbólicas en funciones
+        que aceptan los arreglos de NumPy.</p>
+
+      <script type="text/python">
+"""Modelos RC y masa-resorte-amortiguador mediante Laplace."""
+import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
+
+t = sp.symbols("t", positive=True)
+s, X = sp.symbols("s X")
+
+# Circuito RC: R = 1000 ohm, C = 100 microfaradios.
+R, C = sp.Integer(1000), sp.Rational(1, 10000)
+V0, Vin = sp.Integer(1), sp.Integer(5)
+Vc = (Vin/s + R*C*V0)/(R*C*s + 1)
+vc = sp.simplify(sp.inverse_laplace_transform(Vc, s, t))
+assert sp.simplify(R*C*sp.diff(vc, t) + vc - Vin) == 0
+assert sp.limit(vc, t, 0, dir="+") == V0
+print("Tensión del capacitor:", vc)
+
+# Modelo mecánico, en unidades SI, con condiciones iniciales no nulas.
+m, b, k, F0 = map(sp.Integer, (1, 2, 5, 5))
+x0, v0 = sp.Rational(1, 5), sp.Integer(0)
+ecuacion = sp.Eq(m*(s**2*X - s*x0 - v0)
+                + b*(s*X - x0) + k*X, F0/s)
+Xs = sp.factor(sp.solve(ecuacion, X)[0])
+H = 1/(m*s**2 + b*s + k)
+Xentrada = H*F0/s
+Xinicial = H*((m*s + b)*x0 + m*v0)
+x = sp.simplify(sp.inverse_laplace_transform(Xs, s, t))
+xe = sp.simplify(sp.inverse_laplace_transform(Xentrada, s, t))
+xi = sp.simplify(sp.inverse_laplace_transform(Xinicial, s, t))
+assert sp.simplify(m*sp.diff(x,t,2) + b*sp.diff(x,t) + k*x - F0) == 0
+assert sp.limit(x,t,0,dir="+") == x0
+assert sp.limit(sp.diff(x,t),t,0,dir="+") == v0
+assert sp.simplify(x - xe - xi) == 0
+print("X(s) =", Xs)
+print("x(t) =", x)
+print("Polos:", sp.solve(m*s**2 + b*s + k, s))
+print("Posición final:", sp.limit(s*Xs, s, 0))
+
+tt = np.linspace(0, 8, 1601)
+evaluar = lambda expresion, tiempo: sp.lambdify(t, expresion, "numpy")(tiempo)
+fig, ax = plt.subplots(layout="constrained")
+ax.plot(tt, evaluar(x,tt), label="Respuesta total")
+ax.plot(tt, evaluar(xe,tt), "--", label="Debida a la fuerza")
+ax.plot(tt, evaluar(xi,tt), ":", label="Debida al estado inicial")
+ax.set(xlabel="Tiempo (s)", ylabel="Posición (m)")
+ax.grid(alpha=0.25)
+ax.legend()
+
+# Segundo experimento: pulso de 5 N durante 2 s, desde el reposo.
+T = 2.0
+xp = evaluar(xe,tt).copy()
+activos = tt >= T
+xp[activos] -= evaluar(xe,tt[activos] - T)
+fig2, (a1, a2) = plt.subplots(2, 1, sharex=True, layout="constrained")
+a1.step(tt, float(F0)*(tt < T), where="post")
+a1.set(ylabel="Fuerza (N)")
+a2.plot(tt, xp)
+a2.set(xlabel="Tiempo (s)", ylabel="Posición (m)")
+for eje in (a1, a2):
+    eje.grid(alpha=0.25)
+plt.show()
+      </script>
+
+      <p>El resultado total puede aparecer como
+        $1-\tfrac25e^{-t}\sin2t-\tfrac45e^{-t}\cos2t$, que es la
+        misma expresión obtenida a mano. Los programas comprueban también
+        que la respuesta total es la suma de sus dos componentes.</p>
+
+      <p>En la construcción del pulso, la función retardada se evalúa solo
+        donde $t\geq T$. Así se respeta el encendido y no se interpreta la
+        expresión de respuesta al escalón como una señal que existiera
+        antes de su aplicación. Para visualizar las figuras se utiliza un
+        entorno con salida gráfica, como MATLAB, una consola de Python
+        con backend gráfico o un cuaderno Jupyter.</p>
+
+      <h2>La misma herramienta en un motor de corriente continua</h2>
+
+      <p>El interés para mecatrónica no termina en modelos aislados de una
+        sola disciplina. En un motor de corriente continua con flujo
+        magnético constante, la corriente de armadura $i$ produce un par
+        $K_t i$ y la velocidad angular $\omega$ genera una fuerza
+        contraelectromotriz $K_e\omega$. Un modelo lineal idealizado es</p>
+      <div class="equation">
+        \[
+        \begin{aligned}
+        L_a\frac{\mathrm{d}i}{\mathrm{d}t}+R_a i+K_e\omega&amp;=v_a,\\
+        J\frac{\mathrm{d}\omega}{\mathrm{d}t}+b\omega&amp;=K_t i-\tau_L.
+        \end{aligned}
+        \]
+      </div>
+
+      <p>Aquí $L_a$ y $R_a$ son la inductancia y resistencia de armadura,
+        $J$ es la inercia equivalente, $b$ representa fricción viscosa,
+        $v_a$ es la tensión aplicada y $\tau_L$ el par de carga que se
+        opone al movimiento positivo. Las constantes $K_t$ y $K_e$
+        relacionan las variables eléctricas y mecánicas. Se omiten
+        saturación, fricción seca y otros efectos no lineales.</p>
+
+      <p>Con corriente y velocidad iniciales nulas, las dos ecuaciones se
+        transforman en un sistema algebraico,</p>
+      <div class="equation">
+        \[
+        (L_as+R_a)I+K_e\Omega=V_a,\qquad
+        (Js+b)\Omega=K_t I-T_L.
+        \]
+      </div>
+
+      <p>Al eliminar $I(s)$ obtenemos</p>
+      <div class="equation">
+        \[
+        \Omega(s)=
+        \frac{K_t V_a(s)-(L_as+R_a)T_L(s)}
+        {(L_as+R_a)(Js+b)+K_tK_e}.
+        \]
+      </div>
+
+      <p>La tensión y la carga actúan como dos entradas diferentes. Si se
+        anula la perturbación de carga, la función de transferencia entre
+        tensión y velocidad es</p>
+      <div class="equation">
+        \[
+        \frac{\Omega(s)}{V_a(s)}
+        =\frac{K_t}{L_aJ s^2+(L_ab+R_aJ)s+R_ab+K_tK_e}.
+        \]
+      </div>
+
+      <p>Vuelve a aparecer un denominador de segundo orden, ahora originado
+        por el almacenamiento de energía magnética y cinética. Ante un
+        escalón de tensión se multiplica esa función por $V_s/s$ y se
+        aplica el mismo procedimiento de fracciones parciales. Si además
+        queremos la posición angular, la relación
+        $\dot\theta=\omega$ da
+        $\Theta(s)=\Omega(s)/s+\theta(0^-)/s$.
+        Una velocidad final constante no implica una posición final
+        constante; en giro continuo, la posición crece sin límite.</p>
+
+      <h2>Cómo revisar una solución antes de confiar en ella</h2>
+
+      <ul class="elegante">
+        <li><strong>Unidades.</strong> Todos los términos de la ecuación
+          deben representar la misma magnitud. En el modelo mecánico son
+          fuerzas; en el circuito RC son tensiones.</li>
+        <li><strong>Entrada.</strong> Un escalón, un impulso y un pulso
+          rectangular no son intercambiables. Sus transformadas son
+          $1/s$, $1$ y $(1-e^{-sT})/s$, respectivamente, para amplitudes
+          o áreas unitarias según corresponda.</li>
+        <li><strong>Condiciones iniciales.</strong> La función de transferencia
+          describe la respuesta de estado cero. La energía inicial se
+          incorpora por separado.</li>
+        <li><strong>Polos y convergencia.</strong> Antes de calcular el valor
+          final, hay que comprobar que se cumplen las condiciones del
+          teorema. No basta con que un programa devuelva un límite finito.</li>
+        <li><strong>Sustitución.</strong> Una solución propuesta debe satisfacer
+          la ecuación original y sus condiciones iniciales, no solo tener
+          una gráfica de apariencia razonable.</li>
+      </ul>
+
+      <p>La transformada es especialmente eficaz para sistemas lineales con
+        coeficientes constantes. En modelos no lineales, variables en el
+        tiempo o con fenómenos de contacto y saturación, puede ser necesario
+        linealizar alrededor de un punto de operación o integrar numéricamente
+        las ecuaciones. Tampoco debe confundirse la variable $s$ con una
+        frecuencia real. Sustituir $s=j\omega$ para obtener una respuesta
+        frecuencial requiere revisar las condiciones de existencia
+        correspondientes; no es una operación válida sin restricciones
+        para cualquier señal.</p>
+
+      <h3>Dos variaciones para afianzar el método</h3>
+
+      <p>En el circuito RC, desconectar la fuente ideal sustituyéndola por
+        una conexión de tensión nula deja una resistencia por la que el
+        capacitor se descarga. Con $V_0=5$ V y los mismos $R$ y $C$,
+        la solución es $v_C(t)=5e^{-10t}$ V. Esta respuesta tiene el mismo
+        polo que la carga, pero distinto equilibrio y distinta condición
+        inicial. Abrir físicamente el circuito sería otro problema.</p>
+
+      <p>En el mecanismo que parte del reposo, un golpe ideal de impulso
+        $J_F$ produce $F(t)=J_F\delta(t)$. Integrar la ecuación alrededor
+        de cero da $m[\dot x(0^+)-\dot x(0^-)]=J_F$. Para los parámetros
+        del ejemplo y $J_F=1\,\mathrm{N\,s}$,</p>
+      <div class="equation">
+        \[
+        X(s)=\frac{1}{s^2+2s+5},\qquad
+        x(t)=\frac12e^{-t}\sin2t\quad[\mathrm{m}],\qquad t&gt;0.
+        \]
+      </div>
+      <p>La posición es continua y la velocidad salta a $1\,\mathrm{m/s}$.
+        Podemos resolver el problema incluyendo el impulso y los datos
+        anteriores al golpe, o resolver la evolución libre posterior usando
+        la velocidad que dejó el golpe. Incluir simultáneamente el mismo
+        impulso y esa velocidad como dato anterior contaría dos veces su
+        efecto.</p>
+
+      <h2>Del resultado algebraico a la interpretación física</h2>
+
+      <p>La utilidad de Laplace no consiste únicamente en evitar integraciones
+        difíciles. Su estructura conecta las condiciones iniciales con la
+        energía almacenada, los polos con los modos de movimiento, la
+        convolución con la memoria y el valor final con el equilibrio.
+        Transformar, despejar e invertir permite obtener la trayectoria;
+        revisar esos vínculos permite entenderla.</p>
+
+      <p>Cuando la formulación física es correcta, el cálculo manual y el
+        simbólico se complementan. Las tablas y las fracciones parciales
+        muestran de dónde proviene cada término, mientras MATLAB y SymPy
+        facilitan comprobar expresiones y explorar parámetros. El objetivo
+        no es terminar con una función de $s$, sino regresar al tiempo con
+        una predicción verificable del comportamiento del sistema.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Massachusetts Institute of Technology, Department of Mechanical
+          Engineering. (s. f.). <a href="https://web.mit.edu/2.14/www/Handouts/FreqDom.pdf"><em>Introduction
+          to frequency domain processing</em></a> [Notas del curso 2.14,
+          Analysis and Design of Feedback Control Systems].</li>
+        <li>The MathWorks, Inc. (2026a). <a href="https://www.mathworks.com/help/symbolic/sym.ilaplace.html"><em>ilaplace:
+          Inverse Laplace transform</em></a>. Symbolic Math Toolbox documentation.</li>
+        <li>The MathWorks, Inc. (2026b). <a href="https://www.mathworks.com/help/symbolic/sym.laplace.html"><em>laplace:
+          Laplace transform</em></a>. Symbolic Math Toolbox documentation.</li>
+        <li>The MathWorks, Inc. (2026c). <a href="https://www.mathworks.com/help/symbolic/sym.partfrac.html"><em>partfrac:
+          Partial fraction decomposition</em></a>. Symbolic Math Toolbox documentation.</li>
+        <li>SymPy Development Team. (s. f.-a). <a href="https://docs.sympy.org/latest/modules/integrals/integrals.html"><em>Integrals</em></a>.
+          SymPy 1.14.0 documentation.</li>
+        <li>SymPy Development Team. (s. f.-b). <a href="https://docs.sympy.org/latest/modules/polys/reference.html#sympy.polys.partfrac.apart"><em>Polynomials
+          manipulation module reference</em></a>. SymPy 1.14.0 documentation.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
