@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Galgas extensiométricas y celdas de carga. Deformación, factor de galga, puente de Wheatstone, compensación, montaje, calibración y lectura con HX711 y ESP32." />
+  <title>Galgas extensiométricas y celdas de carga</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="cpp" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Galgas extensiométricas y celdas de carga</h1>
+        <p class="subtitle">Cómo convertir una pequeña deformación en una medición de fuerza, desde el puente de Wheatstone hasta una báscula con HX711 y ESP32.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Una pieza metálica puede deformarse bajo una carga sin que el cambio
+          resulte visible. Las galgas extensiométricas convierten esa deformación
+          en una variación de resistencia eléctrica; un puente de Wheatstone y
+          un circuito de adquisición permiten medirla. Comprender una celda de
+          carga requiere seguir toda esa cadena, desde la mecánica del elemento
+          elástico hasta la calibración de la lectura. Estudiaremos el factor
+          de galga, las conexiones de cuarto, medio y puente completo, la
+          compensación térmica y de los cables, y la interpretación de las
+          especificaciones. Finalmente construiremos un ejemplo de lectura con
+          HX711 y ESP32 y examinaremos las precauciones necesarias para pasar
+          de una demostración de laboratorio a un sistema de pesaje confiable.</p>
+      </section>
+
+      <h2>Medir una fuerza observando sus efectos</h2>
+
+      <p>Una báscula, un robot que regula la fuerza de agarre y una máquina
+        que ensaya la resistencia de un material necesitan convertir una
+        interacción mecánica en información eléctrica. Una solución muy
+        extendida consiste en interponer un elemento elástico cuya
+        deformación depende de la carga y medir esa deformación con suficiente
+        sensibilidad.</p>
+
+      <p>La <strong>galga extensiométrica</strong>, también llamada
+        <em>strain gauge</em> o <em>strain gage</em>, es un transductor que
+        cambia de resistencia al deformarse. En su versión metálica adherida,
+        una rejilla conductora muy delgada se fija a la superficie de la pieza.
+        Si la unión transmite correctamente el movimiento, la rejilla sigue
+        la deformación local del material.</p>
+
+      <figure>
+        <img src="./galgas-lamina.png" width="522" height="391"
+          alt="Galga extensiométrica de lámina con rejilla conductora, soporte aislante y terminales de conexión."
+          style="width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Galga de lámina metálica. La rejilla permite
+          disponer una longitud considerable de conductor en una región pequeña.</figcaption>
+      </figure>
+
+      <p>Conviene distinguir el sensor elemental del instrumento completo.
+        La galga mide <strong>deformación</strong>; no mide directamente
+        kilogramos, presión o fuerza. Para obtener esas magnitudes hace falta
+        una estructura que las relacione con la deformación y una calibración.
+        Una <strong>celda de carga extensiométrica</strong> integra un cuerpo
+        elástico, galgas, conexiones y protección para medir una fuerza en
+        una dirección y un intervalo especificados.</p>
+
+      <p>Este principio se utiliza en básculas, tolvas, plataformas de pesaje,
+        pinzas robóticas, bancos de prueba, sensores de par y transductores de
+        presión con diafragma. También permite estudiar deformaciones en
+        estructuras sin convertirlas necesariamente en una fuerza única.
+        La cadena de medición puede resumirse como</p>
+
+      <div class="equation">
+        \[
+        F\longrightarrow\varepsilon\longrightarrow\Delta R
+        \longrightarrow V_o\longrightarrow N
+        \longrightarrow\widehat F\text{ o }\widehat m.
+        \]
+      </div>
+
+      <p>La fuerza $F$ deforma el elemento, la deformación $\varepsilon$
+        cambia su resistencia en $\Delta R$, el circuito genera una tensión
+        $V_o$ y el convertidor entrega un número $N$. Una relación de
+        calibración produce la estimación final. Cada eslabón puede introducir
+        errores; una buena electrónica no corrige un montaje mecánico defectuoso.</p>
+
+      <h2>Deformación, esfuerzo y fuerza no son lo mismo</h2>
+
+      <p>Si una longitud inicial $L_0$ cambia en $\Delta L$, su deformación
+        longitudinal de ingeniería es</p>
+
+      <div class="equation">
+        \[
+        \varepsilon=\frac{\Delta L}{L_0}.
+        \]
+      </div>
+
+      <p>Es una cantidad adimensional. Usaremos signo positivo para el
+        alargamiento y negativo para el acortamiento. Como los valores
+        elásticos habituales son pequeños, se expresan en
+        <strong>microdeformaciones</strong>, donde
+        $1\,\mu\varepsilon=10^{-6}$. Una longitud de 50 mm que se alarga
+        $25\,\mu\mathrm{m}$ experimenta $500\,\mu\varepsilon$, equivalentes
+        a $0.05\,\%$, no a $500\,\%$.</p>
+
+      <p>El <strong>esfuerzo normal</strong> $\sigma$ describe la intensidad
+        de la fuerza interna por unidad de área. En una barra sometida a
+        carga axial uniforme, $\sigma=F/A$. Para un material elástico lineal
+        bajo esfuerzo uniaxial, la ley de Hooke da</p>
+
+      <div class="equation">
+        \[
+        \sigma=E\varepsilon,\qquad
+        \varepsilon=\frac{F}{EA},\qquad F=EA\varepsilon,
+        \]
+      </div>
+
+      <p>donde $E$ es el módulo de Young y $A$ el área de la sección.
+        Esa última relación no puede trasladarse sin cambios a una viga
+        en flexión, a un diafragma o a una celda con geometría compleja.
+        La distribución de esfuerzos depende de la forma, los apoyos y
+        la manera en que se aplica la carga.</p>
+
+      <aside class="remark">
+        <p><strong>La galga mide una región y una dirección.</strong> Su lectura
+          representa aproximadamente la deformación media bajo la rejilla,
+          proyectada en su dirección sensible. No es una medición puntual
+          perfecta ni una lectura de todas las componentes de deformación.
+          Cuando las direcciones principales son desconocidas se emplean
+          rosetas de varias rejillas, por ejemplo a 0°, 45° y 90°.</p>
+      </aside>
+
+      <h2>Por qué cambia la resistencia</h2>
+
+      <p>Para un conductor uniforme de longitud $L$, sección transversal $A_c$
+        y resistividad $\rho$,</p>
+
+      <div class="equation">
+        \[
+        R=\rho\frac{L}{A_c},\qquad
+        \frac{\mathrm{d}R}{R}
+        =\frac{\mathrm{d}\rho}{\rho}
+        +\frac{\mathrm{d}L}{L}-\frac{\mathrm{d}A_c}{A_c}.
+        \]
+      </div>
+
+      <p>Al estirar el conductor aumenta su longitud y generalmente disminuye
+        su sección. Ambos efectos tienden a aumentar la resistencia. Además,
+        la deformación puede modificar la resistividad; esa contribución se
+        denomina efecto piezorresistivo. En compresión, una galga metálica
+        convencional suele cambiar en sentido contrario.</p>
+
+      <p>Si la contracción lateral obedece al coeficiente de Poisson $\nu$,
+        para pequeñas deformaciones uniaxiales se cumple
+        $\Delta A_c/A_c\approx-2\nu\varepsilon$. De ahí se obtiene</p>
+
+      <div class="equation">
+        \[
+        \frac{\Delta R}{R_0}
+        \approx(1+2\nu)\varepsilon+\frac{\Delta\rho}{\rho}.
+        \]
+      </div>
+
+      <p>En la práctica se utiliza el <strong>factor de galga</strong>,
+        especificado por el fabricante,</p>
+
+      <div class="equation">
+        \[
+        G_F=\frac{\Delta R/R_0}{\varepsilon},\qquad
+        \Delta R=G_F R_0\varepsilon.
+        \]
+      </div>
+
+      <p>Muchas galgas metálicas tienen $G_F$ cercano a 2, aunque para calcular
+        se debe usar el valor correspondiente al sensor. Las galgas
+        semiconductoras pueden tener factores mucho mayores, con una
+        dependencia térmica y una no linealidad que requieren otro tratamiento.
+        Aquí nos concentraremos en galgas metálicas de lámina.</p>
+
+      <h3>Una variación pequeña que no conviene medir de cualquier manera</h3>
+
+      <p>Para $R_0=350\,\Omega$, $G_F=2$ y
+        $\varepsilon=500\,\mu\varepsilon$,</p>
+
+      <div class="equation">
+        \[
+        \Delta R=2(350)(500\times10^{-6})=0.35\,\Omega.
+        \]
+      </div>
+
+      <p>El cambio es solamente el 0.1 % de la resistencia nominal. La
+        resistencia de los cables, el calentamiento y las tolerancias de
+        los componentes pueden ser comparables con esa señal. Por eso la
+        solución habitual no es conectar la galga a cualquier entrada
+        analógica, sino convertir el pequeño desequilibrio resistivo en
+        una tensión diferencial mediante un puente.</p>
+
+      <h2>El puente de Wheatstone</h2>
+
+      <p>El puente está formado por dos divisores de tensión alimentados por
+        una misma excitación $V_{\mathrm{ex}}$. Fijaremos la numeración y
+        polaridad del siguiente esquema para evitar ambigüedades de signo.
+        La salida será $V_o=V_A-V_B$ y el nodo inferior será la referencia
+        de potencial.</p>
+
+      <figure>
+        <img src="./galgas-puente.png" width="1500" height="960"
+          alt="Puente de Wheatstone. R1 y R3 forman la rama izquierda; R2 y R4, la derecha. La excitación se aplica entre los nodos superior e inferior y se mide VA menos VB entre los puntos medios."
+          style="width: 100%; max-width: 640px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. Puente y convención de polaridad utilizada en
+          el artículo. El voltímetro diferencial tiene impedancia de entrada
+          idealmente infinita; no une eléctricamente los nodos $A$ y $B$.</figcaption>
+      </figure>
+
+      <p>Si el instrumento no toma una corriente apreciable de los puntos
+        medios, cada divisor puede analizarse por separado,</p>
+
+      <div class="equation">
+        \[
+        V_A=V_{\mathrm{ex}}\frac{R_3}{R_1+R_3},\qquad
+        V_B=V_{\mathrm{ex}}\frac{R_4}{R_2+R_4}.
+        \]
+      </div>
+
+      <p>Por tanto, la relación exacta es</p>
+      <div class="equation">
+        \[
+        \boxed{\frac{V_o}{V_{\mathrm{ex}}}
+        =\frac{R_3}{R_1+R_3}-\frac{R_4}{R_2+R_4}}.
+        \]
+      </div>
+
+      <p>El puente está equilibrado cuando $R_2R_3=R_1R_4$. Cuatro
+        resistencias iguales son un caso particular. En ese caso,
+        $V_A=V_B=V_{\mathrm{ex}}/2$ y la diferencia es cero, aunque
+        ninguno de los dos puntos medios esté a potencial de tierra.
+        Intercambiar las entradas de medición invierte el signo de la salida.</p>
+
+      <h3>La sensibilidad de cada brazo</h3>
+
+      <p>Escribamos $R_i=R_0(1+\delta_i)$, con cambios relativos
+        $|\delta_i|\ll1$. Al conservar términos de primer orden,</p>
+
+      <div class="equation">
+        \[
+        \frac{V_o}{V_{\mathrm{ex}}}
+        \approx\frac{-\delta_1+\delta_2+\delta_3-\delta_4}{4}.
+        \]
+      </div>
+
+      <p>Este resultado explica cómo se conectan las galgas. Aumentar $R_2$
+        o $R_3$ produce una contribución positiva; aumentar $R_1$ o $R_4$
+        produce una negativa. La posición eléctrica debe elegirse para que
+        las deformaciones que queremos medir se sumen y los efectos comunes
+        se cancelen. Colocar cuatro galgas activas al azar no garantiza una
+        señal cuatro veces mayor.</p>
+
+      <h2>Cuarto de puente, medio puente y puente completo</h2>
+
+      <h3>Una sola galga activa</h3>
+
+      <p>En un cuarto de puente sustituimos $R_3$ por una galga y mantenemos
+        los otros brazos en $R_0$. Si definimos
+        $q=G_F\varepsilon=\Delta R/R_0$,</p>
+
+      <div class="equation">
+        \[
+        \frac{V_o}{V_{\mathrm{ex}}}
+        =\frac{1+q}{2+q}-\frac12
+        =\frac{q}{4+2q}\approx\frac{G_F\varepsilon}{4}.
+        \]
+      </div>
+
+      <p>Para la galga del ejemplo anterior, $q=0.001$. Con una excitación
+        de 5 V, la aproximación da $V_o=1.25$ mV y la expresión exacta
+        da aproximadamente $1.2494$ mV. La pequeña no linealidad se vuelve
+        más importante si se amplía el intervalo de deformación. Si se
+        necesita invertir la relación exacta, con
+        $r=V_o/V_{\mathrm{ex}}$ se obtiene
+        $\varepsilon=4r/[G_F(1-2r)]$.</p>
+
+      <h3>Dos galgas que se deforman en sentidos opuestos</h3>
+
+      <p>Una viga en flexión ofrece una disposición especialmente útil.
+        Una cara se alarga y la opuesta se acorta. Si las galgas ocupan
+        posiciones equivalentes y están alineadas con el eje de la viga,
+        idealmente miden $+\varepsilon$ y $-\varepsilon$.</p>
+
+      <figure>
+        <img src="./galgas-flexion.png" width="1500" height="700"
+          alt="Viga en voladizo cargada hacia abajo. Una galga longitudinal en la cara superior mide tracción y otra en la inferior compresión; la deformación aumenta hacia el empotramiento."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 3. En la flexión representada, la cara superior
+          se alarga y la inferior se acorta. La deformación del dibujo está
+          exagerada para mostrar el principio.</figcaption>
+      </figure>
+
+      <p>Conectemos la galga comprimida como $R_1=R_0(1-q)$ y la estirada
+        como $R_3=R_0(1+q)$, dejando $R_2=R_4=R_0$. Entonces</p>
+
+      <div class="equation">
+        \[
+        \frac{V_o}{V_{\mathrm{ex}}}
+        =\frac{R_0(1+q)}{2R_0}-\frac12
+        =\frac{q}{2}=\frac{G_F\varepsilon}{2}.
+        \]
+      </div>
+
+      <p>En este medio puente ideal, las señales se suman y la sensibilidad
+        duplica la del cuarto de puente. La cancelación algebraica de la
+        no linealidad del divisor supone cambios de resistencia iguales y
+        opuestos, no demuestra que toda viga real sea perfectamente lineal.</p>
+
+      <h3>Cuatro galgas activas</h3>
+
+      <p>En un puente completo de flexión podemos disponer dos galgas en
+        tracción y dos en compresión. Para nuestra numeración elegimos
+        $R_2=R_3=R_0(1+q)$ y $R_1=R_4=R_0(1-q)$. La salida es</p>
+
+      <div class="equation">
+        \[
+        \frac{V_o}{V_{\mathrm{ex}}}
+        =\frac{1+q}{2}-\frac{1-q}{2}
+        =q=G_F\varepsilon.
+        \]
+      </div>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Comparación para galgas idénticas y las disposiciones de flexión descritas.">
+\begin{tabular}{llll}
+\hline
+Configuración & Galgas activas & $V_o/V_{\mathrm{ex}}$ & $V_o$ del ejemplo \\
+\hline
+Cuarto de puente & 1 & $\approx G_F\varepsilon/4$ & $1.25\,\mathrm{mV}$ \\
+Medio puente & 2 & $G_F\varepsilon/2$ & $2.50\,\mathrm{mV}$ \\
+Puente completo & 4 & $G_F\varepsilon$ & $5.00\,\mathrm{mV}$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En la última columna se mantienen $G_F=2$,
+        $\varepsilon=500\,\mu\varepsilon$ y $V_{\mathrm{ex}}=5$ V.
+        Estos factores no son universales para toda conexión llamada
+        «medio puente» o «puente completo». Si una galga es longitudinal y
+        otra transversal en una barra bajo carga axial, sus deformaciones
+        son aproximadamente $\varepsilon$ y $-\nu\varepsilon$;
+        la sensibilidad incorpora entonces el coeficiente de Poisson.
+        Las distintas disposiciones se comparan en la
+        <a href="https://www.ni.com/en/shop/data-acquisition/sensor-fundamentals/measuring-strain-with-strain-gages.html">guía de medición de deformación de NI</a>.</p>
+
+      <h2>Cómo influye la temperatura</h2>
+
+      <p>La resistencia no cambia únicamente por una carga. La temperatura
+        altera la resistividad y las dimensiones del conductor, y el
+        soporte, el adhesivo y la pieza pueden dilatarse de forma diferente.
+        Por eso una variación térmica puede parecer una deformación mecánica
+        aunque la fuerza externa no haya cambiado.</p>
+
+      <p>Una aproximación local permite escribir
+        $\Delta R/R_0\approx G_F\varepsilon_{\mathrm{mec}}+\beta\Delta T$,
+        donde $\beta$ resume el efecto térmico efectivo del conjunto.
+        En un cuarto de puente con tres resistencias de comportamiento
+        térmico distinto, ese término puede aparecer en la salida junto
+        con la deformación que se pretende medir.</p>
+
+      <p>Una solución utiliza una <strong>galga compensadora</strong> en un
+        brazo adyacente. Está sometida a la misma temperatura, pero no a
+        la deformación mecánica de interés. Puede adherirse a una pieza
+        descargada del mismo material y térmicamente próxima. No basta
+        con colocar una galga perpendicular y asumir que no se deforma,
+        pues podría medir la contracción de Poisson.</p>
+
+      <p>En las disposiciones de flexión de medio y puente completo,
+        la deformación cambia de signo entre las caras, mientras una
+        variación térmica uniforme afecta de manera semejante a las galgas.
+        La primera contribución puede sumarse y la segunda cancelarse en
+        gran medida. Las galgas autocompensadas para un material determinado
+        ayudan a reducir la deformación aparente, pero no eliminan todos
+        los efectos térmicos.</p>
+
+      <aside class="remark">
+        <p><strong>Compensar no significa volver inmune el sensor.</strong>
+          Los gradientes térmicos, las diferencias entre galgas, la deriva
+          del módulo elástico y los cambios del adhesivo pueden modificar
+          el cero o la sensibilidad. Una deformación real producida por
+          dilatación impedida tampoco es simplemente un error eléctrico
+          que deba cancelarse.</p>
+      </aside>
+
+      <h2>Por qué se utiliza una conexión de tres hilos</h2>
+
+      <p>Si una galga remota se conecta con dos cables, el brazo del puente
+        contiene la resistencia de la galga más la de ambos conductores.
+        Esas resistencias adicionales producen desequilibrio y reducen la
+        sensibilidad relativa. Además, cambian con la temperatura.</p>
+
+      <p>Con una galga de $350\,\Omega$ y $G_F=2$, un incremento total
+        de $0.07\,\Omega$ en los cables equivale, aproximadamente, a
+        una deformación aparente de</p>
+
+      <div class="equation">
+        \[
+        \varepsilon_{\mathrm{aparente}}
+        \approx\frac{0.07}{2(350)}=100\,\mu\varepsilon.
+        \]
+      </div>
+
+      <p>La conexión de tres hilos redistribuye los efectos de los conductores.
+        Dos cables llevan la corriente de la rama y quedan en brazos
+        adyacentes; el tercero toma la tensión directamente del terminal
+        de la galga. La entrada del amplificador debe tener alta impedancia,
+        de modo que la corriente por ese tercer hilo sea despreciable.</p>
+
+      <figure>
+        <img src="./galgas-tres-hilos.png" width="1500" height="950"
+          alt="Conexión de tres hilos a una galga remota Rg. Rc1 y Rc2 quedan en brazos adyacentes; Rc3 conduce la señal del punto A a una entrada de alta impedancia."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 4. Los conductores $R_{c1}$ y $R_{c2}$ deben
+          presentar resistencias y condiciones térmicas semejantes. El hilo
+          de lectura $R_{c3}$ prácticamente no conduce corriente.</figcaption>
+      </figure>
+
+      <p>Si $R_{c1}=R_{c2}=R_c$ y los brazos nominales son iguales, el
+        equilibrio sin carga se conserva. Para la conexión representada,
+        con $R_g=R_0+\Delta R$,</p>
+
+      <div class="equation">
+        \[
+        \frac{V_o}{V_{\mathrm{ex}}}
+        =\frac{R_0+\Delta R+R_c}{2(R_0+R_c)+\Delta R}-\frac12
+        \approx\frac{G_F\varepsilon}{4}\frac{R_0}{R_0+R_c}.
+        \]
+      </div>
+
+      <p>La deriva común de los cables deja de alterar el equilibrio ideal,
+        pero persiste una reducción de sensibilidad. La compensación
+        depende de la simetría de los conductores y no elimina cualquier
+        resistencia de contacto o gradiente térmico. Este alcance se
+        explica en la nota
+        <a href="https://docs.micro-measurements.com/?id=13752"><em>The Three-Wire Quarter-Bridge Circuit</em>, TT-612</a>,
+        de Micro-Measurements.</p>
+
+      <p>No hay que confundir una galga conectada con tres hilos con una
+        celda de carga que contiene un puente completo de cuatro hilos,
+        ni con un sensor de medio puente de tres terminales. El número
+        de cables, por sí solo, no identifica el circuito interno.</p>
+
+      <h2>Una fuerza convertida en deformación de flexión</h2>
+
+      <p>Para relacionar la mecánica con la señal eléctrica, consideremos
+        una viga rectangular de longitud $L$, ancho $w$ y espesor $h$,
+        empotrada en un extremo y cargada con una fuerza $F$ en el otro.
+        En la teoría de vigas esbeltas, el momento flector en una sección
+        situada a distancia $x$ del empotramiento tiene magnitud
+        $M(x)=F(L-x)$.</p>
+
+      <p>El segundo momento de área es $I=wh^3/12$. En las superficies
+        superior e inferior, a distancia $h/2$ del eje neutro, la magnitud
+        de la deformación es</p>
+
+      <div class="equation">
+        \[
+        |\varepsilon(x)|=\frac{|M(x)|h}{2EI}
+        =\frac{6F(L-x)}{Ewh^2}.
+        \]
+      </div>
+
+      <p>Una viga de aluminio idealizada con $E=70$ GPa, $L=100$ mm,
+        $w=20$ mm y $h=3$ mm, sometida a $F=10$ N, alcanza cerca del
+        empotramiento, según este modelo,</p>
+
+      <div class="equation">
+        \[
+        |\varepsilon(0)|=
+        \frac{6(10)(0.1)}{(70\times10^9)(0.02)(0.003)^2}
+        \approx476\,\mu\varepsilon.
+        \]
+      </div>
+
+      <p>Con $G_F=2$ y excitación de 5 V, un medio puente ideal de flexión
+        entregaría aproximadamente 2.38 mV. Así aparece una relación
+        entre la fuerza aplicada y una señal eléctrica medible. Una
+        galga real ocupa una longitud finita y no debe colocarse sobre
+        la zona perturbada de un empotramiento ideal; su posición efectiva
+        y el montaje forman parte del modelo y de la calibración.</p>
+
+      <p>Esta deducción supone pequeñas deformaciones, comportamiento elástico
+        lineal y una geometría de viga adecuada. No debe aplicarse sin
+        verificación a las zonas perforadas o a las membranas de cualquier
+        celda comercial. En esos casos el fabricante diseña y caracteriza
+        el elemento elástico completo.</p>
+
+      <h2>De la galga a la celda de carga</h2>
+
+      <p>Una celda extensiométrica reúne un cuerpo elástico y varias galgas,
+        normalmente conectadas como puente completo. Su geometría concentra
+        una deformación controlada en las zonas sensibles, mientras los
+        puntos de fijación transmiten la carga. Las conexiones internas,
+        la compensación y la protección ambiental completan el transductor.</p>
+
+      <figure>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 24px;">
+          <img src="./galgas-celda-s.png" width="600" height="606"
+            alt="Celda de carga con cuerpo elástico en forma de S y cable de conexión."
+            style="width: min(100%, 260px); height: auto;" />
+          <img src="./galgas-binocular.png" width="302" height="261"
+            alt="Celda de carga de barra con perforaciones y cable de cuatro conductores."
+            style="width: min(100%, 260px); height: auto;" />
+        </div>
+        <figcaption>Figura 5. Dos geometrías de celda de carga. La forma,
+          los apoyos y la dirección admisible de la fuerza deben corresponder
+          a la aplicación.</figcaption>
+      </figure>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Formas habituales y ejemplos de uso. La capacidad depende del modelo.">
+\begin{tabular}{ll}
+\hline
+Geometría & Aplicaciones habituales \\
+\hline
+Barra de flexión o punto único & Básculas de plataforma pequeñas \\
+Viga de cortante & Plataformas, depósitos y pesaje industrial \\
+Cuerpo en S & Tracción, compresión y ensayos de fuerza \\
+Columna o botón de compresión & Apoyos de depósitos y cargas elevadas \\
+Anular o de perfil bajo & Bancos de ensayo y montajes de poca altura \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Una celda no necesariamente contiene su propio amplificador ni
+        entrega kilogramos directamente. Muchas son sensores pasivos
+        cuya salida es de unos milivoltios. Su caracterización de fábrica
+        tampoco elimina la necesidad de comprobar y ajustar el sistema
+        después de instalarlo.</p>
+
+      <h3>La celda de tipo binocular y su montaje</h3>
+
+      <p>El nombre «binocular» describe un elemento con dos perforaciones
+        próximas que forman regiones delgadas y deformables. La forma
+        favorece la flexión en zonas donde se sitúan las galgas. En diseños
+        de punto único se busca además reducir la dependencia de la
+        lectura respecto de la posición de la carga dentro de una
+        plataforma de dimensiones especificadas. No significa que la
+        celda sea insensible a cualquier momento o fuerza lateral.</p>
+
+      <p>En una báscula sencilla, un extremo se fija a la base y el otro
+        a la plataforma mediante separadores. La parte flexible debe
+        poder moverse sin tocar la base, el plato ni un tope durante
+        la operación normal.</p>
+
+      <figure>
+        <img src="./galgas-montaje.png" width="1500" height="720"
+          alt="Montaje de una celda binocular entre una base fija y una plataforma. Un separador fija el extremo izquierdo a la base y otro conecta el extremo derecho a la plataforma, dejando libre la zona flexible."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 6. Esquema de montaje de una celda de punto
+          único. Los separadores dejan holgura; no debe existir un camino
+          rígido alternativo que desvíe la carga alrededor del sensor.</figcaption>
+      </figure>
+
+      <p>Si ambos extremos se atornillan a una misma placa rígida que
+        impide el movimiento previsto, la celda deja de trabajar como
+        fue diseñada. También introducen errores un cable tirante,
+        una plataforma que roza o un apoyo adicional inadvertido.
+        La flecha de carga, los pares de apriete y las dimensiones
+        admisibles se toman de la documentación del fabricante.</p>
+
+      <h2>Cómo leer las especificaciones</h2>
+
+      <h3>Capacidad y sensibilidad en mV/V</h3>
+
+      <p>La capacidad nominal es la carga máxima del intervalo de medición
+        especificado; no es una autorización para aplicar golpes de esa
+        magnitud. Una sobrecarga, incluso breve, puede dejar deformación
+        permanente y modificar el cero. Hay que considerar también el
+        peso del plato, los accesorios y las cargas dinámicas.</p>
+
+      <p>La sensibilidad nominal suele darse en <strong>mV/V</strong>, es
+        decir, milivoltios de cambio de salida por voltio de excitación
+        al alcanzar la carga nominal. Para una celda idealizada,</p>
+
+      <div class="equation">
+        \[
+        V_o(F)=V_{o0}+S\,V_{\mathrm{ex}}\frac{F}{F_N},
+        \]
+      </div>
+
+      <p>donde $F_N$ es la fuerza nominal, $V_{o0}$ el desequilibrio a
+        carga cero y $S$ la sensibilidad expresada en V/V. Por ejemplo,
+        $2$ mV/V significa $S=0.002$, no $S=2$.</p>
+
+      <p>Una celda nominal de 5 kg, con sensibilidad de 2 mV/V y excitación
+        de 5 V, produce un cambio de aproximadamente 10 mV a plena
+        carga. En condiciones estáticas y bajo la misma gravedad,
+        una masa de 1 kg produce aproximadamente 2 mV respecto del
+        cero. Al reducir la excitación, la señal se reduce en la misma
+        proporción ideal.</p>
+
+      <aside class="remark">
+        <p><strong>Una báscula detecta fuerza y expresa una masa.</strong>
+          El peso es $F=mg$ y se mide en newtons; la masa se mide en
+          kilogramos. La calibración con masas conocidas establece la
+          conversión para el montaje y las condiciones locales. En
+          movimiento, otras aceleraciones pueden modificar la fuerza
+          sobre la celda aunque la masa no haya cambiado.</p>
+      </aside>
+
+      <h3>La exactitud no se describe con un solo número</h3>
+
+      <ul class="elegante">
+        <li><strong>No linealidad.</strong> Desviación respecto de la recta
+          definida por el método de especificación o calibración.</li>
+        <li><strong>Histéresis.</strong> Diferencia de lectura para la misma
+          carga cuando se llega a ella aumentando o disminuyendo la fuerza.</li>
+        <li><strong>Repetibilidad.</strong> Dispersión al repetir la misma
+          condición de carga y montaje.</li>
+        <li><strong>Fluencia o <em>creep</em>.</strong> Cambio lento de salida
+          mientras una carga permanece aplicada.</li>
+        <li><strong>Deriva térmica.</strong> Cambio del cero o de la
+          sensibilidad con la temperatura.</li>
+        <li><strong>Carga excéntrica y fuerzas parásitas.</strong> Efectos
+          de aplicar la fuerza fuera del punto o dirección previstos.</li>
+      </ul>
+
+      <p>También importan la resistencia del puente, la excitación recomendada,
+        el aislamiento y la protección ambiental. Los porcentajes de error
+        pueden estar referidos al fondo de escala o a la carga aplicada;
+        no son equivalentes. La ficha de una
+        <a href="https://novatechloadcells.co.uk/products/f238-binocular-bending-beam/">celda binocular F238</a>,
+        por ejemplo, distingue explícitamente esos criterios y especifica
+        por separado histéresis, fluencia y efectos térmicos.</p>
+
+      <h2>Acondicionar una señal de pocos milivoltios</h2>
+
+      <p>El puente necesita una excitación estable y una entrada diferencial
+        que no lo cargue. Cerca del equilibrio, sus dos salidas pueden
+        estar alrededor de 2.5 V con una excitación de 5 V, aunque la
+        diferencia útil sea solo de 1 mV. El amplificador debe resolver
+        esa diferencia y rechazar la tensión común a ambas entradas.</p>
+
+      <p>Un amplificador de instrumentación ofrece alta impedancia y
+        rechazo de modo común. Una representación útil de su salida es</p>
+
+      <div class="equation">
+        \[
+        V_{\mathrm{ADC}}=V_{\mathrm{ref}}+G(V_A-V_B).
+        \]
+      </div>
+
+      <p>La ganancia $G$ aumenta la señal, y $V_{\mathrm{ref}}$ permite
+        colocarla dentro del intervalo de entrada del convertidor.
+        Para una salida del puente de hasta 10 mV, una ganancia de 200
+        produciría un recorrido de 2 V, al que hay que sumar el nivel
+        de referencia y los posibles desequilibrios. Hay que comprobar
+        los límites diferenciales, de modo común y de salida; no basta
+        con multiplicar la señal por la ganancia.</p>
+
+      <p>Existen circuitos que integran amplificación y referencia de
+        excitación, como el
+        <a href="https://www.ti.com/product/INA125">INA125</a>,
+        y módulos que incorporan además filtrado, conversión y una
+        interfaz digital. Las conexiones y tensiones admisibles dependen
+        del módulo concreto.</p>
+
+      <h3>Excitación y autocalentamiento</h3>
+
+      <p>Aumentar la excitación mejora la amplitud de señal, pero también
+        aumenta la potencia disipada. En un puente equilibrado con cuatro
+        resistencias iguales a $R_0$, cada una recibe aproximadamente
+        la mitad de la tensión y disipa</p>
+
+      <div class="equation">
+        \[
+        P_g=\frac{V_{\mathrm{ex}}^2}{4R_0}.
+        \]
+      </div>
+
+      <p>Con 5 V y $350\,\Omega$, son unos 17.9 mW por galga.
+        Para $120\,\Omega$ ascienden a 52.1 mW. La temperatura alcanzada
+        depende de la superficie, el soporte y la disipación, por lo que
+        esos números no constituyen límites universales de operación.
+        Debe respetarse la excitación recomendada para el sensor.</p>
+
+      <h3>Medición ratiométrica y cables de seis hilos</h3>
+
+      <p>Un convertidor ratiométrico utiliza una referencia relacionada
+        con la excitación del puente. Como su código depende de
+        $V_o/V_{\mathrm{ref,ADC}}$, si ambas tensiones cambian en la
+        misma proporción, gran parte del efecto de la variación de
+        alimentación se cancela. Esto no elimina el ruido añadido,
+        el autocalentamiento ni los errores mecánicos.</p>
+
+      <p>Una celda de cuatro hilos suele tener dos de excitación y dos
+        de señal. En una conexión de seis hilos se agregan dos de
+        <em>sense</em> para medir la excitación que realmente llega
+        al puente. El acondicionador puede utilizarla para regular o
+        referenciar la medición, compensando la caída de tensión en
+        los cables. No es la misma técnica que el cuarto de puente
+        de tres hilos explicado antes.</p>
+
+      <h2>Una báscula de laboratorio con HX711 y ESP32</h2>
+
+      <p>El HX711 combina un amplificador programable y un convertidor
+        analógico-digital de 24 bits diseñado para puentes de medición.
+        Su canal A admite ganancias de 128 o 64; el canal B utiliza 32.
+        Con oscilador interno ofrece 10 u 80 conversiones por segundo,
+        según la conexión del terminal RATE.</p>
+
+      <figure>
+        <img src="./galgas-hx711.png" width="836" height="779"
+          alt="Módulo de adquisición HX711 con conectores para una celda de carga y un microcontrolador."
+          style="width: 100%; max-width: 330px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 7. Módulo HX711. La disposición física y la
+          alimentación de las placas comerciales varían; las conexiones
+          deben identificarse por su función y documentación.</figcaption>
+      </figure>
+
+      <p>Según la
+        <a href="https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf">hoja de datos de AVIA Semiconductor</a>,
+        el intervalo diferencial nominal es aproximadamente
+        $\pm V_{\mathrm{AVDD}}/(2G)$. Con $V_{\mathrm{AVDD}}=5$ V y
+        $G=128$ corresponde a $\pm19.53$ mV, habitualmente redondeado
+        a $\pm20$ mV. También deben cumplirse sus límites de modo común.</p>
+
+      <p>La interfaz usa DOUT para datos y PD_SCK para reloj. No es I²C
+        ni una conexión UART. El fabricante exige mantener PD_SCK bajo
+        mientras se espera una conversión; un nivel alto de más de
+        $60\,\mu\mathrm{s}$ activa el modo de bajo consumo. Una
+        biblioteca adecuada se encarga de los tiempos de lectura.</p>
+
+      <h3>Conectar la celda al módulo</h3>
+
+      <p>Para el ejemplo utilizaremos una celda con puente completo de
+        cuatro hilos y un módulo compatible con alimentación y lógica
+        de 3.3 V. Primero identificamos las funciones del cable de la
+        celda, sin asumir un código de colores universal.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Conexión de la celda de carga al canal A del HX711.">
+\begin{tabular}{lll}
+\hline
+Función en la celda & Terminal del HX711 & Propósito \\
+\hline
+Excitación positiva & E+ & Alimentación del puente \\
+Excitación negativa & E- & Retorno de excitación \\
+Señal positiva & A+ & Entrada diferencial positiva \\
+Señal negativa & A- & Entrada diferencial negativa \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los terminales A+ y A− no son alimentación ni tierra. Intercambiarlos
+        cambia el signo de la lectura. Los cables E+ y E− tampoco se
+        conectan a los pines de datos del microcontrolador. Si se dispone
+        de un sensor de medio puente o de una galga aislada, hace falta
+        completar el puente con una conexión adecuada antes de utilizar
+        este ejemplo.</p>
+
+      <h3>Conectar el módulo al ESP32</h3>
+
+      <script type="text/tabjax" data-caption="Tabla 4. Ejemplo para un ESP32 clásico de desarrollo y un módulo HX711 compatible con 3.3 V.">
+\begin{tabular}{lll}
+\hline
+Terminal del módulo & Conexión al ESP32 & Función \\
+\hline
+VCC & 3V3 & Alimentación compatible \\
+GND & GND & Referencia común \\
+DOUT o DT & GPIO25 & Datos del HX711 al ESP32 \\
+PD\_SCK o SCK & GPIO26 & Reloj del ESP32 al HX711 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los números corresponden a GPIO, no a la posición física del
+        conector. En variantes ESP32-C3, ESP32-S3 o equipos M5Stack,
+        deben elegirse pines disponibles según el esquema de la placa.
+        La alimentación digital del HX711 y sus niveles de salida
+        tienen que ser compatibles con los 3.3 V del ESP32.</p>
+
+      <aside class="remark">
+        <p><strong>No todas las placas HX711 se alimentan igual.</strong>
+          Algunas separan la alimentación analógica de la digital y otras
+          las unen. No conectes DOUT a un ESP32 si puede entregar 5 V.
+          Antes de energizar, verifica la documentación del módulo, la
+          excitación real entre E+ y E− y los límites del sensor. Una
+          placa con un regulador analógico pensado para otra tensión
+          puede no conservar sus prestaciones alimentada a 3.3 V.</p>
+      </aside>
+
+      <h2>Calibrar, tarar y verificar</h2>
+
+      <p>La lectura digital del convertidor está en cuentas, no en kilogramos.
+        Una aproximación lineal de la cadena completa es</p>
+
+      <div class="equation">
+        \[
+        N=N_0+K_m m,\qquad
+        \widehat m=\frac{N-N_0}{K_m}.
+        \]
+      </div>
+
+      <p>$N_0$ representa el cero del montaje y $K_m$ la sensibilidad en
+        cuentas por kilogramo. La <strong>tara</strong> fija el origen de
+        la lectura, por ejemplo para descontar el plato o un recipiente;
+        no determina la sensibilidad. Una calibración de dos puntos
+        utiliza el estado de referencia y una masa conocida,</p>
+
+      <div class="equation">
+        \[
+        K_m=\frac{N_{\mathrm{ref}}-N_0}{m_{\mathrm{ref}}}.
+        \]
+      </div>
+
+      <p>Por ejemplo, si el promedio sin carga es $N_0=12000$ y con
+        una masa de 1 kg es $N_{\mathrm{ref}}=871000$, resulta
+        $K_m=859000$ cuentas/kg. Una lectura de 441500 cuentas
+        corresponde entonces a 0.5 kg. El factor depende de la celda,
+        la electrónica, la ganancia y el montaje; no debe copiarse
+        de otra báscula.</p>
+
+      <p>La sensibilidad puede ser negativa si la polaridad de la señal
+        está invertida. La conversión sigue siendo válida si se conserva
+        su signo. Tomar el valor absoluto de todas las lecturas ocultaría
+        cambios de sentido y dificultaría el diagnóstico.</p>
+
+      <h3>Un procedimiento reproducible</h3>
+
+      <ol>
+        <li>Instalar la celda con sus apoyos definitivos, retirar cualquier
+          roce y comprobar que la carga no excederá su capacidad.</li>
+        <li>Energizar el sistema y esperar a que la lectura se estabilice.
+          El tiempo necesario depende de la electrónica y del equilibrio térmico.</li>
+        <li>Con el plato o recipiente vacío, registrar un promedio y ajustar
+          el cero. No mover el montaje mientras se adquieren las muestras.</li>
+        <li>Aplicar una masa de referencia conocida, suficientemente grande
+          dentro del intervalo permitido, esperar la estabilización y
+          calcular la sensibilidad.</li>
+        <li>Comprobar varias masas intermedias y repetir la secuencia tanto
+          en carga ascendente como descendente.</li>
+        <li>Retirar la carga y comprobar el retorno al cero. Repetir cargas
+          y posiciones permite examinar repetibilidad y excentricidad.</li>
+      </ol>
+
+      <p>Un objeto etiquetado como «1 kg» no es necesariamente un patrón
+        adecuado para cualquier exactitud deseada. La incertidumbre de
+        la referencia limita la de la calibración. Tampoco basta con
+        ajustar perfectamente dos puntos si el comportamiento entre ellos
+        o en el recorrido de descarga es distinto.</p>
+
+      <h3>Varios puntos revelan lo que una sola pendiente oculta</h3>
+
+      <p>Con observaciones $(m_i,N_i)$ puede ajustarse la recta
+        $N_i\approx a+b m_i$ por mínimos cuadrados. Para masas de
+        referencia cuya incertidumbre tenga un efecto despreciable sobre
+        $N$ frente a la dispersión de las lecturas, las expresiones son</p>
+
+      <div class="equation">
+        \[
+        b=\frac{\sum_i(m_i-\overline m)(N_i-\overline N)}
+        {\sum_i(m_i-\overline m)^2},\qquad
+        a=\overline N-b\overline m,\qquad
+        \widehat m=\frac{N-a}{b}.
+        \]
+      </div>
+
+      <p>Los residuos $e_i=N_i-(a+b m_i)$ ayudan a detectar curvatura,
+        puntos anómalos o errores de adquisición. Para expresarlos
+        aproximadamente como error de masa se dividen entre la
+        sensibilidad $b$. Si la incertidumbre de las masas no es
+        despreciable, el procedimiento de ajuste debe considerarla.</p>
+
+      <figure>
+        <img src="./galgas-calibracion.png" width="1500" height="1000"
+          alt="Ejemplo de calibración con datos sintéticos de cero a cinco kilogramos. La gráfica superior muestra una relación casi lineal entre masa y cuentas, y la inferior revela los residuos respecto del ajuste."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 8. Ejemplo con datos sintéticos, no mediciones
+          de una celda real. Una gráfica de respuesta aparentemente recta
+          puede ocultar discrepancias que se distinguen al ampliar los residuos.</figcaption>
+      </figure>
+
+      <p>El ajuste produce coeficientes, pero la calibración también debe
+        documentar las condiciones y la incertidumbre. La histéresis no
+        desaparece al elegir una recta distinta, ni todos los errores
+        pueden reducirse aumentando el número de muestras.</p>
+
+      <h2>Programa de lectura con Arduino para ESP32</h2>
+
+      <p>El siguiente ejemplo utiliza la biblioteca
+        <a href="https://github.com/bogde/HX711/tree/0.7.5"><code>HX711</code> de Bogdan Necula, versión 0.7.5</a>,
+        con el framework de Arduino. Puede instalarse desde el gestor de
+        bibliotecas de Arduino IDE. Selecciona la placa apropiada y abre
+        el monitor serial a 115200 bit/s. El archivo completo está disponible
+        como <a href="./galgas_hx711/galgas_hx711.ino" download><code>galgas_hx711.ino</code></a>.</p>
+
+      <p>Antes de cargarlo, asigna a <code>MASA_REFERENCIA_KG</code> la masa
+        que utilizarás, en kilogramos. El ejemplo supone 1 kg, que debe
+        ser compatible con la capacidad de tu celda. No hay que colocar
+        esa masa hasta terminar la tara.</p>
+
+      <script type="text/cpp">
+#include <Arduino.h>
+#include <HX711.h>
+#include <math.h>
+
+constexpr uint8_t PIN_DOUT = 25;
+constexpr uint8_t PIN_SCK = 26;
+constexpr double MASA_REFERENCIA_KG = 1.0;
+constexpr uint8_t MUESTRAS = 10;
+
+HX711 adc;
+double cero = 0.0;
+double cuentasPorKg = 0.0;
+bool tieneTara = false;
+bool calibrada = false;
+
+bool leerPromedio(double &media) {
+    int64_t suma = 0;
+    for (uint8_t i = 0; i < MUESTRAS; ++i) {
+        if (!adc.wait_ready_timeout(1000, 1)) {
+            Serial.println("Sin datos del HX711. Revise las conexiones.");
+            return false;
+        }
+        const long lectura = adc.read();
+        if (lectura <= -8388608L || lectura >= 8388607L) {
+            Serial.println("ADC saturado. Revise el puente y la ganancia.");
+            return false;
+        }
+        suma += lectura;
+    }
+    media = static_cast<double>(suma) / MUESTRAS;
+    return true;
+}
+
+void setup() {
+    Serial.begin(115200);
+    adc.begin(PIN_DOUT, PIN_SCK, 128);
+    digitalWrite(PIN_SCK, LOW);
+    delay(500);
+    Serial.println("Retire la carga y envíe t para tarar.");
+    Serial.println("Después coloque la masa de referencia y envíe c.");
+    Serial.print("Masa de referencia (kg): ");
+    Serial.println(MASA_REFERENCIA_KG, 3);
+}
+
+void loop() {
+    if (Serial.available() > 0) {
+        const char comando = Serial.read();
+        double media = 0.0;
+        if (comando == 't' && leerPromedio(media)) {
+            cero = media;
+            tieneTara = true;
+            Serial.println("Tara realizada. La sensibilidad se conserva.");
+        } else if (comando == 'c') {
+            if (!tieneTara) {
+                Serial.println("Primero retire la carga y envíe t.");
+            } else if (leerPromedio(media)) {
+                const double diferencia = media - cero;
+                if (MASA_REFERENCIA_KG <= 0.0 || fabs(diferencia) < 1000.0) {
+                    Serial.println("Calibración rechazada: revise la masa y la señal.");
+                } else {
+                    cuentasPorKg = diferencia / MASA_REFERENCIA_KG;
+                    calibrada = true;
+                    Serial.print("Sensibilidad (cuentas/kg): ");
+                    Serial.println(cuentasPorKg, 3);
+                }
+            }
+        }
+    }
+
+    if (calibrada) {
+        double media = 0.0;
+        if (leerPromedio(media)) {
+            const double masaKg = (media - cero) / cuentasPorKg;
+            Serial.print("Masa (kg): ");
+            Serial.println(masaKg, 3);
+        }
+    }
+    delay(100);
+}
+      </script>
+
+      <h3>Secuencia de operación</h3>
+
+      <p>Con la plataforma descargada, envía <code>t</code> y espera la
+        confirmación de tara. Después coloca la masa de referencia, deja
+        que se estabilice y envía <code>c</code>. La báscula comenzará
+        a mostrar la masa. Puedes retirar la referencia y comprobar otras
+        cargas. Una nueva orden <code>t</code> modifica el cero, pero
+        conserva la sensibilidad ya calculada.</p>
+
+      <p>El programa no tara ni calibra automáticamente en cada vuelta de
+        <code>loop()</code>. Hacerlo borraría el cambio de carga que
+        pretendemos medir. Los coeficientes se conservan en RAM y se
+        pierden al reiniciar; para un instrumento de uso habitual pueden
+        guardarse en memoria no volátil junto con su fecha y condiciones
+        de calibración.</p>
+
+      <p>Cada promedio comprueba la disponibilidad de las muestras y
+        rechaza los extremos de saturación del convertidor. El umbral
+        de 1000 cuentas durante el ajuste evita aceptar una diferencia
+        casi nula en este ejemplo; no determina la exactitud ni comprueba
+        que se haya colocado la masa correcta. La saturación eléctrica
+        tampoco es una protección contra sobrecarga mecánica.</p>
+
+      <p>Promediar diez conversiones a 10 muestras/s requiere aproximadamente
+        un segundo. Eso es adecuado para una demostración de pesaje lento,
+        no para registrar impactos o cerrar un lazo de fuerza rápido.
+        Durante el promedio, las órdenes seriales esperan. Los 500 ms
+        iniciales permiten el arranque electrónico, pero no garantizan
+        equilibrio térmico de toda la báscula.</p>
+
+      <aside class="remark">
+        <p><strong>Veinticuatro bits no significan veinticuatro bits de exactitud.</strong>
+          El ruido, la deriva, la celda, la referencia y el montaje limitan
+          los dígitos útiles. Mostrar tres decimales de kilogramo solo
+          fija el formato de salida; no demuestra una incertidumbre de
+          un gramo. Debe evaluarse experimentalmente qué cambios de carga
+          puede distinguir el sistema de manera repetible.</p>
+      </aside>
+
+      <h2>Ruido, instalación y errores que parecen eléctricos</h2>
+
+      <p>La señal es pequeña, por lo que conviene mantener la entrada
+        analógica alejada de motores, relés y convertidores de potencia.
+        Los pares de señal trenzados, las conexiones firmes y el
+        desacoplamiento de alimentación ayudan a reducir interferencias.
+        El blindaje se conecta según las recomendaciones del equipo;
+        no debe utilizarse como sustituto de un conductor de señal o
+        de retorno de excitación.</p>
+
+      <p>El promedio reduce el ruido aleatorio aproximadamente en proporción
+        a $1/\sqrt n$ solo si las muestras aportan ruido suficientemente
+        independiente. No elimina deriva térmica, histéresis ni vibración
+        sistemática. Además, el filtrado reduce el ancho de banda y
+        retrasa la indicación. En una báscula interesa estabilidad;
+        en un ensayo dinámico puede interesar conservar cambios rápidos.</p>
+
+      <h3>Adherir una galga también es parte de la medición</h3>
+
+      <p>Para instrumentar una pieza directamente, la preparación de la
+        superficie, la alineación, el adhesivo y su curado deben seguir
+        el procedimiento del fabricante. Una unión defectuosa no transmite
+        fielmente la deformación. También hay que proteger la instalación
+        frente a humedad y agentes químicos, aliviar los esfuerzos del
+        cable y comprobar el aislamiento respecto del cuerpo metálico.</p>
+
+      <p>Una rejilla más larga promedia sobre una región mayor; una más
+        corta permite observar gradientes más localizados, pero puede
+        exigir mayor cuidado de instalación y disipación. La sensibilidad
+        transversal no es exactamente cero. La elección de la galga debe
+        corresponder al material, al campo de deformación y al ambiente.</p>
+
+      <h3>Comprobación por resistencia de derivación</h3>
+
+      <p>Una prueba <em>shunt</em> coloca una resistencia conocida $R_s$
+        en paralelo con una galga de resistencia $R_0$. La resistencia
+        equivalente y su cambio son</p>
+
+      <div class="equation">
+        \[
+        R'=\frac{R_0R_s}{R_0+R_s},\qquad
+        \frac{\Delta R}{R_0}=-\frac{R_0}{R_0+R_s},\qquad
+        \varepsilon_{\mathrm{eq}}=-\frac{R_0}{G_F(R_0+R_s)}.
+        \]
+      </div>
+
+      <p>Ese cambio eléctrico permite verificar una parte de la cadena
+        de adquisición y su sensibilidad. La salida y su signo dependen
+        del brazo seleccionado y del lugar donde se conecta la resistencia.
+        No verifica que la fuerza llegue correctamente a la celda, ni
+        comprueba el adhesivo o la geometría mecánica. Por ello no sustituye
+        una calibración con fuerzas o masas de referencia.</p>
+
+      <h2>Del prototipo al pesaje industrial</h2>
+
+      <p>En una instalación industrial suele emplearse un transmisor que
+        excita el puente, amplifica la señal, filtra y convierte la
+        medición a una interfaz adecuada para el sistema de control.
+        Según el equipo, la salida puede ser de 0–10 V, 4–20 mA o una
+        comunicación digital. La celda, el transmisor y el controlador
+        tienen especificaciones distintas que deben ser compatibles.</p>
+
+      <p>Un lazo de corriente evita que una caída de tensión moderada en
+        el cable se interprete directamente como un cambio de medida,
+        siempre que el transmisor conserve el margen de tensión necesario.
+        Esto no lo vuelve inmune a cualquier interferencia o conexión
+        incorrecta. Hay que conocer si la salida y la entrada son activas
+        o pasivas, su alimentación y el aislamiento requerido.</p>
+
+      <p>Para un transmisor ajustado a un intervalo de fuerza
+        $[F_{\min},F_{\max}]$, la conversión de una corriente $I$ es</p>
+
+      <div class="equation">
+        \[
+        F=F_{\min}+\frac{I-4\,\mathrm{mA}}{16\,\mathrm{mA}}
+        (F_{\max}-F_{\min}).
+        \]
+      </div>
+
+      <p>Si el intervalo es 0–10 kN, una salida de 12 mA representa 5 kN.
+        Una corriente fuera del intervalo puede corresponder a una falla
+        o a una sobreescala, según la configuración. No debe interpretarse
+        automáticamente como una fuerza válida.</p>
+
+      <h3>Una tolva apoyada en varias celdas</h3>
+
+      <p>En equilibrio estático, si toda la reacción vertical pasa por
+        las celdas y no existen otras fuerzas verticales externas,
+        el peso total es la suma de sus lecturas de fuerza,</p>
+
+      <div class="equation">
+        \[
+        F_{\mathrm{total}}=\sum_{i=1}^{n}F_i,\qquad
+        m_{\mathrm{contenido}}=
+        \frac{\sum_i F_i-F_{\mathrm{tara}}}{g}.
+        \]
+      </div>
+
+      <figure>
+        <img src="./galgas-tolva-horizontal.png" width="1448" height="1086"
+          alt="Tolva sobre cuatro celdas de carga. De cada celda sale un cable independiente hacia una de las cuatro entradas de una caja acostada, con la tapa hacia arriba y sin rótulo; una única salida conecta la caja con el indicador digital de peso."
+          style="width: 100%; max-width: 720px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 9. Pesaje de una tolva mediante celdas de carga
+          situadas en sus apoyos y conectadas al sistema de acondicionamiento
+          e indicación.</figcaption>
+      </figure>
+
+      <p>Las cargas individuales no tienen por qué ser iguales. El centro
+        de masa, la nivelación y la rigidez de los apoyos modifican su
+        reparto. Las tuberías, escaleras, conexiones rígidas y cables
+        pueden transferir fuerzas adicionales y alterar la lectura.
+        Por eso se utilizan montajes apropiados, conexiones flexibles
+        cuando corresponda y verificaciones en el sistema instalado.</p>
+
+      <p>Las celdas pueden conectarse a una caja sumadora diseñada para
+        compatibilizar sus señales o medirse en canales separados y
+        sumarse después de calibrar cada canal. No se suman directamente
+        los valores de milivoltios como si fueran fuerzas, ni se conectan
+        puentes en paralelo sin comprobar la capacidad de excitación,
+        las sensibilidades y las instrucciones del acondicionador.</p>
+
+      <h2>Una medición confiable requiere cerrar toda la cadena</h2>
+
+      <p>La galga convierte deformación en resistencia; el puente convierte
+        desequilibrio en tensión; el acondicionador y el convertidor
+        producen una lectura utilizable. La celda de carga agrega una
+        estructura que relaciona esa deformación con una fuerza. La
+        calibración completa el recorrido y permite expresar el resultado
+        con unidades y un alcance conocidos.</p>
+
+      <p>Antes de confiar en una indicación, conviene comprobar tres
+        aspectos. La carga debe atravesar el sensor de la manera prevista,
+        la cadena eléctrica debe trabajar dentro de sus límites, y el
+        resultado debe verificarse con referencias independientes del
+        ajuste. Esa combinación de mecánica, electrónica y metrología
+        distingue una lectura que cambia al colocar un objeto de una
+        medición de fuerza que realmente puede utilizarse.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>AVIA Semiconductor. (2026). <a href="https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf"><em>HX711:
+          24-bit analog-to-digital converter (ADC) for weigh scales</em></a>
+          [Hoja de datos].</li>
+        <li>Micro-Measurements. (2026). <a href="https://docs.micro-measurements.com/?id=13752"><em>The
+          three-wire quarter-bridge circuit</em></a> (Tech Tip TT-612).
+          Vishay Precision Group.</li>
+        <li>Necula, B., y colaboradores. (2026). <a href="https://github.com/bogde/HX711/tree/0.7.5"><em>HX711</em></a>
+          (Versión 0.7.5) [Biblioteca de Arduino]. GitHub.</li>
+        <li>NI. (2026). <a href="https://www.ni.com/en/shop/data-acquisition/sensor-fundamentals/measuring-strain-with-strain-gages.html"><em>Measuring
+          strain with strain gages</em></a>.</li>
+        <li>Novatech Measurements Limited. (2026). <a href="https://novatechloadcells.co.uk/products/f238-binocular-bending-beam/"><em>F238
+          binocular bending beam</em></a> [Ficha técnica].</li>
+        <li>Texas Instruments. (2026). <a href="https://www.ti.com/product/INA125"><em>INA125:
+          Instrumentation amplifier with precision voltage reference</em></a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+</html>
