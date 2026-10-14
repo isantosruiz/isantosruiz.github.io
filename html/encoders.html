@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Tutorial de encoders rotacionales y señales en cuadratura. Medición de posición angular con un KY-040, ESP32, Arduino e iKY040, con conexiones, calibración y código C++ completo." />
+  <title>Medición de posición angular mediante encoders rotacionales</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="cpp" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Medición de posición angular mediante encoders rotacionales</h1>
+        <p class="subtitle">Señales en cuadratura, conteo bidireccional y lectura del encoder KY-040 con un microcontrolador ESP32.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Un encoder rotacional convierte el movimiento de un eje en información
+          eléctrica que permite medir su posición o sus cambios de posición. En los
+          encoders incrementales, dos señales desfasadas contienen tanto el avance
+          angular como el sentido de giro. Aprender a interpretarlas requiere distinguir
+          entre ciclos, transiciones, cuentas y posiciones mecánicas. Desarrollaremos
+          esa relación y construiremos un lector de un módulo KY-040 con un ESP32,
+          el framework de Arduino y la librería iKY040 desarrollada por el autor. El programa mostrará la
+          posición acumulada, el ángulo dentro de una vuelta y el sentido neto del
+          movimiento, con una referencia que puede restablecerse mediante el
+          pulsador. También examinaremos la calibración, el rebote de los contactos
+          y los límites de esta solución.</p>
+      </section>
+
+      <h2>Medir un giro</h2>
+
+      <p>Para mover un mecanismo no siempre basta con ordenar que un motor gire.
+        Con frecuencia necesitamos saber cuánto ha girado realmente y en qué
+        dirección. Esa información permite cerrar un lazo de control, detectar
+        desplazamientos inesperados o traducir el movimiento de una perilla en
+        una instrucción digital. El dispositivo que convierte el giro en una
+        representación eléctrica de la posición se denomina <strong>encoder
+        rotacional</strong> o codificador angular.</p>
+
+      <p>Los encoders aparecen en articulaciones robóticas, ejes de máquinas
+        herramienta, servomotores, ruedas de vehículos móviles, mecanismos de
+        posicionamiento y mandos de instrumentos. Con una transmisión conocida,
+        también pueden medir desplazamiento lineal. Por ejemplo, un encoder
+        acoplado a una rueda de radio $r$ permite relacionar su ángulo $\theta$
+        con el avance $s=r\theta$, siempre que $\theta$ se exprese en radianes
+        y no exista deslizamiento.</p>
+
+      <p>No todos esos usos requieren el mismo sensor. Una perilla manual admite
+        una resolución modesta y contactos mecánicos; un eje industrial rápido
+        puede necesitar detección óptica o magnética, mejor resolución y una
+        interfaz eléctrica más resistente al ruido. El KY-040 es un módulo
+        económico apropiado para aprender los principios y construir mandos
+        manuales. No debe confundirse con un encoder industrial de alta precisión.</p>
+
+      <figure>
+        <img src="./encoders-ky040.png" width="800" height="800"
+          alt="Módulo KY-040 con eje metálico giratorio y pulsador integrado. La placa identifica los terminales GND, +, SW, DT y CLK."
+          style="width: 100%; max-width: 300px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 1. Encoder incremental KY-040. El eje puede girar y
+          también presionarse; el pulsador constituye una entrada independiente
+          de los dos canales de rotación.</figcaption>
+      </figure>
+
+      <h2>Incremental no significa absoluto</h2>
+
+      <p>Un <strong>encoder absoluto</strong> entrega un código asociado a una
+        posición dentro de su rango de medición. Según su diseño, ese rango puede
+        comprender una vuelta o varias. Un <strong>encoder incremental</strong>,
+        en cambio, produce cambios de señal al moverse. La posición se reconstruye
+        contando esos cambios a partir de una referencia.</p>
+
+      <p>El KY-040 pertenece al segundo grupo. No entrega directamente «el eje
+        está a 90 grados» ni permite conocer su posición anterior a un encendido.
+        Si el programa asigna cero al arrancar, ese cero es una elección lógica
+        asociada a la orientación inicial, no una marca absoluta del sensor.
+        Mover el eje mientras el sistema está apagado no deja un registro que
+        pueda recuperarse al volver a encenderlo.</p>
+
+      <p>A diferencia de un potenciómetro, el KY-040 no codifica el ángulo mediante
+        una tensión analógica proporcional ni impone necesariamente un recorrido
+        limitado por topes. Sus dos canales digitales permiten contar vueltas
+        sucesivas. El límite práctico de ese conteo dependerá del programa y del
+        tipo de contador utilizado.</p>
+
+      <aside class="remark">
+        <p><strong>La referencia importa.</strong> Poner el contador a cero no
+          mueve físicamente el eje. En una máquina que necesite una posición
+          reproducible después del encendido se requiere un procedimiento de
+          referencia, por ejemplo con un sensor de origen. El pulsador del
+          KY-040 no es una señal de índice angular.</p>
+      </aside>
+
+      <h2>Dos señales para distinguir ambos sentidos</h2>
+
+      <p>Un canal digital aislado permite detectar cambios, pero no distingue
+        inequívocamente si un patrón periódico se recorre hacia adelante o hacia
+        atrás. La solución habitual consiste en disponer de dos canales,
+        llamados $A$ y $B$, cuyos cambios ocurren en posiciones angulares
+        diferentes. En una representación ideal, sus señales están desfasadas
+        un cuarto de ciclo eléctrico, es decir, 90 grados eléctricos. Por eso
+        se denominan <strong>señales en cuadratura</strong>.</p>
+
+      <p>Esos 90 grados no son, en general, 90 grados de giro del eje. Si cada
+        vuelta mecánica genera $P$ ciclos por canal, un ciclo eléctrico ocupa
+        $360^\circ/P$ de giro mecánico. El desfase de un cuarto de ciclo
+        corresponde entonces a $360^\circ/(4P)$. A velocidad constante puede
+        representarse como un desfase temporal; si el eje acelera, los intervalos
+        entre flancos dejan de ser iguales.</p>
+
+      <h3>Contactos, resistencias y niveles lógicos</h3>
+
+      <p>En un encoder mecánico, los contactos se abren y se cierran conforme
+        gira una pieza conductora. Las resistencias de elevación, o
+        <em>pull-up</em>, mantienen las salidas en nivel alto cuando los contactos
+        están abiertos. Al cerrarse un contacto hacia el terminal común conectado
+        a tierra, su salida toma un nivel bajo. Los canales del módulo se
+        identifican como <code>CLK</code> y <code>DT</code>; en este tutorial
+        usaremos $A=\mathrm{CLK}$ y $B=\mathrm{DT}$.</p>
+
+      <figure>
+        <img src="./encoders-contactos.png" width="1543" height="1019"
+          alt="Esquema funcional de un encoder mecánico. Dos contactos A y B se conectan a VCC mediante resistencias de elevación y una pieza giratoria los conecta alternativamente al común C, unido a tierra."
+          style="width: 100%; max-width: 440px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 2. Principio de funcionamiento de los contactos y las
+          resistencias de elevación. En el montaje con ESP32, VCC será 3.3 V.
+          La forma del rotor es esquemática y no especifica la resolución real
+          del módulo.</figcaption>
+      </figure>
+
+      <p>El nombre <code>CLK</code> no significa que exista un reloj de frecuencia
+        constante. Es uno de los canales del encoder y solo cambia cuando el
+        movimiento atraviesa las posiciones correspondientes. Tampoco debe
+        interpretarse <code>DT</code> como una línea de datos independiente de
+        la posición; ambos canales forman un mismo código de dos bits.</p>
+
+      <h3>El orden de los estados revela el sentido</h3>
+
+      <p>Adoptaremos como positivo el giro horario, observado de frente al extremo
+        del eje. Con la asignación de canales representada en la figura siguiente,
+        un ciclo horario recorre los estados</p>
+
+      <div class="equation">
+        \[
+        11\longrightarrow01\longrightarrow00\longrightarrow10\longrightarrow11,
+        \]
+      </div>
+
+      <p>mientras que el giro contrario recorre la secuencia inversa,</p>
+
+      <div class="equation">
+        \[
+        11\longrightarrow10\longrightarrow00\longrightarrow01\longrightarrow11.
+        \]
+      </div>
+
+      <p>El primer bit representa $A$ y el segundo, $B$. Solo cambia un bit entre
+        estados consecutivos ideales, una propiedad característica del código
+        Gray. El decodificador compara el estado actual con el anterior y asigna
+        a cada transición válida un incremento de $+1$ o de $-1$.</p>
+
+      <figure>
+        <img src="./encoders-cuadratura.png" width="765" height="623"
+          alt="Señales A y B para giro horario y antihorario. En los cuatro instantes indicados, el giro horario recorre 01, 00, 10, 11 y el antihorario recorre 10, 00, 01, 11."
+          style="width: 100%; max-width: 640px; height: auto; display: block; margin: 0 auto;" />
+        <figcaption>Figura 3. La inversión del giro cambia el orden de los flancos.
+          Las tablas muestran los niveles lógicos en los instantes señalados.
+          La correspondencia física con CW y CCW debe comprobarse con el
+          cableado y la perspectiva de observación elegidos.</figcaption>
+      </figure>
+
+      <p>Intercambiar $A$ y $B$ invierte el signo del conteo. También lo invierte
+        observar el eje desde el extremo contrario. Por ello, el nombre «horario»
+        no puede deducirse de dos cables sin establecer antes una convención.
+        Al probar el montaje confirmaremos que un giro horario aumenta el
+        contador; si no ocurre así, invertiremos el sentido por software.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Incremento por transición para la convención de las secuencias anteriores. Las filas son estados anteriores y las columnas, estados nuevos.">
+\begin{tabular}{lcccc}
+\hline
+Anterior / nuevo & $00$ & $01$ & $10$ & $11$ \\
+\hline
+$00$ & $0$ & $-1$ & $+1$ & Inválida \\
+$01$ & $+1$ & $0$ & Inválida & $-1$ \\
+$10$ & $-1$ & Inválida & $0$ & $+1$ \\
+$11$ & Inválida & $+1$ & $-1$ & $0$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Una transición como $00\rightarrow11$ cambia ambos bits y no permite
+        identificar qué estado intermedio ocurrió primero. Puede deberse a ruido
+        o a una lectura que omitió un cambio. La implementación de iKY040 asigna
+        incremento cero a esas transiciones, pero eso no recupera el movimiento
+        que se haya perdido.</p>
+
+      <h2>De las transiciones al ángulo</h2>
+
+      <p>Conviene separar cuatro cantidades que con frecuencia se confunden.
+        Un <strong>ciclo</strong> es una repetición completa de la señal de un
+        canal. Una <strong>transición</strong> es un cambio de nivel en cualquiera
+        de los dos canales. Una <strong>cuenta</strong> es la unidad que decide
+        entregar el decodificador. Una <strong>muesca</strong> (<em>detent</em>) es una posición
+        de retención mecánica que se percibe como un pequeño clic al girar.</p>
+
+      <p>Si hay $P$ ciclos por vuelta y se cuentan los cuatro flancos de cada
+        ciclo de cuadratura, se detectan idealmente $4P$ transiciones por vuelta.
+        Contar un solo flanco por ciclo, los dos flancos de un canal o los cuatro
+        de ambos canales suele denominarse decodificación $\times1$, $\times2$
+        o $\times4$, respectivamente.</p>
+
+      <p>iKY040 recibe cambios de ambos canales y permite agrupar $q$ transiciones
+        netas para producir una cuenta. Su parámetro se llama
+        <code>stepsPerDetent</code>, aunque la coincidencia de esa cuenta con un
+        clic mecánico depende del encoder instalado. Para una vuelta completa
+        sin pérdidas, y cuando la agrupación divide exactamente el total, se cumple</p>
+
+      <div class="equation">
+        \[
+        C=\frac{4P}{q},
+        \qquad
+        \Delta\theta=\frac{360^\circ}{C},
+        \]
+      </div>
+
+      <p>donde $C$ es el número de <strong>cuentas entregadas por vuelta</strong>.
+        Con $q=4$, el contador avanza una unidad por cada ciclo eléctrico completo.
+        Configurar $q=1$ entrega las transiciones individuales; no cambia la
+        mecánica ni convierte un sensor con rebote en un instrumento de precisión.</p>
+
+      <aside class="remark">
+        <p><strong>Los clics no son una especificación angular suficiente.</strong>
+          Existen encoders con relaciones diferentes entre pulsos y muescas;
+          por ejemplo, la familia
+          <a href="https://www.bourns.com/docs/Product-Datasheets/pec11R.pdf">PEC11R
+          de Bourns</a> ofrece varias combinaciones. Esto no identifica al componente
+          de un KY-040 concreto. La resolución debe determinarse para el módulo y
+          la configuración de conteo que se estén usando.</p>
+      </aside>
+
+      <p>Si $N$ es el conteo acumulado y se asigna $N=0$ a una orientación de
+        referencia $\theta_0$, el ángulo estimado es</p>
+
+      <div class="equation">
+        \[
+        \widehat\theta=\theta_0+\frac{2\pi N}{C}
+        \quad\text{rad},
+        \qquad
+        \widehat\theta_{\mathrm{deg}}=\theta_{0,\mathrm{deg}}+
+        \frac{360N}{C}.
+        \]
+      </div>
+
+      <p>En el programa fijaremos $\theta_0=0$. La lectura acumulada puede superar
+        una vuelta o ser negativa. Para representar solamente la orientación
+        dentro de una vuelta usaremos</p>
+
+      <div class="equation">
+        \[
+        N_{\mathrm{vuelta}}=((N\bmod C)+C)\bmod C,
+        \qquad
+        \theta_{\mathrm{vuelta}}=\frac{360N_{\mathrm{vuelta}}}{C}
+        \in[0,360^\circ).
+        \]
+      </div>
+
+      <p>La normalización es importante porque el operador <code>%</code> de C++
+        puede producir un resto negativo. Si $C=20$, una cuenta representa
+        $18^\circ$; $N=-1$ corresponde a $-18^\circ$ acumulados y a $342^\circ$
+        dentro de la vuelta. Es un ejemplo numérico, no una afirmación de que
+        todos los módulos KY-040 entreguen 20 cuentas por revolución.</p>
+
+      <h2>El rebote y la lectura por interrupciones</h2>
+
+      <p>Un contacto mecánico no cambia siempre una sola vez al abrirse o cerrarse.
+        Puede alternar brevemente entre ambos estados, fenómeno conocido como
+        <strong>rebote</strong>. Contar cada flanco de un canal sin examinar el
+        estado del otro puede convertir esas oscilaciones en desplazamientos
+        inexistentes.</p>
+
+      <p>La tabla de transiciones aporta una defensa útil. Una ida y vuelta entre
+        dos estados vecinos aporta incrementos opuestos, que pueden cancelarse,
+        y los saltos de dos bits no aportan incremento. La agrupación de
+        transiciones también evita publicar cada variación intermedia. Estas
+        medidas no garantizan inmunidad frente a cualquier ruido, velocidad o
+        contacto defectuoso. Un cambio perdido puede dejar un error permanente
+        en una medición incremental.</p>
+
+      <p>Otra dificultad aparece si el programa consulta las entradas demasiado
+        despacio. Mientras imprime por el puerto serial o realiza otro trabajo,
+        podrían ocurrir varios cambios. iKY040 utiliza interrupciones en modo
+        <code>CHANGE</code> sobre ambos GPIO, mediante
+        <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/gpio.html"><code>attachInterruptArg</code>
+        de Arduino-ESP32</a>. Así, la decodificación se activa con los cambios
+        de las señales, mientras el bucle principal se ocupa de presentar las
+        lecturas y revisar el pulsador.</p>
+
+      <p>La librería protege el acceso a sus contadores con secciones críticas.
+        El programa utilizará <code>getPosition()</code> en lugar de intentar
+        leer directamente una variable modificada por una interrupción. Las
+        operaciones de impresión, los cálculos de ángulo y el manejo de la
+        interfaz permanecen fuera de la rutina de interrupción.</p>
+
+      <p>El pulsador <code>SW</code> tiene un tratamiento diferente. Su antirrebote
+        temporal se procesa al llamar a <code>update()</code> desde
+        <code>loop()</code>. <code>setButtonDebounce(30)</code> exige estabilidad
+        durante 30 ms para aceptar el cambio. Ese parámetro afecta al pulsador,
+        no introduce un filtro de 30 ms en los canales de rotación.</p>
+
+      <h2>Conexión del KY-040 al ESP32</h2>
+
+      <p>Necesitaremos un ESP32 clásico compatible con el framework de Arduino,
+        un KY-040, cinco conductores y una conexión USB para programar la placa
+        y observar el puerto serial. El ejemplo utiliza los GPIO predeterminados
+        de iKY040, indicados explícitamente en el programa. En placas ESP32-S3,
+        ESP32-C3 u otras variantes deben comprobarse los GPIO disponibles y
+        adaptar las conexiones; los números no son intercambiables entre todos
+        los modelos.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Conexión propuesta para un ESP32 clásico. Los números son GPIO, no posiciones físicas del conector.">
+\begin{tabular}{lll}
+\hline
+Terminal KY-040 & Función & Conexión ESP32 \\
+\hline
+CLK & Canal A & GPIO 13 \\
+DT & Canal B & GPIO 14 \\
+SW & Pulsador & GPIO 26 \\
++ & Alimentación & 3V3 \\
+GND & Referencia eléctrica & GND \\
+\hline
+\end{tabular}
+      </script>
+
+      <aside class="remark">
+        <p><strong>Alimentación y niveles lógicos.</strong> Conecta el módulo a
+          <strong>3.3 V, no a 5 V</strong>. Sus resistencias pueden elevar las
+          salidas hacia la tensión de alimentación y los GPIO del ESP32 no son
+          entradas tolerantes a 5 V. Tanto la
+          <a href="https://github.com/isantosruiz/iKY040">documentación de iKY040</a>
+          como las
+          <a href="https://docs.espressif.com/projects/esp-faq/en/latest/hardware-related/hardware-design.html">especificaciones
+          de Espressif</a> respaldan esta precaución. Realiza el cableado con la
+          alimentación desconectada y une las tierras.</p>
+      </aside>
+
+      <p>Identifica los terminales por la serigrafía de tu módulo, no solamente
+        por el orden que se observa en una fotografía. Mantén los cables cortos
+        y comprueba que no existan contactos intermitentes. El programa solicita
+        resistencias internas de elevación mediante <code>begin(true, ...)</code>.
+        En el ESP32 clásico, GPIO 13, 14 y 26 permiten esa configuración; GPIO
+        34 a 39 son de entrada y no disponen de elevación interna, como indica
+        la <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html">documentación
+        de GPIO</a>. Si se cambian los pines, también debe revisarse este detalle.</p>
+
+      <h2>Preparación de Arduino e iKY040</h2>
+
+      <ol>
+        <li>Instala el soporte de placas <strong>esp32 by Espressif Systems</strong>
+          en el gestor de placas del IDE de Arduino y selecciona el modelo
+          correspondiente a tu placa y su puerto serial.</li>
+        <li>Descarga la librería desde
+          <a href="https://github.com/isantosruiz/iKY040">isantosruiz/iKY040</a>.
+          Puedes instalar el ZIP del repositorio desde la opción de añadir una
+          biblioteca ZIP del IDE o colocar la carpeta de la librería en
+          <code>libraries</code>, siguiendo su documentación.</li>
+        <li>Abre el <a href="./encoders_ky040/encoders_ky040.ino" download>sketch
+          completo</a> o crea un sketch con el código siguiente. Su biblioteca
+          principal es <code>iKY040.h</code>; no se necesita una biblioteca de
+          pantallas ni una placa M5Stack para usar este ejemplo serial.</li>
+        <li>Compila, carga el programa y abre el monitor serial a
+          <strong>115200 baudios</strong>. Primero verifica el signo del conteo
+          y calibra las cuentas por vuelta antes de interpretar las lecturas
+          como ángulos.</li>
+      </ol>
+
+      <p>El ejemplo utiliza la API de <strong>iKY040 1.0.1</strong>. Su
+        <a href="https://github.com/isantosruiz/iKY040/blob/fa05d8b18b84c07febab1df80432065b8c844955/src/iKY040.cpp">implementación</a>
+        toma como estado <code>(CLK &lt;&lt; 1) | DT</code> y aplica una tabla
+        equivalente a la tabla 1 cuando el argumento de inversión es
+        <code>false</code>. El constructor de la biblioteca utiliza
+        <code>true</code> de manera predeterminada; aquí lo indicamos
+        explícitamente para mantener clara la convención.</p>
+
+      <h2>Programa C++ completo</h2>
+
+      <p>El contador mantiene el giro acumulado. Cada 50 ms, el programa toma
+        una instantánea de ese contador y, si ha cambiado, calcula la diferencia
+        respecto de la última lectura publicada. Una pulsación y liberación de
+        <code>SW</code> establece una nueva referencia cero. La adquisición por
+        interrupciones continúa entre publicaciones; los 50 ms no son el período
+        con que se leen los flancos del encoder.</p>
+
+      <script type="text/cpp">
+#include <Arduino.h>
+#include <iKY040.h>
+
+constexpr uint8_t PIN_CLK = 13;
+constexpr uint8_t PIN_DT = 14;
+constexpr uint8_t PIN_SW = 26;
+constexpr bool INVERTIR_SENTIDO = false;
+constexpr uint8_t TRANSICIONES_POR_CUENTA = 4;
+constexpr int32_t CUENTAS_POR_VUELTA = 20;  // Sustituir por el valor calibrado.
+constexpr uint32_t PERIODO_LECTURA_MS = 50;
+
+static_assert(CUENTAS_POR_VUELTA > 0, "La resolución debe ser positiva.");
+
+iKY040 encoder(PIN_CLK, PIN_DT, PIN_SW, INVERTIR_SENTIDO);
+bool iniciado = false;
+int32_t ultimaPosicion = 0;
+uint32_t ultimaLecturaMs = 0;
+
+void imprimirLectura(uint32_t tiempoMs, int32_t posicion, int64_t cambio) {
+  const double anguloAcumulado = 360.0 * posicion / CUENTAS_POR_VUELTA;
+  int32_t cuentaEnVuelta = posicion % CUENTAS_POR_VUELTA;
+  if (cuentaEnVuelta < 0) {
+    cuentaEnVuelta += CUENTAS_POR_VUELTA;
+  }
+  const double anguloEnVuelta = 360.0 * cuentaEnVuelta / CUENTAS_POR_VUELTA;
+  const char* sentido = cambio > 0 ? "horario" :
+                        cambio < 0 ? "antihorario" : "sin cambio";
+
+  Serial.printf("%lu,%ld,%lld,%.2f,%.2f,%s\n",
+                static_cast<unsigned long>(tiempoMs),
+                static_cast<long>(posicion),
+                static_cast<long long>(cambio),
+                anguloAcumulado, anguloEnVuelta, sentido);
+}
+
+void setup() {
+  Serial.begin(115200);
+  iniciado = encoder.begin(true, TRANSICIONES_POR_CUENTA);
+  if (!iniciado) {
+    Serial.println("No se pudo inicializar el encoder.");
+    return;
+  }
+
+  encoder.setButtonDebounce(30);
+  encoder.setPosition(0);
+  ultimaLecturaMs = millis();
+  Serial.println("# Ajustar CUENTAS_POR_VUELTA antes de interpretar grados.");
+  Serial.println("t_ms,N,dN,angulo_acum_deg,angulo_vuelta_deg,sentido_neto");
+  imprimirLectura(ultimaLecturaMs, 0, 0);
+}
+
+void loop() {
+  if (!iniciado) {
+    delay(100);
+    return;
+  }
+
+  encoder.update();
+  const uint32_t ahora = millis();
+
+  if (encoder.wasClicked()) {
+    encoder.setPosition(0);
+    ultimaPosicion = 0;
+    ultimaLecturaMs = ahora;
+    Serial.println("# Referencia angular restablecida.");
+    imprimirLectura(ahora, 0, 0);
+    return;
+  }
+
+  if (static_cast<uint32_t>(ahora - ultimaLecturaMs) < PERIODO_LECTURA_MS) {
+    return;
+  }
+  ultimaLecturaMs = ahora;
+
+  // Una sola lectura del contador mantiene coherentes N, dN y los ángulos.
+  const int32_t posicion = encoder.getPosition();
+  const int64_t cambio = static_cast<int64_t>(posicion) - ultimaPosicion;
+  if (cambio != 0) {
+    imprimirLectura(ahora, posicion, cambio);
+    ultimaPosicion = posicion;
+  }
+}
+      </script>
+
+      <h3>Cómo leer la salida</h3>
+
+      <p>Las columnas son el tiempo en milisegundos, el conteo $N$, el cambio
+        neto <code>dN</code>, el ángulo acumulado, el ángulo dentro de la vuelta
+        y el sentido neto. Para $C=20$, una secuencia ilustrativa de avances y
+        retrocesos podría producir</p>
+
+      <pre><samp>t_ms,N,dN,angulo_acum_deg,angulo_vuelta_deg,sentido_neto
+250,1,1,18.00,18.00,horario
+500,2,1,36.00,36.00,horario
+750,1,-1,18.00,18.00,antihorario
+1000,0,-1,0.00,0.00,antihorario
+1250,-1,-1,-18.00,342.00,antihorario</samp></pre>
+
+      <p>Los tiempos dependen del movimiento real y no constituyen una secuencia
+        generada automáticamente. Si no cambia la posición, el programa no
+        imprime una nueva fila. Al restablecer la referencia se publica una
+        lectura cero y se descarta el movimiento pendiente anterior a ese
+        reinicio.</p>
+
+      <p>El sentido mostrado es <strong>neto entre lecturas</strong>. Si el eje
+        avanza dos cuentas y retrocede una antes de publicar, <code>dN</code>
+        vale $+1$. Si avanza y retrocede lo mismo, no se publica movimiento.
+        Por tanto, una diferencia neta nula no prueba que el eje haya permanecido
+        inmóvil durante todo el intervalo.</p>
+
+      <h3>Decisiones del programa</h3>
+
+      <p>Las constantes <code>constexpr</code> concentran la configuración y
+        <code>static_assert</code> impide compilar una resolución nula o negativa.
+        La posición se lee una sola vez para que los ángulos y el cambio neto
+        correspondan a la misma instantánea. La resta se realiza en
+        <code>int64_t</code>, aunque el contador interno de iKY040 sigue siendo
+        de 32 bits con signo; ampliar la resta no elimina el límite de ese
+        contador.</p>
+
+      <p>El intervalo se comprueba con una resta de enteros sin signo, que
+        permite atravesar el desbordamiento periódico de <code>millis()</code>
+        para este intervalo corto. No hay un <code>delay(50)</code> en el
+        funcionamiento normal, de modo que <code>update()</code> puede revisar
+        el pulsador en cada iteración. El único retardo aparece si falla la
+        inicialización.</p>
+
+      <p>Comprobar el valor que devuelve <code>begin()</code> es una medida de
+        control del programa, no una prueba de cableado. La versión revisada
+        retorna <code>true</code> después de configurar las entradas; no detecta
+        por sí sola si se conectó el módulo o si los pines elegidos existen en
+        la placa concreta.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Métodos de iKY040 útiles para separar adquisición, movimiento y pulsador.">
+\begin{tabular}{ll}
+\hline
+Método & Propósito \\
+\hline
+begin(true, 4) & Configurar entradas y agrupar cuatro transiciones \\
+getPosition() & Leer el conteo acumulado con signo \\
+getAndResetDelta() & Leer y consumir el incremento pendiente \\
+setPosition(0) & Fijar la referencia y limpiar el movimiento pendiente \\
+update() & Procesar el antirrebote del pulsador \\
+wasClicked() & Consultar y consumir el evento de liberación \\
+setButtonDebounce(30) & Fijar el tiempo de antirrebote de SW \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Como alternativa al cálculo de <code>dN</code> a partir de posiciones,
+        <code>getAndResetDelta()</code> entrega y limpia el movimiento pendiente
+        de forma atómica. No lo usamos aquí porque dos llamadas independientes
+        a ese método y a <code>getPosition()</code> no forman necesariamente una
+        instantánea conjunta si llega una interrupción entre ellas. Tampoco
+        deben confundirse los métodos que consumen eventos con consultas que
+        pueden repetirse sin cambiar el estado.</p>
+
+      <h2>Calibración y comprobación del sentido</h2>
+
+      <p>La calibración básica no exige conocer de antemano el número de ciclos
+        del mecanismo. Sí exige mantener fija la configuración de
+        <code>TRANSICIONES_POR_CUENTA</code> mientras se mide.</p>
+
+      <ol>
+        <li>Marca una orientación del eje y una referencia fija en el soporte.
+          Pulsa y suelta el botón para asignar cero al contador.</li>
+        <li>Gira lentamente en sentido horario, visto desde el extremo del eje.
+          Comprueba que <code>N</code> aumenta. Si disminuye, cambia
+          <code>INVERTIR_SENTIDO</code> a <code>true</code>, vuelve a cargar
+          el programa y repite la prueba.</li>
+        <li>Completa exactamente una vuelta y anota el valor absoluto del cambio
+          de <code>N</code>. Ese número es el candidato a
+          <code>CUENTAS_POR_VUELTA</code> para esta configuración, aunque todavía
+          se estén mostrando ángulos calculados con el valor provisional 20.</li>
+        <li>Repite varias vueltas completas. Si el cambio total es $M$ después
+          de $k$ vueltas, comprueba que $C=|M|/k$ sea consistente con las pruebas
+          de una vuelta. Si no lo es, investiga pérdidas o rebotes antes de
+          modificar arbitrariamente la resolución.</li>
+        <li>Actualiza <code>CUENTAS_POR_VUELTA</code> y comprueba que una vuelta
+          produzca aproximadamente $360^\circ$ acumulados y regrese a
+          $0^\circ$ dentro de la vuelta. Gira después la misma cantidad en
+          sentido contrario y verifica el retorno al conteo inicial.</li>
+      </ol>
+
+      <p>El KY-040 no mide una posición continua entre cuentas. Si el valor
+        calibrado es $C=20$, el paso angular nominal es $18^\circ$, aunque
+        el monitor imprima dos decimales. La resolución nominal, la repetibilidad
+        y la exactitud son propiedades diferentes. La holgura, el rebote, la
+        pérdida de transiciones y el montaje mecánico pueden introducir errores
+        adicionales al escalonamiento de la lectura.</p>
+
+      <p>Para utilizar el encoder sin pulsador puede asignarse
+        <code>iKY040::NO_PIN</code> a <code>PIN_SW</code>. La librería omite
+        entonces esa entrada y las llamadas de actualización del botón no
+        producen eventos. El cero seguirá siendo el del arranque, salvo que
+        el programa incorpore otro mecanismo de referencia.</p>
+
+      <h2>Velocidad y límites de la adquisición</h2>
+
+      <p>El mismo conteo permite estimar velocidad angular. Si se observan
+        $\Delta N$ cuentas netas durante un intervalo real $\Delta t$ expresado
+        en segundos, se obtiene</p>
+
+      <div class="equation">
+        \[
+        \widehat\omega=\frac{2\pi\Delta N}{C\Delta t}
+        \quad\text{rad/s},
+        \qquad
+        \widehat n=\frac{60\Delta N}{C\Delta t}
+        \quad\text{rpm}.
+        \]
+      </div>
+
+      <p>A baja velocidad y con pocas cuentas por vuelta, una ventana breve
+        puede contener cero o una cuenta, por lo que esta estimación resulta
+        escalonada. Ampliar la ventana suaviza la lectura, pero retrasa la
+        detección de cambios. No hay una elección de ventana que mejore
+        simultáneamente ambos aspectos sin otra información.</p>
+
+      <p>La velocidad también determina la frecuencia de transiciones que debe
+        atender el sistema. Para $P$ ciclos eléctricos por vuelta y una
+        velocidad de magnitud $n_{\mathrm{rpm}}$, esa frecuencia ideal es</p>
+
+      <div class="equation">
+        \[
+        f_{\mathrm{transiciones}}=
+        \frac{4P\,n_{\mathrm{rpm}}}{60}.
+        \]
+      </div>
+
+      <p>El rebote puede aumentar el número de interrupciones por encima de
+        ese valor ideal. La carga de procesamiento, los periodos con
+        interrupciones deshabilitadas y el acondicionamiento eléctrico también
+        importan. Para ejes rápidos o aplicaciones exigentes conviene seleccionar
+        un encoder adecuado y evaluar recursos como el contador de pulsos
+        <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/pcnt.html">PCNT
+        del ESP32</a>. La librería iKY040 aquí utilizada decodifica mediante
+        interrupciones GPIO, no mediante ese periférico.</p>
+
+      <h2>Diagnóstico del montaje</h2>
+
+      <ul class="elegante">
+        <li><strong>No cambia el contador.</strong> Revisa alimentación de
+          3.3 V, tierra común y correspondencia entre GPIO y terminales.
+          Comprueba que no se haya confundido SW con un canal de rotación.</li>
+        <li><strong>El signo es contrario al esperado.</strong> Confirma la
+          perspectiva desde la que observas el eje y cambia la inversión por
+          software. No modifiques el número de cuentas por vuelta para corregir
+          un problema de signo.</li>
+        <li><strong>Una vuelta no corresponde a 360 grados.</strong> Calibra
+          las cuentas efectivamente entregadas con la agrupación elegida.
+          Distingue los clics mecánicos de los ciclos y de las transiciones.</li>
+        <li><strong>La lectura salta o deriva.</strong> Revisa los contactos,
+          el tendido de cables, las resistencias de elevación y la velocidad
+          de giro. Un analizador lógico permite observar si aparecen rebotes
+          intensos o transiciones no válidas.</li>
+        <li><strong>El botón parece responder tarde.</strong> El evento se
+          produce al liberar el pulsador y superar el antirrebote. Comprueba
+          que <code>update()</code> se ejecute con frecuencia y que no existan
+          operaciones bloqueantes prolongadas en el bucle principal.</li>
+      </ul>
+
+      <h2>Una medición con referencia y significado</h2>
+
+      <p>Leer un encoder es más que sumar flancos. Primero hay que identificar
+        el orden de los estados de cuadratura, después decidir qué transiciones
+        forman una cuenta y finalmente relacionar esa cuenta con un ángulo
+        mediante una resolución verificada. El sentido de giro, la referencia
+        inicial y la distinción entre posición acumulada y orientación dentro
+        de una vuelta completan la interpretación.</p>
+
+      <p>Con el KY-040 y un ESP32 es posible recorrer todo ese proceso de forma
+        accesible. La librería iKY040 organiza la adquisición por interrupciones
+        y el manejo del pulsador; el programa conserva la responsabilidad de
+        calibrar, convertir unidades y presentar una lectura coherente. Esos
+        mismos principios siguen siendo necesarios cuando se pasa de una
+        perilla de laboratorio a un sistema de posicionamiento más exigente.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>De los Santos Ruiz, I. (2026).
+          <a href="https://github.com/isantosruiz/iKY040"><em>iKY040</em></a>
+          (versión 1.0.1) [Software]. GitHub. Código consultado en la revisión
+          <a href="https://github.com/isantosruiz/iKY040/tree/fa05d8b18b84c07febab1df80432065b8c844955">fa05d8b</a>.</li>
+        <li>Bourns, Inc. (2023, noviembre).
+          <a href="https://www.bourns.com/docs/Product-Datasheets/pec11R.pdf"><em>PEC11R
+          series: 12 mm incremental encoder</em></a> [Hoja de datos].</li>
+        <li>Espressif Systems. (2026).
+          <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/gpio.html"><em>GPIO</em></a>.
+          Arduino-ESP32. Recuperado el 7 de octubre de 2026.</li>
+        <li>Espressif Systems. (2026).
+          <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html"><em>GPIO
+          &amp; RTC GPIO</em></a>. ESP-IDF Programming Guide. Recuperado el 7 de
+          octubre de 2026.</li>
+        <li>Espressif Systems. (2026).
+          <a href="https://docs.espressif.com/projects/esp-faq/en/latest/hardware-related/hardware-design.html"><em>Hardware
+          design</em></a>. ESP-FAQ. Recuperado el 7 de octubre de 2026.</li>
+        <li>Espressif Systems. (2026).
+          <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/pcnt.html"><em>Pulse
+          counter (PCNT)</em></a>. ESP-IDF Programming Guide. Recuperado
+          el 7 de octubre de 2026.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
