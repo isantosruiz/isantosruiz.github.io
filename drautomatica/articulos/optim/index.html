@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Optimización matemática | drAutomática</title><meta name="description" content="Tutorial de optimización matemática para ingeniería: función objetivo, restricciones, convexidad, gradiente, holguras y programación lineal y cuadrática, con un ejemplo resuelto en MATLAB y Python."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/optim/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Optimización matemática | drAutomática"><meta property="og:description" content="Tutorial de optimización matemática para ingeniería: función objetivo, restricciones, convexidad, gradiente, holguras y programación lineal y cuadrática, con un ejemplo resuelto en MATLAB y Python."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/optim/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Tutorial de optimización matemática para ingeniería: función objetivo, restricciones, convexidad, gradiente, holguras y programación lineal y cuadrática, con un ejemplo resuelto en MATLAB y Python."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Optimización matemática | drAutomática"><meta name="twitter:description" content="Tutorial de optimización matemática para ingeniería: función objetivo, restricciones, convexidad, gradiente, holguras y programación lineal y cuadrática, con un ejemplo resuelto en MATLAB y Python."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><meta name="author" content="Ildeberto de los Santos Ruiz">
+  
+  <link rel="stylesheet" href="/drautomatica/html/scientific-template.css">
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="matlab,python" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Tutorial</p>
+        <h1>Optimización matemática: objetivos, restricciones y soluciones</h1>
+        <p class="subtitle">Cómo convertir una decisión de ingeniería en un problema matemático, entender su geometría y resolverlo con MATLAB y Python</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span><time datetime="2026-10-19">Octubre, 2026</time></span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Optimizar significa elegir la mejor alternativa de acuerdo con un criterio explícito y dentro de un conjunto de posibilidades admisibles. Esa idea aparece al dimensionar un mecanismo, ajustar un modelo a mediciones, distribuir recursos o calcular la acción de un controlador. Este tutorial explica las piezas de un problema de optimización y la relación entre su formulación, su geometría y los métodos que permiten resolverlo. Se distinguen el valor mínimo y la decisión que lo alcanza, se estudian el gradiente y la convexidad, y se interpretan las restricciones lineales, no lineales y sus variables de holgura. Un ejemplo de asignación de corriente a dos actuadores conecta los conceptos con una solución analítica y con programas reproducibles en MATLAB y Python.</p>
+      </section>
+
+      <h2>Antes del algoritmo está la decisión</h2>
+
+      <p>Una fuente de alimentación puede resultar insuficiente para satisfacer simultáneamente las demandas de dos motores. Reducir ambas corrientes en la misma cantidad parece razonable, pero quizá uno de los movimientos sea más importante que el otro. Otra opción sería atender por completo al primer motor y entregar al segundo lo que quede. ¿Cuál de esas decisiones es mejor? La pregunta no tiene una respuesta matemática hasta que se define qué significa <em>mejor</em>.</p>
+
+      <p>La optimización proporciona un lenguaje para precisar esa comparación. Primero se identifican las cantidades que pueden elegirse; después se construye una medida de desempeño y se establecen las condiciones que ninguna solución puede incumplir. Solo entonces tiene sentido escoger un algoritmo. Un programa puede resolver con gran precisión un problema que no representa lo que realmente se necesitaba.</p>
+
+      <h2>Las piezas de un problema de optimización</h2>
+
+      <h3>Variables de decisión y función objetivo</h3>
+
+      <p>Las <strong>variables de decisión</strong> son las cantidades cuyo valor buscamos. Si hay $n$ variables reales, las agrupamos en un vector columna $\mathbf{x}=[x_1,\ldots,x_n]^{\mathsf T}\in\mathbb{R}^n$. Pueden representar dimensiones de una pieza, ganancias de un controlador, corrientes eléctricas o parámetros desconocidos de un modelo. Los datos ya fijados, como una resistencia medida o un presupuesto disponible, son parámetros del problema, no variables de decisión.</p>
+
+      <p>La <strong>función objetivo</strong> asigna un número a cada decisión. Se escribe $f:\mathbb{R}^n\to\mathbb{R}$ cuando está definida en todo ese espacio, o se especifica un dominio menor cuando la expresión lo requiere. Su valor puede ser un error de seguimiento, una masa, un consumo energético o un costo. Minimizarla significa preferir decisiones con valores más pequeños:</p>
+
+      <div class="equation">\[
+        \min_{\mathbf{x}} f(\mathbf{x}).
+      \]</div>
+
+      <p>También podemos maximizar un desempeño $J$. Ambos planteamientos se relacionan mediante un cambio de signo:</p>
+
+      <div class="equation">\[
+        \max_{\mathbf{x}\in\mathcal F}J(\mathbf{x})
+        =-\min_{\mathbf{x}\in\mathcal F}\bigl[-J(\mathbf{x})\bigr].
+      \]</div>
+
+      <p>El signo cambia el valor óptimo, pero las decisiones que maximizan $J$ son las mismas que minimizan $-J$. Si interesa combinar varios criterios, por ejemplo precisión y consumo, se pueden normalizar y ponderar. Los pesos expresan prioridades de diseño; no aparecen automáticamente por invocar un optimizador.</p>
+
+      <h3>Restricciones y conjunto factible</h3>
+
+      <p>Las restricciones describen lo permitido. Una desigualdad puede representar un límite de corriente o de temperatura; una igualdad puede expresar un balance de masa, una relación geométrica o una ecuación del modelo. Una formulación general es</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+          &\min_{\mathbf{x}\in\mathcal D} && f(\mathbf{x})\\
+          &\text{sujeto a} && g_i(\mathbf{x})\leq 0,
+             \qquad i=1,\ldots,m,\\
+          &&& h_j(\mathbf{x})=0,
+             \qquad j=1,\ldots,p.
+        \end{aligned}
+      \]</div>
+
+      <p>El dominio $\mathcal D$ recoge las decisiones para las que el modelo tiene sentido. Una restricción escrita como $\widetilde g_i(\mathbf{x})\leq c_i$ se lleva a la forma anterior definiendo $g_i=\widetilde g_i-c_i$. Por ejemplo, $x_1+x_2\leq4$ equivale a $x_1+x_2-4\leq0$. Las desigualdades entre vectores se interpretan componente a componente.</p>
+
+      <p>El <strong>conjunto factible</strong> reúne los puntos que cumplen todas las condiciones simultáneamente:</p>
+
+      <div class="equation">\[
+        \mathcal F=\left\{\mathbf{x}\in\mathcal D:
+        g_i(\mathbf{x})\leq0\ \forall i,\quad
+        h_j(\mathbf{x})=0\ \forall j\right\}.
+      \]</div>
+
+      <p>Un punto puede tener un costo excelente y ser inútil porque viola una restricción. También puede ocurrir que $\mathcal F$ esté vacío. Exigir a la vez $x_1\geq3$ y $x_1\leq2$ no define un problema difícil de resolver: define un problema sin decisiones admisibles.</p>
+
+      <aside class="remark">
+        <p><strong>Una penalización no siempre es una restricción.</strong> Añadir al objetivo un término que castigue corrientes excesivas permite que el algoritmo compare ese exceso con otras ventajas. Imponer una cota obliga a respetarla, dentro de la tolerancia numérica del método. Un límite físico de protección no debería sustituirse sin justificación por una penalización de peso arbitrario.</p>
+      </aside>
+
+      <h2>El mínimo no es lo mismo que el minimizador</h2>
+
+      <p>La expresión $\min f$ devuelve el mejor <em>valor</em> de la función. La expresión $\operatorname{arg\,min} f$ identifica los <em>argumentos</em> que lo alcanzan. Para $f(x)=(x-2)^2+3$ se tiene</p>
+
+      <div class="equation">\[
+        f^\star=\min_{x\in\mathbb R}f(x)=3,
+        \qquad
+        \operatorname*{arg\,min}_{x\in\mathbb R}f(x)=\{2\}.
+      \]</div>
+
+      <p>El número 3 es el costo óptimo y el número 2 es la decisión óptima. En ingeniería suelen necesitarse ambos. Si la solución es única, es habitual escribir $x^\star=2$ y abreviar $x^\star=\operatorname{arg\,min}_x f(x)$, aunque formalmente el operador devuelve un conjunto. Para $f(x)=(x^2-1)^2$, los minimizadores son $\{-1,1\}$ y el valor mínimo es cero.</p>
+
+      <p>Tener una cota inferior tampoco garantiza que exista un minimizador. La función $e^x$ se acerca a cero cuando $x\to-\infty$, pero nunca vale cero. Su ínfimo es 0 y no tiene mínimo sobre $\mathbb R$. En cambio, una función continua sobre un conjunto factible no vacío, cerrado y acotado sí alcanza un mínimo. Estas distinciones evitan confundir un problema sin solución alcanzable con un fallo del software.</p>
+
+      <h2>Un ejemplo de ingeniería que acompañará el tutorial</h2>
+
+      <p>Consideremos dos actuadores alimentados por una fuente común. Para trabajar con números adimensionales, definimos $x_i=I_i/I_0$, donde $I_0=1\,\mathrm{A}$. Sus referencias son $3\,\mathrm{A}$ y $2\,\mathrm{A}$, pero la fuente solo puede entregar $4\,\mathrm{A}$ en total. El primer canal admite hasta $2.5\,\mathrm{A}$ y el segundo hasta $3\,\mathrm{A}$. En este ejemplo no se permite corriente negativa.</p>
+
+      <p>Queremos aproximarnos a las referencias y damos el doble de peso al error cuadrático del segundo actuador. El problema queda definido por</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \min_{x_1,x_2}\quad&
+        f(x_1,x_2)=(x_1-3)^2+2(x_2-2)^2\\
+        \text{sujeto a}\quad&
+        x_1+x_2\leq4,\\
+        &0\leq x_1\leq2.5,\qquad 0\leq x_2\leq3.
+        \end{aligned}
+      \]</div>
+
+      <p>La función mide desviaciones respecto de las referencias, no potencia eléctrica. El factor 2 es una prioridad elegida para el ejemplo. Además, se trata de una asignación estática de corrientes: se supone que los reguladores internos pueden seguir esas consignas. No estamos modelando todavía la dinámica eléctrica ni mecánica de los actuadores.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-geometria.png" alt="Región factible poligonal del reparto de corriente, curvas de nivel elípticas, referencia no factible y solución óptima sobre el límite de corriente total" width="1600" height="1200" style="display:block;width:min(100%,740px);height:auto;margin:0 auto;">
+        <figcaption>Figura 1. El objetivo preferiría el punto $(3,2)$, pero las restricciones lo excluyen. El mejor punto permitido es el lugar donde una curva de nivel toca por primera vez la región factible al aumentar el costo desde cero.</figcaption>
+      </figure>
+
+      <p>Las curvas de nivel reúnen puntos con el mismo valor de $f$. En este caso son elipses centradas en $(3,2)$. La región sombreada representa decisiones físicamente admisibles bajo las hipótesis planteadas. Cambiar el objetivo modifica las elipses; cambiar las restricciones modifica el polígono. Son dos partes diferentes del modelo.</p>
+
+      <h2>Convexidad de la función objetivo</h2>
+
+      <p>Un mínimo <strong>local</strong> es mejor que los puntos factibles suficientemente cercanos. Un mínimo <strong>global</strong> es mejor que todos los puntos factibles. En una función con varios valles, un algoritmo puede llegar al fondo de uno sin encontrar el más profundo.</p>
+
+      <p>La convexidad permite una garantía especialmente útil. Una función $f$ es convexa sobre un dominio convexo si, para cualesquiera $\mathbf u,\mathbf v$ de ese dominio y $0\leq\theta\leq1$, cumple</p>
+
+      <div class="equation">\[
+        f\bigl(\theta\mathbf u+(1-\theta)\mathbf v\bigr)
+        \leq\theta f(\mathbf u)+(1-\theta)f(\mathbf v).
+      \]</div>
+
+      <p>En una gráfica de una variable, la cuerda entre dos puntos de la curva nunca queda por debajo de ella. No es necesario que la función parezca una parábola ni que tenga derivadas en todas partes; $|x|$ también es convexa.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-convexidad.png" alt="Comparación entre una parábola convexa con un solo mínimo y una función no convexa con dos mínimos locales de diferente profundidad" width="1800" height="800" loading="lazy" style="display:block;width:100%;height:auto;margin:0 auto;">
+        <figcaption>Figura 2. A la izquierda, una función convexa. A la derecha, $(x^2-1)^2+0.4x$ tiene dos mínimos locales, pero solo el de la izquierda es global. La no convexidad no obliga a que existan varios mínimos, aunque permite esa dificultad.</figcaption>
+      </figure>
+
+      <p>Si el objetivo y el conjunto factible son convexos, cualquier mínimo local es global. Se puede entender por contradicción: si existiera un punto factible mejor, los puntos del segmento que lo une con el supuesto mínimo local seguirían siendo factibles y, por convexidad, mejorarían el costo incluso arbitrariamente cerca de ese mínimo.</p>
+
+      <p>Si el objetivo es <em>estrictamente</em> convexo, el minimizador es único cuando existe. La convexidad por sí sola no garantiza unicidad ni existencia. Para funciones dos veces diferenciables en un dominio abierto convexo, puede examinarse la matriz hessiana $\nabla^2f$; que sea semidefinida positiva en todo el dominio equivale a convexidad. En nuestro ejemplo,</p>
+
+      <div class="equation">\[
+        \nabla^2 f=
+        \begin{bmatrix}2&0\\0&4\end{bmatrix}\succ0.
+      \]</div>
+
+      <p>Sus dos autovalores son positivos, por lo que el objetivo es estrictamente convexo. Aunque contiene cuadrados y es una función no lineal, sigue siendo convexa. <strong>No lineal</strong> y <strong>no convexo</strong> no son sinónimos.</p>
+
+      <h2>El gradiente indica cómo cambia el costo</h2>
+
+      <p>Para una función diferenciable de varias variables, el gradiente agrupa las derivadas parciales en un vector:</p>
+
+      <div class="equation">\[
+        \nabla f(\mathbf x)=
+        \begin{bmatrix}
+        \dfrac{\partial f}{\partial x_1}\\
+        \vdots\\
+        \dfrac{\partial f}{\partial x_n}
+        \end{bmatrix}.
+      \]</div>
+
+      <p>Su utilidad se aprecia en la aproximación local</p>
+
+      <div class="equation">\[
+        f(\mathbf x+\alpha\mathbf d)
+        =f(\mathbf x)+\alpha\,\nabla f(\mathbf x)^{\mathsf T}\mathbf d
+        +o(\alpha),\qquad \alpha\to0.
+      \]</div>
+
+      <p>Si $\nabla f^{\mathsf T}\mathbf d&lt;0$, un desplazamiento suficientemente pequeño en la dirección $\mathbf d$ reduce el costo. Con la norma euclidiana, $-\nabla f$ apunta en la dirección de descenso más pronunciado. Esto motiva la iteración de descenso por gradiente</p>
+
+      <div class="equation">\[
+        \mathbf x_{k+1}=\mathbf x_k-\alpha_k\nabla f(\mathbf x_k),
+        \qquad \alpha_k>0.
+      \]</div>
+
+      <p>El tamaño de paso $\alpha_k$ importa. Un paso demasiado grande puede aumentar el costo u originar oscilaciones. En problemas restringidos, además, la nueva decisión puede salir del conjunto permitido; el descenso libre no resuelve automáticamente esa dificultad.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-gradiente.png" alt="Curvas de nivel de una función cuadrática y flechas opuestas del gradiente y del gradiente negativo en un punto de la curva" width="1600" height="1120" loading="lazy" style="display:block;width:min(100%,720px);height:auto;margin:0 auto;">
+        <figcaption>Figura 3. El gradiente es normal a una curva de nivel regular. Su sentido corresponde al aumento local del costo y el sentido opuesto al descenso. Las flechas se han escalado para facilitar la lectura.</figcaption>
+      </figure>
+
+      <p>En el reparto de corriente, $\nabla f=[2(x_1-3),\,4(x_2-2)]^{\mathsf T}$. Al comenzar en $(0,0)$ y usar $\alpha=0.2$, un paso libre produce $(1.2,1.6)$. Repetir el proceso sin imponer restricciones lo llevaría hacia $(3,2)$, que no es admisible.</p>
+
+      <aside class="remark">
+        <p><strong>Gradiente nulo no significa necesariamente mínimo.</strong> En un mínimo interior diferenciable es necesario que $\nabla f=\mathbf0$. Sin embargo, esa condición también se cumple en máximos y puntos de silla. Por ejemplo, $f(x_1,x_2)=x_1^2-x_2^2$ tiene gradiente cero en el origen, pero aumenta en una dirección y disminuye en otra. En un mínimo restringido situado en la frontera, el gradiente puede ser distinto de cero.</p>
+      </aside>
+
+      <h2>La convexidad también depende de las restricciones</h2>
+
+      <p>Un conjunto $\mathcal F$ es convexo cuando contiene el segmento completo entre cualquier pareja de sus puntos:</p>
+
+      <div class="equation">\[
+        \mathbf u,\mathbf v\in\mathcal F
+        \quad\Longrightarrow\quad
+        \theta\mathbf u+(1-\theta)\mathbf v\in\mathcal F
+        \quad\text{para todo }0\leq\theta\leq1.
+      \]</div>
+
+      <p>Un disco es convexo; una corona circular no lo es, porque un segmento entre puntos de lados opuestos atraviesa el hueco. La diferencia no depende de que la frontera sea curva. Importa si las combinaciones intermedias siguen siendo admisibles.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-regiones.png" alt="Un disco convexo y una corona circular no convexa, con segmentos entre puntos factibles; el segmento de la corona atraviesa su hueco" width="1800" height="900" loading="lazy" style="display:block;width:100%;height:auto;margin:0 auto;">
+        <figcaption>Figura 4. Las restricciones no lineales pueden definir conjuntos convexos o no convexos. En el disco, el segmento permanece dentro; en la corona, una parte del segmento deja de ser factible.</figcaption>
+      </figure>
+
+      <p>El disco unitario se describe mediante $x_1^2+x_2^2-1\leq0$, una desigualdad no lineal que sí define un conjunto convexo. Para obtener una corona añadimos $r^2-x_1^2-x_2^2\leq0$, con $0&lt;r&lt;1$. En planificación de movimiento, excluir un obstáculo introduce precisamente regiones prohibidas que pueden destruir la convexidad del espacio de posiciones.</p>
+
+      <p>Una forma estándar de garantizar un problema convexo consiste en minimizar una función convexa, imponer desigualdades $g_i\leq0$ con funciones $g_i$ convexas y usar igualdades afines, como $E\mathbf x=\mathbf d$. Las igualdades no lineales no garantizan un conjunto convexo. Esto es un criterio suficiente de formulación; algunas expresiones no estándar pueden describir, aun así, conjuntos convexos.</p>
+
+      <h2>Desigualdades lineales, matrices y politopos</h2>
+
+      <p>Una desigualdad $\mathbf a^{\mathsf T}\mathbf x\leq b$ define un semiespacio. En dos dimensiones su frontera es una recta; en tres, un plano. Varias desigualdades se satisfacen simultáneamente en la intersección de sus semiespacios. Agrupándolas por filas se obtiene</p>
+
+      <div class="equation">\[
+        A\mathbf x\leq\mathbf b,\qquad
+        A\in\mathbb R^{m\times n},\quad \mathbf b\in\mathbb R^m.
+      \]</div>
+
+      <p>En el ejemplo de los actuadores, las cinco desigualdades pueden escribirse como</p>
+
+      <div class="equation">\[
+        \underbrace{\begin{bmatrix}
+        1&1\\1&0\\0&1\\-1&0\\0&-1
+        \end{bmatrix}}_{A}
+        \begin{bmatrix}x_1\\x_2\end{bmatrix}
+        \leq
+        \underbrace{\begin{bmatrix}4\\2.5\\3\\0\\0\end{bmatrix}}_{\mathbf b}.
+      \]</div>
+
+      <p>Las dos últimas filas expresan $x_1\geq0$ y $x_2\geq0$. La región resultante es el polígono con vértices $(0,0)$, $(2.5,0)$, $(2.5,1.5)$, $(1,3)$ y $(0,3)$. En dimensiones mayores se habla de <strong>poliedros</strong>; un poliedro acotado es un <strong>politopo</strong>. No toda intersección de semiespacios está acotada, de modo que no siempre corresponde llamarla politopo.</p>
+
+      <p>Las cotas $\boldsymbol\ell\leq\mathbf x\leq\mathbf u$ definen una caja y pueden mantenerse separadas de $A\mathbf x\leq\mathbf b$ al utilizar software. Esto evita escribir filas adicionales que algunos solucionadores ya gestionan de forma específica.</p>
+
+      <h3>Holguras y restricciones activas</h3>
+
+      <p>La <strong>holgura</strong> de una desigualdad mide cuánto falta para alcanzar su límite en las unidades de esa desigualdad. Para el sistema lineal definimos</p>
+
+      <div class="equation">\[
+        \mathbf s=\mathbf b-A\mathbf x,\qquad
+        A\mathbf x+\mathbf s=\mathbf b,\qquad
+        \mathbf s\geq\mathbf0.
+      \]</div>
+
+      <p>Se introduce una holgura por cada desigualdad, así que $\mathbf s\in\mathbb R^m$, mientras que $\mathbf x\in\mathbb R^n$. Una componente $s_i=0$ identifica una restricción <em>activa</em>; si $s_i>0$, queda margen disponible. Una holgura negativa indica una violación. La transformación no implica que $\mathbf x$ deba ser no negativo en todos los problemas; eso solo se impone cuando forma parte del modelo.</p>
+
+      <p>En $(1,1)$, las holguras de nuestras cinco filas son $[2,1.5,2,1,1]^{\mathsf T}$. La primera indica que aún quedan $2\,\mathrm{A}$ de capacidad total. Una holgura no es, en general, la distancia euclidiana a la frontera: para una fila no nula, esa distancia es $s_i/\|\mathbf a_i\|_2$. Multiplicar una desigualdad por 100 multiplica su holgura por 100, pero no mueve la frontera.</p>
+
+      <h2>Programación lineal y cuadrática</h2>
+
+      <p>En este contexto, <em>programación</em> significa planificación matemática; no se refiere al lenguaje con el que se escribe el código. Dos familias especialmente importantes se reconocen por la forma de su objetivo y sus restricciones.</p>
+
+      <div class="table-block"><div class="tabjax-output">
+        <table class="article-table">
+          <caption class="table-caption">Tabla 1. Dos estructuras habituales en optimización continua.</caption>
+          <thead><tr><th scope="col">Familia</th><th scope="col">Objetivo</th><th scope="col">Restricciones</th><th scope="col">Convexidad</th></tr></thead>
+          <tbody>
+            <tr><td>Programación lineal (LP)</td><td>$\mathbf c^{\mathsf T}\mathbf x$</td><td>Igualdades y desigualdades afines.</td><td>Problema convexo.</td></tr>
+            <tr><td>Programación cuadrática (QP)</td><td>$\frac12\mathbf x^{\mathsf T}H\mathbf x+\mathbf c^{\mathsf T}\mathbf x$</td><td>Igualdades y desigualdades afines.</td><td>Convexo si $H$ es simétrica semidefinida positiva.</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+
+      <p>En un politopo no vacío, una función lineal alcanza algún óptimo en un vértice. Eso no significa que todas las soluciones óptimas sean vértices: si el objetivo es constante sobre una arista óptima, todos sus puntos también son soluciones. Por ejemplo, maximizar $2x_1+x_2$ sobre nuestro polígono conduce al vértice $(2.5,1.5)$ y al valor $6.5$.</p>
+
+      <p>Un objetivo cuadrático puede alcanzar su mínimo en el interior, en una arista o en un vértice. Para nuestro costo de seguimiento, al desarrollar los cuadrados resulta</p>
+
+      <div class="equation">\[
+        f(\mathbf x)=
+        \frac12\mathbf x^{\mathsf T}
+        \underbrace{\begin{bmatrix}2&0\\0&4\end{bmatrix}}_H\mathbf x
+        +\underbrace{\begin{bmatrix}-6&-8\end{bmatrix}}_{\mathbf c^{\mathsf T}}\mathbf x
+        +17.
+      \]</div>
+
+      <p>La constante 17 no cambia el minimizador, pero sí el valor del objetivo. Si se omite al llamar a un solucionador, habrá que recuperarla al informar el costo de seguimiento. El factor $\tfrac12$ es una convención que simplifica el gradiente de la forma cuadrática a $H\mathbf x+\mathbf c$.</p>
+
+      <p>El ajuste por mínimos cuadrados también pertenece a esta familia. Si se minimiza $\tfrac12\|B\boldsymbol\theta-\mathbf y\|_2^2$, entonces $H=B^{\mathsf T}B$ es semidefinida positiva, porque $\mathbf v^{\mathsf T}H\mathbf v=\|B\mathbf v\|_2^2\geq0$. Es definida positiva cuando las columnas de $B$ son linealmente independientes. No debe suponerse unicidad del ajuste cuando falta esa independencia.</p>
+
+      <h2>Resolución analítica del reparto de corriente</h2>
+
+      <p>El mínimo libre estaría en $(3,2)$, pero viola la capacidad total y el límite del primer canal. Para buscar una solución sobre la frontera de corriente total usamos $x_2=4-x_1$. El objetivo restringido a esa recta queda</p>
+
+      <div class="equation">\[
+        \varphi(x_1)
+        =(x_1-3)^2+2(2-x_1)^2
+        =3x_1^2-14x_1+17.
+      \]</div>
+
+      <p>Sobre esta frontera, las otras cotas permiten $1\leq x_1\leq2.5$. Al imponer $\mathrm d\varphi/\mathrm dx_1=6x_1-14=0$ obtenemos un candidato dentro de ese intervalo:</p>
+
+      <div class="equation">\[
+        \mathbf x^\star=
+        \begin{bmatrix}7/3\\5/3\end{bmatrix},
+        \qquad
+        f^\star=\frac23.
+      \]</div>
+
+      <p>La corriente asignada al segundo actuador queda a $1/3\,\mathrm A$ de su referencia; la del primero, a $2/3\,\mathrm A$. La diferencia se explica por la mayor penalización del segundo error. No basta con repartir la capacidad por mitades ni con recortar cada referencia de manera independiente.</p>
+
+      <h3>Cómo certificar que no existe un punto mejor</h3>
+
+      <p>Buscar sobre una frontera solo produce un candidato. Para justificar que es el óptimo del problema completo comprobamos primero todas las restricciones. Sus holguras son</p>
+
+      <div class="equation">\[
+        \mathbf s^\star=
+        \begin{bmatrix}
+        0&1/6&4/3&7/3&5/3
+        \end{bmatrix}^{\mathsf T}.
+      \]</div>
+
+      <p>Solo está activo el límite de corriente total. En ese punto, el gradiente no es cero:</p>
+
+      <div class="equation">\[
+        \nabla f(\mathbf x^\star)=
+        \begin{bmatrix}-4/3\\-4/3\end{bmatrix}
+        =-\frac43\begin{bmatrix}1\\1\end{bmatrix}.
+      \]</div>
+
+      <p>Para cualquier otro punto factible $\mathbf y$, la convexidad diferenciable da la siguiente cota:</p>
+
+      <div class="equation">\[
+        f(\mathbf y)\geq
+        f(\mathbf x^\star)+
+        \nabla f(\mathbf x^\star)^{\mathsf T}(\mathbf y-\mathbf x^\star)
+        =
+        f(\mathbf x^\star)+\frac43(4-y_1-y_2)
+        \geq f(\mathbf x^\star).
+      \]</div>
+
+      <p>La última desigualdad usa precisamente $y_1+y_2\leq4$. Por tanto, ningún punto permitido mejora el candidato. La convexidad estricta garantiza además que es único. Esta relación entre el gradiente y la normal a la restricción es un caso de las condiciones de Karush-Kuhn-Tucker; aquí el multiplicador asociado al límite total es $4/3$ y los de las otras desigualdades son cero.</p>
+
+      <h2>Implementación en MATLAB</h2>
+
+      <p>El siguiente programa requiere MATLAB con <strong>Optimization Toolbox</strong>. Usa <a href="https://www.mathworks.com/help/optim/ug/quadprog.html"><code>quadprog</code></a> y mantiene las cotas separadas de la restricción de suma. Después verifica la factibilidad y calcula el costo con la expresión original. El archivo completo es <a href="/drautomatica/html/optim_actuadores.m" download><code>optim_actuadores.m</code></a>.</p>
+
+      <script type="text/matlab" data-file="optim_actuadores.m">
+% Asignación estática de corriente a dos actuadores
+H = diag([2, 4]);
+c = [-6; -8];
+A = [1, 1];
+b = 4;
+lb = [0; 0];
+ub = [2.5; 3];
+
+opciones = optimoptions('quadprog', 'Display', 'off');
+[x, valor_qp, exitflag, salida] = quadprog( ...
+    H, c, A, b, [], [], lb, ub, [], opciones);
+
+if exitflag <= 0
+    error('No se confirmó la convergencia: %s', salida.message);
+end
+
+tol = 1e-7;
+assert(all(A*x <= b + tol), 'Se excede la corriente total.');
+assert(all(x >= lb - tol) && all(x <= ub + tol), ...
+    'Una corriente está fuera de sus límites.');
+
+costo = (x(1)-3)^2 + 2*(x(2)-2)^2;
+holguras = [b-A*x; ub-x; x-lb];
+assert(abs(costo-(valor_qp+17)) < tol);
+assert(norm(x-[7/3; 5/3]) < 1e-5);
+
+fprintf('Corrientes [A]: %.6f, %.6f\n', x(1), x(2));
+fprintf('Costo de seguimiento: %.6f\n', costo);
+disp('Holguras [suma; cota superior 1; cota superior 2; inferiores]:');
+disp(holguras);
+
+% Visualización del objetivo y del conjunto factible
+[X1, X2] = meshgrid(linspace(0, 3.5, 250), linspace(0, 3.5, 250));
+F = (X1-3).^2 + 2*(X2-2).^2;
+vertices = [0 0; 2.5 0; 2.5 1.5; 1 3; 0 3];
+
+figure('Color', 'w');
+hold on
+patch(vertices(:,1), vertices(:,2), [0.84 0.94 0.91], ...
+    'FaceAlpha', 0.5, 'EdgeColor', [0.1 0.4 0.35]);
+contour(X1, X2, F, [2/3 1 2 4 8 12], 'LineWidth', 1);
+plot(3, 2, 'kx', 'MarkerSize', 10, 'LineWidth', 2);
+plot(x(1), x(2), 'ro', 'MarkerFaceColor', 'r', 'MarkerSize', 7);
+xlabel('$x_1=I_1/I_0$', 'Interpreter', 'latex');
+ylabel('$x_2=I_2/I_0$', 'Interpreter', 'latex');
+title('Reparto de corriente con restricciones');
+axis equal
+xlim([0 3.5]); ylim([0 3.5]);
+grid on
+      </script>
+
+      <p>La salida debe dar corrientes próximas a $2.333333\,\mathrm A$ y $1.666667\,\mathrm A$, con costo $0.666667$. El valor devuelto directamente en <code>valor_qp</code> es aproximadamente $-16.333333$, porque la función que recibe <code>quadprog</code> no contiene la constante 17. Eso no es un error del algoritmo.</p>
+
+      <h2>Implementación en Python</h2>
+
+      <p>La misma formulación puede resolverse con NumPy, SciPy y Matplotlib. Aquí empleamos <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><code>minimize</code> con SLSQP</a>, un método de optimización restringida de propósito más general. Se proporciona el gradiente analítico para evitar estimarlo por diferencias finitas. El programa está disponible en <a href="/drautomatica/html/optim_actuadores.py" download><code>optim_actuadores.py</code></a>.</p>
+
+      <script type="text/python" data-file="optim_actuadores.py">
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import Bounds, LinearConstraint, minimize
+
+
+def objetivo(x):
+    return (x[0] - 3.0)**2 + 2.0*(x[1] - 2.0)**2
+
+
+def gradiente(x):
+    return np.array([2.0*(x[0] - 3.0), 4.0*(x[1] - 2.0)])
+
+
+A = np.array([[1.0, 1.0]])
+lb = np.array([0.0, 0.0])
+ub = np.array([2.5, 3.0])
+limite_total = LinearConstraint(A, -np.inf, 4.0)
+
+resultado = minimize(
+    objetivo,
+    x0=np.array([1.0, 1.0]),
+    jac=gradiente,
+    method="SLSQP",
+    bounds=Bounds(lb, ub),
+    constraints=[limite_total],
+    options={"ftol": 1e-12, "maxiter": 200},
+)
+
+if not resultado.success:
+    raise RuntimeError(f"No se confirmó la convergencia: {resultado.message}")
+
+x = resultado.x
+tol = 1e-7
+assert np.all(A @ x <= 4.0 + tol)
+assert np.all(x >= lb - tol) and np.all(x <= ub + tol)
+assert np.linalg.norm(x - np.array([7/3, 5/3])) < 1e-5
+holguras = np.concatenate((4.0 - A @ x, ub - x, x - lb))
+
+print(f"Corrientes [A]: {x[0]:.6f}, {x[1]:.6f}")
+print(f"Costo de seguimiento: {objetivo(x):.6f}")
+print("Holguras:", holguras)
+
+X1, X2 = np.meshgrid(np.linspace(0, 3.5, 250), np.linspace(0, 3.5, 250))
+F = (X1 - 3.0)**2 + 2.0*(X2 - 2.0)**2
+vertices = np.array([[0, 0], [2.5, 0], [2.5, 1.5], [1, 3], [0, 3]])
+
+fig, ax = plt.subplots(figsize=(7, 6), constrained_layout=True)
+ax.fill(vertices[:, 0], vertices[:, 1], color="#d6eee8", alpha=0.7)
+ax.contour(X1, X2, F, levels=[2/3, 1, 2, 4, 8, 12], linewidths=1)
+ax.plot(3, 2, "kx", markersize=10, label="Referencia no factible")
+ax.plot(*x, "ro", label="Solución óptima")
+ax.set(xlabel=r"$x_1=I_1/I_0$", ylabel=r"$x_2=I_2/I_0$",
+       xlim=(0, 3.5), ylim=(0, 3.5),
+       title="Reparto de corriente con restricciones")
+ax.set_aspect("equal")
+ax.grid(alpha=0.25)
+ax.legend()
+plt.show()
+      </script>
+
+      <p>El indicador de éxito del solucionador debe acompañarse de comprobaciones del modelo. En este ejemplo conocemos la respuesta exacta y podemos compararla; en uno grande se revisan los residuos de las restricciones, las condiciones de optimalidad y la sensibilidad a las tolerancias. Un mensaje de convergencia de un método local no certifica por sí solo un mínimo global en un problema no convexo.</p>
+
+      <h2>Qué hace difícil un problema real</h2>
+
+      <p>La cantidad de variables importa, pero no es el único factor. Un gran problema cuadrático con matrices dispersas puede tener más estructura aprovechable que una pequeña función irregular evaluada mediante un experimento lento. Conviene identificar las dificultades antes de decidir qué herramienta utilizar.</p>
+
+      <ul class="elegante">
+        <li><strong>No convexidad.</strong> Puede haber varios mínimos locales, puntos de silla o regiones factibles desconectadas. Probar varios puntos iniciales aporta evidencia, pero no garantiza haber encontrado el óptimo global.</li>
+        <li><strong>Derivadas ausentes o poco fiables.</strong> Una función puede no ser diferenciable, o estar disponible solo como una simulación cerrada. Los métodos sin derivadas son una opción, aunque el costo depende del problema y del presupuesto de evaluaciones.</li>
+        <li><strong>Evaluaciones costosas.</strong> Si calcular un solo costo exige simular un robot durante minutos, conviene aprovechar derivadas, paralelismo o modelos sustitutos cuando sean apropiados. El número de evaluaciones puede importar más que el número de iteraciones.</li>
+        <li><strong>Ruido e incertidumbre.</strong> Un costo obtenido de mediciones cambia entre repeticiones. Perseguir diferencias menores que ese ruido puede producir una aparente mejora sin relevancia física.</li>
+        <li><strong>Escalas muy diferentes.</strong> Mezclar milímetros, amperes y ganancias de magnitudes dispares puede perjudicar el comportamiento numérico. Escalar las variables y definir tolerancias coherentes ayuda, sin sustituir una formulación correcta.</li>
+        <li><strong>Variables enteras.</strong> Decidir cuántos sensores instalar o qué actuadores encender introduce decisiones discretas. Redondear una solución continua puede violar restricciones y no sustituye un método de optimización entera.</li>
+      </ul>
+
+      <h3>Cuando la decisión es una trayectoria</h3>
+
+      <p>En control, la decisión puede ser una secuencia de entradas $\mathbf u_0,\ldots,\mathbf u_{N-1}$ en vez de un único ajuste estático. Una representación discreta típica es</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \min_{\{\mathbf u_k,\mathbf z_k\}}\quad&
+        \sum_{k=0}^{N-1}\ell(\mathbf z_k,\mathbf u_k)+\phi(\mathbf z_N)\\
+        \text{sujeto a}\quad&
+        \mathbf z_{k+1}=F(\mathbf z_k,\mathbf u_k),\\
+        &\mathbf z_0=\mathbf z_{\mathrm{inicial}},\\
+        &\mathbf u_k\in\mathcal U,\qquad \mathbf z_k\in\mathcal Z,
+        \end{aligned}
+      \]</div>
+
+      <p>donde $\mathbf z_k$ es el estado, $F$ es el modelo dinámico, $\ell$ mide el costo de cada etapa y $\phi$ el costo terminal. La dinámica aparece como una restricción de igualdad. Si el modelo es lineal, los costos son cuadráticos convexos y las restricciones son afines, se obtiene un QP, estructura habitual en control predictivo. Con dinámica no lineal, la geometría y las garantías pueden cambiar.</p>
+
+      <h2>Un procedimiento de trabajo verificable</h2>
+
+      <ol>
+        <li><strong>Definir la decisión.</strong> Especificar qué se puede cambiar, con qué unidades y dentro de qué dominio.</li>
+        <li><strong>Escribir el criterio.</strong> Explicar qué mide el objetivo y por qué sus pesos reflejan la aplicación.</li>
+        <li><strong>Separar requisitos de preferencias.</strong> Colocar límites físicos y balances en las restricciones, y comprobar que exista alguna decisión factible.</li>
+        <li><strong>Reconocer la estructura.</strong> Distinguir continuidad, convexidad, derivadas disponibles y presencia de variables enteras.</li>
+        <li><strong>Resolver y comprobar.</strong> Revisar la terminación del algoritmo, los residuos, el costo calculado con el modelo original y la plausibilidad física.</li>
+        <li><strong>Estudiar la sensibilidad.</strong> Modificar ligeramente referencias, capacidades o pesos para comprobar si la decisión cambia de forma razonable.</li>
+      </ol>
+
+      <p>Como ejercicio, sustituye el peso 2 por 1 en el costo de los actuadores. La solución pasa a $(2.5,1.5)$ y quedan activas tanto la capacidad total como la cota superior del primer canal. Después vuelve al peso 2 y aumenta la capacidad total de 4 a 6. La solución es $(2.5,2)$: sobra capacidad en la fuente, pero el primer actuador continúa limitado por su propio canal. No todas las restricciones deben estar activas en el óptimo.</p>
+
+      <h2>Optimizar es modelar una elección</h2>
+
+      <p>La función objetivo expresa lo deseable y el conjunto factible delimita lo posible. El gradiente describe cómo cambia el costo; la convexidad permite relacionar mejoras locales con garantías globales. Las matrices de restricciones y las variables de holgura traducen esas ideas a representaciones que los algoritmos pueden aprovechar.</p>
+
+      <p>El ejemplo de los actuadores muestra por qué esos elementos deben entenderse juntos. La referencia ideal no era factible, el óptimo no tenía gradiente nulo y el reparto correcto dependía de los pesos del objetivo. El resultado útil no fue solo un número, sino una decisión acompañada de una explicación y de comprobaciones que permiten confiar en ella.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Brunton, S. L. (2026). <a href="https://faculty.washington.edu/sbrunton/OptimizationBootcamp.pdf"><em>Optimization: A bootcamp for machine learning, inverse problems, and control</em></a>. Cambridge University Press.</li>
+        <li>Boyd, S., &amp; Vandenberghe, L. (2004). <a href="https://web.stanford.edu/~boyd/cvxbook/"><em>Convex optimization</em></a>. Cambridge University Press.</li>
+        <li>The MathWorks, Inc. (2026). <a href="https://www.mathworks.com/help/optim/ug/quadprog.html"><em>quadprog: Quadratic programming</em></a>. Optimization Toolbox Documentation.</li>
+        <li>SciPy Community. (s. f.). <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><em>minimize(method='SLSQP')</em></a>. SciPy Manual. Recuperado el 19 de octubre de 2026.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
