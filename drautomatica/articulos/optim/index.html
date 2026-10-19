@@ -388,6 +388,11 @@ grid on
 
       <p>La salida debe dar corrientes próximas a $2.333333\,\mathrm A$ y $1.666667\,\mathrm A$, con costo $0.666667$. El valor devuelto directamente en <code>valor_qp</code> es aproximadamente $-16.333333$, porque la función que recibe <code>quadprog</code> no contiene la constante 17. Eso no es un error del algoritmo.</p>
 
+      <figure>
+        <img src="/drautomatica/html/optim-regiones.png" alt="Solución del problema de optimización" width="1800" height="900" loading="lazy" style="display:block;width:100%;height:auto;margin:0 auto;">
+        <figcaption>Figura 5. Solución del problema de optimización.</figcaption>
+      </figure>
+      
       <h2>Implementación en Python</h2>
 
       <p>La misma formulación puede resolverse con NumPy, SciPy y Matplotlib. Aquí empleamos <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><code>minimize</code> con SLSQP</a>, un método de optimización restringida de propósito más general. Se proporciona el gradiente analítico para evitar estimarlo por diferencias finitas. El programa está disponible en <a href="/drautomatica/html/optim_actuadores.py" download><code>optim_actuadores.py</code></a>.</p>
