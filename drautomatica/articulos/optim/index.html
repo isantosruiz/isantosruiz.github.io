@@ -17,14 +17,16 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
       </header>
 
       <section class="abstract">
-        <p>Optimizar significa elegir la mejor alternativa de acuerdo con un criterio explícito y dentro de un conjunto de posibilidades admisibles. Esa idea aparece al dimensionar un mecanismo, ajustar un modelo a mediciones, distribuir recursos o calcular la acción de un controlador. Este tutorial explica las piezas de un problema de optimización y la relación entre su formulación, su geometría y los métodos que permiten resolverlo. Se distinguen el valor mínimo y la decisión que lo alcanza, se estudian el gradiente y la convexidad, y se interpretan las restricciones lineales, no lineales y sus variables de holgura. Un ejemplo de asignación de corriente a dos actuadores conecta los conceptos con una solución analítica y con programas reproducibles en MATLAB y Python.</p>
+        <p>Optimizar significa elegir la mejor alternativa de acuerdo con un criterio explícito y dentro de un conjunto de posibilidades admisibles. Esa idea aparece al dimensionar un mecanismo, ajustar un modelo a mediciones, distribuir recursos o calcular la acción de un controlador. Este tutorial desarrolla esa elección paso a paso. Primero se busca dónde ubicar una fábrica sin imponer límites a su posición; después se estudia qué cambia cuando el punto elegido debe permanecer sobre una circunferencia o dentro de un disco. Cada ejemplo permite introducir las herramientas matemáticas necesarias para decidir, justificar la respuesta y reconocer sus límites. Finalmente, el reparto de corriente entre dos actuadores reúne esas herramientas en un problema de ingeniería con una solución analítica y programas reproducibles en MATLAB y Python.</p>
       </section>
 
       <h2>Antes del algoritmo está la decisión</h2>
 
       <p>Una fuente de alimentación puede resultar insuficiente para satisfacer simultáneamente las demandas de dos motores. Reducir ambas corrientes en la misma cantidad parece razonable, pero quizá uno de los movimientos sea más importante que el otro. Otra opción sería atender por completo al primer motor y entregar al segundo lo que quede. ¿Cuál de esas decisiones es mejor? La pregunta no tiene una respuesta matemática hasta que se define qué significa <em>mejor</em>.</p>
 
-      <p>La optimización proporciona un lenguaje para precisar esa comparación. Primero se identifican las cantidades que pueden elegirse; después se construye una medida de desempeño y se establecen las condiciones que ninguna solución puede incumplir. Solo entonces tiene sentido escoger un algoritmo. Un programa puede resolver con gran precisión un problema que no representa lo que realmente se necesitaba.</p>
+      <p>La optimización proporciona un lenguaje para precisar esa comparación. Primero se identifican las cantidades que pueden elegirse; después se construye una medida de desempeño y se establecen las condiciones que ninguna solución puede incumplir. Solo entonces tiene sentido escoger un <strong>algoritmo</strong>, una secuencia de operaciones para buscar la respuesta. Un programa puede resolver con gran precisión un problema que no representa lo que realmente se necesitaba.</p>
+
+      <p>Volveremos a los motores después de construir esas herramientas con ejemplos geométricos. Comenzar con puntos y distancias permite ver qué se elige, qué se compara y por qué una condición física puede cambiar la mejor decisión.</p>
 
       <h2>Las piezas de un problema de optimización</h2>
 
@@ -32,28 +34,337 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>Las <strong>variables de decisión</strong> son las cantidades cuyo valor buscamos. Si hay $n$ variables reales, las agrupamos en un vector columna $\mathbf{x}=[x_1,\ldots,x_n]^{\mathsf T}\in\mathbb{R}^n$. Pueden representar dimensiones de una pieza, ganancias de un controlador, corrientes eléctricas o parámetros desconocidos de un modelo. Los datos ya fijados, como una resistencia medida o un presupuesto disponible, son parámetros del problema, no variables de decisión.</p>
 
-      <p>La <strong>función objetivo</strong> asigna un número a cada decisión. Se escribe $f:\mathbb{R}^n\to\mathbb{R}$ cuando está definida en todo ese espacio, o se especifica un dominio menor cuando la expresión lo requiere. Su valor puede ser un error de seguimiento, una masa, un consumo energético o un costo. Minimizarla significa preferir decisiones con valores más pequeños:</p>
+      <p>La <strong>función objetivo</strong> asigna un número a cada decisión. Su <strong>dominio</strong> es el conjunto de valores para los que esa función está definida. Se escribe $f:\mathbb{R}^n\to\mathbb{R}$ cuando el dominio es todo ese espacio, o se especifica uno menor cuando la expresión lo requiere. Su valor puede ser un error de seguimiento, una masa, un consumo energético o un costo. Cuando se busca reducirlo también se habla de <em>función de costo</em>. Minimizarla significa buscar una decisión cuyo valor no sea mayor que el de las demás decisiones permitidas:</p>
 
       <div class="equation">\[
-        \min_{\mathbf{x}} f(\mathbf{x}).
+        \operatorname*{mín}_{\mathbf{x}} f(\mathbf{x}).
       \]</div>
 
-      <p>También podemos maximizar un desempeño $J$. Ambos planteamientos se relacionan mediante un cambio de signo:</p>
+      <p>Las <strong>restricciones</strong> son condiciones que una decisión debe cumplir. Llamaremos <strong>factible</strong> a una decisión que las respeta y <strong>conjunto factible</strong>, denotado por $\mathcal F$, al conjunto de todas ellas. Sin restricciones adicionales, $\mathcal F$ coincide con el dominio de la función.</p>
+
+      <p>También podemos <strong>maximizar</strong> un desempeño $J$, es decir, buscar el mayor valor permitido. Las letras $f$ y $J$ son nombres de funciones y no reservan un sentido de optimización; cualquiera puede aparecer en una minimización o una maximización. Ambos planteamientos se relacionan mediante un cambio de signo:</p>
 
       <div class="equation">\[
-        \max_{\mathbf{x}\in\mathcal F}J(\mathbf{x})
-        =-\min_{\mathbf{x}\in\mathcal F}\bigl[-J(\mathbf{x})\bigr].
+        \operatorname*{máx}_{\mathbf{x}\in\mathcal F}J(\mathbf{x})
+        =-\operatorname*{mín}_{\mathbf{x}\in\mathcal F}\bigl[-J(\mathbf{x})\bigr].
       \]</div>
 
-      <p>El signo cambia el valor óptimo, pero las decisiones que maximizan $J$ son las mismas que minimizan $-J$. Si interesa combinar varios criterios, por ejemplo precisión y consumo, se pueden normalizar y ponderar. Los pesos expresan prioridades de diseño; no aparecen automáticamente por invocar un optimizador.</p>
+      <p>El signo cambia el mejor valor alcanzado, pero las decisiones que maximizan $J$ son las mismas que minimizan $-J$. Si interesa combinar varios criterios, por ejemplo precisión y consumo, se pueden <strong>normalizar</strong>, dividiendo cada uno por una escala de referencia, y <strong>ponderar</strong>, multiplicándolos por coeficientes que expresan su importancia relativa. Esos coeficientes se llaman pesos. Los pesos expresan prioridades de diseño; no aparecen automáticamente por invocar un <em>optimizador</em>, el procedimiento o programa que busca la mejor decisión.</p>
 
-      <h3>Restricciones y conjunto factible</h3>
+      <h2>El mínimo no es lo mismo que el minimizador</h2>
 
-      <p>Las restricciones describen lo permitido. Una desigualdad puede representar un límite de corriente o de temperatura; una igualdad puede expresar un balance de masa, una relación geométrica o una ecuación del modelo. Una formulación general es</p>
+      <p>Antes de resolver un ejemplo conviene distinguir la decisión que buscamos del número con el que la evaluamos. El <strong>valor óptimo</strong> es el mejor valor alcanzado por el objetivo; un <strong>minimizador</strong> es una decisión que alcanza ese valor en un problema de minimización. Usaremos un superíndice $\star$ para identificar una solución óptima y su costo.</p>
+
+      <p>La expresión $\operatorname*{mín} f$ devuelve el mejor <em>valor</em> de la función. La expresión $\operatorname{arg\,mín} f$ identifica los <em>argumentos</em> que lo alcanzan. Para $f(x)=(x-2)^2+3$ se tiene</p>
+
+      <div class="equation">\[
+        f^\star=\operatorname*{mín}_{x\in\mathbb R}f(x)=3,
+        \qquad
+        \operatorname*{arg\,mín}_{x\in\mathbb R}f(x)=\{2\}.
+      \]</div>
+
+      <p>El número 3 es el costo óptimo y el número 2 es la decisión óptima. En ingeniería suelen necesitarse ambos. Si la solución es única, es habitual escribir $x^\star=2$ y abreviar $x^\star=\operatorname{arg\,mín}_x f(x)$, aunque formalmente el operador devuelve un conjunto. Para $f(x)=(x^2-1)^2$, los minimizadores son $\{-1,1\}$ y el valor mínimo es cero.</p>
+
+      <h3>Existencia y alcance de una solución</h3>
+
+      <p>Una <strong>cota inferior</strong> es un número que no supera ningún valor del objetivo. La mayor de esas cotas se llama <strong>ínfimo</strong>, pero no tiene por qué alcanzarse. La función $e^x$ se acerca a cero cuando $x\to-\infty$, pero nunca vale cero. Su ínfimo es 0 y no tiene mínimo sobre $\mathbb R$.</p>
+
+      <p>En cambio, una función continua sobre un conjunto factible no vacío, cerrado y acotado sí alcanza un mínimo. Aquí, <em>continua</em> significa que pequeños cambios en la decisión no producen saltos en el valor de la función; <em>cerrado</em> significa que el conjunto contiene los límites de sus sucesiones convergentes, y <em>acotado</em> que cabe dentro de una región de tamaño finito. Estas condiciones bastan para asegurar existencia, aunque un problema que no las cumpla también puede tener solución. Estas distinciones evitan confundir un problema sin solución alcanzable con un fallo del software.</p>
+
+      <p>También importa con qué decisiones se compara una solución. Un mínimo <strong>local</strong> tiene un costo no mayor que el de los puntos factibles suficientemente cercanos; un mínimo <strong>global</strong> tiene un costo no mayor que el de cualquier punto factible. Si la desigualdad de costos es estricta para los otros puntos de esa comparación, el mínimo es <em>estricto</em>. Un máximo se define invirtiendo el sentido de la comparación.</p>
+
+      <p>Un algoritmo <strong>local</strong> busca mejoras a partir de una decisión inicial y puede terminar en un mínimo local sin asegurar que sea global. En una función con varios valles, llegar al fondo de uno no demuestra que sea el más profundo. Esta distinción será importante al interpretar tanto las derivadas como los mensajes del software.</p>
+
+      <h2>Optimización sin restricciones: dónde ubicar una fábrica</h2>
+
+      <p>Antes de imponer límites, conviene estudiar una decisión que pueda elegirse libremente. Una fábrica abastece tres centros de distribución situados en $P_1=(0,0)$, $P_2=(4,2)$ y $P_3=(2,3)$. Buscamos su ubicación $(x,y)$ para minimizar la suma de las distancias a esos centros. Todas las coordenadas se expresan en una misma unidad de longitud y, por ahora, cualquier punto del plano está permitido.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-fabrica-planteamiento.png" alt="Fábrica en una posición variable x, y y tres centros de distribución en los puntos 0,0, 4,2 y 2,3, unidos por distancias d1, d2 y d3" width="1015" height="810" loading="lazy" style="display:block;width:min(100%,500px);height:auto;margin:0 auto;">
+        <figcaption>Figura 1. La ubicación de la fábrica es la decisión; las posiciones de los tres centros son datos. El dibujo muestra una ubicación de prueba, no necesariamente la óptima.</figcaption>
+      </figure>
+
+      <p>Llamamos $d_i$ a la distancia entre la fábrica y el centro $P_i$. Supondremos recorridos directos, sin obstáculos y con la misma frecuencia de servicio para los tres destinos. Si cada entrega exige ir desde la fábrica hasta un centro y regresar, la distancia total es $2(d_1+d_2+d_3)$; el factor 2 no cambia la mejor ubicación. En cambio, una ruta que visite los tres centros en un solo recorrido requeriría otro modelo. Tampoco estamos considerando todavía carreteras, precios del terreno ni zonas donde esté prohibido construir.</p>
+
+      <h3>De la figura a la función que se minimiza</h3>
+
+      <p>La distancia euclidiana entre dos puntos se obtiene con el teorema de Pitágoras. En este caso,</p>
 
       <div class="equation">\[
         \begin{aligned}
-          &\min_{\mathbf{x}\in\mathcal D} && f(\mathbf{x})\\
+        d_1(x,y)&amp;=\sqrt{x^2+y^2},\\
+        d_2(x,y)&amp;=\sqrt{(x-4)^2+(y-2)^2},\\
+        d_3(x,y)&amp;=\sqrt{(x-2)^2+(y-3)^2}.
+        \end{aligned}
+      \]</div>
+
+      <p>Por tanto, la función de costo y el problema completo son</p>
+
+      <div class="equation">\[
+        J(x,y)=d_1(x,y)+d_2(x,y)+d_3(x,y),
+        \qquad \operatorname*{mín}_{(x,y)\in\mathbb R^2}J(x,y).
+      \]</div>
+
+      <p>Este es un problema de <strong>optimización sin restricciones</strong>. No hay ecuaciones ni desigualdades adicionales que limiten la elección de $(x,y)$. Eso no significa que carezca de hipótesis físicas, sino que esas hipótesis permiten buscar en todo $\mathbb R^2$. La suma de distancias crece sin límite al alejarse indefinidamente de los centros; junto con la continuidad, esto garantiza que se alcanza un mínimo.</p>
+
+      <p>Una primera propuesta podría ser el promedio de las coordenadas, $(2,5/3)$. Sin embargo, ese punto minimiza la <em>suma de distancias al cuadrado</em>, que es otro objetivo. Un punto que minimiza la suma de las distancias, sin elevarlas al cuadrado, se llama <strong>mediana geométrica</strong>. Cambiar una expresión para simplificar las cuentas puede cambiar también la decisión óptima.</p>
+
+      <h3>Buscar un punto donde ninguna dirección mejore el costo</h3>
+
+      <p>Lejos de los tres centros, $J$ es <strong>diferenciable</strong>, lo que permite aproximar su cambio mediante una suma de contribuciones proporcionales a pequeños desplazamientos de las coordenadas. Una derivada parcial mide cómo cambia el costo al variar una coordenada y mantener la otra fija. Si la fábrica está en una posición óptima y puede moverse libremente, esas variaciones no deben reducir el costo a primer orden, es decir, en la parte proporcional al desplazamiento. Las dos derivadas parciales deben anularse:</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \frac{\partial J}{\partial x}
+        &amp;=\frac{x}{d_1}+\frac{x-4}{d_2}+\frac{x-2}{d_3}=0,\\
+        \frac{\partial J}{\partial y}
+        &amp;=\frac{y}{d_1}+\frac{y-2}{d_2}+\frac{y-3}{d_3}=0.
+        \end{aligned}
+      \]</div>
+
+      <p>El <strong>gradiente</strong> es el vector columna que reúne las derivadas parciales, aquí $\nabla J=[\partial J/\partial x,\;\partial J/\partial y]^{\mathsf T}$. Un <strong>punto estacionario</strong> es un punto diferenciable donde ese vector es cero. Por tanto, el sistema anterior expresa $\nabla J=\mathbf0$ y proporciona candidatos a óptimo, todavía pendientes de comprobar. Al resolverlo obtenemos el candidato</p>
+
+      <div class="equation">\[
+        (x^\star,y^\star)\approx(2.190768,\;2.398184),
+        \qquad J(x^\star,y^\star)\approx5.732051.
+      \]</div>
+
+      <p>El promedio de coordenadas da un costo aproximado de $5.964337$, mayor que el obtenido. La diferencia no es un fallo del promedio, sino la consecuencia de haber elegido un criterio distinto. Si unas entregas fueran más frecuentes que otras, podríamos usar $\sum_i w_i d_i$ con pesos positivos $w_i$ proporcionales a esas frecuencias.</p>
+
+      <p>También hay una interpretación geométrica. La <strong>norma euclidiana</strong> $\|\mathbf v\|_2=\sqrt{\sum_i v_i^2}$ mide la longitud de un vector; aplicada a la diferencia entre dos posiciones, da su distancia. Escribiendo $\mathbf z=[x,y]^{\mathsf T}$ y $\mathbf p_i$ para cada centro, la condición anterior equivale a</p>
+
+      <div class="equation">\[
+        \sum_{i=1}^{3}
+        \frac{\mathbf z^\star-\mathbf p_i}
+             {\|\mathbf z^\star-\mathbf p_i\|_2}
+        =\mathbf0.
+      \]</div>
+
+      <p>Los tres vectores tienen longitud uno y se equilibran. En este ejemplo forman ángulos de $120^\circ$ entre sí. La ubicación óptima no es simplemente el centro del rectángulo que contiene los destinos ni el promedio de sus coordenadas.</p>
+
+      <h3>Cómo distinguir un mínimo de otros puntos estacionarios</h3>
+
+      <p>El gradiente nulo no basta para clasificar el candidato. Un punto es <strong>interior</strong> al conjunto permitido cuando admite desplazamientos suficientemente pequeños en todas las direcciones. En un mínimo interior diferenciable, el gradiente debe anularse, pero también puede anularse en un máximo o en un <strong>punto de silla</strong>, donde hay valores mayores y menores que el suyo arbitrariamente cerca. Para distinguir estos comportamientos podemos estudiar cómo cambia la pendiente.</p>
+
+      <p>Para una función $J$ dos veces continuamente diferenciable cerca de un punto, la <strong>matriz hessiana</strong>, también escrita $\nabla^2J$, agrupa sus segundas derivadas:</p>
+
+      <div class="equation">\[
+        H_J(\mathbf x)=
+        \left[\frac{\partial^2J}{\partial x_i\,\partial x_j}\right]_{i,j=1}^{n}.
+      \]</div>
+
+      <p>En un punto estacionario $\mathbf x^\star$, la aproximación de segundo orden permite examinar esa curvatura. Escribimos $\mathbf v$ para un desplazamiento pequeño y $o(\|\mathbf v\|_2^2)$ para un resto que, dividido entre $\|\mathbf v\|_2^2$, tiende a cero cuando $\mathbf v\to\mathbf0$:</p>
+
+      <div class="equation">\[
+        J(\mathbf x^\star+\mathbf v)
+        =J(\mathbf x^\star)+\frac12\mathbf v^{\mathsf T}
+        H_J(\mathbf x^\star)\mathbf v+o(\|\mathbf v\|_2^2).
+      \]</div>
+
+      <p>El término $\tfrac12\mathbf v^{\mathsf T}H_J\mathbf v$ es <strong>cuadrático</strong> en el desplazamiento, pues sus sumandos contienen productos de dos componentes de $\mathbf v$. La hessiana es simétrica bajo estas hipótesis. Un <strong>eigenvalor</strong> $\rho$ de una matriz $H$ es un número para el que existe un vector no nulo $\mathbf v$ tal que $H\mathbf v=\rho\mathbf v$. Para una hessiana simétrica, sus eigenvalores permiten reconocer los signos de la curvatura. El término cuadrático de la aproximación anterior conduce a las siguientes pruebas:</p>
+
+      <ul class="elegante">
+        <li>La hessiana es <strong>definida positiva</strong> si $\mathbf v^{\mathsf T}H_J\mathbf v>0$ para todo $\mathbf v\ne\mathbf0$, lo que equivale a tener todos sus eigenvalores positivos. En un punto estacionario, esto garantiza un mínimo local estricto.</li>
+        <li>Es <strong>definida negativa</strong> si ese término es negativo para todo vector no nulo, o equivalentemente si todos sus eigenvalores son negativos. En un punto estacionario, esto garantiza un máximo local estricto.</li>
+        <li>Es <strong>indefinida</strong> si el término puede ser positivo o negativo según la dirección, y por tanto tiene eigenvalores de ambos signos. En un punto estacionario, esto garantiza un punto de silla.</li>
+        <li>Si tiene eigenvalores nulos y los demás son del mismo signo, esta prueba por sí sola no decide. En una variable, $x^4$ y $-x^4$ tienen segunda derivada nula en el origen y comportamientos opuestos.</li>
+      </ul>
+
+      <p>También usaremos la expresión <strong>semidefinida positiva</strong> para una matriz simétrica cuyo término $\mathbf v^{\mathsf T}H\mathbf v$ es siempre no negativo, aunque pueda valer cero para vectores no nulos. Sus eigenvalores son no negativos. Las notaciones $H\succ0$ y $H\succeq0$ indican, respectivamente, que $H$ es definida positiva y semidefinida positiva.</p>
+
+      <p>Una condición <strong>necesaria</strong> debe cumplirse si existe el mínimo, pero puede cumplirse sin que lo haya. Una condición <strong>suficiente</strong> permite asegurarlo. Así, $\nabla J(\mathbf x^\star)=\mathbf0$ es necesaria en un mínimo interior diferenciable, mientras que combinarla con una hessiana definida positiva es suficiente para confirmar un mínimo local estricto, pero no necesario. El ejemplo $x^4$ muestra por qué una hessiana positiva no es imprescindible.</p>
+
+      <h3>Por qué la solución de la fábrica es global</h3>
+
+      <p>La prueba de curvatura describe el entorno del candidato. Para descartar puntos mejores lejos de él necesitamos una propiedad de toda la función. Un <strong>conjunto convexo</strong> contiene el segmento completo que une cualquier pareja de sus puntos. Una <strong>función convexa</strong>, definida sobre un conjunto convexo, tiene un costo en cada punto intermedio no mayor que el promedio de los costos de los extremos ponderado en la misma proporción que define ese punto. Geométricamente, su gráfica no queda por encima de la recta que une los valores de los extremos. Si el costo es estrictamente menor para extremos distintos y puntos interiores del segmento, la función es <strong>estrictamente convexa</strong>. Una función o un conjunto que no cumple su respectiva propiedad se llama <em>no convexo</em>.</p>
+
+      <p>Minimizar una función convexa sobre un conjunto factible convexo constituye un <strong>problema convexo</strong>. En él, cualquier mínimo local es global; si el objetivo es estrictamente convexo, el minimizador es único cuando existe. Más adelante escribiremos estas propiedades como desigualdades y veremos cómo reconocerlas en el problema de los motores.</p>
+
+      <p>Cada distancia de la fábrica a un centro es convexa por la desigualdad triangular, que afirma que la longitud de una suma de vectores no supera la suma de sus longitudes. La suma de las tres distancias es estrictamente convexa porque los centros no están alineados. Por tanto, el punto estacionario calculado es el mínimo global único, no solo una buena ubicación cercana al punto inicial. Esta garantía procede del modelo, no solo del éxito de un cálculo numérico.</p>
+
+      <aside class="remark">
+        <p><strong>Las derivadas no existen en los propios centros.</strong> Allí alguna distancia vale cero y las fracciones anteriores no están definidas. Por eso no deben descartarse esos puntos únicamente porque no satisfacen el sistema escrito. En este ejemplo el candidato encontrado es diferente de los tres centros y la convexidad ya permite compararlo con todos los puntos del plano, incluidos aquellos donde no existen las derivadas.</p>
+      </aside>
+
+      <h3>Resolver el ejemplo en MATLAB</h3>
+
+      <p>Ya podemos traducir el cálculo a un programa. La teoría anterior justifica el alcance de la respuesta; el programa obtiene el candidato y comprueba su curvatura. Con <strong>Symbolic Math Toolbox</strong> calculamos las derivadas como expresiones simbólicas y resolvemos numéricamente sus ecuaciones mediante <a href="https://www.mathworks.com/help/symbolic/sym.vpasolve.html"><code>vpasolve</code></a>. El punto $(2,2)$ es una aproximación inicial que orienta la búsqueda, no una restricción sobre la solución.</p>
+
+      <p>Un <strong>residuo</strong> mide cuánto falta para cumplir una ecuación. Aquí evaluamos el gradiente en el candidato; como debería ser cero, su norma mide ese incumplimiento. Una <strong>tolerancia numérica</strong> es un umbral pequeño que usamos para decidir si un residuo o una variación es aceptable, teniendo en cuenta que el cálculo se realiza con precisión finita. El código exige un residuo menor que $10^{-8}$, comprueba los eigenvalores de la hessiana y dibuja la solución.</p>
+
+      <script type="text/matlab" data-file="optim_fabrica.m">
+% Ubicación de una fábrica sin restricciones
+syms x y real
+P = [0 0; 4 2; 2 3];
+J = sqrt(x^2 + y^2) ...
+    + sqrt((x-4)^2 + (y-2)^2) ...
+    + sqrt((x-2)^2 + (y-3)^2);
+gradJ = gradient(J, [x, y]);
+HJ = hessian(J, [x, y]);
+
+[xs, ys] = vpasolve(gradJ == 0, [x, y], [2, 2]);
+if isempty(xs) || isempty(ys)
+    error('No se encontró un punto estacionario.');
+end
+p = double([xs; ys]);
+assert(isreal(p) && all(isfinite(p)), 'La solución debe ser real y finita.');
+costo = double(subs(J, [x, y], p.'));
+residuo = double(subs(gradJ, [x, y], p.'));
+Hopt = double(subs(HJ, [x, y], p.'));
+assert(norm(residuo) < 1e-8, 'El gradiente no es suficientemente pequeño.');
+assert(all(eig(Hopt) > 0), 'No se confirmó la curvatura positiva.');
+
+fprintf('Ubicación óptima: (%.6f, %.6f)\n', p(1), p(2));
+fprintf('Suma mínima de distancias: %.6f\n', costo);
+disp('Eigenvalores de la hessiana en la solución:');
+disp(eig(Hopt));
+
+figure('Color', 'w');
+hold on
+hCentros = plot(P(:,1), P(:,2), 'ko', 'MarkerFaceColor', 'k');
+hFabrica = plot(p(1), p(2), 'rp', 'MarkerSize', 12, 'MarkerFaceColor', 'r');
+for k = 1:size(P, 1)
+    plot([p(1), P(k,1)], [p(2), P(k,2)], '--', 'Color', [0.2 0.5 0.5]);
+end
+xlabel('$x$', 'Interpreter', 'latex');
+ylabel('$y$', 'Interpreter', 'latex');
+title('Ubicación óptima de la fábrica');
+legend([hCentros, hFabrica], {'Centros de distribución', 'Fábrica óptima'}, ...
+    'Location', 'best');
+axis equal
+xlim([-0.3 4.3]); ylim([-0.3 3.3]);
+grid on
+      </script>
+
+      <p>El programa completo está disponible en <a href="/drautomatica/html/optim_fabrica.m" download><code>optim_fabrica.m</code></a>. Los eigenvalores de la hessiana resultan aproximadamente $0.627119$ y $1.804510$, ambos positivos. <code>vpasolve</code> busca una solución del sistema de ecuaciones; encontrarla no constituye por sí solo una demostración de que sea óptima, ni el procedimiento enumera siempre todos los puntos estacionarios.</p>
+
+      <p>También se puede minimizar directamente la función numérica sin calcular derivadas. Esta alternativa usa <a href="https://www.mathworks.com/help/matlab/ref/fminsearch.html"><code>fminsearch</code></a>, un algoritmo local disponible en MATLAB sin una toolbox adicional. Trabaja mediante <strong>iteraciones</strong>, pasos sucesivos que actualizan los puntos de búsqueda. Las opciones <code>TolX</code> y <code>TolFun</code> fijan tolerancias sobre la dispersión de esos puntos y de sus valores del objetivo, utilizadas para decidir cuándo detenerse. Un indicador de convergencia informa que se cumplieron los criterios de terminación del método, no que se haya demostrado un mínimo global. El siguiente bloque puede ejecutarse de forma independiente:</p>
+
+      <script type="text/matlab">
+P = [0 0; 4 2; 2 3];
+distancia = @(p) sum(sqrt(sum((P - p(:).').^2, 2)));
+opciones = optimset('Display', 'off', 'TolX', 1e-10, 'TolFun', 1e-10);
+[p, costo, exitflag] = fminsearch(distancia, [2; 2], opciones);
+assert(exitflag > 0, 'No se confirmó la convergencia.');
+fprintf('Ubicación: (%.6f, %.6f); costo: %.6f\n', p(1), p(2), costo);
+      </script>
+
+      <p>Ambas rutas llegan aquí a la misma solución. En un problema no convexo, un método local puede depender del punto inicial. No conviene trasladar a cualquier función la garantía global que tenemos para esta suma particular de distancias.</p>
+
+      <h2>Una igualdad cambia los movimientos permitidos</h2>
+
+      <p>En el problema de la fábrica se podía elegir cualquier posición. Esa libertad justificaba exigir gradiente nulo, pero deja de existir cuando una relación física obliga a moverse solo por ciertos puntos. Para aislar ese cambio sin complicar la suma de tres distancias, consideremos una sola distancia y una guía circular.</p>
+
+      <p>Queremos hallar el punto de la circunferencia $x^2+y^2=1$ más cercano a $A=(3,2)$. Sin esa guía, la respuesta sería el propio punto $A$, con distancia cero. La igualdad obliga a permanecer sobre la circunferencia, por lo que esa solución deja de estar permitida. A diferencia de la fábrica, este es un problema de <strong>optimización restringida</strong>, porque se optimiza solo entre decisiones que cumplen una condición adicional.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-circunferencia.png" alt="Punto A igual a 3,2 fuera de una circunferencia de radio uno y comparación de su distancia a un punto cualquiera y al punto más cercano de la circunferencia" width="955" height="810" loading="lazy" style="display:block;width:min(100%,440px);height:auto;margin:0 auto;">
+        <figcaption>Figura 2. La restricción $x^2+y^2=1$ permite moverse por la circunferencia, pero no por su interior. El segmento más corto hacia $(3,2)$ sigue la dirección radial.</figcaption>
+      </figure>
+
+      <p>Minimizar una distancia no negativa y minimizar su cuadrado dan el mismo punto, porque elevar al cuadrado es estrictamente creciente en ese intervalo. Así evitamos una raíz y escribimos</p>
+
+      <div class="equation">\[
+        \operatorname*{mín}_{x,y}J(x,y)=(x-3)^2+(y-2)^2
+        \quad\text{sujeto a}\quad h(x,y)=x^2+y^2-1=0.
+      \]</div>
+
+      <p>Aquí estamos elevando al cuadrado <em>una sola distancia</em>. No debe confundirse esta equivalencia con reemplazar una suma de distancias por la suma de sus cuadrados, operación que sí cambiaba el problema de la fábrica.</p>
+
+      <h3>Multiplicadores de Lagrange</h3>
+
+      <p>Una dirección <strong>tangente</strong> sigue la curva localmente, mientras que una dirección <strong>normal</strong> es perpendicular a ella. En un punto de la curva $h=0$ donde $\nabla h\ne\mathbf0$, el gradiente $\nabla h$ es normal a la curva. En un mínimo restringido, el costo no puede disminuir mediante un pequeño movimiento tangente permitido. Por tanto, su gradiente también debe ser normal, aunque no sea cero.</p>
+
+      <p>Introducimos un número $\nu$, llamado <strong>multiplicador de Lagrange</strong>, que expresa cuánto de esa normal se necesita para equilibrar el gradiente del objetivo. La relación se escribe $\nabla J+\nu\nabla h=\mathbf0$. El multiplicador es una incógnita auxiliar para encontrar el punto óptimo, no una nueva coordenada física.</p>
+
+      <p>Las ecuaciones se organizan mediante la función lagrangiana</p>
+
+      <div class="equation">\[
+        \mathcal L(x,y,\nu)
+        =(x-3)^2+(y-2)^2+\nu(x^2+y^2-1).
+      \]</div>
+
+      <p>Igualar a cero sus derivadas respecto de $x$, $y$ y $\nu$ produce dos condiciones de estacionariedad y recupera la restricción:</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        2(x-3)+2\nu x&amp;=0,\\
+        2(y-2)+2\nu y&amp;=0,\\
+        x^2+y^2-1&amp;=0.
+        \end{aligned}
+      \]</div>
+
+      <p>Las dos primeras ecuaciones dan $x=3/(1+\nu)$ y $y=2/(1+\nu)$; el valor $\nu=-1$ no puede satisfacerlas. Al sustituir en la tercera obtenemos $(1+\nu)^2=13$. Por tanto, hay dos candidatos:</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        (x_+,y_+)&amp;=\left(\frac3{\sqrt{13}},\frac2{\sqrt{13}}\right),
+        &amp;\nu_+&amp;=\sqrt{13}-1,\\
+        (x_-,y_-)&amp;=\left(-\frac3{\sqrt{13}},-\frac2{\sqrt{13}}\right),
+        &amp;\nu_-&amp;=-\sqrt{13}-1.
+        \end{aligned}
+      \]</div>
+
+      <p>El primero es el punto más cercano y el segundo el más lejano. Para comprobarlo globalmente, sobre la circunferencia el objetivo se reduce a $J=14-2(3x+2y)$. La desigualdad de Cauchy-Schwarz establece que el valor absoluto del producto escalar de dos vectores no supera el producto de sus normas, $|\mathbf a^{\mathsf T}\mathbf b|\leq\|\mathbf a\|_2\|\mathbf b\|_2$. Aplicada a $(3,2)$ y $(x,y)$, cuya norma es uno, da $-\sqrt{13}\leq3x+2y\leq\sqrt{13}$. Los dos candidatos alcanzan esos extremos. En consecuencia,</p>
+
+      <div class="equation">\[
+        (x^\star,y^\star)\approx(0.832050,\;0.554700),
+        \qquad J^\star=14-2\sqrt{13}.
+      \]</div>
+
+      <p>Como $J$ es la distancia <em>al cuadrado</em>, la distancia mínima buscada es $\sqrt{J^\star}=\sqrt{13}-1\approx2.605551$, no $J^\star\approx6.788897$. La distinción entre la magnitud física y el objetivo que elegimos para calcularla sigue siendo importante al interpretar una solución.</p>
+
+      <aside class="remark">
+        <p><strong>La lagrangiana no se minimiza libremente respecto de todas sus variables.</strong> Resolver sus ecuaciones de estacionariedad da candidatos que deben clasificarse, como los dos puntos anteriores. El multiplicador de una igualdad puede tener cualquier signo. No se añade como una nueva decisión física para minimizar conjuntamente en $(x,y,\nu)$; de hecho, fuera de la restricción el término $\nu h$ puede disminuir sin límite al variar $\nu$. Estas ecuaciones requieren hipótesis sobre las restricciones, llamadas <em>condiciones de regularidad</em>, que evitan degeneraciones en la descripción de los movimientos permitidos. Para una igualdad suave basta aquí con $\nabla h\ne\mathbf0$; para varias, una condición suficiente es que sus gradientes sean linealmente independientes, es decir, que ninguno sea combinación lineal de los demás.</p>
+      </aside>
+
+      <h2>De una igualdad a una restricción de desigualdad</h2>
+
+      <p>Supongamos que ya no exigimos permanecer sobre una guía, sino dentro de una zona de alcance máximo uno. El objetivo sigue siendo acercarse a $A=(3,2)$, pero la condición cambia a</p>
+
+      <div class="equation">\[
+        g(x,y)=x^2+y^2-1\leq0.
+      \]</div>
+
+      <p>Ahora se permite todo el disco, incluido su borde. Una igualdad fija una relación exacta; una desigualdad establece un límite que puede cumplirse con margen. En este caso particular, el punto más cercano a $A$ sigue siendo $(3/\sqrt{13},2/\sqrt{13})$, porque $A$ está fuera del disco. La desigualdad queda <strong>activa</strong> en el óptimo, es decir, allí se cumple con igualdad.</p>
+
+      <p>Pero no todas las desigualdades se saturan. Si el destino fuera $A=(0.3,0.4)$, estaría dentro del disco y el mejor punto sería el propio destino, con distancia cero. La condición se cumpliría estrictamente, pues $0.3^2+0.4^2-1=-0.75&lt;0$. La restricción sería <strong>inactiva</strong>. Reemplazarla por una igualdad nos obligaría a ir al borde y empeoraría la solución.</p>
+
+      <h3>Qué cambia en las condiciones de optimalidad</h3>
+
+      <p>Las <strong>condiciones de optimalidad</strong> son relaciones que permiten reconocer candidatos a óptimo o confirmar una solución bajo hipótesis precisas. Para extender el equilibrio de Lagrange a una desigualdad escrita como $g\leq0$, se introduce un multiplicador $\lambda\geq0$. Además se exige <strong>complementariedad</strong>, que significa que el producto $\lambda g$ es cero. Esta condición permite distinguir si el límite está actuando o si queda margen.</p>
+
+      <p>Escribamos $\mathbf z=[x,y]^{\mathsf T}$ para la posición elegida y $\mathbf a$ para las coordenadas del destino. El objetivo es $J(\mathbf z)=\|\mathbf z-\mathbf a\|_2^2$, una función <strong>cuadrática</strong>, es decir, un polinomio de grado dos en las variables de decisión. Para el problema del disco, el equilibrio de gradientes, el cumplimiento de la restricción, el signo del multiplicador y la complementariedad forman las condiciones de <strong>Karush-Kuhn-Tucker (KKT)</strong>:</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \nabla J(\mathbf z^\star)+\lambda^\star\nabla g(\mathbf z^\star)
+          &amp;=\mathbf0,\\
+        g(\mathbf z^\star)&amp;\leq0,\qquad \lambda^\star\geq0,\\
+        \lambda^\star g(\mathbf z^\star)&amp;=0.
+        \end{aligned}
+      \]</div>
+
+      <p>La última ecuación expresa la complementariedad. Si la restricción tiene margen, $g&lt;0$, su multiplicador debe ser cero y reaparece la condición de gradiente nulo del problema libre. Si $\lambda>0$, necesariamente estamos en la <strong>frontera</strong>, el borde que separa el disco permitido de su exterior. La implicación inversa no es obligatoria; una restricción puede estar activa y tener multiplicador cero.</p>
+
+      <p>Para el destino $(3,2)$ obtenemos $\lambda^\star=\sqrt{13}-1>0$, que equilibra el gradiente del objetivo en el borde. Para el destino interior $(0.3,0.4)$, el gradiente del objetivo ya es cero y basta $\lambda^\star=0$. Esta diferencia explica por qué no debemos convertir todas las desigualdades en igualdades antes de resolver.</p>
+
+      <figure>
+        <img src="/drautomatica/html/optim-desigualdad-disco.png" alt="Comparación de una restricción de disco activa cuando el destino está fuera e inactiva cuando el destino está dentro, con el óptimo marcado en cada caso" width="1800" height="900" loading="lazy" style="display:block;width:100%;height:auto;margin:0 auto;">
+        <figcaption>Figura 3. Para el mismo disco permitido, el óptimo puede estar en la frontera o en el interior, según el destino $\mathbf a$. Se usa la notación $\mathbf z^\star=[x^\star,y^\star]^{\mathsf T}$. Las escalas de los dos paneles son diferentes.</figcaption>
+      </figure>
+
+      <p>El disco es convexo y tanto el objetivo cuadrático como $g$ son funciones convexas. En este ejemplo diferenciable, satisfacer las condiciones KKT basta para certificar el óptimo global. Además, existe un punto que cumple estrictamente la desigualdad, por ejemplo el origen. En este problema convexo, esa propiedad es una condición de regularidad que también asegura la existencia de un multiplicador KKT en el óptimo. Son dos afirmaciones diferentes, la suficiencia de las condiciones y la garantía de que un óptimo las satisface. Fuera del marco convexo, las ecuaciones KKT por sí solas no garantizan un mínimo global. Estas condiciones y sus hipótesis se desarrollan en <a href="https://web.stanford.edu/~boyd/cvxbook/">Boyd y Vandenberghe (2004)</a>.</p>
+
+      <p>Los tres planteamientos muestran cómo cambia la búsqueda al reducir los movimientos permitidos. Primero elegimos libremente una ubicación; después exigimos una relación geométrica exacta; finalmente permitimos una región delimitada por una desigualdad. Para reunir estas situaciones en un modelo de ingeniería con muchas variables, necesitamos escribir varias condiciones simultáneas en una notación común.</p>
+
+      <h2>Restricciones y conjunto factible</h2>
+
+      <p>Hasta ahora hemos impuesto, como máximo, una condición geométrica. En general, una desigualdad puede representar un límite de corriente o de temperatura; una igualdad puede expresar un balance de masa, una relación geométrica o una ecuación del modelo. Denotamos por $\mathcal D$ el dominio del modelo, por $g_i$ las funciones de las $m$ desigualdades y por $h_j$ las de las $p$ igualdades. La formulación general es</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+          &\operatorname*{mín}_{\mathbf{x}\in\mathcal D} && f(\mathbf{x})\\
           &\text{sujeto a} && g_i(\mathbf{x})\leq 0,
              \qquad i=1,\ldots,m,\\
           &&& h_j(\mathbf{x})=0,
@@ -74,32 +385,18 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
       <p>Un punto puede tener un costo excelente y ser inútil porque viola una restricción. También puede ocurrir que $\mathcal F$ esté vacío. Exigir a la vez $x_1\geq3$ y $x_1\leq2$ no define un problema difícil de resolver: define un problema sin decisiones admisibles.</p>
 
       <aside class="remark">
-        <p><strong>Una penalización no siempre es una restricción.</strong> Añadir al objetivo un término que castigue corrientes excesivas permite que el algoritmo compare ese exceso con otras ventajas. Imponer una cota obliga a respetarla, dentro de la tolerancia numérica del método. Un límite físico de protección no debería sustituirse sin justificación por una penalización de peso arbitrario.</p>
+        <p><strong>Una penalización no siempre es una restricción.</strong> Una penalización es un término añadido al objetivo para aumentar el costo de un comportamiento no deseado. Penalizar corrientes excesivas permite que el algoritmo compare ese exceso con otras ventajas. Imponer un límite como restricción obliga a respetarlo, dentro de la tolerancia numérica del método. Un límite físico de protección no debería sustituirse sin justificación por una penalización de peso arbitrario.</p>
       </aside>
 
-      <h2>El mínimo no es lo mismo que el minimizador</h2>
+      <h2>Aplicar la formulación al reparto de corriente</h2>
 
-      <p>La expresión $\min f$ devuelve el mejor <em>valor</em> de la función. La expresión $\operatorname{arg\,min} f$ identifica los <em>argumentos</em> que lo alcanzan. Para $f(x)=(x-2)^2+3$ se tiene</p>
-
-      <div class="equation">\[
-        f^\star=\min_{x\in\mathbb R}f(x)=3,
-        \qquad
-        \operatorname*{arg\,min}_{x\in\mathbb R}f(x)=\{2\}.
-      \]</div>
-
-      <p>El número 3 es el costo óptimo y el número 2 es la decisión óptima. En ingeniería suelen necesitarse ambos. Si la solución es única, es habitual escribir $x^\star=2$ y abreviar $x^\star=\operatorname{arg\,min}_x f(x)$, aunque formalmente el operador devuelve un conjunto. Para $f(x)=(x^2-1)^2$, los minimizadores son $\{-1,1\}$ y el valor mínimo es cero.</p>
-
-      <p>Tener una cota inferior tampoco garantiza que exista un minimizador. La función $e^x$ se acerca a cero cuando $x\to-\infty$, pero nunca vale cero. Su ínfimo es 0 y no tiene mínimo sobre $\mathbb R$. En cambio, una función continua sobre un conjunto factible no vacío, cerrado y acotado sí alcanza un mínimo. Estas distinciones evitan confundir un problema sin solución alcanzable con un fallo del software.</p>
-
-      <h2>Un ejemplo de ingeniería que acompañará el tutorial</h2>
-
-      <p>Consideremos dos actuadores alimentados por una fuente común. Para trabajar con números adimensionales, definimos $x_i=I_i/I_0$, donde $I_0=1\,\mathrm{A}$. Sus referencias son $3\,\mathrm{A}$ y $2\,\mathrm{A}$, pero la fuente solo puede entregar $4\,\mathrm{A}$ en total. El primer canal admite hasta $2.5\,\mathrm{A}$ y el segundo hasta $3\,\mathrm{A}$. En este ejemplo no se permite corriente negativa.</p>
+      <p>Volvamos a los dos actuadores alimentados por una fuente común que motivaron el tutorial. Ya podemos separar las decisiones, el criterio de comparación y los límites físicos. Para trabajar con números adimensionales, definimos $x_i=I_i/I_0$, donde $I_0=1\,\mathrm{A}$. Sus referencias, las corrientes que querríamos entregar a cada actuador, son $3\,\mathrm{A}$ y $2\,\mathrm{A}$, pero la fuente solo puede entregar $4\,\mathrm{A}$ en total. El primer canal admite hasta $2.5\,\mathrm{A}$ y el segundo hasta $3\,\mathrm{A}$. En este ejemplo no se permite corriente negativa.</p>
 
       <p>Queremos aproximarnos a las referencias y damos el doble de peso al error cuadrático del segundo actuador. El problema queda definido por</p>
 
       <div class="equation">\[
         \begin{aligned}
-        \min_{x_1,x_2}\quad&
+        \operatorname*{mín}_{x_1,x_2}\quad&
         f(x_1,x_2)=(x_1-3)^2+2(x_2-2)^2\\
         \text{sujeto a}\quad&
         x_1+x_2\leq4,\\
@@ -107,18 +404,18 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         \end{aligned}
       \]</div>
 
-      <p>La función mide desviaciones respecto de las referencias, no potencia eléctrica. El factor 2 es una prioridad elegida para el ejemplo. Además, se trata de una asignación estática de corrientes: se supone que los reguladores internos pueden seguir esas consignas. No estamos modelando todavía la dinámica eléctrica ni mecánica de los actuadores.</p>
+      <p>La función mide desviaciones respecto de las referencias, no potencia eléctrica. El factor 2 es una prioridad elegida para el ejemplo. Además, se trata de una asignación estática de corrientes, elegida para un instante sin describir su evolución temporal. Se supone que los reguladores internos pueden seguir esas consignas. No estamos modelando todavía la dinámica eléctrica ni mecánica de los actuadores.</p>
+
+      <p>Para visualizar el objetivo usamos <strong>curvas de nivel</strong>, que reúnen puntos con el mismo valor de $f$. En este caso son elipses centradas en $(3,2)$. La región sombreada de la siguiente figura representa decisiones físicamente admisibles bajo las hipótesis planteadas. Cambiar el objetivo modifica las elipses; cambiar las restricciones modifica el polígono. Son dos partes diferentes del modelo.</p>
 
       <figure>
         <img src="/drautomatica/html/optim-geometria.png" alt="Región factible poligonal del reparto de corriente, curvas de nivel elípticas, referencia no factible y solución óptima sobre el límite de corriente total" width="1600" height="1200" style="display:block;width:min(100%,740px);height:auto;margin:0 auto;">
-        <figcaption>Figura 1. El objetivo preferiría el punto $(3,2)$, pero las restricciones lo excluyen. El mejor punto permitido es el lugar donde una curva de nivel toca por primera vez la región factible al aumentar el costo desde cero.</figcaption>
+        <figcaption>Figura 4. El objetivo preferiría el punto $(3,2)$, pero las restricciones lo excluyen. El mejor punto permitido es el lugar donde una curva de nivel toca por primera vez la región factible al aumentar el costo desde cero.</figcaption>
       </figure>
-
-      <p>Las curvas de nivel reúnen puntos con el mismo valor de $f$. En este caso son elipses centradas en $(3,2)$. La región sombreada representa decisiones físicamente admisibles bajo las hipótesis planteadas. Cambiar el objetivo modifica las elipses; cambiar las restricciones modifica el polígono. Son dos partes diferentes del modelo.</p>
 
       <h2>Convexidad de la función objetivo</h2>
 
-      <p>Un mínimo <strong>local</strong> es mejor que los puntos factibles suficientemente cercanos. Un mínimo <strong>global</strong> es mejor que todos los puntos factibles. En una función con varios valles, un algoritmo puede llegar al fondo de uno sin encontrar el más profundo.</p>
+      <p>La figura sugiere una solución, pero necesitamos justificar que no hay otra mejor. En el ejemplo de la fábrica utilizamos la convexidad para pasar de un candidato local a una conclusión global. Ahora precisaremos esa propiedad y la comprobaremos en el objetivo de los actuadores.</p>
 
       <p>La convexidad permite una garantía especialmente útil. Una función $f$ es convexa sobre un dominio convexo si, para cualesquiera $\mathbf u,\mathbf v$ de ese dominio y $0\leq\theta\leq1$, cumple</p>
 
@@ -131,23 +428,23 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <figure>
         <img src="/drautomatica/html/optim-convexidad.png" alt="Comparación entre una parábola convexa con un solo mínimo y una función no convexa con dos mínimos locales de diferente profundidad" width="1800" height="800" loading="lazy" style="display:block;width:100%;height:auto;margin:0 auto;">
-        <figcaption>Figura 2. A la izquierda, una función convexa. A la derecha, $(x^2-1)^2+0.4x$ tiene dos mínimos locales, pero solo el de la izquierda es global. La no convexidad no obliga a que existan varios mínimos, aunque permite esa dificultad.</figcaption>
+        <figcaption>Figura 5. A la izquierda, una función convexa. A la derecha, $(x^2-1)^2+0.4x$ tiene dos mínimos locales, pero solo el de la izquierda es global. La no convexidad no obliga a que existan varios mínimos, aunque permite esa dificultad.</figcaption>
       </figure>
 
       <p>Si el objetivo y el conjunto factible son convexos, cualquier mínimo local es global. Se puede entender por contradicción: si existiera un punto factible mejor, los puntos del segmento que lo une con el supuesto mínimo local seguirían siendo factibles y, por convexidad, mejorarían el costo incluso arbitrariamente cerca de ese mínimo.</p>
 
-      <p>Si el objetivo es <em>estrictamente</em> convexo, el minimizador es único cuando existe. La convexidad por sí sola no garantiza unicidad ni existencia. Para funciones dos veces diferenciables en un dominio abierto convexo, puede examinarse la matriz hessiana $\nabla^2f$; que sea semidefinida positiva en todo el dominio equivale a convexidad. En nuestro ejemplo,</p>
+      <p>La función es <em>estrictamente</em> convexa si la desigualdad anterior es estricta cuando $\mathbf u\ne\mathbf v$ y $0&lt;\theta&lt;1$. En ese caso, el minimizador es único cuando existe. La convexidad por sí sola no garantiza unicidad ni existencia. Para funciones dos veces diferenciables en un dominio abierto convexo, puede examinarse la matriz hessiana $\nabla^2f$; que sea semidefinida positiva en todo el dominio equivale a convexidad. En nuestro ejemplo,</p>
 
       <div class="equation">\[
         \nabla^2 f=
         \begin{bmatrix}2&0\\0&4\end{bmatrix}\succ0.
       \]</div>
 
-      <p>Sus dos eigenvalores son positivos, por lo que el objetivo es estrictamente convexo. Aunque contiene cuadrados y es una función no lineal, sigue siendo convexa. <strong>No lineal</strong> y <strong>no convexo</strong> no son sinónimos.</p>
+      <p>Sus dos eigenvalores son positivos en todo el dominio, por lo que el objetivo es estrictamente convexo. Conviene separar esta propiedad de la forma algebraica. Una función <strong>afín</strong> tiene la forma $\mathbf a^{\mathsf T}\mathbf x+b$; si $b=0$, es lineal en sentido estricto. Los cuadrados del objetivo impiden expresarlo de esa forma, por lo que es <strong>no lineal</strong>, aunque siga siendo convexo. <strong>No lineal</strong> y <strong>no convexo</strong> no son sinónimos.</p>
 
       <h2>El gradiente indica cómo cambia el costo</h2>
 
-      <p>Para una función diferenciable de varias variables, el gradiente agrupa las derivadas parciales en un vector:</p>
+      <p>La convexidad nos dice qué garantía puede tener una solución; el gradiente ayuda a encontrarla y a interpretar cómo cambia el costo durante la búsqueda. Ya lo usamos con dos coordenadas en la fábrica. Para una función diferenciable de $n$ variables, su expresión es</p>
 
       <div class="equation">\[
         \nabla f(\mathbf x)=
@@ -158,7 +455,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         \end{bmatrix}.
       \]</div>
 
-      <p>Su utilidad se aprecia en la aproximación local</p>
+      <p>Tomemos una dirección $\mathbf d$ y un número $\alpha>0$ que controle la longitud del desplazamiento $\alpha\mathbf d$. La aproximación de primer orden es la siguiente; el resto $o(\alpha)$, dividido entre $\alpha$, tiende a cero cuando $\alpha\to0$:</p>
 
       <div class="equation">\[
         f(\mathbf x+\alpha\mathbf d)
@@ -166,7 +463,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         +o(\alpha),\qquad \alpha\to0.
       \]</div>
 
-      <p>Si $\nabla f^{\mathsf T}\mathbf d&lt;0$, un desplazamiento suficientemente pequeño en la dirección $\mathbf d$ reduce el costo. Con la norma euclidiana, $-\nabla f$ apunta en la dirección de descenso más pronunciado. Esto motiva la iteración de descenso por gradiente</p>
+      <p>Una <strong>dirección de descenso</strong> es una dirección en la que desplazarse una distancia suficientemente pequeña reduce el objetivo. La condición $\nabla f^{\mathsf T}\mathbf d&lt;0$ permite reconocerla mediante la aproximación anterior. Al comparar direcciones de longitud uno, $-\nabla f$ apunta hacia el descenso más pronunciado. Esto motiva el método de <strong>descenso por gradiente</strong>, que actualiza el punto en esa dirección. Si $k$ cuenta las iteraciones, la regla es</p>
 
       <div class="equation">\[
         \mathbf x_{k+1}=\mathbf x_k-\alpha_k\nabla f(\mathbf x_k),
@@ -175,9 +472,11 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>El tamaño de paso $\alpha_k$ importa. Un paso demasiado grande puede aumentar el costo u originar oscilaciones. En problemas restringidos, además, la nueva decisión puede salir del conjunto permitido; el descenso libre no resuelve automáticamente esa dificultad.</p>
 
+      <p>En un punto donde $\nabla f\ne\mathbf0$, una curva de nivel diferenciable se llama <em>regular</em>. Su gradiente es normal a la curva, por la misma razón por la que $\nabla h$ era normal a la guía circular. Así se conectan la dirección de descenso y la geometría de las curvas de nivel.</p>
+
       <figure>
         <img src="/drautomatica/html/optim-gradiente.png" alt="Curvas de nivel de una función cuadrática y flechas opuestas del gradiente y del gradiente negativo en un punto de la curva" width="1600" height="1120" loading="lazy" style="display:block;width:min(100%,720px);height:auto;margin:0 auto;">
-        <figcaption>Figura 3. El gradiente es normal a una curva de nivel regular. Su sentido corresponde al aumento local del costo y el sentido opuesto al descenso. Las flechas se han escalado para facilitar la lectura.</figcaption>
+        <figcaption>Figura 6. El gradiente es normal a una curva de nivel regular. Su sentido corresponde al aumento local del costo y el sentido opuesto al descenso. Las flechas se han escalado para facilitar la lectura.</figcaption>
       </figure>
 
       <p>En el reparto de corriente, $\nabla f=[2(x_1-3),\,4(x_2-2)]^{\mathsf T}$. Al comenzar en $(0,0)$ y usar $\alpha=0.2$, un paso libre produce $(1.2,1.6)$. Repetir el proceso sin imponer restricciones lo llevaría hacia $(3,2)$, que no es admisible.</p>
@@ -188,7 +487,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <h2>La convexidad también depende de las restricciones</h2>
 
-      <p>Un conjunto $\mathcal F$ es convexo cuando contiene el segmento completo entre cualquier pareja de sus puntos:</p>
+      <p>El descenso libre acaba de mostrar un límite importante. Mejorar el objetivo no basta si el movimiento deja de ser permitido. Debemos estudiar también la forma del conjunto factible. La definición de conjunto convexo que introdujimos con la fábrica puede escribirse formalmente exigiendo que el segmento completo entre cualquier pareja de puntos factibles siga siendo factible:</p>
 
       <div class="equation">\[
         \mathbf u,\mathbf v\in\mathcal F
@@ -201,7 +500,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <figure>
         <img src="/drautomatica/html/optim-regiones.png" alt="Un disco convexo y una corona circular no convexa, con segmentos entre puntos factibles; el segmento de la corona atraviesa su hueco" width="1800" height="900" loading="lazy" style="display:block; width:100%; height:auto; max-width: 600px; margin:0 auto;">
-        <figcaption>Figura 4. Las restricciones no lineales pueden definir conjuntos convexos o no convexos. En el disco, el segmento permanece dentro; en la corona, una parte del segmento deja de ser factible.</figcaption>
+        <figcaption>Figura 7. Las restricciones no lineales pueden definir conjuntos convexos o no convexos. En el disco, el segmento permanece dentro; en la corona, una parte del segmento deja de ser factible.</figcaption>
       </figure>
 
       <p>El disco unitario se describe mediante $x_1^2+x_2^2-1\leq0$, una desigualdad no lineal que sí define un conjunto convexo. Para obtener una corona añadimos $r^2-x_1^2-x_2^2\leq0$, con $0&lt;r&lt;1$. En planificación de movimiento, excluir un obstáculo introduce precisamente regiones prohibidas que pueden destruir la convexidad del espacio de posiciones.</p>
@@ -210,7 +509,9 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <h2>Desigualdades lineales, matrices y politopos</h2>
 
-      <p>Una desigualdad $\mathbf a^{\mathsf T}\mathbf x\leq b$ define un semiespacio. En dos dimensiones su frontera es una recta; en tres, un plano. Varias desigualdades se satisfacen simultáneamente en la intersección de sus semiespacios. Agrupándolas por filas se obtiene</p>
+      <p>En el ejemplo de los actuadores no hay fronteras curvas. Sus límites son desigualdades afines, que en optimización suelen llamarse <strong>desigualdades lineales</strong> aunque contengan un término constante. Una condición $\mathbf a^{\mathsf T}\mathbf x\leq b$, con $\mathbf a\ne\mathbf0$, permite todos los puntos de un lado de la frontera $\mathbf a^{\mathsf T}\mathbf x=b$, incluida esa frontera. Esa región se llama <strong>semiespacio</strong>. En dos dimensiones la frontera es una recta; en tres, un plano.</p>
+
+      <p>Varias desigualdades se satisfacen simultáneamente en la <strong>intersección</strong> de sus semiespacios, es decir, en los puntos que pertenecen a todos ellos. Si hay $m$ desigualdades y $n$ variables, podemos reunir los coeficientes de cada desigualdad en una fila de una matriz $A$, y sus límites en un vector $\mathbf b$:</p>
 
       <div class="equation">\[
         A\mathbf x\leq\mathbf b,\qquad
@@ -228,13 +529,13 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         \underbrace{\begin{bmatrix}4\\2.5\\3\\0\\0\end{bmatrix}}_{\mathbf b}.
       \]</div>
 
-      <p>Las dos últimas filas expresan $x_1\geq0$ y $x_2\geq0$. La región resultante es el polígono con vértices $(0,0)$, $(2.5,0)$, $(2.5,1.5)$, $(1,3)$ y $(0,3)$. En dimensiones mayores se habla de <strong>poliedros</strong>; un poliedro acotado es un <strong>politopo</strong>. No toda intersección de semiespacios está acotada, de modo que no siempre corresponde llamarla politopo.</p>
+      <p>Las dos últimas filas expresan $x_1\geq0$ y $x_2\geq0$. La región resultante es el polígono cuyas esquinas, o <strong>vértices</strong>, son $(0,0)$, $(2.5,0)$, $(2.5,1.5)$, $(1,3)$ y $(0,3)$. Los segmentos del borde entre vértices consecutivos son sus <strong>aristas</strong>. En cualquier dimensión, la intersección de un número finito de semiespacios se llama <strong>poliedro</strong>; si además está acotado, es un <strong>politopo</strong>. Así se generaliza la descripción del polígono cuando hay más variables. No toda intersección de semiespacios está acotada, de modo que no siempre corresponde llamarla politopo.</p>
 
-      <p>Las cotas $\boldsymbol\ell\leq\mathbf x\leq\mathbf u$ definen una caja y pueden mantenerse separadas de $A\mathbf x\leq\mathbf b$ al utilizar software. Esto evita escribir filas adicionales que algunos solucionadores ya gestionan de forma específica.</p>
+      <p>Las <strong>cotas</strong> son límites inferiores o superiores para cada variable. Los vectores $\boldsymbol\ell$ y $\mathbf u$ los reúnen en la expresión $\boldsymbol\ell\leq\mathbf x\leq\mathbf u$, interpretada componente a componente. Esta región es un rectángulo en dos dimensiones y una caja en dimensiones mayores. Las cotas pueden mantenerse separadas de $A\mathbf x\leq\mathbf b$ al utilizar software. Esto evita escribir filas adicionales que algunos solucionadores ya gestionan de forma específica.</p>
 
       <h3>Holguras y restricciones activas</h3>
 
-      <p>La <strong>holgura</strong> de una desigualdad mide cuánto falta para alcanzar su límite en las unidades de esa desigualdad. Para el sistema lineal definimos</p>
+      <p>La matriz facilita comprobar si se respetan los límites, pero también interesa saber cuánto margen queda. La <strong>holgura</strong> de una desigualdad mide cuánto falta para alcanzar su límite en las unidades de esa desigualdad. Para un punto factible del sistema lineal definimos</p>
 
       <div class="equation">\[
         \mathbf s=\mathbf b-A\mathbf x,\qquad
@@ -244,11 +545,13 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>Se introduce una holgura por cada desigualdad, así que $\mathbf s\in\mathbb R^m$, mientras que $\mathbf x\in\mathbb R^n$. Una componente $s_i=0$ identifica una restricción <em>activa</em>; si $s_i>0$, queda margen disponible. Una holgura negativa indica una violación. La transformación no implica que $\mathbf x$ deba ser no negativo en todos los problemas; eso solo se impone cuando forma parte del modelo.</p>
 
-      <p>En $(1,1)$, las holguras de nuestras cinco filas son $[2,1.5,2,1,1]^{\mathsf T}$. La primera indica que aún quedan $2\,\mathrm{A}$ de capacidad total. Una holgura no es, en general, la distancia euclidiana a la frontera: para una fila no nula, esa distancia es $s_i/\|\mathbf a_i\|_2$. Multiplicar una desigualdad por 100 multiplica su holgura por 100, pero no mueve la frontera.</p>
+      <p>En $(1,1)$, las holguras de nuestras cinco filas son $[2,1.5,2,1,1]^{\mathsf T}$. La primera indica que aún quedan $2\,\mathrm{A}$ de capacidad total. Una holgura no es, en general, la distancia euclidiana a la frontera. Si $\mathbf a_i^{\mathsf T}$ es la fila $i$ de $A$ y no es nula, la distancia perpendicular desde un punto factible a la frontera de esa desigualdad es $s_i/\|\mathbf a_i\|_2$. Multiplicar una desigualdad por 100 multiplica su holgura por 100, pero no mueve la frontera.</p>
 
       <h2>Programación lineal y cuadrática</h2>
 
-      <p>En este contexto, <em>programación</em> significa planificación matemática; no se refiere al lenguaje con el que se escribe el código. Dos familias especialmente importantes se reconocen por la forma de su objetivo y sus restricciones.</p>
+      <p>Ya tenemos una representación de los límites que puede recibir un programa. Para elegir el método de resolución falta combinar esa estructura con la del objetivo. En este contexto, <em>programación</em> significa planificación matemática; no se refiere al lenguaje con el que se escribe el código.</p>
+
+      <p>La <strong>programación lineal</strong>, abreviada LP por <em>linear programming</em>, utiliza un objetivo lineal y restricciones afines. La <strong>programación cuadrática</strong>, o QP por <em>quadratic programming</em>, permite además términos cuadráticos en el objetivo y conserva las restricciones afines. Ambas pertenecen aquí a la <strong>optimización continua</strong>, en la que las variables pueden tomar valores reales, sin exigir que sean enteras. En las expresiones de la tabla, $\mathbf c$ es un vector de coeficientes y $H$ una matriz simétrica de coeficientes cuadráticos.</p>
 
       <div class="table-block"><div class="tabjax-output">
         <table class="article-table">
@@ -275,11 +578,11 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
 
       <p>La constante 17 no cambia el minimizador, pero sí el valor del objetivo. Si se omite al llamar a un solucionador, habrá que recuperarla al informar el costo de seguimiento. El factor $\tfrac12$ es una convención que simplifica el gradiente de la forma cuadrática a $H\mathbf x+\mathbf c$.</p>
 
-      <p>El ajuste por mínimos cuadrados también pertenece a esta familia. Si se minimiza $\tfrac12\|B\boldsymbol\theta-\mathbf y\|_2^2$, entonces $H=B^{\mathsf T}B$ es semidefinida positiva, porque $\mathbf v^{\mathsf T}H\mathbf v=\|B\mathbf v\|_2^2\geq0$. Es definida positiva cuando las columnas de $B$ son linealmente independientes. No debe suponerse unicidad del ajuste cuando falta esa independencia.</p>
+      <p>Esta estructura también aparece al ajustar modelos a mediciones. El método de <strong>mínimos cuadrados</strong> elige los parámetros para minimizar la suma de los cuadrados de las diferencias entre lo que predice el modelo y lo que se ha observado. Si $B\boldsymbol\theta$ reúne las predicciones de un modelo lineal en sus parámetros $\boldsymbol\theta$ y $\mathbf y$ contiene las mediciones, el objetivo es $\tfrac12\|B\boldsymbol\theta-\mathbf y\|_2^2$. Entonces $H=B^{\mathsf T}B$ es semidefinida positiva, porque $\mathbf v^{\mathsf T}H\mathbf v=\|B\mathbf v\|_2^2\geq0$. Es definida positiva cuando las columnas de $B$ son linealmente independientes. No debe suponerse unicidad del ajuste cuando falta esa independencia.</p>
 
       <h2>Resolución analítica del reparto de corriente</h2>
 
-      <p>El mínimo libre estaría en $(3,2)$, pero viola la capacidad total y el límite del primer canal. Para buscar una solución sobre la frontera de corriente total usamos $x_2=4-x_1$. El objetivo restringido a esa recta queda</p>
+      <p>El reparto de corriente es, por tanto, un problema cuadrático convexo. Antes de enviarlo al software podemos resolverlo a mano y disponer de una respuesta con la cual contrastar el cálculo numérico. El mínimo libre estaría en $(3,2)$, pero viola la capacidad total y el límite del primer canal. Como hipótesis de búsqueda, supongamos activo el límite total, $x_1+x_2=4$, y usemos $x_2=4-x_1$. No estamos convirtiendo arbitrariamente todas las desigualdades en igualdades; buscamos un candidato sobre una frontera y después comprobaremos que resuelve el problema completo. El objetivo restringido a esa recta queda</p>
 
       <div class="equation">\[
         \varphi(x_1)
@@ -317,7 +620,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         =-\frac43\begin{bmatrix}1\\1\end{bmatrix}.
       \]</div>
 
-      <p>Para cualquier otro punto factible $\mathbf y$, la convexidad diferenciable da la siguiente cota:</p>
+      <p>Una función convexa diferenciable queda siempre por encima de su aproximación lineal en cualquier punto. Aplicada en $\mathbf x^\star$, esta propiedad proporciona una cota inferior del costo de cualquier otro punto factible $\mathbf y$. Sustituyendo el gradiente calculado resulta</p>
 
       <div class="equation">\[
         f(\mathbf y)\geq
@@ -328,11 +631,11 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         \geq f(\mathbf x^\star).
       \]</div>
 
-      <p>La última desigualdad usa precisamente $y_1+y_2\leq4$. Por tanto, ningún punto permitido mejora el candidato. La convexidad estricta garantiza además que es único. Esta relación entre el gradiente y la normal a la restricción es un caso de las condiciones de Karush-Kuhn-Tucker; aquí el multiplicador asociado al límite total es $4/3$ y los de las otras desigualdades son cero.</p>
+      <p>La última desigualdad usa precisamente $y_1+y_2\leq4$. Por tanto, ningún punto permitido mejora el candidato. La convexidad estricta garantiza además que es único. Reaparece el equilibrio de gradientes de las condiciones KKT que vimos en el disco. Con varias desigualdades, se introduce un multiplicador no negativo por cada una y se suman sus contribuciones normales; cada multiplicador satisface su propia ecuación de complementariedad. Aquí el asociado al límite total es $4/3$ y los de las otras desigualdades son cero.</p>
 
       <h2>Implementación en MATLAB</h2>
 
-      <p>El siguiente programa requiere MATLAB con <strong>Optimization Toolbox</strong>. Usa <a href="https://www.mathworks.com/help/optim/ug/quadprog.html"><code>quadprog</code></a> y mantiene las cotas separadas de la restricción de suma. Después verifica la factibilidad y calcula el costo con la expresión original. El archivo completo es <a href="/drautomatica/html/optim_actuadores.m" download><code>optim_actuadores.m</code></a>.</p>
+      <p>La solución analítica permite ahora comprobar una implementación sin depender únicamente del mensaje del solucionador. El siguiente programa requiere MATLAB con <strong>Optimization Toolbox</strong>. Usa <a href="https://www.mathworks.com/help/optim/ug/quadprog.html"><code>quadprog</code></a>, un solucionador de problemas cuadráticos, y mantiene las cotas separadas de la restricción de suma. Después verifica la factibilidad, es decir, el cumplimiento de todas las restricciones, y calcula el costo con la expresión original. El archivo completo es <a href="/drautomatica/html/optim_actuadores.m" download><code>optim_actuadores.m</code></a>.</p>
 
       <script type="text/matlab" data-file="optim_actuadores.m">
 % Asignación estática de corriente a dos actuadores
@@ -390,21 +693,20 @@ grid on
       
       <h2>Implementación en Python</h2>
 
-      <p>La misma formulación puede resolverse con NumPy, SciPy y Matplotlib. Aquí empleamos <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><code>minimize</code> con SLSQP</a>, un método de optimización restringida de propósito más general. Se proporciona el gradiente analítico para evitar estimarlo por diferencias finitas. El programa está disponible en <a href="/drautomatica/html/optim_actuadores.py" download><code>optim_actuadores.py</code></a>.</p>
+      <p>El modelo no depende del lenguaje de programación. Podemos conservar el objetivo, las cotas y el límite total y resolverlos con NumPy, SciPy y Matplotlib. Aquí empleamos <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><code>minimize</code> con SLSQP</a>, siglas de <em>Sequential Least Squares Programming</em>. Es un método local de optimización restringida que calcula pasos mediante subproblemas cuadráticos y admite problemas más generales que este QP.</p>
+
+      <p>Proporcionamos el <strong>gradiente analítico</strong>, obtenido al derivar la expresión del objetivo, para evitar estimarlo mediante <strong>diferencias finitas</strong>, que aproximan derivadas comparando valores de la función en puntos cercanos. La opción <code>ftol</code> controla la tolerancia utilizada en las comprobaciones de terminación y <code>maxiter</code> limita el número de iteraciones. El programa está disponible en <a href="/drautomatica/html/optim_actuadores.py" download><code>optim_actuadores.py</code></a>.</p>
 
       <script type="text/python" data-file="optim_actuadores.py">
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import Bounds, LinearConstraint, minimize
 
-
 def objetivo(x):
     return (x[0] - 3.0)**2 + 2.0*(x[1] - 2.0)**2
 
-
 def gradiente(x):
     return np.array([2.0*(x[0] - 3.0), 4.0*(x[1] - 2.0)])
-
 
 A = np.array([[1.0, 1.0]])
 lb = np.array([0.0, 0.0])
@@ -453,28 +755,30 @@ ax.legend()
 plt.show()
       </script>
 
-      <p>El indicador de éxito del solucionador debe acompañarse de comprobaciones del modelo. En este ejemplo conocemos la respuesta exacta y podemos compararla; en uno grande se revisan los residuos de las restricciones, las condiciones de optimalidad y la sensibilidad a las tolerancias. Un mensaje de convergencia de un método local no certifica por sí solo un mínimo global en un problema no convexo.</p>
+      <p>El indicador de éxito del solucionador debe acompañarse de comprobaciones del modelo. En este ejemplo conocemos la respuesta exacta y podemos compararla. En uno grande se revisan los residuos de las igualdades y las violaciones de las desigualdades, además de las condiciones de optimalidad. También se estudia la <strong>sensibilidad</strong>, cuánto cambia la solución al modificar datos o parámetros del cálculo, por ejemplo sus tolerancias. Un mensaje de convergencia de un método local no certifica por sí solo un mínimo global en un problema no convexo.</p>
 
       <h2>Qué hace difícil un problema real</h2>
 
-      <p>La cantidad de variables importa, pero no es el único factor. Un gran problema cuadrático con matrices dispersas puede tener más estructura aprovechable que una pequeña función irregular evaluada mediante un experimento lento. Conviene identificar las dificultades antes de decidir qué herramienta utilizar.</p>
+      <p>El ejemplo pudo comprobarse a mano porque tiene dos variables y una estructura favorable. Al pasar a un modelo real, la cantidad de variables importa, pero no es el único factor. Un gran problema cuadrático con <strong>matrices dispersas</strong>, en las que la mayoría de las entradas son cero, puede tener más estructura aprovechable que una pequeña función irregular evaluada mediante un experimento lento. Conviene identificar las dificultades antes de decidir qué herramienta utilizar.</p>
 
       <ul class="elegante">
-        <li><strong>No convexidad.</strong> Puede haber varios mínimos locales, puntos de silla o regiones factibles desconectadas. Probar varios puntos iniciales aporta evidencia, pero no garantiza haber encontrado el óptimo global.</li>
+        <li><strong>No convexidad.</strong> Puede haber varios mínimos locales, puntos de silla o regiones factibles desconectadas, separadas de modo que no se puede pasar de una a otra por un camino continuo sin salir del conjunto permitido. Probar varios puntos iniciales aporta evidencia, pero no garantiza haber encontrado el óptimo global.</li>
         <li><strong>Derivadas ausentes o poco fiables.</strong> Una función puede no ser diferenciable, o estar disponible solo como una simulación cerrada. Los métodos sin derivadas son una opción, aunque el costo depende del problema y del presupuesto de evaluaciones.</li>
-        <li><strong>Evaluaciones costosas.</strong> Si calcular un solo costo exige simular un robot durante minutos, conviene aprovechar derivadas, paralelismo o modelos sustitutos cuando sean apropiados. El número de evaluaciones puede importar más que el número de iteraciones.</li>
+        <li><strong>Evaluaciones costosas.</strong> Una evaluación es un cálculo del objetivo o de una restricción en una decisión concreta. Si calcular un solo costo exige simular un robot durante minutos, conviene aprovechar derivadas, ejecutar cálculos independientes en paralelo o utilizar <em>modelos sustitutos</em>, aproximaciones más rápidas del modelo original, cuando sean apropiados. El número de evaluaciones puede importar más que el número de iteraciones, pues una iteración puede necesitar varias evaluaciones.</li>
         <li><strong>Ruido e incertidumbre.</strong> Un costo obtenido de mediciones cambia entre repeticiones. Perseguir diferencias menores que ese ruido puede producir una aparente mejora sin relevancia física.</li>
-        <li><strong>Escalas muy diferentes.</strong> Mezclar milímetros, amperes y ganancias de magnitudes dispares puede perjudicar el comportamiento numérico. Escalar las variables y definir tolerancias coherentes ayuda, sin sustituir una formulación correcta.</li>
-        <li><strong>Variables enteras.</strong> Decidir cuántos sensores instalar o qué actuadores encender introduce decisiones discretas. Redondear una solución continua puede violar restricciones y no sustituye un método de optimización entera.</li>
+        <li><strong>Escalas muy diferentes.</strong> Mezclar milímetros, amperes y ganancias de magnitudes dispares puede perjudicar el comportamiento numérico. <em>Escalar las variables</em> consiste en expresarlas respecto de magnitudes de referencia, como hicimos al dividir la corriente entre $I_0$. Esto y unas tolerancias coherentes ayudan, sin sustituir una formulación correcta.</li>
+        <li><strong>Variables enteras.</strong> Decidir cuántos sensores instalar o qué actuadores encender introduce decisiones discretas, cuyos valores no pueden variar libremente en un intervalo real. La <em>optimización entera</em> exige que determinadas variables tomen valores enteros; una variable binaria solo puede valer 0 o 1. Redondear una solución continua puede violar restricciones y no sustituye un método que respete estas condiciones.</li>
       </ul>
 
       <h3>Cuando la decisión es una trayectoria</h3>
 
-      <p>En control, la decisión puede ser una secuencia de entradas $\mathbf u_0,\ldots,\mathbf u_{N-1}$ en vez de un único ajuste estático. Una representación discreta típica es</p>
+      <p>Hay otra ampliación natural del reparto de corriente. Hasta ahora elegimos una consigna para un instante, pero un controlador puede tener que elegir acciones futuras y anticipar sus efectos. En ese caso, una <strong>trayectoria</strong> es la secuencia de estados o de entradas del sistema a lo largo del tiempo. Los estados reúnen las variables necesarias para describir su evolución, como posiciones y velocidades; las entradas son las acciones que podemos aplicar, como voltajes o fuerzas.</p>
+
+      <p>Dividimos el tiempo en instantes $k=0,\ldots,N$, donde $N$ es el <strong>horizonte de predicción</strong>, el número de pasos futuros que se consideran. Denotamos el estado por $\mathbf z_k$, la entrada por $\mathbf u_k$ y el modelo de evolución de un paso al siguiente por $F$. La función $\ell$ mide el costo de cada etapa y $\phi$ el costo terminal, evaluado al final del horizonte. Los conjuntos $\mathcal U$ y $\mathcal Z$ contienen las entradas y los estados permitidos, respectivamente. Con un estado inicial conocido $\mathbf z_{\mathrm{inicial}}$, el problema toma la forma</p>
 
       <div class="equation">\[
         \begin{aligned}
-        \min_{\{\mathbf u_k,\mathbf z_k\}}\quad&
+        \operatorname*{mín}_{\{\mathbf u_k,\mathbf z_k\}}\quad&
         \sum_{k=0}^{N-1}\ell(\mathbf z_k,\mathbf u_k)+\phi(\mathbf z_N)\\
         \text{sujeto a}\quad&
         \mathbf z_{k+1}=F(\mathbf z_k,\mathbf u_k),\\
@@ -483,9 +787,13 @@ plt.show()
         \end{aligned}
       \]</div>
 
-      <p>donde $\mathbf z_k$ es el estado, $F$ es el modelo dinámico, $\ell$ mide el costo de cada etapa y $\phi$ el costo terminal. La dinámica aparece como una restricción de igualdad. Si el modelo es lineal, los costos son cuadráticos convexos y las restricciones son afines, se obtiene un QP, estructura habitual en control predictivo. Con dinámica no lineal, la geometría y las garantías pueden cambiar.</p>
+      <p>Las ecuaciones de evolución y los límites de entrada se imponen para $k=0,\ldots,N-1$; los límites de estado, para $k=0,\ldots,N$. La dinámica aparece como una restricción de igualdad que enlaza las decisiones de distintos instantes. Si el modelo es lineal, los costos son cuadráticos convexos y las restricciones son afines, se obtiene un QP.</p>
+
+      <p>Esta estructura es habitual en el <strong>control predictivo</strong>, que resuelve repetidamente un problema de este tipo, aplica la primera acción y vuelve a calcular las siguientes a partir de un estado actualizado. Con dinámica no lineal, la geometría y las garantías pueden cambiar, pero siguen presentes las mismas piezas que hemos usado desde el primer ejemplo.</p>
 
       <h2>Un procedimiento de trabajo verificable</h2>
+
+      <p>Desde una ubicación fija hasta una secuencia de acciones de control, cambia el tamaño del modelo, pero no el orden de las preguntas. Los ejemplos anteriores pueden reunirse en el siguiente procedimiento.</p>
 
       <ol>
         <li><strong>Definir la decisión.</strong> Especificar qué se puede cambiar, con qué unidades y dentro de qué dominio.</li>
@@ -510,6 +818,8 @@ plt.show()
         <li>Brunton, S. L. (2026). <a href="https://faculty.washington.edu/sbrunton/OptimizationBootcamp.pdf"><em>Optimization: A bootcamp for machine learning, inverse problems, and control</em></a>. Cambridge University Press.</li>
         <li>Boyd, S., &amp; Vandenberghe, L. (2004). <a href="https://web.stanford.edu/~boyd/cvxbook/"><em>Convex optimization</em></a>. Cambridge University Press.</li>
         <li>The MathWorks, Inc. (2026). <a href="https://www.mathworks.com/help/optim/ug/quadprog.html"><em>quadprog: Quadratic programming</em></a>. Optimization Toolbox Documentation.</li>
+        <li>The MathWorks, Inc. (2026). <a href="https://www.mathworks.com/help/symbolic/sym.vpasolve.html"><em>vpasolve: Solve symbolic equations numerically</em></a>. Symbolic Math Toolbox Documentation.</li>
+        <li>The MathWorks, Inc. (2026). <a href="https://www.mathworks.com/help/matlab/ref/fminsearch.html"><em>fminsearch: Solve unconstrained multivariable local minimization problem using derivative-free method</em></a>. MATLAB Documentation.</li>
         <li>SciPy Community. (2008). <a href="https://docs.scipy.org/doc/scipy/reference/optimize.minimize-slsqp.html"><em>minimize(method='SLSQP')</em></a>. SciPy Manual.</li>
       </ul>
 
