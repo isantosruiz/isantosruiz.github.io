@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description"
+    content="Una introducción geométrica al PCA, los eigenvectores y las proyecciones sobre los espacios principal y residual, con ejemplos reproducibles en Python para detectar cambios y posibles fallas." />
+  <title>PCA: la geometría que revela cambios ocultos en los datos</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="python,shell" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Análisis de datos e instrumentación</p>
+        <h1>PCA: la geometría que revela cambios ocultos en los datos</h1>
+        <p class="subtitle">Eigenvectores, proyecciones y detección de fallas a partir de las relaciones entre variables</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Cuando varias mediciones están relacionadas, observarlas por separado puede ocultar cambios importantes
+          en su comportamiento conjunto. El análisis de componentes principales, conocido como PCA, permite encontrar
+          las direcciones en las que los datos presentan mayor variación y construir una representación de menor
+          dimensión. Sin embargo, la parte que queda fuera de esa representación puede ser precisamente la más útil
+          para advertir que algo ha cambiado. A partir de una nube de datos tridimensional se desarrolla la relación
+          entre covarianza, eigenvectores y proyección ortogonal, y se muestra cómo los espacios principal y residual
+          ofrecen información complementaria para la detección de posibles fallas. Las ecuaciones se acompañan de
+          gráficas y código reproducible en Python.</p>
+      </section>
+
+      <h2>Cuando el cambio está en la relación entre las mediciones</h2>
+
+      <p>Un sistema instrumentado suele entregar varias mediciones al mismo tiempo. En un motor se pueden registrar
+        corriente, velocidad y temperatura; en una instalación hidráulica, caudales y presiones; en un mecanismo,
+        desplazamientos y vibraciones. Cada señal tiene interés por sí misma, pero también importa la forma en que
+        unas acompañan a las otras. Una corriente elevada puede ser razonable cuando aumenta la carga y resultar
+        sospechosa si las demás variables indican que las condiciones de operación no han cambiado.</p>
+
+      <p>Por eso, vigilar únicamente si cada sensor permanece entre un mínimo y un máximo puede ser insuficiente.
+        Es posible que todas las mediciones estén dentro de sus intervalos habituales y, aun así, que su combinación
+        sea poco compatible con el funcionamiento conocido. Para estudiar ese comportamiento conjunto conviene
+        representar cada conjunto de mediciones como un punto de un espacio cuyas coordenadas son las variables
+        observadas. Las relaciones entre ellas se manifiestan entonces en la forma de la nube de puntos.</p>
+
+      <p>El <strong>análisis de componentes principales</strong>, o PCA por sus siglas en inglés
+        (<em>principal component analysis</em>), construye nuevas coordenadas alineadas con las direcciones de mayor
+        variación de esa nube. Es una técnica lineal y no supervisada, lo que significa que busca una estructura
+        en los datos sin necesitar etiquetas de falla para calcularla. En una aplicación de vigilancia, sin embargo,
+        sí necesitamos saber que los datos usados como referencia representan condiciones aceptables. De otra forma,
+        el modelo podría aprender una falla como parte del comportamiento habitual.</p>
+
+      <p>Comenzaremos con tres variables para poder ver la geometría. Después utilizaremos las mismas ideas para
+        distinguir dos cambios que requieren interpretaciones diferentes, uno que rompe las relaciones habituales
+        y otro que se desplaza demasiado a lo largo de ellas.</p>
+
+      <h2>Una nube tridimensional que casi cabe en un plano</h2>
+
+      <p>En una aplicación real, el punto de partida sería un conjunto de mediciones registradas mediante sensores
+        durante el funcionamiento de un equipo. Las variables se eligen de acuerdo con las magnitudes que interesa
+        observar, y sus valores provienen de la adquisición de datos. Para explicar el método en condiciones
+        controladas, aquí <strong>simularemos esas mediciones mediante números aleatorios</strong>. Esta simulación
+        permite conocer de antemano la estructura que después intentará encontrar PCA; generar datos aleatorios
+        no es un requisito del método ni sustituye las mediciones de un experimento real.</p>
+
+      <p>Consideremos \(n=500\) observaciones simuladas de tres variables. Podemos imaginar tres sensores que entregan
+        una lectura cada uno en cada adquisición; las tres lecturas juntas forman una observación y se representan
+        mediante un punto de la nube. La observación \(i\) se escribe como el vector columna
+        \(\mathbf{x}_i=(x_{i1},x_{i2},x_{i3})^\mathsf{T}\), y la matriz de datos
+        \(\mathbf{X}\in\mathbb{R}^{n\times 3}\) contiene una observación por renglón. Esta distinción evita una confusión
+        frecuente al pasar de las ecuaciones al código, donde cada fila de un arreglo representa un vector
+        \(\mathbf{x}_i^\mathsf{T}\).</p>
+
+      <p>Para construir estas mediciones artificiales partimos de tres variables aleatorias latentes, es decir,
+        variables auxiliares que determinan cómo se generan los datos, aunque después no se entregan al algoritmo.
+        Las elegimos independientes y gaussianas, con distribuciones normales centradas en cero y dispersiones
+        distintas. La varianza mide esa dispersión mediante el promedio de las desviaciones al cuadrado respecto
+        de la media, y su raíz cuadrada es la desviación estándar. En nuestro generador usamos</p>
+
+      <div class="equation">\[
+        u_1\sim\mathcal{N}(0,5^2),\qquad
+        u_2\sim\mathcal{N}(0,3^2),\qquad
+        u_3\sim\mathcal{N}(0,0.81^2).
+      \]</div>
+
+      <p>En esta notación, el segundo parámetro de \(\mathcal{N}\) es la varianza. Aplicamos después un cambio
+        ortogonal de coordenadas mediante una matriz \(\mathbf{R}\), que cumple
+        \(\mathbf{R}^\mathsf{T}\mathbf{R}=\mathbf{I}\), y trasladamos el centro de la nube,</p>
+
+      <div class="equation">\[
+        \mathbf{x}_i=\boldsymbol{\mu}_0+\mathbf{R}\mathbf{u}_i,
+        \qquad
+        \boldsymbol{\mu}_0=
+        \begin{bmatrix}2&-1&4\end{bmatrix}^{\mathsf{T}}.
+      \]</div>
+
+      <p>La transformación ortogonal mezcla las coordenadas sin cambiar las longitudes ni los ángulos. Puede
+        incluir una reflexión, lo cual no afecta el argumento. Como la tercera variable latente varía mucho menos
+        que las otras dos, la nube resultante tiene poco espesor en una dirección y se parece bastante a una lámina. No es
+        exactamente un plano porque la tercera varianza sigue siendo positiva.</p>
+
+      <script type="text/python">
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.decomposition import PCA
+
+# Mediciones simuladas; en una aplicación se cargarían datos adquiridos.
+# Semilla fija para reproducir la simulación.
+rng = np.random.RandomState(42)
+n = 500
+escalas = np.array([5.0, 3.0, 0.81])
+U = np.column_stack([
+    rng.normal(0.0, escala, n) for escala in escalas
+])
+R, _ = np.linalg.qr(rng.randn(3, 3))
+mu_generadora = np.array([2.0, -1.0, 4.0])
+X = U @ R.T + mu_generadora
+</script>
+
+      <p>La factorización QR utilizada en el código proporciona una matriz ortogonal a partir de una matriz
+        aleatoria. En esta construcción las tres variables observadas se expresan en unidades arbitrarias
+        comparables. Más adelante veremos por qué esa condición debe revisarse cuando se trabaja con sensores
+        de naturaleza diferente. Una vez formada \(\mathbf{X}\), la analizaremos como si contuviera mediciones
+        adquiridas. PCA no recibirá las variables latentes ni la matriz utilizada para mezclarlas; tendrá que
+        inferir las direcciones relevantes únicamente a partir de los datos observados.</p>
+
+      <p>La <a href="#fig-pca-nube">figura 1</a> representa los datos de la matriz <code>X</code> que acabamos
+        de generar. Cada renglón aporta las tres coordenadas de un punto, de modo que la nube permite observar
+        conjuntamente las 500 mediciones simuladas. Para dibujarla se utiliza un diagrama de dispersión
+        tridimensional de Matplotlib.</p>
+
+      <p>Todas las gráficas de este artículo se obtuvieron al ejecutar el programa
+        <a href="./pca_geometria.py" download><code>pca_geometria.py</code></a>, que reúne los cálculos y las
+        instrucciones de dibujo. Los bloques incluidos en el texto presentan los pasos del análisis; el
+        archivo descargable contiene también los detalles necesarios para reproducir las figuras tal como
+        aparecen aquí. Las <a href="#reproducir-figuras">instrucciones de ejecución</a> se encuentran al final.</p>
+
+      <figure id="fig-pca-nube">
+        <img src="./pca-nube.png" alt="Nube tridimensional de 500 puntos con mayor extensión en dos direcciones y poco espesor en la tercera."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Cada punto reúne tres mediciones simuladas. La forma aplanada sugiere que gran parte de la
+          variación puede describirse con dos coordenadas adecuadamente elegidas.</figcaption>
+      </figure>
+
+      <h2>La covarianza describe la orientación de la nube</h2>
+
+      <p>Antes de buscar direcciones necesitamos separar la posición del conjunto de datos de su dispersión.
+        La media muestral y los datos centrados se definen como</p>
+
+      <div class="equation">\[
+        \boldsymbol{\mu}=\frac{1}{n}\sum_{i=1}^{n}\mathbf{x}_i,
+        \qquad
+        \mathbf{x}_{c,i}=\mathbf{x}_i-\boldsymbol{\mu}.
+      \]</div>
+
+      <p>La media calculada con una muestra finita no coincide exactamente con la media generadora
+        \(\boldsymbol{\mu}_0\). En este ejemplo obtenemos aproximadamente
+        \(\boldsymbol{\mu}=(1.9027,-0.9279,4.0578)^\mathsf{T}\). Al restarla, la nube queda centrada en el origen,
+        pero conserva su forma y orientación.</p>
+
+      <p>La <strong>matriz de covarianza muestral</strong> reúne la dispersión de cada variable y la manera en que
+        sus desviaciones se relacionan,</p>
+
+      <div class="equation">\[
+        \mathbf{S}
+        =\frac{1}{n-1}\sum_{i=1}^{n}
+        \mathbf{x}_{c,i}\mathbf{x}_{c,i}^{\mathsf{T}}
+        =\frac{1}{n-1}\mathbf{X}_c^\mathsf{T}\mathbf{X}_c.
+      \]</div>
+
+      <p>Los elementos diagonales son las varianzas de las variables. Los términos fuera de la diagonal son
+        covarianzas; un valor positivo indica que las desviaciones de dos variables tienden a tener el mismo
+        signo, mientras que uno negativo indica una tendencia en sentidos opuestos. Una covarianza cercana a cero
+        expresa poca relación lineal, pero no descarta relaciones no lineales.</p>
+
+      <p>Para los datos generados,</p>
+
+      <div class="equation">\[
+        \mathbf{S}\approx
+        \begin{bmatrix}
+          16.0349&0.6864&7.8740\\
+          0.6864&0.8045&-0.7895\\
+          7.8740&-0.7895&16.5100
+        \end{bmatrix}.
+      \]</div>
+
+      <p>La matriz es simétrica y semidefinida positiva. Esta última propiedad significa que
+        \(\mathbf{w}^\mathsf{T}\mathbf{S}\mathbf{w}\geq 0\) para cualquier vector \(\mathbf{w}\), porque esa
+        expresión representa una varianza y no puede ser negativa. Ambas propiedades son la base de la
+        descomposición que utiliza PCA.</p>
+
+      <h2>Por qué aparecen los eigenvectores</h2>
+
+      <p>Un <strong>eigenvector</strong>, también llamado vector propio, de una matriz \(\mathbf{S}\) es un vector
+        no nulo cuya dirección se conserva cuando la matriz actúa sobre él. El factor por el que cambia su
+        magnitud es el <strong>eigenvalor</strong> o valor propio asociado,</p>
+
+      <div class="equation">\[
+        \mathbf{S}\mathbf{v}_j=\lambda_j\mathbf{v}_j.
+      \]</div>
+
+      <p>En PCA buscamos primero una dirección unitaria \(\mathbf{w}\) sobre la cual los datos centrados tengan
+        la mayor varianza posible. La coordenada de la observación \(i\) sobre esa dirección es el producto
+        escalar \(z_i=\mathbf{w}^\mathsf{T}\mathbf{x}_{c,i}\). Su varianza muestral resulta</p>
+
+      <div class="equation">\[
+        \frac{1}{n-1}\sum_{i=1}^{n}z_i^2
+        =\mathbf{w}^\mathsf{T}\mathbf{S}\mathbf{w}.
+      \]</div>
+
+      <p>La condición \(\mathbf{w}^\mathsf{T}\mathbf{w}=1\) es indispensable. Sin ella podríamos aumentar
+        artificialmente la varianza multiplicando \(\mathbf{w}\) por cualquier número grande. Para incorporar
+        esa condición a la búsqueda usamos un multiplicador de Lagrange \(\eta\),</p>
+
+      <div class="equation">\[
+        \mathcal{L}(\mathbf{w},\eta)
+        =\mathbf{w}^\mathsf{T}\mathbf{S}\mathbf{w}
+        -\eta\left(\mathbf{w}^\mathsf{T}\mathbf{w}-1\right).
+      \]</div>
+
+      <p>Al igualar a cero la derivada respecto de \(\mathbf{w}\) obtenemos
+        \(2\mathbf{S}\mathbf{w}-2\eta\mathbf{w}=\mathbf{0}\). Por lo tanto, las direcciones candidatas son
+        eigenvectores y la varianza en cada una de ellas es su eigenvalor. El máximo se alcanza en el
+        eigenvector asociado al mayor eigenvalor. La segunda dirección se obtiene buscando la mayor varianza
+        entre las direcciones ortogonales a la primera, y así sucesivamente.</p>
+
+      <p>Como \(\mathbf{S}\) es simétrica, podemos elegir una base de eigenvectores ortonormales. Esto significa
+        que son perpendiculares entre sí, tienen longitud uno y permiten expresar cualquier vector de datos
+        mediante una combinación de sus direcciones. Si hay \(p\) variables, escribimos</p>
+
+      <div class="equation">\[
+        \mathbf{S}=\mathbf{V}\boldsymbol{\Lambda}\mathbf{V}^{\mathsf{T}},
+        \qquad
+        \mathbf{V}=\begin{bmatrix}\mathbf{v}_1&\cdots&\mathbf{v}_p\end{bmatrix},
+        \qquad
+        \boldsymbol{\Lambda}=\operatorname{diag}(\lambda_1,\ldots,\lambda_p),
+      \]</div>
+
+      <div class="equation">\[
+        \lambda_1\geq\lambda_2\geq\cdots\geq\lambda_p\geq 0,
+        \qquad
+        \mathbf{V}^{\mathsf{T}}\mathbf{V}=\mathbf{I}.
+      \]</div>
+
+      <p>Las nuevas coordenadas se llaman <strong>puntuaciones</strong>, o <em>scores</em>, y se calculan como
+        \(\mathbf{z}_i=\mathbf{V}^\mathsf{T}\mathbf{x}_{c,i}\). La covarianza de esas coordenadas es
+        \(\boldsymbol{\Lambda}\), por lo que quedan sin correlación lineal entre sí. En datos generales esto no
+        implica independencia estadística; esa conclusión requiere condiciones adicionales, como una distribución
+        conjunta gaussiana.</p>
+
+      <h2>El plano principal y el espacio residual</h2>
+
+      <p>Volvamos a la nube de tres variables e imaginemos una hoja plana que atraviesa su centro. Podemos
+        desplazarnos sobre esa hoja en dos direcciones independientes, mientras que separarnos de ella requiere
+        una tercera dirección. Las direcciones \(\mathbf{v}_1\) y \(\mathbf{v}_2\) encontradas por PCA orientan
+        esa hoja de acuerdo con las dos mayores dispersiones de los datos. El plano que pasa por la media y
+        se extiende en ambas direcciones se llama <strong>plano principal</strong>.</p>
+
+      <p>Podemos describir todos sus puntos mediante</p>
+
+      <div class="equation">\[
+        \Pi=\left\{
+        \boldsymbol{\mu}+a\mathbf{v}_1+b\mathbf{v}_2
+        \;:\; a,b\in\mathbb{R}
+        \right\}.
+      \]</div>
+
+      <p>Los números \(a\) y \(b\) indican cuánto avanzamos en cada dirección a partir de la media.
+        Aunque sus puntos siguen teniendo tres coordenadas originales, bastan esos dos números para ubicar
+        cualquiera de ellos dentro del plano. En general, el plano está inclinado respecto de los ejes de
+        las mediciones, de modo que usarlo para “comprimir” los datos no equivale a solo elegir dos sensores y dejar de leer el tercero.</p>
+
+      <p>En la <a href="#fig-pca-plano">figura 2</a> se añade ese plano a la misma nube de la figura 1.
+        El programa construye una malla de puntos mediante la expresión de \(\Pi\) y superpone las flechas
+        de las tres direcciones principales con origen en la media. El cálculo de PCA de la siguiente subsección
+        proporciona la media, los eigenvectores y los eigenvalores utilizados en esta gráfica. La superficie
+        permite reconocer la orientación del plano, mientras que las flechas distinguen sus dos direcciones
+        internas y la dirección perpendicular.</p>
+
+      <figure id="fig-pca-plano">
+        <img src="./pca-plano.png" alt="Plano principal que pasa por la media y flechas correspondientes a las tres direcciones propias de la covarianza."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Las dos primeras direcciones definen el plano principal; la tercera es perpendicular
+          a él. Las flechas se dibujan con longitud \(2\sqrt{\lambda_j}\) para representar la dispersión, aunque
+          los eigenvectores \(\mathbf{v}_j\) son unitarios.</figcaption>
+      </figure>
+
+      <p>Los puntos de la nube no están exactamente sobre la hoja. Para representar una observación
+        \(\mathbf{x}\) dentro del plano buscamos el punto de este que queda más cerca de ella y lo llamamos
+        \(\widehat{\mathbf{x}}\). El segmento que une ambos puntos es perpendicular al plano, por lo que esta
+        operación se denomina <strong>proyección ortogonal</strong>. La palabra ortogonal significa,
+        precisamente, perpendicular. El punto proyectado es una aproximación de la medición original.</p>
+
+      <p>El vector que va desde esa aproximación hasta la observación original es el
+        <strong>residuo</strong>, \(\mathbf{e}=\mathbf{x}-\widehat{\mathbf{x}}\). En tres dimensiones,
+        los residuos de esta proyección son paralelos a \(\mathbf{v}_3\), la dirección que es perpendicular
+        tanto a \(\mathbf{v}_1\) como a \(\mathbf{v}_2\). Todas las combinaciones de esa tercera dirección
+        forman el <strong>espacio residual</strong>, también llamado complemento ortogonal del espacio
+        principal. En este ejemplo es una recta de posibles desplazamientos, no un segundo plano.</p>
+
+      <p>Para verlo en las ecuaciones, recordemos que la puntuación en la dirección \(j\) es
+        \(z_j=\mathbf{v}_j^\mathsf{T}(\mathbf{x}-\boldsymbol{\mu})\). Las primeras dos puntuaciones
+        determinan el punto proyectado y la tercera describe lo que falta para recuperar la observación,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+          \widehat{\mathbf{x}}&=\boldsymbol{\mu}
+            +z_1\mathbf{v}_1+z_2\mathbf{v}_2,\\
+          \mathbf{e}&=z_3\mathbf{v}_3,
+          \qquad \mathbf{x}=\widehat{\mathbf{x}}+\mathbf{e}.
+        \end{aligned}
+      \]</div>
+
+      <p>Por lo tanto, cada observación se descompone en una parte representada dentro del plano y otra que
+        indica cuánto se separa de él. El residuo no es otro grupo de observaciones ni necesariamente un
+        error del sensor; es la parte de cada observación que la representación bidimensional no recoge.
+        En esta nube su magnitud describe el espesor que vemos alrededor de la hoja.</p>
+
+      <p>Al restar la media, el plano queda pasando por el origen y recibe el nombre de
+        <strong>subespacio principal</strong>, el conjunto de todas las combinaciones de las direcciones
+        retenidas. La misma idea se extiende a más variables. Si conservamos \(r\) direcciones de un total
+        de \(p\), el espacio principal tiene dimensión \(r\) y su complemento ortogonal tiene dimensión
+        \(p-r\). El caso que podemos dibujar corresponde a \(p=3\) y \(r=2\).</p>
+
+      <h3>El cálculo con scikit-learn</h3>
+
+      <p>El siguiente bloque calcula las tres componentes para examinar tanto la parte dominante como la residual.
+        El objeto <code>PCA</code> centra los datos automáticamente, pero no los divide entre sus desviaciones
+        estándar. Además, almacena los eigenvectores por renglones en <code>components_</code>; por eso transponemos
+        ese arreglo al construir la matriz \(\mathbf{V}\) de las ecuaciones.</p>
+
+      <script type="text/python">
+pca = PCA(n_components=3, svd_solver="full", whiten=False)
+scores = pca.fit_transform(X)
+media = pca.mean_
+V = pca.components_.T
+lambdas = pca.explained_variance_
+proporciones = pca.explained_variance_ratio_
+Xc = X - media
+S = Xc.T @ Xc / (n - 1)
+
+print("Media:", media)
+print("Eigenvalores:", lambdas)
+print("Varianza explicada (%):", 100 * proporciones)
+</script>
+
+      <p>Con <code>svd_solver="full"</code>, la implementación utiliza la descomposición en valores singulares,
+        o SVD, de la matriz centrada. Si se escribe
+        \(\mathbf{X}_c=\mathbf{A}\boldsymbol{\Sigma}\mathbf{V}^{\mathsf{T}}\), las columnas de
+        \(\mathbf{V}\) son las direcciones principales y los eigenvalores son
+        \(\lambda_j=\sigma_j^2/(n-1)\), donde \(\sigma_j\) son los valores singulares. Así se obtiene el mismo
+        resultado sin formar explícitamente la covarianza, lo que puede ofrecer ventajas numéricas.</p>
+
+      <p>También podemos comprobar la relación con los eigenvectores directamente mediante
+        <code>np.linalg.eigh</code>, una función apropiada para matrices reales simétricas. Sus valores se
+        ordenan de menor a mayor, por lo que invertimos el orden para compararlos con PCA.</p>
+
+      <script type="text/python">
+valores, vectores = np.linalg.eigh(S)
+orden = np.argsort(valores)[::-1]
+valores = valores[orden]
+vectores = vectores[:, orden]
+
+np.testing.assert_allclose(valores, lambdas, rtol=1e-12)
+np.testing.assert_allclose(S @ V, V * lambdas, atol=1e-12)
+np.testing.assert_allclose(V.T @ V, np.eye(3), atol=1e-12)
+</script>
+
+      <section class="remark">
+        <p>El signo de un eigenvector es arbitrario. Si \(\mathbf{v}\) es una dirección principal,
+          \(-\mathbf{v}\) también lo es; únicamente cambia el signo de su puntuación. Por eso, dos implementaciones
+          pueden mostrar flechas opuestas y producir la misma reconstrucción. Cuando hay eigenvalores repetidos,
+          tampoco es única la orientación de los ejes dentro del subespacio correspondiente.</p>
+      </section>
+
+      <h2>Cuánta variación conserva el plano principal</h2>
+
+      <p>Ahora que hemos separado la posición de cada punto dentro del plano de su desplazamiento perpendicular,
+        podemos cuantificar cuánta dispersión corresponde a cada parte. La varianza de la puntuación \(z_1\)
+        es \(\lambda_1\), la de \(z_2\) es \(\lambda_2\) y la de \(z_3\) es \(\lambda_3\). Por eso,
+        la variación representada en el plano se mide mediante \(\lambda_1+\lambda_2\), mientras que
+        \(\lambda_3\) mide la variación residual. Hablar de varianza conservada significa comparar esas
+        cantidades con la dispersión total de la nube.</p>
+
+      <p>La varianza total de los datos centrados es la suma de las varianzas de sus coordenadas originales,
+        es decir, la traza de \(\mathbf{S}\), que se obtiene sumando sus elementos diagonales. Esa cantidad
+        también es la suma de los eigenvalores. Por eso,
+        la proporción de varianza explicada por la componente \(j\) y la proporción acumulada al conservar
+        \(r\) componentes se calculan como</p>
+
+      <div class="equation">\[
+        \rho_j=\frac{\lambda_j}{\sum_{k=1}^{p}\lambda_k},
+        \qquad
+        \rho_{\mathrm{acum}}(r)=
+        \frac{\sum_{j=1}^{r}\lambda_j}{\sum_{k=1}^{p}\lambda_k}.
+      \]</div>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Dispersión de las 500 observaciones en las direcciones principales.">
+\begin{tabular}{lrrr}
+\hline
+Componente & Eigenvalor & Varianza (\%) & Acumulada (\%) \\
+\hline
+Primera & 24.15034 & 72.4162 & 72.4162 \\
+Segunda & 8.53545 & 25.5940 & 98.0102 \\
+Tercera & 0.66358 & 1.9898 & 100.0000 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Las primeras dos componentes conservan aproximadamente el \(98.01\,\%\) de la varianza muestral.
+        El \(1.99\,\%\) restante corresponde al espesor de la nube. En la distribución que generó los datos,
+        la proporción teórica asociada a la tercera dirección es
+        \(0.81^2/(5^2+3^2+0.81^2)\approx 1.89\,\%\). La diferencia es consecuencia de trabajar con una
+        muestra finita.</p>
+
+      <p>Retener el \(98\,\%\) de la varianza no equivale a conservar el \(98\,\%\) de la información útil para
+        cualquier tarea. La varianza mide dispersión, no relevancia física. Una desviación de poca amplitud puede
+        contener una señal de falla si aparece precisamente en una dirección en la que el sistema casi nunca
+        varía. Por esa razón, el número de componentes no debe decidirse únicamente con un porcentaje acumulado;
+        también importan la finalidad del modelo y su desempeño con datos independientes.</p>
+
+      <h2>Proyectar, reconstruir y conservar el residuo</h2>
+
+      <p>La construcción geométrica anterior puede escribirse de manera compacta con matrices para aplicarla
+        a cualquier número de variables. Al retener \(r\) componentes reunimos sus direcciones en
+        \(\mathbf{V}_r=[\mathbf{v}_1,\ldots,\mathbf{v}_r]\). Las combinaciones lineales de sus columnas
+        forman el espacio principal que ya describimos. Para una observación nueva \(\mathbf{x}\),
+        sus coordenadas reducidas son</p>
+
+      <div class="equation">\[
+        \mathbf{z}=\mathbf{V}_r^{\mathsf{T}}(\mathbf{x}-\boldsymbol{\mu})
+        \in\mathbb{R}^{r}.
+      \]</div>
+
+      <p>Estas \(r\) coordenadas permiten construir una aproximación en las unidades y coordenadas de los datos
+        originales,</p>
+
+      <div class="equation">\[
+        \widehat{\mathbf{x}}
+        =\boldsymbol{\mu}+\mathbf{V}_r\mathbf{z}
+        =\boldsymbol{\mu}+
+        \underbrace{\mathbf{V}_r\mathbf{V}_r^\mathsf{T}}_{\mathbf{P}}
+        (\mathbf{x}-\boldsymbol{\mu}).
+      \]</div>
+
+      <p>La matriz \(\mathbf{P}\) es un <strong>proyector ortogonal</strong>. Cumple
+        \(\mathbf{P}^\mathsf{T}=\mathbf{P}\) y \(\mathbf{P}^2=\mathbf{P}\), de modo que volver a proyectar
+        un vector ya proyectado no lo modifica. En tres dimensiones, con \(r=2\), el punto
+        \(\widehat{\mathbf{x}}\) pertenece al plano que pasa por la media y se extiende en las direcciones
+        \(\mathbf{v}_1\) y \(\mathbf{v}_2\). Ese plano es un conjunto afín; el subespacio lineal correspondiente
+        pasa por el origen después de centrar los datos.</p>
+
+      <p>La parte que no se reconstruye se llama <strong>residuo</strong>,</p>
+
+      <div class="equation">\[
+        \mathbf{e}=\mathbf{x}-\widehat{\mathbf{x}}
+        =\underbrace{(\mathbf{I}-\mathbf{P})}_{\mathbf{P}_{\perp}}
+        (\mathbf{x}-\boldsymbol{\mu}).
+      \]</div>
+
+      <p>El proyector \(\mathbf{P}_{\perp}\) lleva el vector centrado al complemento ortogonal del espacio
+        principal. Por lo tanto, ambas operaciones son proyecciones ortogonales, una sobre el espacio principal y
+        otra sobre el espacio residual. Se cumple</p>
+
+      <div class="equation">\[
+        \mathbf{x}-\boldsymbol{\mu}
+        =\mathbf{P}(\mathbf{x}-\boldsymbol{\mu})+\mathbf{e},
+        \qquad
+        \mathbf{V}_r^\mathsf{T}\mathbf{e}=\mathbf{0},
+        \qquad
+        \mathbf{P}\mathbf{P}_{\perp}=\mathbf{0}.
+      \]</div>
+
+      <p>La perpendicularidad también permite aplicar el teorema de Pitágoras,</p>
+
+      <div class="equation">\[
+        \|\mathbf{x}-\boldsymbol{\mu}\|_2^2
+        =\|\mathbf{z}\|_2^2+\|\mathbf{e}\|_2^2.
+      \]</div>
+
+      <p>Aquí \(\|\cdot\|_2\) es la longitud o norma euclidiana. La igualdad muestra que las puntuaciones y el residuo
+        describen partes complementarias de la desviación respecto de la media. Mirar solamente una de ellas
+        equivale a ignorar parte de esa desviación.</p>
+
+      <script type="text/python">
+r = 2
+Vr = V[:, :r]
+P = Vr @ Vr.T
+P_perp = np.eye(X.shape[1]) - P
+Z = Xc @ Vr
+X_proy = media + Z @ Vr.T
+E = X - X_proy
+residuo_firmado = Xc @ V[:, 2]
+error_medio = np.mean(np.sum(E**2, axis=1))
+
+np.testing.assert_allclose(P @ P, P, atol=1e-12)
+np.testing.assert_allclose(P @ P_perp, 0.0, atol=1e-12)
+np.testing.assert_allclose(E @ Vr, 0.0, atol=1e-12)
+np.testing.assert_allclose(X, X_proy + E, atol=1e-12)
+</script>
+
+      <p>La <a href="#fig-pca-proyeccion">figura 3</a> traduce el resultado del bloque anterior a una
+        comparación geométrica. El programa dibuja los puntos de <code>X</code> junto con sus reconstrucciones
+        de <code>X_proy</code> y une algunas parejas mediante segmentos. Cada segmento representa el residuo
+        de una observación, por lo que su longitud permite apreciar cuánto cambia el dato al aproximarlo
+        mediante el plano principal.</p>
+
+      <figure id="fig-pca-proyeccion">
+        <img src="./pca-proyeccion.png" alt="Datos originales, puntos reconstruidos en el plano principal y segmentos perpendiculares que unen cada dato seleccionado con su proyección."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. Los puntos anaranjados son las reconstrucciones. Los segmentos morados representan
+          residuos perpendiculares al plano y se muestran para una de cada diez observaciones para facilitar
+          la lectura.</figcaption>
+      </figure>
+
+      <h3>Por qué este plano es la mejor aproximación cuadrática</h3>
+
+      <p>Entre todos los subespacios lineales de dimensión \(r\), las primeras \(r\) componentes producen la
+        menor suma de errores cuadrados de reconstrucción de los datos centrados. Si
+        \(\mathbf{B}\) contiene cualquier conjunto de \(r\) columnas ortonormales, el error correspondiente es</p>
+
+      <div class="equation">\[
+        \sum_{i=1}^{n}
+        \|(\mathbf{I}-\mathbf{B}\mathbf{B}^\mathsf{T})\mathbf{x}_{c,i}\|_2^2
+        =(n-1)\left[
+        \operatorname{tr}(\mathbf{S})
+        -\operatorname{tr}(\mathbf{B}^\mathsf{T}\mathbf{S}\mathbf{B})
+        \right].
+      \]</div>
+
+      <p>La traza, indicada por \(\operatorname{tr}\), es la suma de los elementos diagonales de una matriz.
+        Como la primera cantidad del lado derecho es fija, reducir el error equivale a conservar la mayor
+        varianza posible. Al elegir \(\mathbf{B}=\mathbf{V}_r\), el error se expresa mediante los eigenvalores
+        descartados,</p>
+
+      <div class="equation">\[
+        \sum_{i=1}^{n}\|\mathbf{e}_i\|_2^2
+        =(n-1)\sum_{j=r+1}^{p}\lambda_j.
+      \]</div>
+
+      <p>En nuestro ejemplo, el promedio del error cuadrático por observación es
+        \((499/500)\lambda_3\approx 0.66225\). El factor \(499/500\) aparece porque la covarianza se calculó
+        con denominador \(n-1\), mientras que este promedio usa \(n\). La optimalidad se refiere a un criterio
+        cuadrático sobre el conjunto de ajuste; no garantiza que el modelo sea la mejor representación para
+        todas las condiciones futuras.</p>
+
+      <h2>Las nuevas coordenadas y la dirección que desaparece</h2>
+
+      <p>La reconstrucción \(\widehat{\mathbf{x}}\) sigue teniendo tres entradas, aunque se encuentre sobre
+        un plano. En cambio, \(\mathbf{z}=(z_1,z_2)^\mathsf{T}\) contiene solamente las dos coordenadas
+        necesarias para ubicarla dentro de ese plano. La <a href="#fig-pca-coordenadas">figura 4</a> representa
+        las dos columnas de <code>Z</code> como coordenadas horizontal y vertical. Así muestra los mismos
+        puntos proyectados de la figura 3, pero vistos directamente en el plano, sin la perspectiva tridimensional
+        que puede dificultar la interpretación.</p>
+
+      <p>El siguiente bloque genera una versión básica de ese diagrama de dispersión. En el script completo
+        se añaden las flechas y los porcentajes de varianza que aparecen en la figura 4, manteniendo las
+        mismas puntuaciones y la misma escala para ambos ejes.</p>
+
+      <script type="text/python">
+fig, ax = plt.subplots()
+ax.scatter(Z[:, 0], Z[:, 1], s=12, alpha=0.6)
+ax.axhline(0, color="gray", linewidth=0.7)
+ax.axvline(0, color="gray", linewidth=0.7)
+ax.set_aspect("equal", adjustable="box")
+ax.set(xlabel=r"$z_1$", ylabel=r"$z_2$",
+       title="Datos en coordenadas principales")
+ax.grid(alpha=0.2)
+plt.show()
+</script>
+
+      <figure id="fig-pca-coordenadas">
+        <img src="./pca-coordenadas.png" alt="Dispersión de las puntuaciones en las dos primeras componentes, con mayor extensión sobre el eje horizontal."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. El plano principal expresado en sus propias coordenadas. Los vectores
+          \(\mathbf{e}_1\) y \(\mathbf{e}_2\) son los ejes unitarios de este sistema bidimensional; las flechas
+          se escalan por \(2\sqrt{\lambda_1}\) y \(2\sqrt{\lambda_2}\), respectivamente.</figcaption>
+      </figure>
+
+      <p>La coordenada que desaparece en esta representación es
+        \(z_3=\mathbf{v}_3^\mathsf{T}(\mathbf{x}-\boldsymbol{\mu})\). Como el complemento ortogonal tiene
+        una sola dimensión, el residuo completo se recupera con
+        \(\mathbf{e}=z_3\mathbf{v}_3\). El signo de \(z_3\) indica de qué lado del plano está la observación,
+        según la orientación elegida para \(\mathbf{v}_3\), y su magnitud es la distancia al plano.</p>
+
+      <p>Para esta realización, una elección del eigenvector residual es aproximadamente</p>
+
+      <div class="equation">\[
+        \mathbf{v}_3=
+        \begin{bmatrix}-0.09329&0.99103&0.09573\end{bmatrix}^{\mathsf{T}}.
+      \]</div>
+
+      <p>Que los datos estén cerca del plano equivale a que, en condiciones habituales, cumplan aproximadamente</p>
+
+      <div class="equation">\[
+        -0.09329(x_1-\mu_1)
+        +0.99103(x_2-\mu_2)
+        +0.09573(x_3-\mu_3)\approx 0.
+      \]</div>
+
+      <p>Esta expresión hace visible una relación que no se aprecia tan fácilmente al revisar tres gráficas
+        separadas. El residuo mide cuánto se incumple esa relación. No obstante, se trata de una regularidad
+        estadística aprendida de los datos; por sí sola no demuestra una ley física ni una relación causal
+        entre sensores.</p>
+
+      <h2>Dos indicadores para vigilar comportamientos distintos</h2>
+
+      <p>Para utilizar el modelo como referencia de funcionamiento necesitamos convertir las desviaciones en
+        cantidades que se puedan comparar con un límite. Un <strong>estadístico de vigilancia</strong> es
+        precisamente una cantidad calculada a partir de las mediciones para evaluar qué tan inusual es una
+        observación. En PCA conviene considerar tanto su posición dentro del espacio principal como su
+        separación respecto de él.</p>
+
+      <h3>La distancia dentro del espacio principal</h3>
+
+      <p>Una puntuación grande no tiene el mismo significado en todas las componentes. Desplazarse cinco
+        unidades en una dirección cuya desviación estándar es cinco puede ser habitual; hacerlo en otra cuya
+        desviación estándar es uno resulta mucho menos frecuente. El estadístico \(T^2\) de Hotelling tiene
+        en cuenta esas escalas,</p>
+
+      <div class="equation">\[
+        T^2
+        =\mathbf{z}^{\mathsf{T}}\boldsymbol{\Lambda}_r^{-1}\mathbf{z}
+        =\sum_{j=1}^{r}\frac{z_j^2}{\lambda_j},
+        \qquad
+        \boldsymbol{\Lambda}_r=\operatorname{diag}(\lambda_1,\ldots,\lambda_r).
+      \]</div>
+
+      <p>Así, \(T^2\) es una distancia cuadrática normalizada por la variabilidad habitual de cada componente.
+        Un valor alto indica que la observación se encuentra lejos del centro dentro del espacio principal,
+        aunque todavía respete las relaciones representadas por ese espacio. La fórmula requiere que los
+        eigenvalores retenidos sean positivos; direcciones de varianza nula no deben invertirse de esta forma.</p>
+
+      <h3>La distancia al espacio principal</h3>
+
+      <p>El segundo indicador es el error cuadrático de predicción, conocido como SPE
+        (<em>squared prediction error</em>) o estadístico \(Q\). Para distinguirlo de otras matrices que suelen
+        representarse con esa letra lo escribiremos</p>
+
+      <div class="equation">\[
+        Q_{\mathrm{SPE}}=\mathbf{e}^{\mathsf{T}}\mathbf{e}
+        =\|\mathbf{e}\|_2^2
+        =\sum_{j=r+1}^{p}z_j^2.
+      \]</div>
+
+      <p>En nuestro caso, \(Q_{\mathrm{SPE}}=z_3^2\). Un valor alto indica que la observación se aleja del plano
+        y, por lo tanto, deja de cumplir las relaciones habituales entre las variables. Al elevar al cuadrado se
+        pierde el signo del residuo, lo cual es adecuado para una alarma que debe reaccionar ante desviaciones
+        hacia cualquiera de los dos lados. Cuando interesa interpretar el cambio, conviene conservar también
+        \(z_3\) y el vector \(\mathbf{e}\).</p>
+
+      <p>La siguiente función calcula ambos indicadores usando siempre la media y las direcciones del modelo
+        de referencia. No vuelve a ajustar PCA con las observaciones que está evaluando.</p>
+
+      <script type="text/python">
+def evaluar(Y):
+    """Usa siempre la media y las direcciones del ajuste de referencia."""
+    Yc = np.asarray(Y) - media
+    z = Yc @ Vr
+    e = Yc - z @ Vr.T
+    t2 = np.sum(z**2 / lambdas[:r], axis=1)
+    spe = np.sum(e**2, axis=1)
+    return z, e, t2, spe
+</script>
+
+      <section class="remark">
+        <p>Un cambio puede tener un residuo pequeño y, aun así, ser inusual por su magnitud dentro del espacio
+          principal. También puede presentar puntuaciones habituales y un residuo grande. Vigilar solamente
+          \(T^2\) o solamente \(Q_{\mathrm{SPE}}\) deja sin examinar uno de esos comportamientos.</p>
+      </section>
+
+      <h2>Cómo establecer los límites sin utilizar las fallas</h2>
+
+      <p>El umbral de un indicador es el valor a partir del cual decidimos generar una señal de revisión.
+        Para obtenerlo separamos tres conjuntos con funciones distintas. Las 500 observaciones iniciales
+        ajustan PCA; otras 2000 observaciones sanas calibran los umbrales; finalmente, un conjunto adicional
+        permite examinar el comportamiento del detector. Esta separación evita evaluar el método solamente
+        sobre los mismos datos que lo definieron.</p>
+
+      <p>Usaremos el percentil 99 de cada indicador en el conjunto de calibración, es decir, un valor por
+        debajo del cual queda aproximadamente el \(99\,\%\) de sus observaciones de referencia. Existen
+        límites analíticos bajo determinadas hipótesis de distribución, pero la calibración empírica permite
+        ilustrar el procedimiento sin confundir esas hipótesis con propiedades universales de PCA.</p>
+
+      <script type="text/python">
+def nuevas_muestras(cantidad):
+    latentes = np.column_stack([
+        rng.normal(0.0, escala, cantidad) for escala in escalas
+    ])
+    return latentes @ R.T + mu_generadora
+
+
+X_cal = nuevas_muestras(2000)
+_, _, t2_cal, q_cal = evaluar(X_cal)
+alpha = 0.01
+limite_t2 = np.quantile(t2_cal, 1 - alpha, method="higher")
+limite_q = np.quantile(q_cal, 1 - alpha, method="higher")
+
+print(f"Umbral de T²: {limite_t2:.4f}")
+print(f"Umbral de Q: {limite_q:.4f}")
+</script>
+
+      <p>El resultado reproducible de esta simulación es
+        \(h_T\approx 9.8214\) y \(h_Q\approx 4.5579\). Una regla sencilla genera una alarma cuando
+        \(T^2&gt;h_T\) o \(Q_{\mathrm{SPE}}&gt;h_Q\). Cada umbral se calibró por separado, por lo que su
+        combinación no tiene automáticamente una tasa de falsas alarmas del \(1\,\%\). Además, los percentiles
+        se estimaron con datos finitos y el porcentaje observado en otra muestra puede ser diferente.
+        Una falsa alarma es una superación del límite cuando el sistema continúa en condiciones sanas.</p>
+
+      <p>En una aplicación real, el conjunto de calibración debe cubrir las condiciones de operación que
+        se consideran normales. La autocorrelación temporal, los cambios de régimen y la incertidumbre de
+        los parámetros afectan la frecuencia de alarmas; el valor nominal del percentil no reemplaza una
+        validación del sistema completo.</p>
+
+      <h2>Un experimento con dos cambios deliberadamente distintos</h2>
+
+      <p>Generaremos ahora 600 observaciones nuevas a partir de la misma distribución. Las primeras 200
+        conservan el comportamiento de referencia. En las siguientes 200 añadimos un desplazamiento perpendicular
+        al plano principal, y en las últimas 200 añadimos otro que pertenece a él. Las magnitudes se expresan
+        en unidades de la desviación estándar de su dirección respectiva,</p>
+
+      <div class="equation">\[
+        \boldsymbol{\delta}_{\perp}
+        =4\sqrt{\lambda_3}\,\mathbf{v}_3,
+        \qquad
+        \boldsymbol{\delta}_{\parallel}
+        =4\sqrt{\lambda_1}\,\mathbf{v}_1.
+      \]</div>
+
+      <p>El cambio residual tiene longitud aproximada \(3.26\), mientras que el cambio principal tiene
+        longitud \(19.66\). El segundo necesita una amplitud absoluta mayor para representar el mismo
+        desplazamiento de cuatro desviaciones estándar en una dirección naturalmente más dispersa.
+        No son fallas de un equipo específico, sino perturbaciones diseñadas para separar y entender la
+        respuesta de los dos indicadores.</p>
+
+      <script type="text/python">
+# Tres tramos de 200 muestras; no se simula una dinámica temporal.
+X_base = nuevas_muestras(600)
+X_test = X_base.copy()
+cambio_residual = 4 * np.sqrt(lambdas[2]) * V[:, 2]
+cambio_principal = 4 * np.sqrt(lambdas[0]) * V[:, 0]
+X_test[200:400] += cambio_residual
+X_test[400:600] += cambio_principal
+
+Z_test, E_test, t2_test, q_test = evaluar(X_test)
+alarma_t2 = t2_test > limite_t2
+alarma_q = q_test > limite_q
+alarma = alarma_t2 | alarma_q
+tramos = [slice(0, 200), slice(200, 400), slice(400, 600)]
+tasas = np.array([
+    [alarma_t2[s].mean(), alarma_q[s].mean(), alarma[s].mean()]
+    for s in tramos
+])
+
+print("Porcentajes de alarma [T², Q, cualquiera]:")
+print(100 * tasas)
+</script>
+
+      <p>La <a href="#fig-pca-senales">figura 5</a> muestra las tres columnas de <code>X_test</code>
+        frente al número de observación. Se genera después de aplicar los desplazamientos del bloque
+        anterior, con un panel por variable y un color por condición. Esta vista permite examinar cómo
+        se manifiestan los cambios en las mediciones originales antes de interpretarlos mediante las
+        coordenadas principales y los residuos.</p>
+
+      <figure id="fig-pca-senales">
+        <img src="./pca-senales.png" loading="lazy" alt="Tres variables en 600 observaciones, con un tramo sano, otro con cambio residual y otro con cambio principal."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. Las mediciones antes de calcular los indicadores. Los tramos representan grupos de
+          muestras independientes bajo tres condiciones; el número de muestra no es una escala de tiempo ni
+          describe el transitorio de un sistema físico.</figcaption>
+      </figure>
+
+      <h3>Un cambio que no se ve en las dos primeras componentes</h3>
+
+      <p>Para una observación desplazada por \(\boldsymbol{\delta}_{\perp}\), las puntuaciones retenidas no
+        cambian porque \(\mathbf{V}_r^\mathsf{T}\mathbf{v}_3=\mathbf{0}\). En efecto,</p>
+
+      <div class="equation">\[
+        \mathbf{z}'=
+        \mathbf{V}_r^\mathsf{T}
+        (\mathbf{x}+\boldsymbol{\delta}_{\perp}-\boldsymbol{\mu})
+        =\mathbf{z},
+        \qquad
+        \mathbf{e}'=\mathbf{e}+\boldsymbol{\delta}_{\perp}.
+      \]</div>
+
+      <p>El estadístico \(T^2\) de cada observación es exactamente el que tendría sin ese desplazamiento,
+        pero su residuo cambia. En un diagrama que muestre únicamente \(z_1\) y \(z_2\), esta modificación
+        queda completamente oculta. Es un ejemplo concreto de por qué descartar una componente de pequeña
+        varianza puede eliminar información útil para el diagnóstico.</p>
+
+      <h3>Un cambio que permanece dentro del plano</h3>
+
+      <p>Si añadimos \(\boldsymbol{\delta}_{\parallel}\), ocurre lo contrario. El cambio pertenece al espacio
+        principal, por lo que \(\mathbf{P}_{\perp}\boldsymbol{\delta}_{\parallel}=\mathbf{0}\), y obtenemos</p>
+
+      <div class="equation">\[
+        \mathbf{e}'=\mathbf{e},
+        \qquad
+        \mathbf{z}'=\mathbf{z}+
+        \begin{bmatrix}4\sqrt{\lambda_1}\\0\end{bmatrix}.
+      \]</div>
+
+      <p>El valor de \(Q_{\mathrm{SPE}}\) permanece igual al de la observación sin perturbar, mientras que
+        \(T^2\) tiende a aumentar por el desplazamiento de la distribución de las puntuaciones. No tiene que
+        aumentar para cada punto individual, ya que una puntuación inicial negativa puede acercarse al origen
+        al sumarle un desplazamiento positivo, pero el conjunto sí se desplaza hacia una región menos habitual.</p>
+
+      <p>La <a href="#fig-pca-dos-espacios">figura 6</a> permite comparar visualmente los dos efectos.
+        El panel izquierdo utiliza las dos columnas de <code>Z_test</code>; el derecho conserva la primera
+        puntuación y la combina con la coordenada residual, calculada mediante <code>E_test @ V[:, 2]</code>.
+        En ambos paneles se representan las mismas 600 observaciones. Al cambiar la segunda coordenada,
+        el grupo con cambio residual, que se mezcla con la referencia sana en la vista izquierda,
+        se distingue claramente en la derecha.</p>
+
+      <figure id="fig-pca-dos-espacios">
+        <img src="./pca-dos-espacios.png" loading="lazy" alt="Comparación de las observaciones en el plano z1 z2 y en el plano z1 z3, donde se separa el grupo con cambio residual."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. En la vista izquierda, el cambio residual se superpone con la referencia sana,
+          mientras que el cambio principal se desplaza hacia la derecha. La vista derecha recupera la coordenada
+          residual y revela la separación del grupo rojo. La elipse representa \(T^2=h_T\) y las líneas
+          horizontales corresponden a \(z_3=\pm\sqrt{h_Q}\); las escalas verticales de los paneles son diferentes.</figcaption>
+      </figure>
+
+      <h2>Qué muestran las alarmas y qué no permiten concluir</h2>
+
+      <p>La <a href="#fig-pca-monitoreo">figura 7</a> se construye con los arreglos <code>t2_test</code>
+        y <code>q_test</code> obtenidos mediante la función <code>evaluar</code>. Al representar cada indicador
+        frente al número de observación aparecen claramente sus funciones complementarias. En el tramo
+        con cambio residual aumenta principalmente \(Q_{\mathrm{SPE}}\); en el tramo con cambio principal,
+        el indicador que reacciona es \(T^2\). Las líneas discontinuas son los límites obtenidos antes de
+        introducir ambos cambios.</p>
+
+      <figure id="fig-pca-monitoreo">
+        <img src="./pca-monitoreo.png" loading="lazy" alt="Estadísticos T cuadrada y Q para las 600 observaciones, con elevación de Q durante el cambio residual y de T cuadrada durante el cambio principal."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. Vigilancia simultánea de los espacios principal y residual. Superar un umbral
+          produce una señal de revisión; no identifica por sí mismo la causa física del cambio.</figcaption>
+      </figure>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Porcentaje de observaciones que superan los límites en cada grupo de 200 muestras.">
+\begin{tabular}{lrrr}
+\hline
+Condición & $T^2$ (\%) & $Q_{\mathrm{SPE}}$ (\%) & Cualquiera (\%) \\
+\hline
+Referencia sana & 3.5 & 0.5 & 4.0 \\
+Cambio residual & 0.0 & 92.5 & 92.5 \\
+Cambio principal & 81.5 & 1.0 & 81.5 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En esta realización, \(Q_{\mathrm{SPE}}\) señala 185 de las 200 observaciones con cambio residual,
+        y \(T^2\) señala 163 de las 200 observaciones con cambio principal. También aparecen ocho alarmas
+        combinadas entre las 200 observaciones sanas. Estos porcentajes describen la muestra simulada; no son
+        probabilidades universales de detección ni una garantía para otra instalación. La variación observada
+        en el grupo sano confirma que el percentil de calibración no fija exactamente el porcentaje de
+        alarmas de un grupo de evaluación pequeño.</p>
+
+      <p>Las perturbaciones se eligieron alineadas con eigenvectores para que el contraste fuera inequívoco.
+        Una falla real puede tener componentes en ambos espacios y elevar los dos indicadores. También puede
+        ser demasiado pequeña para detectarse, quedar enmascarada por el ruido o confundirse con una condición
+        legítima que no estaba representada en los datos de referencia.</p>
+
+      <p>Para investigar una alarma residual podemos examinar los términos \(e_j^2\), cuya suma es
+        \(Q_{\mathrm{SPE}}\). Estos términos muestran qué coordenadas contribuyen más al error en el sistema
+        de unidades utilizado. Sin embargo, no basta con elegir la mayor contribución y declarar que ese
+        sensor falló. Un error de medición en una sola variable se distribuye entre varias entradas del residuo
+        a través de \(\mathbf{P}_{\perp}\), y una alteración física puede afectar varios instrumentos a la vez.
+        Identificar la causa requiere contrastar los resultados con el conocimiento del proceso.</p>
+
+      <h2>Del ejemplo geométrico a los datos de una instalación</h2>
+
+      <h3>Centrar no es lo mismo que estandarizar</h3>
+
+      <p>En el ejemplo todas las coordenadas tienen escalas comparables, pero una aplicación puede reunir
+        presión en pascales, corriente en amperes y temperatura en grados Celsius. Un simple cambio de unidades
+        modificaría sus varianzas numéricas y, con ellas, las direcciones principales. Si queremos evitar
+        que una variable domine únicamente por su escala, podemos estandarizar cada columna usando
+        la media y la desviación estándar del conjunto de ajuste,</p>
+
+      <div class="equation">\[
+        y_j=\frac{x_j-\mu_j}{s_j},
+        \qquad s_j&gt;0.
+      \]</div>
+
+      <p>Aplicar PCA a estas variables equivale a trabajar con su estructura de correlación cuando se emplea
+        una convención coherente para las desviaciones estándar. La estandarización da un peso comparable a
+        las variables, pero también puede aumentar la importancia de una medición poco variable y ruidosa.
+        En ciertos problemas es preferible escalar por incertidumbres instrumentales o por rangos físicos
+        significativos. La elección debe corresponder al propósito del análisis.</p>
+
+      <p>La media y las escalas deben calcularse una sola vez con los datos de ajuste y mantenerse al evaluar
+        datos nuevos. Si se estandariza cada lote por separado, un desplazamiento que debería generar una
+        alarma puede desaparecer al restar la nueva media. Además, después de estandarizar, la ortogonalidad
+        y las distancias descritas en el artículo corresponden al espacio escalado; no deben interpretarse
+        automáticamente como distancias euclidianas en las unidades originales.</p>
+
+      <h3>Una referencia sana debe representar el funcionamiento permitido</h3>
+
+      <p>El modelo aprenderá tanto la estructura útil como las condiciones presentes en sus datos de ajuste.
+        Antes de calcularlo conviene revisar errores de adquisición, valores faltantes, saturaciones y
+        condiciones anómalas. Si una instalación tiene varios regímenes claramente distintos, un único
+        plano puede no describirlos adecuadamente. Puede ser necesario utilizar modelos por régimen o
+        incorporar variables que expliquen los cambios de operación.</p>
+
+      <p>PCA describe relaciones lineales. Si las mediciones siguen una superficie curva, una representación
+        lineal puede producir residuos grandes aun cuando el comportamiento sea normal. Tampoco incorpora
+        de manera automática el orden temporal de las observaciones. En procesos dinámicos puede ser necesario
+        incluir mediciones retardadas o utilizar un modelo dinámico que explique cómo unas variables
+        preceden a otras.</p>
+
+      <h3>La poca varianza no convierte una dirección en ruido</h3>
+
+      <p>La interpretación del espacio residual depende de la aplicación. En una tarea de compresión puede
+        ser aceptable omitir variaciones pequeñas. En instrumentación, esas mismas variaciones pueden
+        representar el incumplimiento de una relación muy precisa. Por eso, seleccionar las componentes,
+        calibrar los límites y evaluar fallas conocidas o cambios físicamente plausibles son decisiones
+        relacionadas, pero diferentes.</p>
+
+      <p>Un sistema de vigilancia también necesita una política para actuar ante alarmas. Exigir varias
+        superaciones consecutivas puede reducir avisos aislados, pero introduce retraso y cambia las
+        características del detector. Actualizar el modelo puede ayudar frente a cambios legítimos y
+        graduales, aunque hacerlo sin supervisión también puede incorporar una degradación progresiva a la
+        referencia sana. Esas decisiones deben evaluarse con datos separados de los utilizados para
+        diseñar el procedimiento.</p>
+
+      <h2 id="reproducir-figuras">Reproducir el análisis y las figuras</h2>
+
+      <p>Los bloques de cálculo del artículo se pueden ejecutar en el orden en que aparecen. Se requieren
+        NumPy para los arreglos y el álgebra lineal, scikit-learn para PCA y Matplotlib para las figuras.
+        Estas dependencias pueden instalarse en un entorno de Python con</p>
+
+      <script type="text/shell">
+python -m pip install numpy scipy scikit-learn matplotlib
+</script>
+
+      <p>El archivo <a href="./pca_geometria.py" download><code>pca_geometria.py</code></a> reúne el ejemplo
+        completo, las comprobaciones algebraicas y la generación de las siete figuras. Al ejecutarlo sin
+        argumentos muestra las gráficas en pantalla; la opción de guardado permite exportarlas a una carpeta.</p>
+
+      <p>Dentro del archivo, la función <code>figuras_geometricas()</code> genera las figuras 1 a 4 a partir
+        de la nube inicial, el plano, las reconstrucciones y las puntuaciones. La función
+        <code>figuras_monitorizacion()</code> genera las figuras 5 a 7 con las observaciones de evaluación,
+        sus proyecciones y los indicadores de vigilancia. Ambas utilizan los resultados calculados previamente
+        por el programa, por lo que las gráficas y los valores numéricos del análisis corresponden a los
+        mismos datos.</p>
+
+      <script type="text/shell">
+python pca_geometria.py
+python pca_geometria.py --guardar figuras-pca
+</script>
+
+      <p>Los resultados presentados se calcularon con Python 3.13, NumPy 1.26.4, scikit-learn 1.7.0 y
+        Matplotlib 3.10.5. La semilla fija permite repetir la secuencia de datos, aunque el signo elegido
+        para los eigenvectores puede variar entre implementaciones numéricas. Las reconstrucciones y los
+        subespacios no dependen de ese signo; en la simulación, el sentido concreto de un desplazamiento
+        construido a partir de un eigenvector sí sigue la orientación que devuelve el cálculo.</p>
+
+      <h2>Leer la estructura y también sus desviaciones</h2>
+
+      <p>PCA permite describir una nube de datos mediante un conjunto de ejes que ordenan su variación.
+        Los eigenvectores proporcionan las direcciones, los eigenvalores indican su dispersión y las
+        puntuaciones ubican cada observación en ese nuevo sistema de coordenadas. Retener algunas componentes
+        produce una representación compacta y una reconstrucción óptima bajo un criterio de error cuadrático.</p>
+
+      <p>Para detectar cambios, esa reconstrucción es solamente una parte del análisis. La distancia dentro
+        del espacio principal informa sobre desplazamientos a lo largo de las relaciones conocidas, mientras
+        que el residuo indica cuánto se aparta una observación de ellas. En el ejemplo, la dirección que
+        representa apenas el \(1.99\,\%\) de la varianza es la que permite reconocer un cambio invisible en
+        las primeras dos componentes. La utilidad del método surge de interpretar ambas partes junto con
+        el conocimiento físico del sistema y una referencia de funcionamiento bien establecida.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Jolliffe, I. T., &amp; Cadima, J. (2016). Principal component analysis: A review and recent
+          developments. <em>Philosophical Transactions of the Royal Society A: Mathematical, Physical and
+            Engineering Sciences, 374</em>(2065), 20150202.
+          <a href="https://doi.org/10.1098/rsta.2015.0202">https://doi.org/10.1098/<wbr>rsta.2015.0202</a></li>
+        <li>Jackson, J. E., &amp; Mudholkar, G. S. (1979). Control procedures for residuals associated with
+          principal component analysis. <em>Technometrics, 21</em>(3), 341–349.
+          <a href="https://doi.org/10.1080/00401706.1979.10489779">https://doi.org/10.1080/<wbr>00401706.<wbr>1979.<wbr>10489779</a></li>
+        <li>scikit-learn developers. (s. f.). <em>PCA</em>. scikit-learn documentation. Recuperado el 25 de
+          octubre de 2026, de
+          <a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html">la documentación de PCA</a>.</li>
+        <li>NumPy developers. (s. f.). <em>numpy.linalg.eigh</em>. NumPy documentation. Recuperado el 25 de
+          octubre de 2026, de
+          <a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.eigh.html">la documentación de eigh</a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+
+</html>
