@@ -1,0 +1,1085 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Medición de la concentración de CO₂ en el aire | drAutomática</title><meta name="description" content="Medición de CO2 con el sensor NDIR MH-Z19D. Principio óptico, especificaciones, conexión a M5Stack y ESP32, programación en C++, calibración e interpretación de mediciones de ventilación."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/codos/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Medición de la concentración de CO₂ en el aire | drAutomática"><meta property="og:description" content="Medición de CO2 con el sensor NDIR MH-Z19D. Principio óptico, especificaciones, conexión a M5Stack y ESP32, programación en C++, calibración e interpretación de mediciones de ventilación."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/codos/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Medición de CO2 con el sensor NDIR MH-Z19D. Principio óptico, especificaciones, conexión a M5Stack y ESP32, programación en C++, calibración e interpretación de mediciones de ventilación."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Medición de la concentración de CO₂ en el aire | drAutomática"><meta name="twitter:description" content="Medición de CO2 con el sensor NDIR MH-Z19D. Principio óptico, especificaciones, conexión a M5Stack y ESP32, programación en C++, calibración e interpretación de mediciones de ventilación."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="cpp,text" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Medición de la concentración de CO₂ en el aire</h1>
+        <p class="subtitle">Fundamentos de la medición con el MH-Z19D, adquisición de datos con ESP32 y criterios para interpretar la concentración de CO₂ en espacios interiores.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span>
+          <span>Octubre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La medición de dióxido de carbono aporta información sobre la
+          renovación del aire en espacios ocupados, siempre que sus resultados
+          se interpreten considerando las características del instrumento y
+          las condiciones del recinto. A partir del principio de absorción
+          infrarroja no dispersiva, se estudia el funcionamiento del sensor
+          MH-Z19D y se desarrolla un monitor con una placa M5Stack Core2 for
+          AWS basada en ESP32. El programa en C++ permite adquirir datos por
+          UART, registrar las lecturas e identificar errores de comunicación,
+          mientras que el análisis de la calibración, la respuesta dinámica
+          y la instalación establece los criterios necesarios para utilizar
+          esos datos. Finalmente, un modelo de dilución relaciona el descenso
+          de la concentración con la renovación del aire y permite discutir
+          los alcances y las limitaciones de esta aplicación.</p>
+      </section>
+
+      <h2>La medición de CO₂ en espacios interiores</h2>
+
+      <p>En un salón de clases o una oficina, una temperatura agradable no
+        necesariamente indica que exista un aporte suficiente de aire
+        exterior. Durante la ocupación, las personas exhalan dióxido de
+        carbono, CO₂, cuya concentración puede aumentar si la ventilación
+        no alcanza a diluirlo al ritmo en que se genera. El registro de esa
+        evolución permite relacionar los cambios de concentración con la
+        ocupación del recinto, la apertura de ventanas o el funcionamiento
+        del sistema de ventilación.</p>
+
+      <p>El interés por medir CO₂ se extiende a otros ámbitos, pues este gas
+        participa en la fotosíntesis, se produce en la fermentación y la
+        combustión y contribuye al efecto invernadero. Estas funciones
+        explican sus aplicaciones en invernaderos, laboratorios, procesos
+        industriales y estudios atmosféricos, aunque cada una plantea
+        exigencias distintas en cuanto al intervalo de medida, la exactitud
+        y las condiciones de instalación. La selección del instrumento debe
+        responder a esas exigencias; por ello, un módulo económico para aire
+        interior no sustituye a un analizador de gases de combustión ni a un
+        equipo destinado a estudiar pequeñas variaciones de la concentración
+        atmosférica global.</p>
+
+      <p>Para desarrollar un monitor de aire interior utilizaremos el
+        <strong>MH-Z19D</strong>, un módulo de Winsen que integra el sistema
+        de medición óptica y la electrónica necesaria para entregar la
+        concentración mediante una interfaz digital. La variante elegida
+        para el ejemplo tiene un intervalo nominal de 400 a 5000 ppm.</p>
+
+      <figure>
+        <img src="/drautomatica/html/codos-sensor.png"
+          alt="Dos vistas del sensor MH-Z19D, con la cámara óptica metálica, la placa electrónica y los pines de conexión. La etiqueta indica un intervalo de 400 a 5000 ppm."
+          style="display:block;width:100%;max-width:20rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Sensor MH-Z19D en su presentación con pines.
+          Conviene identificar el modelo y el intervalo impresos en la unidad
+          antes de conectarla o configurar el programa.</figcaption>
+      </figure>
+
+      <p>Cuando las personas constituyen la fuente principal de CO₂, su
+        acumulación permite estudiar la relación entre ocupación y aporte
+        de aire exterior, pero <strong>no constituye una medida completa de
+        la calidad del aire</strong>, ya que este sensor no detecta partículas,
+        compuestos orgánicos volátiles, microorganismos ni monóxido de carbono.
+        La diferencia tiene consecuencias prácticas; por ejemplo, un filtro
+        HEPA puede retirar partículas sin reducir la concentración de CO₂,
+        de modo que su eficacia no puede evaluarse con este monitor. La
+        interpretación de las mediciones interiores debe reconocer estos
+        alcances y limitaciones
+        (<a href="https://www.ashrae.org/file%20library/about/position%20documents/pd-on-indoor-carbon-dioxide-english.pdf">ASHRAE, 2025</a>).</p>
+
+      <section class="remark">
+        <p>Es importante distinguir el <strong>dióxido de carbono (CO₂)</strong>
+          del <strong>monóxido de carbono (CO)</strong>, pues el monitor
+          desarrollado aquí no detecta fugas de este último ni mide la
+          concentración de oxígeno. Como tampoco constituye un sistema
+          certificado de protección de personas, no debe utilizarse para
+          determinar si es seguro ingresar a un espacio confinado.</p>
+      </section>
+
+      <h2>Qué significa una concentración en ppm</h2>
+
+      <p>La concentración expresada en <strong>partes por millón</strong>,
+        abreviadas ppm, indica la proporción de CO₂ presente en la mezcla.
+        Esta proporción puede describirse mediante la fracción molar
+        $x_{\mathrm{CO_2}}$, definida como el cociente entre la cantidad de
+        sustancia de CO₂ y la cantidad total de sustancia de la mezcla,
+        de manera que</p>
+
+      <div class="equation">\[
+        C_{\mathrm{ppm}}=10^6x_{\mathrm{CO_2}}
+        =10^6\frac{n_{\mathrm{CO_2}}}{n_{\mathrm{total}}}.
+      \]</div>
+
+      <p>De acuerdo con esta definición, 1000 ppm equivalen a una fracción
+        de 0.001, es decir, 0.1 %. En una mezcla de gases aproximadamente
+        ideales, la fracción molar coincide con la fracción volumétrica
+        cuando los volúmenes se expresan a la misma temperatura y presión.
+        Para convertir ese valor a una concentración de masa, como mg/m³,
+        es necesario conocer dichas condiciones, puesto que la proporción
+        de moléculas no determina por sí sola la masa contenida en un
+        volumen de aire.</p>
+
+      <p>La humedad introduce otra consideración al comparar mediciones.
+        Mientras que los registros atmosféricos de NOAA se expresan como
+        fracción molar en aire seco, un módulo colocado directamente en una
+        habitación recibe aire húmedo. Una comparación metrológica requiere,
+        por tanto, revisar la base en que se reporta cada resultado y las
+        compensaciones aplicadas, sin suponer que la electrónica interna
+        elimina todas las influencias ambientales.</p>
+
+      <h2>Medir CO₂ a partir de la luz que absorbe</h2>
+
+      <p>El principio de medición aprovecha la absorción selectiva de
+        radiación por las moléculas de CO₂, particularmente intensa en una
+        banda infrarroja cercana a $4.26\,\mu\mathrm{m}$. En un sensor
+        <strong>NDIR</strong>, del inglés <em>non-dispersive infrared</em>,
+        la radiación atraviesa una muestra de gas y un detector mide la
+        intensidad transmitida dentro de la banda seleccionada por un
+        filtro óptico. La denominación «no dispersivo» se refiere a que
+        esta selección no requiere separar todo el espectro mediante un
+        prisma o una red de difracción
+        (<a href="https://www.ti.com/lit/an/snaa207/snaa207.pdf">Seitz y Tong, 2013</a>).</p>
+
+      <figure>
+        <img src="/drautomatica/html/codos-ndir.png"
+          alt="Principio NDIR. La radiación de una fuente infrarroja atraviesa aire con CO2, pasa por un filtro de aproximadamente 4.26 micrómetros y llega a un detector con menor intensidad."
+          style="display:block;width:100%;max-width:40rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Esquema conceptual de absorción infrarroja.
+          Representa el principio de medición, no la geometría interna exacta
+          del MH-Z19D.</figcaption>
+      </figure>
+
+      <p>Una primera descripción matemática de este fenómeno se obtiene
+        mediante la ley de Beer-Lambert, que para una longitud de onda y
+        unas condiciones fijas de temperatura y presión puede escribirse como</p>
+
+      <div class="equation">\[
+        I=I_0\exp(-k\rho_{\mathrm{CO_2}}L),
+        \qquad
+        A=-\ln\!\left(\frac{I}{I_0}\right)
+        =k\rho_{\mathrm{CO_2}}L.
+      \]</div>
+
+      <p>En estas expresiones, $I_0$ es la intensidad de referencia sin la
+        absorción del CO₂, $I$ la intensidad transmitida, $L$ la longitud del
+        recorrido óptico y $\rho_{\mathrm{CO_2}}$ la concentración molar en
+        mol/m³. El coeficiente $k$ tiene las unidades necesarias para que el
+        exponente sea adimensional, mientras que $A$ representa la
+        absorbancia, definida aquí mediante el logaritmo natural. La
+        relación muestra que la transmisión disminuye al aumentar la
+        concentración o la longitud del recorrido óptico, si las demás
+        condiciones permanecen constantes.</p>
+
+      <p>En el sensor real, la medición abarca una banda de longitudes de
+        onda y está sujeta a las características de la fuente, el detector
+        y el entorno, por lo que la conversión a ppm requiere una
+        caracterización específica del módulo. La electrónica interna
+        aplica esa caracterización junto con las compensaciones previstas
+        y entrega un resultado procesado al microcontrolador externo,
+        que puede utilizarlo sin medir la intensidad óptica ni implementar
+        la conversión.</p>
+
+      <p>La influencia de la presión y la temperatura puede comprenderse
+        al relacionar la fracción molar con la cantidad de CO₂ por unidad
+        de volumen. Para una mezcla ideal, esta relación es</p>
+
+      <div class="equation">\[
+        \rho_{\mathrm{CO_2}}
+        =x_{\mathrm{CO_2}}\frac{p}{RT},
+      \]</div>
+
+      <p>donde $p$ es la presión absoluta, $T$ la temperatura absoluta y
+        $R$ la constante universal de los gases. Así, una misma fracción
+        molar puede corresponder a distintas concentraciones molares cuando
+        cambian la presión o la temperatura, como ocurre al trasladar el
+        instrumento a otra altitud. Aunque el MH-Z19D incorpora compensación
+        de temperatura, su documentación no permite suponer una corrección
+        barométrica adicional; en instalaciones con mayores exigencias de
+        exactitud o situadas a otra altitud, es necesario verificar su
+        comportamiento con una referencia apropiada.</p>
+
+      <p>El principio óptico descrito también permite distinguir una
+        medición NDIR de una lectura <strong>eCO₂</strong>, o «CO₂
+        equivalente», que suele estimarse a partir de la respuesta a otros
+        gases, como los compuestos orgánicos volátiles. Aunque ambos
+        resultados pueden expresarse en ppm, solo conocer el principio de
+        funcionamiento permite establecer si el equipo mide CO₂ de manera
+        selectiva o estima su presencia a partir de otras variables.</p>
+
+      <h2>Características del MH-Z19D</h2>
+
+      <p>La tabla 1 reúne las características establecidas en la versión 1.3
+        del manual del MH-Z19D. Al seleccionar y conectar el módulo debe
+        consultarse el documento correspondiente al sufijo <strong>D</strong>,
+        ya que dentro de la familia MH-Z19 existen diferencias de
+        alimentación, tiempo de precalentamiento e intervalo de medida.</p>
+
+      <div class="table-block"><div class="tabjax-output">
+        <table class="article-table">
+          <caption class="table-caption">Tabla 1. Características del MH-Z19D según Winsen (2021).</caption>
+          <thead><tr><th scope="col">Característica</th><th scope="col">Especificación</th></tr></thead>
+          <tbody>
+            <tr><td>Gas y principio</td><td>CO₂, absorción infrarroja NDIR</td></tr>
+            <tr><td>Intervalos disponibles</td><td>400–2000, 400–5000 o 400–10000 ppm, según variante</td></tr>
+            <tr><td>Resolución</td><td>1 ppm</td></tr>
+            <tr><td>Exactitud declarada</td><td>±(50 ppm + 5 % de la lectura)</td></tr>
+            <tr><td>Alimentación</td><td>5.0 ± 0.1 V de corriente continua</td></tr>
+            <tr><td>Consumo</td><td>Promedio &lt; 40 mA; pico de 125 mA</td></tr>
+            <tr><td>Capacidad mínima de la fuente</td><td>150 mA disponibles para el módulo</td></tr>
+            <tr><td>Salidas</td><td>UART con nivel TTL de 3.3 V y PWM</td></tr>
+            <tr><td>Precalentamiento</td><td>1 min</td></tr>
+            <tr><td>Tiempo de respuesta</td><td>$T_{90}&lt;120\,\mathrm{s}$</td></tr>
+            <tr><td>Ambiente de operación</td><td>0–50 °C; 0–95 % HR, sin condensación</td></tr>
+            <tr><td>Dimensiones aproximadas</td><td>32.9 × 19.7 × 8.6 mm</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+
+      <h3>Resolución, exactitud y repetibilidad</h3>
+
+      <p>La resolución de 1 ppm indica el menor incremento que puede
+        distinguirse en la salida digital, pero no establece el error de
+        medición. Para evaluar este último debe considerarse la exactitud
+        declarada por el fabricante, cuyo margen para una lectura $C$
+        expresada en ppm se calcula mediante</p>
+
+      <div class="equation">\[
+        E(C)=50+0.05C\quad\text{ppm}.
+      \]</div>
+
+      <p>Por ejemplo, a 1000 ppm corresponde un margen de ±100 ppm y a
+        2000 ppm, de ±150 ppm. Estos valores se calculan a partir de la
+        especificación y no constituyen intervalos de confianza obtenidos
+        estadísticamente, ni incluyen necesariamente los errores de
+        instalación, la falta de calibración o las condiciones no
+        contempladas por el fabricante. Por ello, una variación de unos
+        pocos ppm requiere una evaluación adicional antes de atribuirla
+        a un cambio ambiental.</p>
+
+      <p>Para interpretar esas variaciones conviene distinguir la
+        <strong>repetibilidad</strong>, que describe la proximidad entre
+        mediciones realizadas bajo las mismas condiciones, de la
+        <strong>deriva</strong>, entendida como un cambio gradual de la
+        indicación mientras la entrada permanece estable. El promedio puede
+        reducir parte de la fluctuación, pero no corrige un desplazamiento
+        de calibración. Además, la reducción habitual $1/\sqrt{N}$ no puede
+        aplicarse sin comprobar sus supuestos a $N$ lecturas cercanas en
+        el tiempo, puesto que estas pueden estar fuertemente correlacionadas.</p>
+
+      <h3>Precalentamiento y respuesta dinámica</h3>
+
+      <p>El precalentamiento corresponde al periodo inicial requerido por
+        el módulo después de energizarse, mientras que el tiempo $T_{90}$
+        caracteriza su respuesta ante un cambio de concentración y mide
+        cuánto tarda la indicación en recorrer el 90 % de dicho cambio.
+        Son procesos diferentes, por lo que esperar el minuto de
+        precalentamiento no elimina el retardo de medición ni garantiza
+        la estabilización térmica de todo el montaje.</p>
+
+      <p>Para visualizar ese retardo, un modelo ilustrativo de primer orden
+        relaciona la concentración real $C(t)$ con la indicación $C_m(t)$ mediante</p>
+
+      <div class="equation">\[
+        \tau_s\frac{\mathrm{d}C_m}{\mathrm{d}t}+C_m=C,
+        \qquad T_{90}=\tau_s\ln(10).
+      \]</div>
+
+      <p>La constante de tiempo $\tau_s$ determina la rapidez de esta
+        respuesta; al elegir $\tau_s=50\,\mathrm{s}$, se obtiene
+        $T_{90}\approx115\,\mathrm{s}$, como se ilustra en la figura 3.
+        El valor se ha elegido con fines didácticos y <strong>no procede
+        de una identificación experimental del MH-Z19D</strong>, cuyo
+        comportamiento puede incluir otras dinámicas y filtrado interno.</p>
+
+      <figure>
+        <img src="/drautomatica/html/codos-respuesta.png"
+          alt="Respuesta simulada de primer orden a un cambio de CO2 de 450 a 1500 ppm. La lectura alcanza el 90 por ciento del cambio aproximadamente a los 115 segundos."
+          style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. Respuesta de un modelo de primer orden ante
+          un cambio de concentración. Consultar la UART cada dos segundos
+          permite registrar más puntos de la evolución, sin modificar
+          la rapidez de respuesta del sensor.</figcaption>
+      </figure>
+
+      <h2>Conexión a M5Stack Core2 for AWS y ESP32</h2>
+
+      <p>Con las características del módulo definidas, podemos establecer
+        las conexiones del monitor. El montaje requiere un MH-Z19D, una
+        placa M5Stack Core2 for AWS con su base, un cable Grove a terminales
+        apropiados y una alimentación capaz de mantener el voltaje
+        especificado. También es posible utilizar otra placa ESP32 con una
+        UART disponible, siempre que se elijan los pines correspondientes
+        y se retire del programa la parte de pantalla y alimentación
+        específica de M5Stack.</p>
+
+      <p>En el <strong>Core2 for AWS original, SKU K010-AWS</strong>, el
+        PORT C de la base permite acceder a GPIO14 y GPIO13, que en este
+        ejemplo se asignan a transmisión y recepción, respectivamente.
+        Como los nombres TX y RX se interpretan desde el dispositivo al
+        que pertenecen, el transmisor de la placa debe conectarse al
+        receptor del sensor y viceversa, según la tabla 2 y la figura 4.</p>
+
+      <div class="table-block"><div class="tabjax-output">
+        <table class="article-table">
+          <caption class="table-caption">Tabla 2. Cableado para el Core2 for AWS original.</caption>
+          <thead><tr><th scope="col">PORT C / ESP32</th><th scope="col">Cable Grove</th><th scope="col">MH-Z19D</th><th scope="col">Función</th></tr></thead>
+          <tbody>
+            <tr><td>GND</td><td>Negro</td><td>GND</td><td>Referencia eléctrica común</td></tr>
+            <tr><td>5 V</td><td>Rojo</td><td>Vin</td><td>Alimentación del módulo</td></tr>
+            <tr><td>GPIO14, TX</td><td>Amarillo</td><td>RX</td><td>Solicitud enviada al sensor</td></tr>
+            <tr><td>GPIO13, RX</td><td>Blanco</td><td>TX</td><td>Respuesta enviada al ESP32</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+
+      <figure>
+        <img src="/drautomatica/html/codos-conexion.png"
+          alt="Cuatro conexiones entre M5Stack y MH-Z19D. Cinco voltios a Vin, GND a GND, GPIO14 TX a RX del sensor y GPIO13 RX a TX del sensor."
+          style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Conexión funcional de alimentación y UART.
+          Los pines PWM y HD quedan sin conectar en este montaje.</figcaption>
+      </figure>
+
+      <section class="remark">
+        <p>La correspondencia de colores de la tabla se refiere al
+          <strong>Core2 for AWS original</strong> documentado por
+          <a href="https://docs.m5stack.com/en/core/Core2_For_AWS">M5Stack</a>
+          y puede variar con la base, la revisión o el cable utilizado.
+          Antes de conectar el sensor deben comprobarse los GPIO y las
+          etiquetas de la unidad, tomando como referencia la conexión
+          eléctrica TX → RX y no únicamente el color del conductor.</p>
+      </section>
+
+      <p>En el cableado deben distinguirse la <strong>alimentación de
+        5 V</strong> y los <strong>niveles de comunicación TTL de 3.3 V</strong>.
+        Estos últimos permiten conectar el MH-Z19D a la UART del ESP32,
+        cuyos GPIO no deben recibir 5 V ni conectarse directamente a una
+        interfaz RS-232. De igual manera, el pin Vin del sensor debe
+        alimentarse con el voltaje especificado y no desde la salida
+        de 3.3 V de la placa.</p>
+
+      <p>Las conexiones deben realizarse sin energía y, una vez alimentado
+        el montaje, es necesario comprobar el voltaje entre Vin y GND con
+        el sensor en funcionamiento. Un cable largo o una fuente
+        insuficiente pueden ocasionar caídas durante los picos de consumo,
+        aunque el valor promedio parezca aceptable. Al dimensionar la
+        fuente hay que considerar que los 150 mA indicados corresponden
+        únicamente al sensor, de modo que la placa y la pantalla requieren
+        capacidad adicional.</p>
+
+      <p>Si se utiliza una fuente regulada separada para el sensor, ambas
+        partes deben compartir la referencia de tierra, sin unir entre sí
+        las salidas de dos fuentes independientes de 5 V. Para reducir la
+        susceptibilidad al ruido eléctrico, conviene mantener cortos los
+        conductores UART y separarlos del cableado de potencia y los motores.</p>
+
+      <p>Los dos terminales que quedan sin utilizar tienen funciones
+        diferentes de las conexiones anteriores. El pin <strong>HD</strong>
+        activa el ajuste del punto de referencia cuando recibe un nivel
+        bajo durante más de siete segundos, por lo que no debe tratarse
+        como un pin de reinicio ni conectarse accidentalmente a GND.
+        Por su parte, la salida <strong>PWM</strong> representa la
+        concentración mediante la duración de los pulsos y requiere la
+        conversión temporal especificada para la revisión y el intervalo
+        del módulo; al no ser una salida analógica proporcional, no puede
+        interpretarse mediante una lectura con <code>analogRead()</code>.
+        En este montaje la adquisición se realiza mediante UART.</p>
+
+      <h2>Comunicación y lectura de datos por UART</h2>
+
+      <p>La interfaz serie se configura a <strong>9600 baudios, ocho bits
+        de datos, sin paridad y un bit de parada</strong>, configuración
+        habitualmente abreviada como 8N1. El intercambio comienza cuando
+        la placa solicita una medición y recibe del sensor una trama de
+        nueve bytes. Para la consulta <code>0x86</code> de la familia
+        MH-Z19, esa trama contiene dos bytes que, al combinarse, proporcionan
+        la concentración.</p>
+
+      <script type="text/text">
+Solicitud, en hexadecimal:
+FF 01 86 00 00 00 00 00 79
+
+Estructura de la respuesta:
+FF 86 HH LL B4 B5 B6 B7 CS
+      </script>
+
+      <p>En la respuesta, <code>HH</code> representa el byte de mayor peso
+        y <code>LL</code> el de menor peso, de modo que la concentración
+        se obtiene mediante</p>
+
+      <div class="equation">\[
+        C_{\mathrm{ppm}}=256\,HH+LL.
+      \]</div>
+
+      <p>Por ejemplo, si se reciben <code>HH = 0x03</code> y
+        <code>LL = 0xE8</code>, la concentración es $256(3)+232=1000$ ppm.
+        Los campos <code>B4</code> a <code>B7</code> no intervienen en este
+        cálculo y su interpretación como variables físicas requiere
+        consultar el protocolo de la unidad. El último byte,
+        <code>CS</code>, contiene una suma de comprobación con la que se
+        pueden detectar determinados errores de transmisión.</p>
+
+      <p>Si los bytes se numeran de 0 a 8, el byte 8 se calcula como el
+        negativo, módulo 256, de la suma de los bytes 1 a 7; por tanto,
+        la suma de estos últimos más <code>CS</code> debe ser cero módulo
+        256. Aunque algunas bibliotecas denominan CRC al error asociado
+        con esta comprobación, el procedimiento no corresponde a un CRC
+        polinómico. Su función es verificar la integridad de la trama,
+        mientras que la validez de la medición depende también de la
+        calibración y la instalación del sensor.</p>
+
+      <p>Para gestionar este intercambio utilizaremos la biblioteca
+        <a href="https://github.com/WifWaf/MH-Z19">MH-Z19 de WifWaf</a>,
+        cuya función <code>getCO2(false)</code> selecciona la consulta
+        <code>0x86</code>. Es importante indicar explícitamente el argumento
+        <code>false</code>, pues la llamada <code>getCO2()</code> utiliza
+        por omisión la consulta alternativa <code>0x85</code>, que no se
+        necesita en este ejemplo. Antes de incorporar otras funciones de
+        la biblioteca debe comprobarse su compatibilidad con la revisión
+        del sensor, ya que se trata de una biblioteca para la familia MH-Z19.</p>
+
+      <h2>Un monitor con Arduino y PlatformIO</h2>
+
+      <p>Con las conexiones y el protocolo definidos, podemos implementar
+        la adquisición mediante el framework de Arduino y la biblioteca
+        <strong>M5Unified</strong>, que permite manejar la placa y su
+        pantalla. El programa mantiene la UART del sensor a 9600 baudios
+        y utiliza 115200 baudios para el puerto USB de depuración, puesto
+        que ambas comunicaciones son independientes.</p>
+
+      <p>Para reproducir el ejemplo en PlatformIO, se crea un proyecto
+        destinado a <code>m5stack-core2</code> y se incorpora la siguiente
+        configuración en <code>platformio.ini</code>, donde se fijan las
+        versiones de la plataforma y las bibliotecas utilizadas.</p>
+
+      <script type="text/text">
+[env:m5stack-core2]
+platform = espressif32@6.12.0
+board = m5stack-core2
+framework = arduino
+lib_deps =
+    wifwaf/MH-Z19@1.5.4
+    m5stack/M5Unified@0.2.13
+    m5stack/M5GFX@0.2.35
+monitor_speed = 115200
+      </script>
+
+      <p>El programa se guarda en <code>src/main.cpp</code> y está disponible
+        tanto en el <a href="/drautomatica/html/codos_mhz19d.zip" download>proyecto completo</a>
+        como en el <a href="/drautomatica/html/codos_mhz19d/src/main.cpp">archivo C++</a>.
+        Antes de compilarlo deben ajustarse <code>MIN_PPM</code> y
+        <code>MAX_PPM</code> al intervalo nominal de la unidad instalada,
+        teniendo presente que estas constantes <strong>solo se utilizan
+        para validar las lecturas en el programa y no reconfiguran el
+        intervalo del módulo</strong>.</p>
+
+      <script type="text/cpp">
+#include <Arduino.h>
+#include <M5Unified.h>
+#include <MHZ19.h>
+
+namespace Config {
+constexpr int PIN_RX = 13;  // RX del ESP32 <- TX del sensor.
+constexpr int PIN_TX = 14;  // TX del ESP32 -> RX del sensor.
+constexpr int MIN_PPM = 400;
+constexpr int MAX_PPM = 5000;  // Debe coincidir con la variante instalada.
+constexpr uint32_t CALENTAMIENTO_MS = 60000;
+constexpr uint32_t INTERVALO_MS = 2000;
+// Cambiar solo tras decidir y verificar la estrategia de calibración.
+constexpr bool DESACTIVAR_ABC = false;
+}
+
+MHZ19 sensor;
+uint32_t encendidoMs = 0;
+uint32_t ultimaLecturaMs = 0;
+bool iniciado = false;
+
+void mostrarEstado(const char* mensaje, int ppm = -1) {
+    M5.Display.fillScreen(TFT_WHITE);
+    M5.Display.setTextColor(TFT_BLACK, TFT_WHITE);
+    M5.Display.setTextSize(2);
+    M5.Display.setCursor(12, 18);
+    M5.Display.println("MH-Z19D / CO2");
+    M5.Display.setCursor(12, 62);
+    M5.Display.println(mensaje);
+
+    if (ppm >= 0) {
+        M5.Display.setTextSize(4);
+        M5.Display.setCursor(12, 112);
+        M5.Display.printf("%d ppm", ppm);
+    }
+}
+
+void setup() {
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Power.setExtOutput(true);
+    encendidoMs = millis();
+
+    Serial.begin(115200);
+    Serial2.begin(9600, SERIAL_8N1, Config::PIN_RX, Config::PIN_TX);
+    mostrarEstado("Calentando...");
+    Serial.println("# Precalentamiento mínimo: 60 s.");
+}
+
+void loop() {
+    M5.update();
+    const uint32_t ahora = millis();
+
+    if (!iniciado) {
+        if (ahora - encendidoMs < Config::CALENTAMIENTO_MS) {
+            delay(10);
+            return;
+        }
+
+        sensor.begin(Serial2);
+        if (Config::DESACTIVAR_ABC) {
+            sensor.autoCalibration(false);
+            Serial.println("# Solicitud ABC desactivado; verificar en la unidad.");
+        } else {
+            Serial.println("# Se conserva la configuración ABC del sensor.");
+        }
+        Serial.println("tiempo_s,co2_ppm,estado,codigo");
+        iniciado = true;
+        ultimaLecturaMs = millis() - Config::INTERVALO_MS;
+        return;
+    }
+
+    if (ahora - ultimaLecturaMs < Config::INTERVALO_MS) {
+        delay(5);
+        return;
+    }
+    ultimaLecturaMs = ahora;
+
+    // false selecciona la consulta 0x86, no el modo alternativo 0x85.
+    const int ppm = sensor.getCO2(false);
+    const byte error = sensor.errorCode;
+    const double tiempoS = (millis() - encendidoMs) / 1000.0;
+
+    // Un fallo de comunicación no es una concentración de cero ppm.
+    if (error != RESULT_OK) {
+        Serial.printf("%.1f,,error_uart,%u\n", tiempoS,
+                      static_cast<unsigned>(error));
+        mostrarEstado("Error UART");
+        return;
+    }
+
+    if (ppm < Config::MIN_PPM || ppm > Config::MAX_PPM) {
+        Serial.printf("%.1f,%d,fuera_de_rango,0\n", tiempoS, ppm);
+        mostrarEstado("Fuera de rango", ppm);
+        return;
+    }
+
+    if (ppm == Config::MAX_PPM) {
+        Serial.printf("%.1f,%d,limite_superior,0\n", tiempoS, ppm);
+        mostrarEstado("Tope del rango", ppm);
+        return;
+    }
+
+    Serial.printf("%.1f,%d,ok,0\n", tiempoS, ppm);
+    mostrarEstado("Lectura recibida", ppm);
+}
+      </script>
+
+      <h3>Funcionamiento del programa</h3>
+
+      <p>La inicialización mediante
+        <code>Serial2.begin(9600, SERIAL_8N1, 13, 14)</code> asigna
+        explícitamente los pines de recepción y transmisión, evitando
+        depender de una configuración por omisión que podría utilizar
+        terminales distintos de los disponibles en el PORT C. La llamada
+        <code>M5.Power.setExtOutput(true)</code> habilita, por su parte,
+        la salida de alimentación externa, cuyo voltaje debe comprobarse
+        en el módulo como se indicó al describir el cableado.</p>
+
+      <p>Durante el primer minuto se mantiene el precalentamiento sin
+        publicar mediciones de CO₂. El tiempo transcurrido se comprueba
+        mediante <code>millis()</code>, lo que permite continuar con las
+        actualizaciones de M5Stack sin detener todo el programa durante
+        60 segundos. Una vez cumplida la espera, se inicia la biblioteca
+        y se solicita una lectura aproximadamente cada dos segundos;
+        cada consulta incluye un tiempo de espera acotado dentro de la
+        biblioteca, por lo que la comunicación UART no es completamente
+        asíncrona.</p>
+
+      <p>Durante la inicialización, <code>begin()</code> realiza consultas
+        auxiliares de identificación a las que algunas revisiones del sensor
+        pueden no responder. Por esta razón, la aceptación de cada lectura
+        se basa en el resultado de su propia consulta de CO₂, cuyo
+        <code>errorCode</code> se guarda inmediatamente para evitar que
+        otra operación lo modifique. Los avisos de inicialización deben
+        investigarse como información de diagnóstico y mantenerse separados
+        de las concentraciones registradas.</p>
+
+      <p>Cuando falla la comunicación, el programa muestra el error y deja
+        vacía la columna de CO₂ para impedir que un fallo se interprete
+        como una concentración de cero. También identifica los datos fuera
+        del intervalo nominal y marca aquellos que alcanzan exactamente
+        el extremo superior, pues podrían corresponder a una lectura
+        recortada. El estado <code>ok</code> indica que la recepción y las
+        comprobaciones del programa fueron satisfactorias, sin sustituir
+        la verificación metrológica del instrumento.</p>
+
+      <p>La configuración inicial conserva el intervalo y el estado de la
+        corrección automática de línea base del sensor, sin ejecutar un
+        ajuste de cero. Si el plan de medición requiere desactivar esa
+        corrección, la constante <code>DESACTIVAR_ABC</code> permite
+        solicitarlo, aunque el envío de la orden debe complementarse con
+        la revisión de la documentación y la comprobación de su efecto
+        en la unidad. Los criterios para tomar esta decisión se discutirán
+        en la sección de calibración.</p>
+
+      <p>La adquisición se limita a la concentración de CO₂, ya que los
+        campos internos de temperatura utilizados para compensación o
+        diagnóstico pueden estar afectados por el calentamiento del módulo
+        y no equivalen a una medición ambiental calibrada. Cuando el
+        estudio requiere también temperatura y humedad del recinto, deben
+        incorporarse sensores apropiados y ubicarse lejos de fuentes de
+        calor que alteren sus indicaciones.</p>
+
+      <h3>Registro de datos y tratamiento de errores</h3>
+
+      <p>Al abrir el monitor serie a 115200 baudios, una vez terminado
+        el calentamiento, se recibe una cabecera seguida de registros
+        separados por comas. La salida que se muestra a continuación
+        ilustra <strong>el formato de los datos</strong> y no corresponde
+        a mediciones experimentales realizadas con el montaje.</p>
+
+      <script type="text/text">
+tiempo_s,co2_ppm,estado,codigo
+61.2,842,ok,0
+63.2,846,ok,0
+65.7,,error_uart,2
+67.2,850,ok,0
+      </script>
+
+      <p>La primera columna expresa el tiempo en segundos desde que se
+        habilitó la alimentación externa y vuelve a comenzar cuando se
+        reinicia la placa, por lo que no proporciona una fecha de
+        calendario. Para campañas prolongadas conviene registrar fecha y
+        hora con un reloj sincronizado, además de contemplar el
+        desbordamiento de <code>millis()</code>, que ocurre aproximadamente
+        cada 49.7 días. Aunque las diferencias de tiempo empleadas para
+        programar las lecturas toleran ese desbordamiento, la representación
+        del tiempo transcurrido debe ampliarse si se pretende registrar
+        periodos mayores.</p>
+
+      <p>El archivo CSV debe conservar la cabecera y las filas de datos,
+        separadas de los mensajes de diagnóstico, y mantener las lecturas
+        fallidas como datos faltantes en lugar de sustituirlas por ceros.
+        Para interpretar la serie temporal es necesario acompañarla con
+        información sobre la ubicación del sensor, la ocupación aproximada,
+        las aperturas de puertas y ventanas y los cambios de configuración,
+        pues estos antecedentes permiten examinar las posibles causas
+        de las variaciones observadas.</p>
+
+      <h2>Calibración y ajuste de la referencia</h2>
+
+      <p>Una vez resuelta la adquisición de datos, es necesario considerar
+        cómo se relacionan las indicaciones del sensor con una concentración
+        de referencia. En metrología, <strong>calibrar</strong> consiste en
+        establecer esa relación con sus incertidumbres, mientras que
+        <strong>ajustar</strong> implica modificar el instrumento para
+        cambiarla. La distinción es pertinente porque las bibliotecas de
+        estos módulos suelen denominar «calibración» a una orden de ajuste
+        que, si se ejecuta con una referencia incorrecta, puede empeorar
+        la medición.</p>
+
+      <h3>La referencia del punto cero</h3>
+
+      <p>En la terminología utilizada para este sensor, el punto «cero»
+        corresponde a una <strong>referencia de fondo de 400 ppm</strong>,
+        no a una atmósfera libre de CO₂. Su ajuste requiere exponer el
+        módulo a una concentración conocida y estable durante un periodo
+        suficiente, para el cual se utiliza una pauta de estabilización
+        superior a 20 minutos. Tanto la concentración de referencia como
+        el tiempo de exposición deben cumplir el procedimiento indicado
+        para la revisión del fabricante; esperar ese periodo en una
+        atmósfera de composición desconocida no permite validar el ajuste.</p>
+
+      <p>Esta precaución es especialmente importante cuando se pretende
+        utilizar el aire exterior como referencia, pues su concentración
+        no es necesariamente de 400 ppm. NOAA reportó, por ejemplo, una
+        media global mensual de 426.10 ppm para julio de 2026, todavía
+        preliminar en la actualización del 9 de octubre
+        (<a href="https://gml.noaa.gov/ccgg/trends/global.html">Lan et al., 2026</a>).
+        Ese promedio tampoco representa la concentración de un lugar
+        específico, donde las condiciones locales, el tráfico y otras
+        fuentes cercanas pueden modificarla.</p>
+
+      <p>Forzar al equipo a indicar 400 ppm después de sacarlo al exterior
+        puede, en consecuencia, introducir un sesgo. Para realizar un
+        ajuste trazable se necesita una mezcla certificada o un
+        procedimiento de comparación validado y compatible con las
+        opciones del sensor, en lugar de adoptar como corrección permanente
+        la diferencia respecto de una estación atmosférica lejana. Dado
+        que el ajuste exige estas condiciones, la llamada
+        <code>calibrate()</code> y la activación del pin HD no deben formar
+        parte de la secuencia habitual de arranque.</p>
+
+      <h3>Corrección automática de línea base</h3>
+
+      <p>Además del ajuste con una referencia conocida, algunos sensores
+        utilizan una <strong>corrección automática de línea base</strong>,
+        o ABC por <em>automatic baseline correction</em>, que intenta
+        compensar la deriva a partir de una hipótesis sobre la menor
+        concentración encontrada durante un periodo. En implementaciones
+        habituales de esta familia se emplean una referencia de fondo y
+        un ciclo del orden de 24 horas, aunque la configuración exacta
+        depende de la revisión. La validez de la corrección depende de
+        que se cumpla esa hipótesis, pues el algoritmo no dispone de una
+        segunda medición independiente con la cual contrastarla.</p>
+
+      <p>Si el recinto permanece ocupado y su concentración nunca se
+        aproxima a la referencia esperada, el algoritmo puede atribuir
+        una concentración realmente elevada a un desplazamiento de la
+        indicación, situación que también puede presentarse en un
+        invernadero con enriquecimiento de CO₂. En tales condiciones
+        puede convenir desactivar ABC y establecer verificaciones
+        periódicas con una referencia, mientras que en una instalación
+        expuesta regularmente a una línea base adecuada la corrección
+        puede resultar útil. La decisión debe basarse en el comportamiento
+        esperado de la concentración durante el uso, más que en la sola
+        clasificación del espacio como interior o exterior.</p>
+
+      <p>El fabricante recomienda intervenciones de calibración con un
+        intervalo no mayor de seis meses, que puede reducirse según el
+        historial de deriva y la exigencia de la aplicación. Cada
+        intervención debe documentar los valores anteriores y posteriores
+        al ajuste, la referencia utilizada, las condiciones ambientales
+        y el estado de ABC. La comparación entre sensores puede aportar
+        información sobre sus diferencias, pero la coincidencia de sus
+        indicaciones no sustituye una referencia que permita evaluar
+        su exactitud.</p>
+
+      <h2>Criterios de instalación y ubicación</h2>
+
+      <p>La calibración caracteriza la respuesta del sensor, pero la
+        instalación determina qué muestra de aire llega a su cámara.
+        Como el ingreso de gas ocurre por difusión, una caja hermética
+        aislaría al módulo del recinto que se pretende observar. La carcasa
+        debe permitir el intercambio alrededor de la ventana del sensor,
+        protegerlo de contactos eléctricos y evitar presiones sobre la
+        cámara óptica; cualquier protección contra polvo debe evaluarse
+        también por el retardo adicional que pueda introducir.</p>
+
+      <ul class="formal">
+        <li>La <strong>ubicación representativa</strong> de un espacio
+          ocupado suele encontrarse en la zona de respiración habitual,
+          pero debe quedar separada de la exhalación directa de las
+          personas y de rincones con aire estancado.</li>
+        <li>Las <strong>corrientes locales</strong> junto a ventanas,
+          entradas de aire o puntos de extracción pueden producir
+          lecturas distintas del promedio del recinto, por lo que esas
+          ubicaciones solo son apropiadas si se pretende estudiar
+          específicamente la corriente correspondiente.</li>
+        <li>Las <strong>fuentes de calor</strong>, como la radiación solar,
+          los reguladores y el procesador, deben mantenerse alejadas del
+          módulo, pues la compensación interna no elimina los efectos
+          de cualquier gradiente térmico.</li>
+        <li>La <strong>ausencia de condensación</strong> es una condición
+          de operación incluso dentro del intervalo permitido de humedad
+          relativa; los cambios bruscos entre ambientes fríos y cálidos
+          pueden depositar agua sobre el sensor.</li>
+        <li>La <strong>exhalación directa</strong> no constituye una
+          referencia de calibración, ya que aporta CO₂ de concentración
+          desconocida, humedad y calor, y puede exceder el intervalo
+          de medida.</li>
+      </ul>
+
+      <p>En habitaciones grandes o con zonas poco comunicadas puede ser
+        necesario utilizar varios puntos de medición para representar
+        la distribución espacial de la concentración. Antes de comparar
+        ubicaciones distintas, conviene colocar los instrumentos juntos
+        durante un periodo estable y evaluar sus diferencias de indicación,
+        de manera que esa información pueda considerarse al interpretar
+        los registros obtenidos posteriormente.</p>
+
+      <h2>De una gráfica de CO₂ a un modelo de ventilación</h2>
+
+      <p>Una vez establecidos los criterios de adquisición e instalación,
+        podemos examinar cómo se relaciona la evolución de la concentración
+        con la ventilación. Consideremos un recinto de volumen $V$, con
+        aire aproximadamente bien mezclado, al que entra un caudal de aire
+        exterior $Q$ y del que sale el mismo caudal. Denotaremos por $C(t)$
+        la concentración interior y por $C_e$ la exterior, mientras que
+        $G$ representará la tasa volumétrica de generación de CO₂ por
+        personas u otras fuentes, expresada a las mismas condiciones
+        de referencia que $Q$.</p>
+
+      <p>Si $C$ y $C_e$ se expresan numéricamente en ppm, $V$ en m³ y
+        tanto $G$ como $Q$ en m³/h, el balance de CO₂ es</p>
+
+      <div class="equation">\[
+        V\frac{\mathrm{d}C}{\mathrm{d}t}
+        =10^6G+Q(C_e-C).
+      \]</div>
+
+      <p>El término $10^6G$ representa el aporte de las fuentes internas,
+        con el factor de conversión necesario para expresar la concentración
+        en ppm, mientras que $Q(C_e-C)$ describe el balance entre el CO₂
+        que entra y el que sale con la ventilación. Para mantener la
+        consistencia de las unidades, el tiempo $t$ debe expresarse en
+        horas. Esta formulación corresponde a un balance de una sola zona,
+        empleado para describir la evolución de la concentración en un
+        recinto bien mezclado
+        (<a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir6729.pdf">Emmerich y Persily, 2001</a>).</p>
+
+      <p>Si $G$, $Q$ y $C_e$ permanecen constantes, el equilibrio satisface</p>
+
+      <div class="equation">\[
+        C_{\mathrm{eq}}=C_e+10^6\frac{G}{Q}.
+      \]</div>
+
+      <p>El cociente $G/Q$ muestra que una misma concentración de equilibrio
+        puede corresponder a distintas combinaciones de ocupación y caudal,
+        por lo que una lectura aislada no permite determinar la ventilación.
+        Además, el recinto necesita tiempo para aproximarse al equilibrio;
+        aplicar la relación estacionaria a un máximo observado durante una
+        clase solo sería válido si se hubiera comprobado que ese estado
+        se alcanzó y que las condiciones permanecieron constantes.</p>
+
+      <h3>Un ejemplo de descenso después de la ocupación</h3>
+
+      <p>Una alternativa para estudiar la renovación del aire consiste
+        en observar el descenso de concentración después de que los
+        ocupantes se retiran. Si no quedan otras fuentes relevantes,
+        podemos aproximar $G=0$ y, suponiendo constantes el caudal y la
+        concentración exterior, obtener la solución</p>
+
+      <div class="equation">\[
+        C(t)=C_e+(C_0-C_e)e^{-nt},
+        \qquad n=\frac{Q}{V}.
+      \]</div>
+
+      <p>En esta expresión, $C_0$ es la concentración al inicio del
+        descenso y $n$, en h⁻¹, es la <strong>tasa de renovación de
+        aire</strong>, también expresada como renovaciones por hora.
+        Esta tasa relaciona el caudal con el volumen del recinto y
+        caracteriza la rapidez de la dilución; debido a la mezcla,
+        no significa que todo el aire original se sustituya por completo
+        en un tiempo determinado.</p>
+
+      <figure>
+        <img src="/drautomatica/html/codos-ventilacion.png"
+          alt="Curvas teóricas de descenso del CO2 desde 1800 ppm hacia 450 ppm para 0.5, 2 y 4 renovaciones por hora. Con dos renovaciones por hora quedan aproximadamente 1143 ppm después de 20 minutos."
+          style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. Descenso de concentración calculado mediante
+          el modelo de mezcla uniforme, sin generación interna y con una
+          concentración exterior supuesta de 450 ppm. Las curvas son
+          teóricas y no incluyen el retardo ni el error del sensor.</figcaption>
+      </figure>
+
+      <p>Por ejemplo, en un recinto de $V=150\,\mathrm{m^3}$ con un
+        caudal $Q=300\,\mathrm{m^3/h}$, la tasa de renovación es
+        $n=2\,\mathrm{h^{-1}}$. Si la concentración inicial es
+        $C_0=1800$ ppm y la exterior $C_e=450$ ppm, después de
+        20 minutos, equivalentes a un tercio de hora, se obtiene</p>
+
+      <div class="equation">\[
+        C(1/3)=450+1350e^{-2/3}
+        \approx1143\;\mathrm{ppm}.
+      \]</div>
+
+      <p>La misma solución permite plantear el problema inverso y estimar
+        la tasa de renovación a partir de concentraciones medidas. Si
+        se cumplen las hipótesis del modelo, dos puntos del descenso
+        proporcionan la relación</p>
+
+      <div class="equation">\[
+        n=\frac{1}{t_2-t_1}
+        \ln\!\left(\frac{C(t_1)-C_e}{C(t_2)-C_e}\right).
+      \]</div>
+
+      <p>En la práctica es preferible ajustar el modelo con varios puntos
+        para reducir la dependencia de dos lecturas particulares. La
+        linealización $\ln[(C-C_e)/(C_0-C_e)]=-nt$ permite relacionar
+        la tasa con una pendiente, aunque amplifica el efecto de los
+        errores cuando $C$ se aproxima a $C_e$ y deja de ser aplicable
+        si alguna de las diferencias es nula o negativa. La concentración
+        exterior debe medirse o justificarse para las condiciones del
+        ensayo, en lugar de fijarse arbitrariamente en 400 ppm.</p>
+
+      <p>La interpretación del resultado depende de que durante el
+        descenso no existan fuentes relevantes, la mezcla sea suficiente
+        y la ventilación permanezca aproximadamente constante. El
+        intercambio con habitaciones vecinas debe incorporarse al análisis
+        cuando sea significativo, pues de otro modo el balance de una
+        sola zona no representa el proceso observado; también debe
+        considerarse la dinámica del sensor si el descenso es rápido.
+        Incluso cuando estas condiciones se cumplen, la estimación de
+        $n$ describe el efecto conjunto de los intercambios de aire,
+        sin separar los aportes de ventanas, infiltraciones o ventiladores,
+        y no constituye por sí sola una verificación reglamentaria.</p>
+
+      <h3>Propuesta de observación experimental</h3>
+
+      <p>Una práctica didáctica puede comenzar con el registro de una
+        situación de ocupación habitual, sin provocar acumulaciones
+        deliberadas de CO₂, y continuar con la observación del descenso
+        después de que las personas salgan. Durante esta segunda etapa
+        se mantiene una condición de ventilación definida y se documentan
+        los cambios que puedan alterarla, junto con una medición exterior
+        representativa. Antes del análisis deben identificarse las
+        lecturas recortadas o afectadas por errores de comunicación y
+        distinguirse la constante de tiempo del recinto, $V/Q$, de la
+        correspondiente al sensor, $\tau_s$.</p>
+
+      <p>En una primera aproximación, los registros permiten comparar
+        tendencias entre condiciones de ventilación. Para obtener una
+        estimación cuantitativa del caudal es necesario validar las
+        hipótesis y evaluar la incertidumbre asociada con las
+        concentraciones, el volumen y el ajuste, de forma que la precisión
+        reportada sea congruente con la información disponible y con
+        las condiciones en que se realizaron las mediciones.</p>
+
+      <h2>Aplicaciones y límites de un monitor de CO₂</h2>
+
+      <ul class="formal">
+        <li>En <strong>aulas, oficinas y salas de reunión</strong>, los
+          registros permiten relacionar la concentración con la ocupación,
+          los horarios y los cambios de ventilación, siempre que se
+          interpreten como información ambiental y no como un diagnóstico
+          de salud basado en una lectura aislada.</li>
+        <li>En la <strong>ventilación controlada por demanda</strong>, la
+          concentración puede utilizarse como una entrada del controlador
+          que regula el aporte de aire exterior, cuyo diseño debe
+          considerar también otros contaminantes y los requisitos
+          de ventilación del espacio.</li>
+        <li>En <strong>invernaderos y cámaras de cultivo</strong>, la
+          medición permite estudiar el intercambio asociado con las
+          plantas y la renovación de aire, siempre que el intervalo y
+          las condiciones sean compatibles con el sensor y se preste
+          atención a la humedad y a la estrategia de línea base.</li>
+        <li>En la <strong>enseñanza de instrumentación</strong>, el
+          montaje ofrece una aplicación para estudiar comunicaciones
+          digitales, validación de datos, respuesta dinámica, calibración
+          y balances de materia dentro de un mismo problema experimental.</li>
+        <li>En las <strong>redes de monitoreo</strong>, el registro de
+          varias zonas permite reconocer patrones espaciales y
+          temporales, para cuya comparación es necesario verificar
+          los sensores y conservar su historial de ajustes.</li>
+      </ul>
+
+      <p>Si el monitor se incorpora a un control de ventilación, las
+        fluctuaciones pequeñas pueden provocar conmutaciones repetidas.
+        Para evitarlas puede utilizarse <strong>histéresis</strong>,
+        que establece umbrales distintos de activación y desactivación,
+        junto con tiempos mínimos de permanencia que limiten cambios
+        demasiado rápidos. Estos parámetros deben definirse considerando
+        la incertidumbre, el retardo y las condiciones de la instalación,
+        además de prever una respuesta ante la pérdida de comunicación,
+        cuando el último dato disponible ya no permite conocer el estado
+        actual del ambiente.</p>
+
+      <p>La elección de los umbrales requiere particular cuidado, pues
+        los 1000 ppm utilizados en algunos indicadores comerciales no
+        constituyen una frontera universal entre aire seguro y peligroso.
+        Como explica Persily
+        (<a href="https://www.nist.gov/publications/quit-blaming-ashrae-standard-621-1000-ppm-co2">2020</a>),
+        la interpretación de ese valor depende del propósito de la
+        medición, la ocupación y el contexto. Por ello, un criterio
+        operativo de ventilación debe distinguirse tanto de un límite
+        toxicológico como del extremo del intervalo de medida del sensor.</p>
+
+      <h2>Comprobación de lecturas anómalas</h2>
+
+      <p>Cuando los registros difieren de lo esperado, conviene revisar
+        primero las condiciones de adquisición y operación antes de
+        atribuir el cambio al ambiente o modificar la calibración.
+        La tabla 3 reúne algunas observaciones frecuentes y las
+        comprobaciones que permiten orientar esa revisión.</p>
+
+      <div class="table-block"><div class="tabjax-output">
+        <table class="article-table">
+          <caption class="table-caption">Tabla 3. Comprobaciones iniciales antes de atribuir un cambio al ambiente.</caption>
+          <thead><tr><th scope="col">Observación</th><th scope="col">Qué revisar</th></tr></thead>
+          <tbody>
+            <tr><td>No llega respuesta UART</td><td>Alimentación, tierra común, cruce TX/RX, GPIO elegidos, velocidad y revisión de la placa.</td></tr>
+            <tr><td>Errores intermitentes de trama</td><td>Conectores, ruido eléctrico, longitud de cables y estabilidad de la alimentación.</td></tr>
+            <tr><td>Valor constante durante el arranque</td><td>Precalentamiento, estabilización y validez de la primera consulta; no publicarlo como ambiente estable.</td></tr>
+            <tr><td>Lectura fija en el valor máximo</td><td>Posible saturación o recorte, que impide determinar la concentración real por encima del intervalo.</td></tr>
+            <tr><td>Lectura baja tras muchas horas en un recinto ocupado</td><td>Estado de ABC, referencia de ajuste y cambios de alimentación, sin descartar cambios reales de ventilación.</td></tr>
+            <tr><td>Respuesta lenta al cambiar de lugar</td><td>Dinámica propia del sensor, ventilación de la carcasa y mezcla del aire.</td></tr>
+            <tr><td>Diferencias entre instrumentos</td><td>Ubicación, calibración, intervalos, estabilización y condiciones ambientales antes de aplicar correcciones a las lecturas.</td></tr>
+          </tbody>
+        </table>
+      </div></div>
+
+      <h2>Consideraciones finales</h2>
+
+      <p>La integración del MH-Z19D con una placa ESP32 permite desarrollar
+        un monitor de CO₂ con el que se pueden estudiar variaciones
+        ambientales y contrastarlas con modelos sencillos de ventilación.
+        La utilidad de esos registros depende de una alimentación adecuada,
+        una ubicación representativa, una referencia de calibración
+        apropiada y un tratamiento de datos que considere los errores
+        de comunicación y la respuesta dinámica del sensor. Al documentar
+        estas condiciones y explicitar los supuestos del análisis, es
+        posible establecer qué conclusiones están respaldadas por las
+        mediciones y cuáles requieren información o instrumentos adicionales.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>ASHRAE. (2025). <a href="https://www.ashrae.org/file%20library/about/position%20documents/pd-on-indoor-carbon-dioxide-english.pdf"><em>ASHRAE position document on indoor carbon dioxide</em></a>.</li>
+        <li>Emmerich, S. J., &amp; Persily, A. K. (2001). <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir6729.pdf"><em>State-of-the-art review of CO₂ demand controlled ventilation technology and application</em></a> (NISTIR 6729). National Institute of Standards and Technology.</li>
+        <li>Lan, X., Tans, P., &amp; Thoning, K. W. (2026). <a href="https://doi.org/10.15138/9N0H-ZH07"><em>Trends in globally-averaged CO₂ determined from NOAA Global Monitoring Laboratory measurements</em></a> (versión del 9 de octubre de 2026) [Conjunto de datos]. NOAA Global Monitoring Laboratory.</li>
+        <li>M5Stack. (s. f.). <a href="https://docs.m5stack.com/en/core/Core2_For_AWS"><em>Core2 for AWS</em></a> [Documentación de hardware].</li>
+        <li>M5Stack. (s. f.). <a href="https://github.com/m5stack/M5Unified/tree/0.2.13"><em>M5Unified</em></a> (versión 0.2.13) [Software]. GitHub.</li>
+        <li>Persily, A. K. (2020). <a href="https://www.nist.gov/publications/quit-blaming-ashrae-standard-621-1000-ppm-co2"><em>Quit blaming ASHRAE Standard 62.1 for 1000 ppm CO₂</em></a>. The 16th Conference of the International Society of Indoor Air Quality &amp; Climate (Indoor Air 2020), Seúl, Corea del Sur.</li>
+        <li>Seitz, J., &amp; Tong, C. (2013). <a href="https://www.ti.com/lit/an/snaa207/snaa207.pdf"><em>LMP91051 NDIR CO₂ gas detection system</em></a> (SNAA207). Texas Instruments.</li>
+        <li>WifWaf. (s. f.). <a href="https://github.com/WifWaf/MH-Z19"><em>MH-Z19</em></a> (versión 1.5.4) [Biblioteca de Arduino]. GitHub.</li>
+        <li>Zhengzhou Winsen Electronics Technology Co., Ltd. (2021). <a href="https://www.winsen-sensor.com/d/files/manual/mh-z19d.pdf"><em>Infrared CO₂ sensor module (model: MH-Z19D): User’s manual</em></a> (versión 1.3).</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
