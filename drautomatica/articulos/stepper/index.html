@@ -1,0 +1,1143 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Motores a pasos: posicionamiento con ESP32 y TB6600 | drAutomática</title><meta name="description" content="Motores a pasos NEMA 17 con ESP32 y TB6600. Micropasos, corriente, conexiones, aceleración y referencia de origen, con proyectos C++ para PlatformIO."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/stepper/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Motores a pasos: posicionamiento con ESP32 y TB6600 | drAutomática"><meta property="og:description" content="Motores a pasos NEMA 17 con ESP32 y TB6600. Micropasos, corriente, conexiones, aceleración y referencia de origen, con proyectos C++ para PlatformIO."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/stepper/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Motores a pasos NEMA 17 con ESP32 y TB6600. Micropasos, corriente, conexiones, aceleración y referencia de origen, con proyectos C++ para PlatformIO."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Motores a pasos: posicionamiento con ESP32 y TB6600 | drAutomática"><meta name="twitter:description" content="Motores a pasos NEMA 17 con ESP32 y TB6600. Micropasos, corriente, conexiones, aceleración y referencia de origen, con proyectos C++ para PlatformIO."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="cpp,shell,text" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell"><article class="article-inner">
+  <header class="article-header">
+    <p class="article-kicker">Mecatrónica</p>
+    <h1>Motores a pasos</h1>
+    <p class="subtitle">Del giro del eje al movimiento de una mesa, con micropasos, aceleración y referencia de origen</p>
+    <div class="article-meta">
+      <span><strong>Ildeberto de los Santos Ruiz</strong></span>
+      <span>Noviembre, 2026</span>
+    </div>
+  </header>
+
+  <section class="abstract">
+    <p>Los motores a pasos permiten convertir una secuencia de pulsos en desplazamientos angulares
+      definidos. Su uso en impresoras, mesas de posicionamiento y mecanismos de dosificación resulta
+      sencillo cuando se comprende la relación entre la corriente de las fases, los micropasos y la
+      trayectoria solicitada. Este tutorial desarrolla esos fundamentos mediante un motor NEMA 17,
+      un controlador TB6600 y un ESP32. Se estudian el dimensionamiento eléctrico, la adaptación de
+      las señales de control, la generación de movimientos con aceleración y la búsqueda de una
+      referencia física. Los ejemplos en C++ utilizan el framework de Arduino y PlatformIO en
+      Visual Studio Code, y culminan en el posicionamiento de una mesa accionada por husillo.</p>
+  </section>
+
+  <h2>Una secuencia eléctrica que produce movimiento</h2>
+
+  <p>Para repartir piezas entre varias estaciones, desplazar un cabezal o regular el avance de una
+    bomba dosificadora, interesa ordenar una cantidad de movimiento y repetirla de manera predecible.
+    Un <strong>motor a pasos</strong>, también llamado <em>stepper</em>, desplaza su rotor entre
+    posiciones de equilibrio que se establecen al energizar sus devanados en una secuencia determinada.
+    Cada avance elemental se denomina paso. Al repetir la secuencia se obtiene una rotación continua;
+    al invertir su orden se invierte el sentido de giro.</p>
+
+  <p>El <strong>rotor</strong> es la parte móvil, unida al eje, y el <strong>estator</strong> es la
+    estructura fija que lo rodea. Los <strong>devanados</strong> son bobinas de alambre conductor
+    que, al recibir corriente, producen campos magnéticos. Una <strong>fase</strong> es un conjunto
+    de bobinas cuya corriente se controla conjuntamente. En los motores de dos fases, estas suelen
+    identificarse como A y B; su excitación coordinada establece las posiciones hacia las que
+    se orienta el rotor.</p>
+
+  <p>Una construcción habitual en aplicaciones de posicionamiento es el motor <strong>híbrido</strong>,
+    cuyo rotor combina un imán permanente con estructuras dentadas que interactúan
+    con los polos del estator. Al modificar las corrientes de los devanados se desplaza el campo
+    magnético, y el rotor intenta seguirlo. El campo puede avanzar más rápido de lo que la
+    carga permite responder al eje. Si ocurre esa pérdida de sincronismo, el número de órdenes
+    enviadas deja de representar el desplazamiento real.</p>
+
+  <p>Para establecer esas posiciones de equilibrio se necesita una secuencia de corrientes,
+    no solamente conectar el motor a una fuente.
+    El <strong>controlador de potencia</strong>, o <em>driver</em>, se encarga de producir esas
+    corrientes a partir de las órdenes del microcontrolador. Si mantiene una excitación fija,
+    el motor puede sostener una posición frente a una carga limitada; al cambiar la excitación
+    desplaza la posición de equilibrio. El esfuerzo de giro que ejerce el motor se denomina
+    <strong>par</strong>, y el máximo par que puede resistir estando detenido y energizado se
+    conoce como <strong>par de retención</strong>. La forma de alimentar los devanados permite distinguir
+    los accionamientos unipolar y bipolar, que se explican a continuación.</p>
+
+  <h2>Motores unipolares y bipolares</h2>
+
+  <p>Los términos <strong>unipolar</strong> y <strong>bipolar</strong> describen la conexión y el
+    modo de alimentar los devanados. Ambos permiten girar en los dos sentidos; la diferencia
+    está en cómo se obtiene cada polaridad magnética. Esta clasificación es independiente de
+    que el motor sea híbrido, denominación que se refiere a su construcción.</p>
+
+  <h3>Accionamiento unipolar</h3>
+
+  <p>En la configuración unipolar habitual de dos fases, cada devanado tiene una
+    <strong>derivación central</strong>, una conexión intermedia que permite utilizar por separado
+    sus dos mitades. La derivación se conecta a la alimentación y el controlador activa
+    alternativamente una mitad u otra. Así obtiene polaridades magnéticas opuestas sin tener
+    que invertir la corriente en cada mitad, lo que simplifica la etapa de potencia.</p>
+
+  <p>Es común encontrar seis conductores, tres por fase. Si las dos derivaciones centrales están
+    unidas dentro del motor, salen cinco conductores. En la secuencia unipolar convencional se
+    utiliza una mitad de cada fase energizada a la vez; la otra queda sin alimentar.</p>
+
+  <h3>Accionamiento bipolar</h3>
+
+  <p>En un motor bipolar de dos fases y cuatro conductores, cada devanado presenta dos extremos
+    accesibles, sin derivación central. Para cambiar su polaridad magnética, el controlador hace
+    circular corriente en un sentido y luego en el contrario por ese mismo devanado. Esta inversión
+    se realiza con un <strong>puente H</strong> por fase, un circuito de interruptores electrónicos
+    que permite aplicar ambas polaridades a la bobina.</p>
+
+  <p>La excitación bipolar utiliza el devanado completo y requiere una etapa de potencia capaz de
+    invertir su corriente. Un driver que integra la secuencia de excitación incorpora esa función
+    para las fases A y B, de modo que el microcontrolador puede solicitar los pasos sin controlar individualmente
+    los interruptores internos.
+    La distinción entre ambos accionamientos se desarrolla también en la
+    <a href="https://www.ti.com/document-viewer/lit/html/SSZT313/GUID-7D2E5A3F-0C9C-44B5-9700-341DAF459588">nota técnica de Texas Instruments</a>.</p>
+
+  <p>La <a href="#fig-stepper-devanados">Figura 1</a> permite comparar ambas conexiones.
+    En rojo se observan las derivaciones centrales que dividen cada fase en dos mitades;
+    en azul, cada fase presenta únicamente sus dos extremos. Esta diferencia explica por qué
+    el accionamiento bipolar necesita invertir la corriente en el devanado completo.</p>
+
+  <figure id="fig-stepper-devanados">
+    <img src="/drautomatica/html/stepper-devanados.png" alt="Comparación de dos fases con devanados unipolares en rojo, cada una con derivación central, y devanados bipolares en azul, sin derivaciones centrales."
+      style="display:block;width:100%;max-width:36rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 1. Devanados unipolares y bipolares. Se representan dos fases por
+      configuración; los signos indican referencias de polaridad de las secciones de bobina,
+      no un esquema de conexión directa a la fuente de alimentación.</figcaption>
+  </figure>
+
+  <h3>Cómo elegir una conexión compatible</h3>
+
+  <p>El número de cables orienta la identificación, pero debe confirmarse con el esquema del
+    fabricante. Algunos motores de seis conductores admiten conexión bipolar dejando aisladas,
+    por separado, las derivaciones centrales y utilizando los extremos de cada fase. En uno de
+    cinco conductores con las derivaciones unidas internamente, no basta con dejar libre el
+    cable común para obtener dos fases independientes. La
+    <a href="https://blog.orientalmotor.com/stepper-motor-wiring-basics-unipolar-vs-bipolar">guía de conexiones de Oriental Motor</a>
+    describe estas configuraciones y cómo afectan las características eléctricas.</p>
+
+  <p>Para las prácticas utilizaremos la conexión bipolar de cuatro conductores y un controlador
+    adecuado para ese accionamiento. Una vez definida esa conexión, necesitamos conocer las dimensiones,
+    la corriente admisible y el ángulo de paso del motor concreto.</p>
+
+  <h2>Qué especifica NEMA 17 y qué debemos conocer del motor</h2>
+
+  <p><strong>NEMA 17</strong> identifica una familia de dimensiones de montaje, con una cara frontal
+    de aproximadamente 42 mm. No determina la corriente, el par ni el ángulo de paso. Dos motores
+    con ese tamaño pueden tener devanados y prestaciones diferentes. En este tutorial se considera
+    un motor bipolar de dos fases y cuatro conductores, con paso entero de \(1.8^\circ\).</p>
+
+  <p>Como referencia concreta, el modelo SOYO de 42 × 38 mm documentado por Pololu tiene 200 pasos
+    por vuelta, corriente nominal cercana a 1.7 A por fase, resistencia de \(1.65\ \Omega\) e
+    inductancia de 3.2 mH por devanado. Estos valores describen ese motor; deben sustituirse por
+    los de la unidad que se utilice. Si \(\alpha_s\) es el ángulo de un paso entero, el número
+    \(N_s\) de pasos enteros por revolución se calcula como</p>
+
+  <div class="equation">\[
+    N_s=\frac{360^\circ}{\alpha_s}
+    =\frac{360^\circ}{1.8^\circ}=200.
+  \]</div>
+
+  <p>Además del ángulo de paso, el montaje requiere identificar los conductores de las fases A y B.
+    Con el motor desconectado, un multímetro permite identificar
+    los dos conductores que pertenecen a cada devanado, pues entre ellos aparece una resistencia
+    pequeña; entre conductores de fases distintas no debe haber continuidad. El primer par se
+    conecta a A+ y A−, y el segundo a B+ y B−. Los colores no constituyen una convención universal.
+    Invertir los terminales de una sola fase cambia el sentido de giro, mientras que mezclar
+    conductores de fases distintas puede producir vibración sin rotación útil.</p>
+
+  <p>El signo de los terminales A y B identifica una referencia para la corriente del devanado.
+    Ninguno de ellos se conecta a tierra. Como se explicó para el accionamiento bipolar, el driver
+    necesita invertir la corriente en cada fase mediante su correspondiente puente H.</p>
+
+  <h2>Pasos enteros, micropasos y resolución</h2>
+
+  <p>Los \(1.8^\circ\) del motor elegido corresponden al paso entero. Para solicitar incrementos
+    menores, el controlador puede repartir la corriente entre ambas fases y establecer posiciones
+    intermedias mediante el <strong>control por micropasos</strong>. Si \(i_A\) e \(i_B\) son las
+    corrientes de esas fases, una representación idealizada de sus referencias es</p>
+
+  <div class="equation">\[
+    i_A=I_{\mathrm{pk}}\cos\varphi,\qquad
+    i_B=I_{\mathrm{pk}}\sin\varphi,
+  \]</div>
+
+  <p>donde \(I_{\mathrm{pk}}\) es la amplitud de corriente y \(\varphi\) representa el ángulo
+    eléctrico de la secuencia de excitación. Este ángulo no es el ángulo mecánico del eje.
+    La <a href="#fig-stepper-corrientes">Figura 2</a> muestra cómo cambia el reparto de corriente
+    durante un cuadrante eléctrico. Sus puntos corresponden a ocho incrementos; la geometría
+    dentada del motor es la que relaciona esos cambios eléctricos con pequeños desplazamientos
+    mecánicos.</p>
+
+  <figure id="fig-stepper-corrientes">
+    <img src="/drautomatica/html/stepper-corrientes.png" alt="Referencias sinusoidales de corriente en las fases A y B y su representación vectorial durante ocho incrementos de un cuadrante eléctrico."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 2. Corrientes idealizadas de micropaso, calculadas con las funciones seno y
+      coseno. El dibujo representa la excitación eléctrica, no una vuelta mecánica ni una medición
+      de corriente del módulo.</figcaption>
+  </figure>
+
+  <p>Para solicitar esos incrementos, muchos drivers disponen de una entrada de
+    <strong>pulsos</strong>. Un pulso es una activación breve de la señal de mando que hace avanzar
+    la secuencia un incremento; con el controlador configurado para micropasos, cada pulso
+    aceptado solicita un micropaso. Si cada paso entero se divide en \(\mu\) micropasos,
+    el número de pulsos necesarios para
+    una vuelta y el incremento angular nominal son</p>
+
+  <div class="equation">\[
+    N_p=\mu N_s,\qquad
+    \Delta\theta=\frac{360^\circ}{N_p}.
+  \]</div>
+
+  <script type="text/tabjax" data-caption="Tabla 1. Resolución nominal para un motor de 200 pasos enteros por vuelta.">
+\begin{tabular}{rrr}
+\hline
+División de micropaso & Pulsos por vuelta & Grados por pulso \\
+\hline
+1 & 200 & 1.8 \\
+2 & 400 & 0.9 \\
+4 & 800 & 0.45 \\
+8 & 1600 & 0.225 \\
+16 & 3200 & 0.1125 \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>Usaremos \(\mu=8\), de modo que una vuelta requiere 1600 pulsos y un giro de \(90^\circ\)
+    requiere 400. La división debe coincidir en el programa y en los interruptores del driver.
+    Si el código supone ocho micropasos y el módulo está configurado para dieciséis, el giro real
+    será la mitad del previsto, aunque no se pierda ningún pulso.</p>
+
+  <section class="remark">
+    <p>La resolución de la orden y la exactitud mecánica son magnitudes diferentes. Un incremento
+      nominal de \(0.225^\circ\) no garantiza que el eje avance exactamente esa cantidad en cada
+      pulso. La carga, el rozamiento, el par de retención del rotor, la regulación de corriente
+      y las tolerancias del motor modifican la posición de equilibrio. Los micropasos ayudan
+      a reducir vibraciones y suavizar el movimiento, pero no sustituyen una medición de posición.</p>
+  </section>
+
+  <h2>La función del TB6600</h2>
+
+  <p>La relación entre pulsos y desplazamiento permite definir las órdenes de movimiento.
+    Para llevarlas al motor utilizaremos una tarjeta controladora TB6600,
+    un driver para motores a pasos bipolares de dos fases. El ESP32 será el microcontrolador
+    encargado de calcular cuándo debe ocurrir cada incremento y en qué sentido, mientras que
+    la tarjeta transformará esas órdenes en corrientes para las fases del motor mediante sus
+    puentes H. Las entradas de mando del driver suelen estar
+    identificadas como PUL o STEP, para los pulsos, y DIR, para el sentido de giro. Cada pulso
+    aceptado avanza la secuencia de excitación un micropaso. En un servo RC de posición,
+    la consigna angular se codifica en el ancho del pulso; en este accionamiento, el desplazamiento
+    depende del número de pulsos y la velocidad de su frecuencia.</p>
+
+  <p>Esta interfaz transmite órdenes al motor, pero no devuelve una medición de su movimiento.
+    Por ello, el conjunto descrito trabaja en <strong>lazo abierto</strong>. El programa lleva
+    la cuenta de los pulsos, pero no mide el ángulo alcanzado. Esta característica explica tanto
+    su sencillez como sus límites. El dimensionamiento del motor, la aceleración y la elección de
+    una posición física conocida como origen son parte del posicionamiento; un contador de pulsos
+    correcto no compensa un acoplamiento flojo o un motor que perdió pasos. Cuando se necesita
+    detectar esos errores durante el movimiento, se incorpora un <em>encoder</em>, un sensor de
+    posición angular, y un control con realimentación que utiliza esa medición para corregir
+    el movimiento.</p>
+
+  <p>Al elegir la tarjeta que realizará ese control, conviene distinguir el circuito integrado
+    TB6600HG de Toshiba de los módulos que se venden
+    con la denominación «TB6600». La electrónica de entrada, los interruptores y las funciones
+    disponibles dependen del fabricante del módulo. Por ejemplo, el integrado documenta divisiones
+    hasta 1/16, mientras que algunos módulos ofrecen 1/32. Las especificaciones del encapsulado
+    no describen por sí solas la tarjeta adquirida. En la
+    <a href="#fig-stepper-nema-tb6600">Figura 3</a> se muestra un motor NEMA 17 junto a un
+    módulo comercial de este tipo.</p>
+
+  <figure id="fig-stepper-nema-tb6600">
+    <img src="/drautomatica/html/NEMA17_TB6600.png" alt="Motor a pasos NEMA 17 a la izquierda y módulo controlador TB6600 a la derecha, con sus bornes de conexión y tablas de configuración en la carcasa."
+      style="display:block;width:100%;max-width:36rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 3. Motor a pasos NEMA 17 (izquierda) y módulo controlador
+      TB6600 (derecha). La carcasa del controlador identifica los bornes y los ajustes
+      de corriente y micropasos.</figcaption>
+  </figure>
+
+  <p>La conexión de referencia se basa en el manual del módulo DFRobot DRI0043, con entradas
+    optoacopladas y alimentación de potencia de 9 a 42 V CC. Una entrada <strong>optoacoplada</strong>
+    transmite la orden mediante la luz de un LED y un receptor interno, separando eléctricamente
+    el circuito de entrada del circuito receptor. Adoptaremos una fuente regulada
+    de 24 V, siempre que la unidad utilizada admita ese valor. El ajuste de micropasos y la
+    corriente se realiza mediante pequeños interruptores de configuración, denominados DIP.
+    Para la división 1/8, ese manual indica
+    S1 = OFF, S2 = ON y S3 = OFF; la combinación solo debe usarse si coincide con la tabla
+    impresa o documentada para el módulo disponible.</p>
+
+  <h3>Por qué la tensión de la fuente no es la tensión del devanado</h3>
+
+  <p>La elección de una fuente de 24 V debe entenderse junto con la regulación de corriente del
+    driver. La tensión nominal de un devanado suele corresponder aproximadamente al producto de su
+    corriente nominal por su resistencia. Para el motor citado, \(1.7\times1.65\approx2.8\) V.
+    Durante el movimiento también intervienen la inductancia y la fuerza contraelectromotriz,
+    de acuerdo con</p>
+
+  <div class="equation">\[
+    v=Ri+L\frac{\mathrm{d}i}{\mathrm{d}t}+e,
+  \]</div>
+
+  <p>donde \(R\) y \(L\) son la resistencia y la inductancia del devanado, e \(e\) es la tensión
+    inducida por el movimiento. Una fuente de mayor tensión permite elevar la corriente más
+    rápidamente. El driver conmuta esa alimentación y regula la corriente mediante un control
+    por recorte, conocido como <em>chopper</em>. Por ello puede utilizar una fuente de 24 V con
+    un devanado cuya tensión nominal es 2.8 V. Esa conexión sería incorrecta si se aplicaran
+    los 24 V directamente al devanado sin regulación de corriente.</p>
+
+  <p>La regulación permite usar una tensión mayor, pero requiere fijar un límite de corriente acorde
+    con el motor. Ese ajuste se obtiene de su placa de características y de la convención utilizada por el
+    controlador. Algunas tablas especifican valor pico y otras valor eficaz o RMS, equivalente
+    a la corriente continua que produciría el mismo calentamiento en una resistencia. Para una
+    corriente sinusoidal ideal, \(I_{\mathrm{RMS}}=I_{\mathrm{pk}}/\sqrt{2}\), pero la comparación
+    debe respetar cómo define cada fabricante sus valores. No conviene seleccionar la corriente
+    máxima del TB6600 solo porque el motor sea NEMA 17. En una primera prueba sin carga se puede
+    comenzar con un ajuste bajo, por ejemplo 1 A para el motor de referencia, y revisar par,
+    temperatura y límites nominales antes de aumentarlo.</p>
+
+  <p>El motor puede calentarse mientras está detenido porque sus fases siguen energizadas.
+    Algunos módulos reducen automáticamente la corriente en reposo. La corriente que entrega
+    la fuente de 24 V tampoco es igual, en general, a la suma de las corrientes de las fases,
+    pues la etapa de potencia realiza una conversión conmutada. La fuente, el cableado y la
+    disipación deben dimensionarse para el conjunto y su ciclo de trabajo.</p>
+
+  <h2>Conexiones de potencia y señales de control</h2>
+
+  <p>Con la alimentación y el ajuste de corriente definidos, podemos organizar el cableado.
+    La <a href="#fig-stepper-potencia">Figura 4</a> separa la alimentación de potencia de las
+    entradas de mando. Cada devanado utiliza exactamente dos terminales del driver.
+    Las conexiones del motor y los cambios de interruptores se realizan con la alimentación
+    desconectada; abrir un devanado energizado puede generar sobretensiones y dañar la etapa
+    de potencia.</p>
+
+  <figure id="fig-stepper-potencia">
+    <img src="/drautomatica/html/stepper-potencia.png" alt="Módulo TB6600 con fuente de 24 V, cuatro salidas conectadas a dos devanados independientes de un NEMA 17 y entradas PUL y DIR procedentes de la interfaz de control."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 4. Conexiones de potencia y devanados. Q1 y Q2 pertenecen a la interfaz
+      de la Figura 5. Las posiciones dibujadas de los bornes son funcionales; se identifican
+      por sus etiquetas al realizar el cableado.</figcaption>
+  </figure>
+
+  <p>Además del circuito de potencia, necesitamos adaptar las órdenes del microcontrolador a las
+    entradas del driver. El ESP32 trabaja con lógica de 3.3 V y dispone de terminales programables
+    de entrada y salida, llamados <strong>GPIO</strong>. En el programa, LOW designa el nivel bajo
+    y HIGH el alto. Las entradas optoacopladas de un módulo TB6600 requieren
+    una corriente suficiente, y su compatibilidad no puede deducirse únicamente del nombre del
+    driver. El manual de referencia utiliza un circuito de mando de 5 V y señala corrientes de
+    entrada del orden de 8 a 15 mA. Para disponer de una interfaz definida se emplearán dos
+    transistores NPN que actuarán como interruptores, uno para PUL y otro para DIR, como muestra la
+    <a href="#fig-stepper-interfaz">Figura 5</a>.</p>
+
+  <figure id="fig-stepper-interfaz">
+    <img src="/drautomatica/html/stepper-interfaz.png" alt="Dos circuitos NPN con transistores BC337, resistencias de base de 1 kiloohm y base-emisor de 10 kiloohm, que activan las entradas optoacopladas PUL y DIR del TB6600 desde GPIO18 y GPIO19."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 5. Interfaz de colector abierto para conexión de ánodo común.
+      La resistencia \(R_{\mathrm{int}}\) y el LED del optoacoplador están dentro del módulo;
+      Q1, Q2 y sus resistencias son externos. Se debe verificar el orden de terminales
+      B, C y E del transistor utilizado.</figcaption>
+  </figure>
+
+  <p>PUL+ y DIR+ se conectan a una alimentación regulada de control de 5 V, denominada
+    <code>+5V_CTRL</code>. Los colectores de Q1 y Q2 se conectan a PUL− y DIR−, respectivamente.
+    Sus emisores van a <code>GND_CTRL</code>, compartido con el ESP32 y con el negativo de esa
+    fuente de control. La placa ESP32 se alimenta por USB; no se unen los positivos de ambas
+    fuentes. La alimentación de 5 V de control no es la fuente de 24 V del motor.</p>
+
+  <p>Cuando GPIO18 pasa a nivel alto, circula corriente de base por la resistencia de
+    \(1\ \mathrm{k\Omega}\), Q1 conduce y se enciende el LED de entrada de PUL. La corriente
+    de base es del orden de \((3.3-0.8)/1000=2.5\) mA, mientras que la corriente del optoacoplador
+    procede de la fuente de 5 V. La resistencia de \(10\ \mathrm{k\Omega}\) entre base y emisor
+    mantiene apagado el transistor cuando el GPIO está en alta impedancia durante el arranque.
+    El canal DIR funciona de la misma manera. Aunque el transistor invierte la tensión de su
+    colector, un HIGH del GPIO activa la corriente de entrada del módulo.</p>
+
+  <p>Con PUL y DIR queda resuelto el mando de los pasos. El módulo dispone además de ENA+ y ENA−,
+    que en la unidad de referencia se dejan sin conectar, pues la entrada EN actúa como
+    función de liberación del motor y no es necesaria para estas prácticas. Otros módulos pueden
+    tener una lógica distinta. Además, dejar de enviar pulsos conserva normalmente la corriente
+    de retención; no equivale a desenergizar el eje. La separación entre el circuito optoacoplado
+    de control y V− de potencia debe respetar el manual del módulo, sin añadir puentes entre
+    ambas referencias por suposición.</p>
+
+  <p>La tabla 2 reúne estas conexiones y las entradas que se añadirán en las prácticas de
+    posicionamiento. El pulsador solicitará movimientos y los contactos de final de carrera
+    señalarán posiciones del mecanismo. Las siglas NO y NC significan normalmente abierto y
+    normalmente cerrado, respectivamente, y describen el estado del contacto sin accionar.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 2. Asignación de señales del ESP32 clásico y de la interfaz externa.">
+\begin{tabular}{lll}
+\hline
+Función & Conexión al ESP32 & Destino \\
+\hline
+Pulsos & GPIO18, resistencia de 1 kΩ, base Q1 & Colector Q1 a PUL− \\
+Sentido & GPIO19, resistencia de 1 kΩ, base Q2 & Colector Q2 a DIR− \\
+Ánodos de entrada & Fuente externa de control de 5 V & PUL+ y DIR+ \\
+Referencia del control & GND del ESP32 y emisores & Negativo de la fuente de 5 V \\
+Botón del indexador & GPIO27, pull-up interno & Contacto NO a GND \\
+Origen de la mesa & GPIO32, pull-up externo & Contacto NC a GND \\
+Límite positivo & GPIO33, pull-up externo & Contacto NC a GND \\
+\hline
+\end{tabular}
+  </script>
+
+  <h2>Cuántos pulsos, con qué frecuencia y durante cuánto tiempo</h2>
+
+  <p>El cableado permite que cada orden eléctrica llegue al driver; ahora necesitamos calcular
+    cuántos pulsos enviar y cómo distribuirlos en el tiempo. Una orden angular se convierte en
+    un número entero de pulsos. Si \(n\) es la cuenta con
+    signo, la posición calculada respecto de una referencia \(\theta_0\) es</p>
+
+  <div class="equation">\[
+    \theta_{\mathrm{calc}}=\theta_0+n\frac{360^\circ}{N_p}.
+  \]</div>
+
+  <p>Para una frecuencia \(f_p\) de pulsos por segundo, la velocidad nominal en revoluciones por
+    minuto y la velocidad angular en radianes por segundo se obtienen como</p>
+
+  <div class="equation">\[
+    v_{\mathrm{rpm}}=\frac{60f_p}{N_p},\qquad
+    \omega=\frac{2\pi f_p}{N_p}.
+  \]</div>
+
+  <p>Con 1600 pulsos por vuelta, 800 pulsos/s corresponden a 30 rpm. Al aumentar la división
+    de micropaso, también aumenta la frecuencia necesaria para conservar la misma velocidad.
+    El ancho del pulso no determina el ángulo; debe satisfacer los tiempos de entrada del driver.</p>
+
+  <p>La <a href="#fig-stepper-pulsos">Figura 6</a> define la secuencia utilizada por los programas.
+    Se establece DIR, se esperan 20 microsegundos, se activa PUL durante 20 microsegundos y,
+    después de desactivarlo, se conserva un margen adicional de 20 microsegundos. Son valores
+    de trabajo elegidos para estos ejemplos de baja frecuencia, no una especificación universal
+    de todos los módulos. Deben contrastarse con el manual y con la señal medida en la entrada.</p>
+
+  <figure id="fig-stepper-pulsos">
+    <img src="/drautomatica/html/stepper-pulsos.png" alt="Cronograma de GPIO18, corriente de la entrada optoacoplada y GPIO19, con veinte microsegundos de establecimiento de dirección, veinte de pulso y veinte de mantenimiento."
+      style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 6. Cronograma ideal de un pulso. El nivel 1 de la segunda fila indica
+      optoacoplador activado, no una corriente de un amperio. En una secuencia de movimiento,
+      el tiempo entre pulsos suele ser mucho mayor que la ventana mostrada.</figcaption>
+  </figure>
+
+  <h2>Preparar los proyectos en PlatformIO</h2>
+
+  <p>Con las conexiones y la temporización establecidas, podemos trasladar las órdenes de movimiento
+    a un programa. Las prácticas avanzan desde la comprobación de una vuelta hasta el movimiento
+    acelerado de una mesa giratoria y, finalmente, el posicionamiento de una mesa lineal con
+    referencia de origen. Cada una incorpora una función que la anterior todavía no necesita.</p>
+
+  <p>Los ejemplos utilizan una ESP32-DevKitC con módulo ESP32-WROOM-32E, el framework de Arduino
+    y la configuración <code>esp32dev</code>. En VS Code se instala la extensión PlatformIO IDE
+    y se crea un proyecto para <strong>Espressif ESP32 Dev Module</strong>. La placa considerada
+    es un ESP32 clásico con 4 MB de memoria flash; la asignación de GPIO no debe trasladarse
+    sin revisión a variantes C3 o S3.</p>
+
+  <p>El archivo <code>platformio.ini</code> fija las versiones del entorno y de AccelStepper,
+    la biblioteca que calculará la temporización de los movimientos acelerados.</p>
+
+  <script type="text/text" data-source="stepper-ejemplos/pulsos/platformio.ini">
+[env:esp32dev]
+platform = espressif32@6.12.0
+board = esp32dev
+framework = arduino
+lib_deps = waspinator/AccelStepper@1.64
+monitor_speed = 115200
+</script>
+
+  <p>Los tres proyectos tienen la misma estructura. El programa particular se encuentra en
+    <code>src/main.cpp</code>, y las funciones que generan PUL y DIR se guardan en
+    <code>include/PasoDir.h</code>. El primer ejemplo no utiliza AccelStepper, pero conserva
+    la configuración común para facilitar el paso a las prácticas siguientes.</p>
+
+  <script type="text/text">
+stepper-practica/
+├── platformio.ini
+├── include/
+│   └── PasoDir.h
+└── src/
+    └── main.cpp
+  </script>
+
+  <p>El archivo <code>PasoDir.h</code> reúne la interfaz eléctrica común a las tres prácticas.
+    <code>prepararInterfaz()</code> configura las salidas y <code>emitirPaso()</code> reproduce
+    el cronograma de la Figura 6 para un sentido de giro determinado. La constante <code>MICROPASOS</code>
+    debe coincidir con el ajuste físico del TB6600. Los números 18 y 19 identifican GPIO,
+    no posiciones en la hilera de contactos de la placa.</p>
+
+  <script type="text/cpp" data-source="stepper-ejemplos/pulsos/include/PasoDir.h">
+#pragma once
+#include <Arduino.h>
+
+constexpr uint8_t PIN_PUL = 18;
+constexpr uint8_t PIN_DIR = 19;
+constexpr long PASOS_ENTEROS = 200;
+constexpr long MICROPASOS = 8;  // Debe coincidir con los interruptores del driver.
+constexpr long PULSOS_VUELTA = PASOS_ENTEROS * MICROPASOS;
+constexpr uint32_t T_DIR_US = 20;
+constexpr uint32_t T_PUL_US = 20;
+constexpr uint32_t T_HOLD_US = 20;
+
+inline void prepararInterfaz() {
+    digitalWrite(PIN_PUL, LOW);
+    digitalWrite(PIN_DIR, LOW);
+    pinMode(PIN_PUL, OUTPUT);
+    pinMode(PIN_DIR, OUTPUT);
+}
+
+inline void emitirPaso(bool positivo) {
+    digitalWrite(PIN_DIR, positivo ? HIGH : LOW);
+    delayMicroseconds(T_DIR_US);
+    digitalWrite(PIN_PUL, HIGH);
+    delayMicroseconds(T_PUL_US);
+    digitalWrite(PIN_PUL, LOW);
+    delayMicroseconds(T_HOLD_US);
+}
+
+inline void pasoPositivo() { emitirPaso(true); }
+inline void pasoNegativo() { emitirPaso(false); }
+</script>
+
+  <p>Las esperas de <code>emitirPaso()</code> duran unas decenas de microsegundos y establecen los márgenes
+    eléctricos del pulso. No se utilizan para esperar un movimiento completo. La temporización
+    total también incluye el tiempo de ejecución de las instrucciones y posibles interrupciones
+    del sistema; las aplicaciones que requieren frecuencias altas o pulsos con menor variación
+    temporal deben emplear un generador dedicado, por ejemplo basado en periféricos del ESP32.</p>
+
+  <p>Los proyectos se pueden compilar, cargar y observar desde las tareas Build, Upload y Monitor
+    de PlatformIO. El monitor serial permite enviar órdenes de texto a la placa y leer sus
+    mensajes por la conexión USB. En la terminal de PlatformIO, abierta dentro de la carpeta
+    de cada proyecto, las órdenes son</p>
+
+  <script type="text/shell">
+pio run
+pio run --target upload
+pio device monitor --baud 115200
+  </script>
+
+  <h2>Ejemplo 1. Comprobar una vuelta y el sentido de giro</h2>
+
+  <p>La primera práctica verifica el cableado, la división de micropaso y el sentido del movimiento
+    con el motor fijado y sin carga acoplada. Al enviar <code>f</code> por el monitor serial,
+    el programa genera 1600 pulsos; <code>r</code> solicita la misma cantidad en el sentido opuesto.
+    El intervalo nominal entre pulsos es de 5000 microsegundos, equivalente a una frecuencia de
+    200 pulsos/s, por lo que una vuelta tarda aproximadamente ocho segundos.
+    El tiempo real será algo mayor por la ejecución de las instrucciones.</p>
+
+  <p>La función <code>setup()</code> se ejecuta una vez al arrancar y prepara la comunicación y
+    las salidas. Después, <code>loop()</code> se repite para atender las órdenes recibidas.
+    Al reconocer <code>f</code> o <code>r</code>, llama a <code>unaVuelta()</code>, que utiliza
+    la función común de emisión de pasos hasta completar la cuenta solicitada.</p>
+
+  <script type="text/cpp" data-source="stepper-ejemplos/pulsos/src/main.cpp">
+#include <Arduino.h>
+#include "PasoDir.h"
+
+constexpr uint32_t PERIODO_US = 5000;  // Aproximadamente 200 pulsos/s.
+static_assert(PERIODO_US > T_DIR_US + T_PUL_US + T_HOLD_US,
+              "El periodo debe superar el tiempo de la secuencia.");
+
+void unaVuelta(bool positivo) {
+    for (long k = 0; k < PULSOS_VUELTA; ++k) {
+        emitirPaso(positivo);
+        delayMicroseconds(PERIODO_US - T_DIR_US - T_PUL_US - T_HOLD_US);
+        if ((k + 1) % 32 == 0) delay(1); // Cede tiempo a las tareas del ESP32.
+    }
+}
+
+void setup() {
+    Serial.begin(115200);
+    prepararInterfaz();
+    Serial.println("Motor sin carga. f: una vuelta; r: una vuelta inversa.");
+}
+
+void loop() {
+    if (Serial.available() == 0) return;
+    const char orden = static_cast<char>(Serial.read());
+    if (orden != 'f' && orden != 'r') return;
+    unaVuelta(orden == 'f');
+    Serial.println("Secuencia de pulsos terminada.");
+}
+</script>
+
+  <p>Una marca en el eje permite comprobar que la secuencia termina cerca de su orientación inicial.
+    Si completa media vuelta o dos vueltas, primero se revisa la correspondencia entre
+    <code>MICROPASOS</code>, los interruptores y el ángulo de paso del motor. Si solamente vibra,
+    se comprueban los pares de devanados y la circulación de corriente por las entradas PUL y DIR.</p>
+
+  <p>Este programa arranca y se detiene a frecuencia constante, y mantiene ocupado el flujo principal
+    durante toda la vuelta. Resulta útil para una comprobación inicial, pero no es apropiado para
+    mover una mesa que deba atender finales de carrera durante el recorrido. Tampoco garantiza que
+    una carga cualquiera pueda arrancar directamente a esa velocidad. Las prácticas siguientes
+    incorporan aceleración y atención continua de las entradas.</p>
+
+  <h2>La aceleración forma parte de la orden de movimiento</h2>
+
+  <p>El arranque a frecuencia constante de la primera práctica solicita la velocidad final
+    desde los primeros pulsos. Para mover una carga con mayor suavidad, los pulsos deben
+    comenzar más separados y acercarse progresivamente. Ese cambio de frecuencia produce
+    una aceleración, y el motor debe proporcionar el par que exige la inercia del conjunto
+    además del requerido por la carga. Una representación simplificada es
+    \(\tau_m=J_{\mathrm{eq}}\dot\omega+\tau_{\mathrm{carga}}\), donde \(\tau_m\) es el par del motor,
+    \(\tau_{\mathrm{carga}}\) el par resistente de la carga, \(J_{\mathrm{eq}}\) la inercia equivalente
+    referida al eje y \(\dot\omega\) la aceleración angular. Si se solicita una variación de velocidad demasiado rápida,
+    el rotor puede perder sincronismo. Además, el par disponible suele disminuir al aumentar la
+    velocidad, por lo que el par de retención del catálogo no representa el par utilizable en todo
+    el recorrido.</p>
+
+  <p>Consideremos un movimiento que parte del reposo y termina detenido, con distancia \(D\) expresada
+    en pulsos, aceleración \(a_p\) en pulsos/s² y velocidad máxima \(v_p\) en pulsos/s.
+    La distancia necesaria para acelerar hasta \(v_p\) es \(v_p^2/(2a_p)\); el frenado requiere
+    la misma distancia. Si el recorrido permite ambas etapas y un tramo a velocidad constante,
+    el perfil de velocidad es trapezoidal. Denominando \(t_a\) al tiempo de aceleración,
+    \(t_c\) al intervalo a velocidad constante y \(T\) a la duración total, se obtiene</p>
+
+  <div class="equation">\[
+    D\geq\frac{v_p^2}{a_p},\qquad
+    t_a=\frac{v_p}{a_p},\qquad
+    t_c=\frac{D-v_p^2/a_p}{v_p},\qquad
+    T=2t_a+t_c.
+  \]</div>
+
+  <p>Si el recorrido es más corto, no se alcanza la velocidad máxima configurada. El perfil se vuelve
+    triangular, y sus valores ideales son</p>
+
+  <div class="equation">\[
+    v_{\mathrm{pico}}=\sqrt{a_pD},\qquad
+    T=2\sqrt{\frac{D}{a_p}}.
+  \]</div>
+
+  <p>La <a href="#fig-stepper-perfiles">Figura 7</a> compara ambas situaciones para
+    \(v_p=800\) pulsos/s y \(a_p=800\) pulsos/s². Un avance angular de \(90^\circ\), equivalente a
+    400 pulsos, tiene perfil triangular y tarda idealmente 1.41 s. Una vuelta completa,
+    de 1600 pulsos, incluye un segundo a velocidad constante y dura tres segundos. Los tiempos
+    describen el modelo continuo; la emisión discreta de pulsos y la ejecución del programa
+    introducen pequeñas diferencias.</p>
+
+  <figure id="fig-stepper-perfiles">
+    <img src="/drautomatica/html/stepper-perfiles.png" alt="Perfiles teóricos de posición y velocidad para movimientos de 90 grados y una vuelta, con aceleración limitada; el primero es triangular y el segundo trapezoidal."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 7. Perfiles calculados con las ecuaciones de aceleración constante.
+      Son trayectorias solicitadas, no mediciones del rotor. La resolución utilizada es
+      de 1600 pulsos por revolución.</figcaption>
+  </figure>
+
+  <h2>Ejemplo 2. Una mesa indexadora de cuatro posiciones</h2>
+
+  <p>El movimiento de \(90^\circ\) recién calculado puede emplearse en una <strong>mesa
+    indexadora</strong>, una plataforma giratoria que avanza entre posiciones de trabajo
+    predeterminadas. En este ejemplo lleva piezas sucesivamente a cuatro estaciones de inspección.
+    Cada pulsación del botón solicita un avance de \(90^\circ\), con aceleración y frenado.</p>
+
+  <p>El botón se conecta entre GPIO27 y GND, con la resistencia interna de elevación o
+    <em>pull-up</em> habilitada. Esa resistencia mantiene la entrada en HIGH mientras el contacto
+    está abierto; al pulsarlo, la conexión a GND produce LOW. El circuito aparece junto a los
+    finales de carrera en la <a href="#fig-stepper-entradas">Figura 9</a>.</p>
+
+  <p>AccelStepper acepta dos funciones para emitir un paso positivo o negativo. Utilizaremos
+    <code>pasoPositivo()</code> y <code>pasoNegativo()</code>, definidas en el archivo común,
+    para conservar los tiempos de establecimiento de DIR y duración de PUL. La biblioteca calcula
+    cuándo corresponde cada paso; esas funciones se encargan de la secuencia eléctrica.</p>
+
+  <script type="text/cpp" data-source="stepper-ejemplos/indexador/src/main.cpp">
+#include <Arduino.h>
+#include <AccelStepper.h>
+#include "PasoDir.h"
+
+constexpr uint8_t PIN_BOTON = 27;
+constexpr uint32_t REBOTE_MS = 30;
+constexpr long CUARTO_VUELTA = PULSOS_VUELTA / 4;
+static_assert(PULSOS_VUELTA % 4 == 0, "El índice debe ser un número entero.");
+
+AccelStepper eje(pasoPositivo, pasoNegativo);
+bool lecturaAnterior = HIGH;
+bool nivelEstable = HIGH;
+bool enMovimiento = false;
+uint32_t ultimoCambio = 0;
+
+bool nuevaPulsacion() {
+    const uint32_t ahora = millis();
+    const bool lectura = digitalRead(PIN_BOTON);
+    if (lectura != lecturaAnterior) {
+        lecturaAnterior = lectura;
+        ultimoCambio = ahora;
+    }
+    if (ahora - ultimoCambio >= REBOTE_MS && lectura != nivelEstable) {
+        nivelEstable = lectura;
+        return nivelEstable == LOW;
+    }
+    return false;
+}
+
+void setup() {
+    Serial.begin(115200);
+    prepararInterfaz();
+    pinMode(PIN_BOTON, INPUT_PULLUP);
+    eje.setMaxSpeed(800.0f);      // Pulsos/s.
+    eje.setAcceleration(800.0f); // Pulsos/s².
+    eje.setCurrentPosition(0);   // Referencia relativa, sin medición.
+    Serial.println("Una pulsación solicita un avance de 90 grados.");
+}
+
+void loop() {
+    const bool pulsado = nuevaPulsacion();
+    if (pulsado && !enMovimiento) {
+        eje.move(CUARTO_VUELTA);
+        enMovimiento = true;
+    }
+    eje.run();
+    if (enMovimiento && eje.distanceToGo() == 0) {
+        enMovimiento = false;
+        eje.setCurrentPosition(0);  // La próxima orden vuelve a ser relativa.
+        Serial.println("Índice completado según el contador de pulsos.");
+    }
+}
+</script>
+
+  <p>Los valores de <code>setMaxSpeed()</code> y <code>setAcceleration()</code> corresponden a
+    la velocidad en pulsos/s y la aceleración en pulsos/s² de la Figura 7; la biblioteca no
+    realiza por sí sola la conversión desde grados o revoluciones. <code>move()</code>
+    establece un desplazamiento relativo, mientras
+    que <code>run()</code> debe ejecutarse con suficiente frecuencia para atender los pulsos
+    que van venciendo. No espera a que termine el recorrido y emite, como máximo, un paso en cada
+    llamada. Por eso no se colocan pausas largas ni mensajes seriales continuos durante el movimiento.</p>
+
+  <p>Al cerrar un contacto mecánico pueden producirse varias aperturas y cierres rápidos antes
+    de estabilizarse, fenómeno llamado <strong>rebote</strong>. Para que una sola pulsación no
+    se interprete como varias órdenes, la entrada del botón se acepta después de 30 ms de
+    estabilidad. Mantenerlo presionado no
+    produce varios índices, y las pulsaciones durante un recorrido se descartan. Al terminar se
+    reinicia la cuenta relativa para que cada orden vuelva a representar un cuarto de vuelta;
+    no se ha medido ni corregido la posición física. Si se interrumpe la alimentación o se pierde
+    sincronismo, la orientación de las estaciones deja de estar determinada por el programa.
+    Una aplicación que deba recuperar esa referencia necesita un sensor de origen.</p>
+
+  <h2>Convertir el giro en desplazamiento lineal</h2>
+
+  <p>La necesidad de recuperar una referencia también aparece al trasladar el conteo de pasos
+    a un eje lineal. La tercera práctica añadirá esa función, pero primero debemos relacionar
+    el giro del motor con la distancia recorrida por el mecanismo.</p>
+
+  <p>Un <strong>husillo</strong>, un eje roscado que gira dentro de una tuerca, permite transformar
+    la rotación en el avance de un carro guiado que impide que la tuerca gire con el eje, como
+    muestra la <a href="#fig-stepper-mesa">Figura 8</a>. Denominaremos \(\ell\) al
+    <strong>avance del husillo por revolución</strong>. Este valor no siempre coincide con la
+    distancia entre filetes consecutivos, llamada paso de rosca. Por ejemplo, un husillo
+    Tr8×8(P2) tiene avance de 8 mm por vuelta y paso de rosca de 2 mm, debido a sus cuatro entradas,
+    es decir, cuatro hélices de rosca entrelazadas. El esquema incluye el sensor de origen,
+    identificado como HOME, y un contacto que detecta el límite positivo del recorrido.</p>
+
+  <figure id="fig-stepper-mesa">
+    <img src="/drautomatica/html/stepper-mesa.png" alt="Mesa horizontal con NEMA 17, acoplamiento, husillo, carro con tuerca, sensor HOME, límite positivo y origen útil separado del sensor."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 8. Esquema mecánico de la aplicación, sin escala constructiva.
+      Tras detectar HOME, el programa se retira 5 mm y establece allí el origen útil.
+      Las guías soportan el carro; el husillo transmite el esfuerzo de avance.</figcaption>
+  </figure>
+
+  <p>Si \(x\) es el desplazamiento respecto del origen y \(\ell\) se expresa en milímetros por
+    vuelta, el factor \(K_x\), expresado en pulsos por milímetro, convierte esa distancia en pulsos.
+    Como la cuenta \(n\) debe ser
+    entera, se redondea el resultado; \(\Delta x\) representa el incremento nominal por pulso.</p>
+
+  <div class="equation">\[
+    K_x=\frac{N_p}{\ell},\qquad
+    n=\operatorname{redondear}(K_x x),\qquad
+    \Delta x=\frac{1}{K_x}.
+  \]</div>
+
+  <p>Con \(N_p=1600\) y \(\ell=8\) mm/rev, se obtiene \(K_x=200\) pulsos/mm. Un desplazamiento
+    de 20 mm requiere 4000 pulsos, y la resolución nominal es de 0.005 mm por pulso. Esa cifra
+    no es una especificación de exactitud de la mesa: el juego entre husillo y tuerca, la deformación,
+    el error de avance y los micropasos del motor influyen en el resultado.</p>
+
+  <p>La conversión anterior determina cuántos pulsos ordenar, pero el motor también debe ser capaz
+    de mover la carga. Para una fuerza axial \(F\), el par estático requerido por un husillo
+    de eficiencia \(\eta\), la fracción del trabajo de entrada que se convierte en trabajo útil,
+    puede estimarse mediante el balance de trabajo por revolución,</p>
+
+  <div class="equation">\[
+    2\pi\tau\,\eta=F\ell
+    \quad\Longrightarrow\quad
+    \tau=\frac{F\ell}{2\pi\eta}.
+  \]</div>
+
+  <p>En esta ecuación, \(\ell\) se expresa en metros. Con \(F=20\) N, \(\ell=0.008\) m y
+    \(\eta=0.35\), el resultado es aproximadamente \(0.073\ \mathrm{N\,m}\). La eficiencia
+    adoptada es ilustrativa, no una propiedad universal de los husillos. A ese esfuerzo se suman
+    los efectos dinámicos y las pérdidas no incluidas en el modelo; la selección del motor debe
+    contrastarse con su curva de par frente a velocidad para la alimentación y el driver elegidos.</p>
+
+  <h2>Ejemplo 3. Una mesa que encuentra su origen</h2>
+
+  <p>Una vez relacionada la rotación con el avance del carro, falta asociar el contador a un
+    lugar conocido de la mesa. Al encender el equipo, ese contador puede inicializarse en cero
+    en cualquier lugar del recorrido. La correspondencia con una posición reproducible se
+    establece mediante una <strong>búsqueda de origen</strong>,
+    también llamada <em>homing</em>. El carro se aproxima a un sensor, se retira y vuelve a aproximarse
+    a menor velocidad. La segunda captura reduce la influencia de la velocidad sobre la detección.</p>
+
+  <p>Para detectar esas posiciones se emplean dos contactos normalmente cerrados, NC.
+    HOME se conecta entre GPIO32 y GND y el límite
+    positivo entre GPIO33 y GND. Cada entrada dispone de una resistencia externa de
+    \(10\ \mathrm{k\Omega}\) hacia 3V3, según la <a href="#fig-stepper-entradas">Figura 9</a>.
+    En reposo el contacto conduce y la lectura es LOW. Al accionarse, o si se abre un conductor,
+    la lectura pasa a HIGH. Este cableado permite reaccionar ante una apertura, aunque por sí
+    solo no distingue un contacto accionado de un cable roto ni detecta todos los tipos de falla.</p>
+
+  <figure id="fig-stepper-entradas">
+    <img src="/drautomatica/html/stepper-entradas.png" alt="Entradas HOME y límite positivo con contactos normalmente cerrados a tierra y resistencias externas a 3.3 V, junto al pulsador normalmente abierto del indexador."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 9. Circuitos de entrada. Los contactos NC se muestran en reposo, cerrados.
+      Las resistencias de HOME y del límite son externas; la del pulsador del indexador se habilita
+      mediante INPUT_PULLUP. Todas estas conexiones pertenecen al circuito de control de 3.3 V.</figcaption>
+  </figure>
+
+  <p>La referencia supone una mesa horizontal de laboratorio con espacio suficiente para el
+    procedimiento. Al recibir <code>h</code> por el monitor serial, el programa busca HOME
+    hacia el sentido negativo, a 2 mm/s, con un límite
+    de búsqueda de 60 mm. Se retira al menos 3 mm, verifica que el contacto cierre y vuelve
+    a buscarlo a 0.5 mm/s. Después se aleja 5 mm y asigna a esa posición el valor \(x=0\).
+    Si HOME está abierto al iniciar, primero intenta liberarlo en sentido positivo, con un
+    recorrido máximo de 5 mm. Cada etapa tiene también un tiempo máximo.</p>
+
+  <p>Antes de acoplar el motor se debe comprobar qué nivel de DIR produce cada sentido, de modo
+    que los pasos negativos acerquen el carro a HOME. Si es necesario invertirlo, puede cambiarse
+    la relación lógica en <code>emitirPaso()</code> o intercambiar los conductores de una fase
+    con el equipo desconectado. El límite positivo debe quedar más allá del recorrido útil,
+    dejando margen mecánico; los valores del programa suponen al menos unos 70 mm disponibles
+    desde HOME y una posición inicial dentro de los 60 mm de búsqueda.</p>
+
+  <p>Después de referenciar, <code>a</code> solicita la posición de 20 mm y <code>r</code> regresa
+    a 0 mm. Se define un intervalo permitido de 0 a 40 mm, velocidad máxima de 10 mm/s y
+    aceleración de 20 mm/s². Multiplicando por \(K_x\), esos dos últimos valores equivalen a
+    2000 pulsos/s y 4000 pulsos/s².</p>
+
+  <p>Para atender los contactos mientras el carro se mueve, el programa se organiza como una
+    <strong>máquina de estados</strong>. Cada estado representa una etapa, como buscar HOME,
+    retirarse o ejecutar una orden de posición. En cada ejecución de <code>loop()</code> se
+    leen las entradas y se realiza solo el trabajo que corresponde a esa etapa; el cambio
+    de estado ocurre al detectar el contacto, terminar el recorrido o alcanzar un límite
+    de tiempo. Así se evita esperar un movimiento completo dentro de un bucle que desatienda
+    los sensores.</p>
+
+  <script type="text/cpp" data-source="stepper-ejemplos/mesa/src/main.cpp">
+#include <Arduino.h>
+#include <AccelStepper.h>
+#include <math.h>
+#include "PasoDir.h"
+
+constexpr uint8_t PIN_HOME = 32;
+constexpr uint8_t PIN_LIMITE = 33;
+constexpr float AVANCE_MM_VUELTA = 8.0f;
+constexpr float PULSOS_MM = PULSOS_VUELTA / AVANCE_MM_VUELTA;
+constexpr float RECORRIDO_UTIL_MM = 40.0f;
+constexpr uint32_t FILTRO_MS = 10;
+
+// Cada contacto NC une su GPIO a GND. Una resistencia externa de 10 kΩ
+// conecta ese GPIO a 3V3. HIGH significa contacto abierto.
+struct EntradaNC {
+    uint8_t pin;
+    explicit EntradaNC(uint8_t numero) : pin(numero) {}
+    bool anterior = LOW;
+    bool abierta = LOW;
+    uint32_t cambio = 0;
+    void begin() {
+        pinMode(pin, INPUT);
+        anterior = abierta = digitalRead(pin);
+        cambio = millis();
+    }
+    void actualizar(uint32_t ahora) {
+        const bool lectura = digitalRead(pin);
+        if (lectura != anterior) {
+            anterior = lectura;
+            cambio = ahora;
+        }
+        if (ahora - cambio >= FILTRO_MS) abierta = lectura;
+    }
+};
+
+EntradaNC home{PIN_HOME};
+EntradaNC limite{PIN_LIMITE};
+AccelStepper eje(pasoPositivo, pasoNegativo);
+enum class Estado {
+    ESPERA, LIBERAR, BUSCAR, RETROCEDER, APROXIMAR, RETIRAR,
+    LISTO, MOVER, ERROR
+};
+Estado estado = Estado::ESPERA;
+uint32_t inicioFase = 0;
+
+long pulsos(float mm) { return lroundf(mm * PULSOS_MM); }
+
+void fallar(const char* mensaje) {
+    // Detiene la emisión de pulsos; no desenergiza el motor.
+    eje.setCurrentPosition(eje.currentPosition());
+    estado = Estado::ERROR;
+    Serial.println(mensaje);
+}
+
+void faseConstante(Estado siguiente, float velocidad) {
+    eje.setCurrentPosition(0);
+    eje.setSpeed(velocidad);
+    inicioFase = millis();
+    estado = siguiente;
+}
+
+bool excede(float recorridoMm, uint32_t tiempoMs, uint32_t ahora) {
+    return labs(eje.currentPosition()) >= pulsos(recorridoMm) ||
+           ahora - inicioFase >= tiempoMs;
+}
+
+void moverA(float mm) {
+    if (mm < 0.0f || mm > RECORRIDO_UTIL_MM) return;
+    eje.moveTo(pulsos(mm));
+    estado = Estado::MOVER;
+}
+
+void setup() {
+    Serial.begin(115200);
+    prepararInterfaz();
+    home.begin();
+    limite.begin();
+    eje.setMaxSpeed(10.0f * PULSOS_MM);
+    eje.setAcceleration(20.0f * PULSOS_MM);
+    Serial.println("h: buscar origen; después, a: ir a 20 mm; r: volver a 0 mm.");
+}
+
+void loop() {
+    const uint32_t ahora = millis();
+    home.actualizar(ahora);
+    limite.actualizar(ahora);
+    if (estado == Estado::ERROR) return; // Corregir la causa y reiniciar.
+    if (limite.abierta) {
+        fallar("Parada: límite positivo abierto.");
+        return;
+    }
+
+    char orden = 0;
+    if (Serial.available() > 0) orden = static_cast<char>(Serial.read());
+    if (estado == Estado::ESPERA && orden == 'h') {
+        if (home.abierta) faseConstante(Estado::LIBERAR, 2.0f * PULSOS_MM);
+        else faseConstante(Estado::BUSCAR, -2.0f * PULSOS_MM);
+        return;
+    }
+    if ((estado == Estado::LISTO || estado == Estado::MOVER) && home.abierta) {
+        fallar("Parada: HOME abierto fuera de la referencia.");
+        return;
+    }
+
+    switch (estado) {
+        case Estado::LIBERAR:
+            if (!home.abierta) {
+                faseConstante(Estado::BUSCAR, -2.0f * PULSOS_MM);
+            } else if (excede(5.0f, 10000, ahora)) {
+                fallar("No se pudo liberar HOME.");
+            } else eje.runSpeed();
+            break;
+        case Estado::BUSCAR:
+            if (home.abierta) {
+                faseConstante(Estado::RETROCEDER, 2.0f * PULSOS_MM);
+            } else if (excede(60.0f, 45000, ahora)) {
+                fallar("HOME no encontrado.");
+            } else eje.runSpeed();
+            break;
+        case Estado::RETROCEDER:
+            if (eje.currentPosition() >= pulsos(3.0f) && !home.abierta) {
+                faseConstante(Estado::APROXIMAR, -0.5f * PULSOS_MM);
+            } else if (excede(5.0f, 10000, ahora)) {
+                fallar("HOME no cerró al retroceder.");
+            } else eje.runSpeed();
+            break;
+        case Estado::APROXIMAR:
+            if (home.abierta) {
+                eje.setCurrentPosition(0);
+                eje.moveTo(pulsos(5.0f));
+                inicioFase = ahora;
+                estado = Estado::RETIRAR;
+            } else if (excede(6.0f, 20000, ahora)) {
+                fallar("Falló la aproximación lenta.");
+            } else eje.runSpeed();
+            break;
+        case Estado::RETIRAR:
+            eje.run();
+            if (eje.distanceToGo() == 0) {
+                if (home.abierta) fallar("HOME permanece abierto.");
+                else {
+                    eje.setCurrentPosition(0); // Origen útil, 5 mm tras la captura.
+                    estado = Estado::LISTO;
+                    Serial.println("Origen establecido. a: 20 mm; r: 0 mm.");
+                }
+            } else if (ahora - inicioFase > 10000) fallar("Retirada incompleta.");
+            break;
+        case Estado::LISTO:
+            if (orden == 'a') moverA(20.0f);
+            if (orden == 'r') moverA(0.0f);
+            break;
+        case Estado::MOVER:
+            eje.run();
+            if (eje.distanceToGo() == 0) {
+                estado = Estado::LISTO;
+                Serial.print("Posición calculada (mm): ");
+                Serial.println(eje.currentPosition() / PULSOS_MM, 3);
+            }
+            break;
+        default:
+            break;
+    }
+}
+</script>
+
+  <p>La máquina de estados utiliza <code>runSpeed()</code> durante la referencia a velocidad
+    constante y <code>run()</code> para calcular aceleración y frenado en el posicionamiento,
+    como en el ejemplo de la mesa indexadora. La búsqueda inicial usa velocidades bajas y
+    cambia de etapa al detectar el contacto. Los límites de pulsos y tiempo permiten abandonar
+    una etapa si el sensor no responde como se espera.</p>
+
+  <p>Las entradas se filtran durante 10 ms para reducir el efecto del rebote. Ese filtro introduce
+    un retraso que debe considerarse en la instalación del sensor. A 2 mm/s, el avance nominal
+    durante 10 ms es 0.02 mm; a 10 mm/s es 0.1 mm, antes de añadir la respuesta mecánica.
+    El límite debe accionarse con margen antes del tope físico.</p>
+
+  <p>Ante una falla, el programa deja de emitir pulsos y requiere corregir la causa y reiniciar.
+    Es una detención de la secuencia de mando, no una parada de seguridad certificada ni una
+    desconexión de potencia. Una carga con inercia puede seguir moviéndose, y un eje vertical
+    puede requerir un freno. La maqueta debe permitir cortar la alimentación de potencia de
+    manera independiente; un equipo destinado a operación real necesita las protecciones
+    apropiadas para su mecanismo.</p>
+
+  <h2>Verificar el montaje y reconocer sus límites</h2>
+
+  <p>Las tres prácticas permiten verificar el montaje de manera progresiva, desde la emisión
+    de pulsos hasta la recuperación del origen. La puesta en marcha comienza con el motor
+    desacoplado. Se comprueban los pares de devanados,
+    la corriente seleccionada y la coincidencia entre micropasos y programa. Un osciloscopio o
+    analizador lógico permite observar las salidas del ESP32; para revisar la entrada del módulo
+    se mide la señal respecto de la referencia de control y se verifica que el optoacoplador
+    reciba corriente suficiente. Las conexiones de masa del instrumento deben respetar la
+    separación entre control y potencia.</p>
+
+  <p>Después se prueba el indexador con una marca angular y, finalmente, la mesa con recorridos
+    pequeños. Una regla o un comparador permite contrastar la distancia solicitada con la real.
+    Repetir la llegada al mismo punto desde ambos sentidos ayuda a reconocer el juego mecánico.
+    El procedimiento de origen recupera una referencia al arrancar, pero no corrige automáticamente
+    pérdidas de pasos que ocurran después. La tabla 3 relaciona las anomalías que pueden
+    observarse durante estas pruebas con sus comprobaciones correspondientes.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 3. Comprobaciones útiles ante fallas frecuentes.">
+\begin{tabular}{ll}
+\hline
+Síntoma & Comprobación \\
+\hline
+Vibra sin girar & Pares de devanados, entrada DIR y corriente \\
+Gira la mitad o el doble & Ángulo del motor y división de micropasos \\
+Pierde posición al acelerar & Aceleración, carga, tensión y curva de par \\
+No responde a PUL & Corriente del optoacoplador, polaridad y ENA \\
+El motor se calienta detenido & Corriente de fase y reducción en reposo \\
+HOME no se libera & Cableado NC, sentido de giro y recorrido permitido \\
+La distancia cambia al invertir & Juego del husillo, acoplamiento y sincronismo \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>Una frecuencia mayor no siempre produce más velocidad útil. Al acercarse a los límites del
+    conjunto, la inductancia, el par disponible, las resonancias —vibraciones que se amplifican
+    en ciertos regímenes de funcionamiento— y el tiempo de ejecución del
+    programa adquieren importancia. En los ejemplos acelerados se atienden como máximo 2000
+    pulsos/s y no se utilizan Wi-Fi, tareas de red ni impresiones continuas durante el recorrido.
+    Si la aplicación requiere más frecuencia, varios ejes sincronizados o tiempos de pulso
+    estrictos, conviene separar la planificación de la trayectoria de su generación por hardware.</p>
+
+  <h2>Proyectos y figuras reproducibles</h2>
+
+  <p>Para reproducir estas prácticas, el archivo
+    <a href="/drautomatica/html/stepper-ejemplos.zip" download>stepper-ejemplos.zip</a> contiene los
+    proyectos <code>pulsos</code>, <code>indexador</code> y <code>mesa</code>. Cada carpeta incluye
+    su configuración, el archivo común de interfaz y su programa principal. Se abre una carpeta
+    por vez en VS Code; los programas no deben concatenarse. Los bloques de este artículo
+    corresponden a esos mismos archivos.</p>
+
+  <p>Los tres proyectos se verificaron por compilación para ESP32 con Espressif 32 6.12.0,
+    Arduino-ESP32 2.0.17 y AccelStepper 1.64. La compilación comprueba el software, pero el
+    comportamiento eléctrico y mecánico requiere pruebas en el montaje. Las ilustraciones
+    y las curvas teóricas de la Figura 2 y de las Figuras 4 a 9 se generan mediante
+    <a href="/drautomatica/html/stepper-figuras.py" download><code>stepper-figuras.py</code></a>, con NumPy y
+    Matplotlib. Ninguna de las curvas presentadas corresponde a un ensayo experimental.</p>
+
+  <h2>Referencias</h2>
+  <ul class="references">
+    <li>DFRobot. (2026). <em>TB6600 stepper motor driver user guide</em> (versión 1.2).
+      <a href="https://dfimg.dfrobot.com/nobody/wiki/0bcc0b661ce7750ff7d0134bfc3e88b3.pdf">Manual del módulo DRI0043</a>.</li>
+    <li>Espressif Systems. (2026). <em>ESP32-DevKitC V4</em>.
+      <a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html">Alimentación y asignación de pines de la placa</a>.</li>
+    <li>McCauley, M. (2022). <em>AccelStepper</em> (versión 1.64) [Biblioteca de software].
+      <a href="https://registry.platformio.org/libraries/waspinator/AccelStepper">Distribución utilizada</a>.
+      <a href="https://www.airspayce.com/mikem/arduino/AccelStepper/classAccelStepper.html">Documentación de la interfaz de programación</a>.</li>
+    <li>Oriental Motor. (2026). <em>Stepper motor basics</em>.
+      <a href="https://www.orientalmotor.com/stepper-motors/technology/stepper-motor-basics.html">Principios de funcionamiento y modos de excitación</a>.</li>
+    <li>Ortega, D. (2020). <em>Drive unipolar stepper motors as bipolar stepper motors
+      with a simple wiring reconfiguration</em> (SSZT313). Texas Instruments.
+      <a href="https://www.ti.com/document-viewer/lit/html/SSZT313/GUID-7D2E5A3F-0C9C-44B5-9700-341DAF459588">Configuración de devanados y accionamiento</a>.</li>
+    <li>Pololu. (2026). <em>Stepper motor: Bipolar, 200 steps/rev, 42×38 mm, 2.8 V, 1.7 A/phase</em>.
+      <a href="https://www.pololu.com/product/2267">Datos del motor de referencia</a>.</li>
+    <li>Pololu. (2026). <em>Stepper motor with 28 cm lead screw: Bipolar, 200 steps/rev,
+      42×38 mm, 2.8 V, 1.7 A/phase</em>.
+      <a href="https://www.pololu.com/product/2268/specs">Especificaciones y nomenclatura del husillo Tr8×8(P2)</a>.</li>
+    <li>PlatformIO. (2026). <em>Espressif ESP32 Dev Module</em>.
+      <a href="https://docs.platformio.org/en/latest/boards/espressif32/esp32dev.html">Configuración esp32dev</a>.</li>
+    <li>Tang, J. (2026). <em>Stepper motor wiring basics: Unipolar vs bipolar</em>.
+      Oriental Motor.
+      <a href="https://blog.orientalmotor.com/stepper-motor-wiring-basics-unipolar-vs-bipolar">Conexiones y características de los devanados</a>.</li>
+    <li>Toshiba Electronic Devices &amp; Storage Corporation. (2026). <em>TB6600HG</em>.
+      <a href="https://toshiba.semicon-storage.com/ap-en/semiconductor/product/motor-driver-ics/stepping-motor-driver-ics/detail.TB6600HG.html">Características del circuito integrado</a>.</li>
+  </ul>
+  <footer class="article-footer ccby"></footer>
+</article></main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>

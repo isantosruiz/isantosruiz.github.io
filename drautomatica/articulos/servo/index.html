@@ -1,0 +1,972 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Servomotores en mecatrónica: del pulso al movimiento | drAutomática</title><meta name="description" content="Tutorial de servomotores para mecatrónica. Funcionamiento, pulsos, alimentación, calibración y tres proyectos C++ para ESP32 con el framework de Arduino y PlatformIO en VS Code."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/servo/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Servomotores en mecatrónica: del pulso al movimiento | drAutomática"><meta property="og:description" content="Tutorial de servomotores para mecatrónica. Funcionamiento, pulsos, alimentación, calibración y tres proyectos C++ para ESP32 con el framework de Arduino y PlatformIO en VS Code."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/servo/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Tutorial de servomotores para mecatrónica. Funcionamiento, pulsos, alimentación, calibración y tres proyectos C++ para ESP32 con el framework de Arduino y PlatformIO en VS Code."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Servomotores en mecatrónica: del pulso al movimiento | drAutomática"><meta name="twitter:description" content="Tutorial de servomotores para mecatrónica. Funcionamiento, pulsos, alimentación, calibración y tres proyectos C++ para ESP32 con el framework de Arduino y PlatformIO en VS Code."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="cpp,shell,text" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Mecatrónica</p>
+        <h1>Servomotores en mecatrónica: del pulso al movimiento</h1>
+        <p class="subtitle">Control de posición, calibración y aplicaciones con ESP32, C++ y PlatformIO</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Un servomotor permite ordenar el movimiento de un mecanismo y corregir su posición mediante
+          realimentación. Su facilidad de conexión puede ocultar aspectos decisivos para el diseño, como
+          la alimentación, la calibración entre pulsos y ángulos, el par requerido por la carga y la diferencia
+          entre solicitar una posición y comprobar que se alcanzó. Este tutorial desarrolla esos fundamentos
+          y los aplica a un servo de radiocontrol de tres cables, gobernado por un ESP32.
+          Los programas se desarrollan en C++ con el framework de Arduino y PlatformIO en Visual
+          Studio Code. A partir de la calibración del actuador se construyen un posicionador con
+          potenciómetro y una barrera de laboratorio cuya trayectoria y secuencia de operación se
+          programan sin detener la atención de las entradas.</p>
+      </section>
+
+      <h2>Mover un eje y mantenerlo donde hace falta</h2>
+
+      <p>Orientar una cámara, regular una compuerta, mover la dirección de un vehículo o posicionar una
+        articulación robótica requiere algo más que hacer girar un motor. En estas aplicaciones interesa
+        que el eje alcance una posición y responda cuando una carga intenta apartarlo de ella. Un
+        <strong>servosistema</strong> combina un actuador, una etapa de potencia, un sensor y un controlador
+        para comparar continuamente el movimiento deseado con el observado y reducir la diferencia.</p>
+
+      <p>El término servomotor se usa para equipos muy distintos. Un servo industrial puede tener un motor
+        síncrono, un encoder de alta resolución y un accionamiento separado que regula corriente, velocidad
+        y posición. Un pequeño servo de radiocontrol, o servo RC, integra en una carcasa el motor, un reductor
+        de engranajes, un sensor de posición y la electrónica de control. Esa integración lo convierte en
+        un recurso útil para aprender y construir prototipos mecatrónicos.</p>
+
+      <p>El montaje utiliza un <strong>servo RC posicional de recorrido limitado</strong>, con
+        alimentación compatible con 5 V y una entrada que admita pulsos de lógica de 3.3 V.
+        Estas dos especificaciones corresponden a circuitos diferentes y deben comprobarse en la
+        documentación del actuador. La placa de referencia es una ESP32-DevKitC con módulo
+        ESP32-WROOM-32E, programada mediante el framework de Arduino. Los ejemplos están destinados
+        a esta familia de ESP32; una variante C3 o S3 requiere revisar la asignación de pines.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. El nombre servo no determina por sí solo qué magnitud controla la interfaz.">
+\begin{tabular}{lll}
+\hline
+Tipo & Orden habitual & Aplicación característica \\
+\hline
+RC posicional & Posición dentro de un recorrido & Articulación o compuerta \\
+RC de rotación continua & Sentido y rapidez de giro & Rueda de un robot \\
+Servo con comunicación digital & Posición, velocidad o par & Robótica con telemetría \\
+Servosistema industrial & Depende del modo del accionamiento & Eje de una máquina \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>También se comercializan servos RC llamados analógicos y digitales. La diferencia suele referirse
+        al procesamiento y al control internos; un servo RC digital puede seguir recibiendo exactamente
+        el mismo tipo de pulsos de mando que uno analógico. Para conocer la interfaz, el recorrido y la
+        frecuencia permitida debemos consultar la documentación del modelo concreto.</p>
+
+      <h2>El lazo de posición que está dentro de la carcasa</h2>
+
+      <p>La <a href="#fig-servo-lazo">Figura 1</a> muestra el funcionamiento de un servo posicional
+        convencional. El microcontrolador envía una consigna, es decir, una posición deseada. La electrónica
+        del servo interpreta esa orden y la compara con la posición medida por un sensor interno, que
+        en muchos modelos económicos es un potenciómetro acoplado al eje de salida. Si ambas posiciones
+        difieren, el controlador modifica la acción del motor para acercarlas.</p>
+
+      <div class="equation">\[
+        e(t)=\theta_d(t)-\theta_m(t),
+      \]</div>
+
+      <p>donde \(\theta_d\) es el ángulo deseado y \(\theta_m\) es el ángulo medido dentro del servo.
+        La etapa de potencia suministra la corriente que necesita el motor y los engranajes reducen
+        su velocidad para aumentar el par disponible en el eje de salida, a costa de pérdidas y holgura.
+        La ley de control interna depende del fabricante; no es necesario suponer que todos los servos
+        implementan el mismo algoritmo de control.</p>
+
+      <figure id="fig-servo-lazo">
+        <img src="/drautomatica/html/servo-lazo.png" alt="Diagrama de lazo interno con decodificador de pulso, comparación de posición, controlador, motor y engranajes, y sensor de posición realimentado."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Lazo de posición de un servo RC convencional. La realimentación permanece
+          dentro del dispositivo; el cable de señal recibe la orden del ESP32.</figcaption>
+      </figure>
+
+      <p>Que exista realimentación interna no significa que el programa del ESP32 conozca el ángulo
+        alcanzado. En la interfaz convencional de tres cables solo enviamos órdenes. Si el mecanismo
+        encuentra un obstáculo o la carga supera el par disponible, el programa puede continuar solicitando
+        una posición que nunca se alcanza. Cuando es necesario confirmar el movimiento se requiere un
+        sensor externo, finales de carrera o un servo con una interfaz que permita leer su estado.</p>
+
+      <p>En aplicaciones mecatrónicas, esta distinción separa dos problemas. El servo intenta controlar
+        su propio eje, mientras que el programa coordina la tarea del mecanismo. Una barrera puede
+        necesitar una secuencia de apertura y cierre; una pinza, además, puede necesitar información
+        sobre contacto o fuerza. El control interno del servo no resuelve automáticamente esas funciones.</p>
+
+      <h2>La orden está en la duración del pulso</h2>
+
+      <p>Un servo RC recibe pulsos eléctricos repetidos. Denotaremos por \(t_p\) el tiempo que la señal
+        permanece en nivel alto y por \(T\) el intervalo entre los inicios de dos pulsos consecutivos.
+        Un valor habitual de \(T\) es 20 ms, correspondiente a una frecuencia de 50 Hz,</p>
+
+      <div class="equation">\[
+        f=\frac{1}{T}=\frac{1}{0.020\ \mathrm{s}}=50\ \mathrm{Hz}.
+      \]</div>
+
+      <p>La duración \(t_p\) representa la orden de posición. Como referencia frecuente se utilizan pulsos
+        entre 1 y 2 ms, con una orden intermedia cercana a 1.5 ms, pero ni esos límites ni su correspondencia
+        angular son universales. En particular, 1 ms no significa necesariamente \(0^\circ\), 1.5 ms no
+        garantiza \(90^\circ\), y 2 ms no garantiza \(180^\circ\). El sentido de giro también depende del
+        modelo y de la referencia mecánica elegida.</p>
+
+      <p>La <a href="#fig-servo-pulsos">Figura 2</a> compara tres órdenes mediante señales ideales.
+        El periodo se mantiene constante y solamente cambia el ancho del pulso. El detalle ampliado
+        permite ver que la información está en cuánto dura el nivel alto, no en la altura de la señal.</p>
+
+      <figure id="fig-servo-pulsos">
+        <img src="/drautomatica/html/servo-pulsos.png" alt="Tres trenes de pulsos con anchos de 1, 1.5 y 2 milisegundos, mostrados durante un periodo de 20 milisegundos y en una ampliación temporal."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Señales de mando ideales. Los niveles 0 y 1 representan estados lógicos;
+          la tensión real debe ser compatible con la entrada del servo. Los anchos dibujados no fijan
+          ángulos mecánicos universales.</figcaption>
+      </figure>
+
+      <p>Esta interfaz suele describirse como PWM porque varía el ancho de un pulso, pero conviene
+        distinguirla del PWM empleado para regular la potencia de un motor de corriente continua. En ese
+        último caso suele interesar el ciclo de trabajo \(D=t_p/T\); en el servo RC, la orden se interpreta
+        a partir de \(t_p\). Por ejemplo, un pulso de 1.5 ms con periodo de 20 ms tiene un ciclo de trabajo
+        del \(7.5\,\%\). Mantener ese porcentaje y cambiar el periodo modificaría el ancho y, por tanto,
+        la orden de posición.</p>
+
+      <p>Para producir esta señal emplearemos <code>ESP32Servo</code>, una biblioteca que configura
+        el periférico LEDC del ESP32. Este periférico dispone de temporizadores y canales PWM capaces
+        de generar los pulsos por hardware. El programa establece una frecuencia de 50 Hz y modifica
+        el ancho cuando cambia la consigna; entre una actualización y la siguiente, el hardware mantiene
+        el tren de pulsos sin que sea necesario conmutar el pin desde <code>loop()</code>.</p>
+
+      <h2>Alimentación y conexiones del montaje</h2>
+
+      <p>Para las prácticas se necesita la placa ESP32 con su cable USB, el servo posicional, una
+        fuente regulada adecuada para el actuador, cables de conexión y una fijación mecánica.
+        El segundo ejemplo añade un potenciómetro lineal de \(10\ \mathrm{k\Omega}\) y un capacitor
+        cerámico de 100 nF; el tercero utiliza un pulsador normalmente abierto y una barrera ligera
+        de laboratorio.</p>
+
+      <p>La corriente que consume el servo cambia con la carga y puede aumentar considerablemente durante
+        el arranque o cuando el eje queda bloqueado. Por ello, la fuente se selecciona a partir de la
+        corriente máxima especificada o medida para el montaje, con margen para los transitorios. No debe
+        dimensionarse únicamente con el consumo sin carga. Si hay varios servos, hay que considerar
+        cuántos pueden demandar corriente simultáneamente.</p>
+
+      <p>En el circuito de la <a href="#fig-servo-conexion">Figura 3a</a>, la placa ESP32 recibe
+        alimentación por USB y el servo desde una fuente externa de 5 V. La conexión entre sus tierras
+        establece la referencia de la señal de control. La corriente del motor retorna directamente
+        a la fuente por un conductor adecuado, sin atravesar la placa de desarrollo. Los positivos
+        de ambas alimentaciones se mantienen separados.</p>
+
+      <p>GPIO18 entrega una señal de 3.3 V, aunque el servo se alimente a 5 V. La conexión directa
+        requiere que la entrada del servo reconozca ese nivel como alto; si su especificación requiere
+        un nivel mayor, se debe intercalar un adaptador lógico unidireccional compatible con ambas
+        tensiones. Los GPIO del ESP32 no admiten señales de 5 V, por lo que el potenciómetro y el
+        pulsador se conectan al dominio de 3.3 V de la placa.</p>
+
+      <figure id="fig-servo-conexion">
+        <img src="/drautomatica/html/servo-conexion.png" alt="Esquemas eléctricos del servo conectado a GPIO18 con fuente externa de 5 V y tierra común, del potenciómetro entre 3V3 y GND con cursor a GPIO34 y capacitor de 100 nF, y del pulsador entre GPIO27 y GND con pull-up interno."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. Conexiones eléctricas del servo (a), del mando con potenciómetro (b)
+          y del pulsador (c). Todos los símbolos GND corresponden al mismo nodo; 3V3 es la alimentación
+          de 3.3 V de la placa. La resistencia del circuito (c) está dentro del ESP32 y se habilita
+          por software. La posición dibujada de los terminales del servo no representa el orden
+          de su conector físico.</figcaption>
+      </figure>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Conexiones para ESP32-DevKitC con módulo ESP32-WROOM-32E.">
+\begin{tabular}{lll}
+\hline
+Elemento & Terminal & Conexión \\
+\hline
+Servo & Señal & GPIO18 \\
+Servo & Alimentación positiva & Positivo de la fuente externa \\
+Servo & Tierra & Negativo de la fuente y GND del ESP32 \\
+Potenciómetro & Extremos & 3V3 y GND de la placa \\
+Potenciómetro & Cursor & GPIO34 (ADC1) \\
+Capacitor de 100 nF & Dos terminales & GPIO34 y GND \\
+Pulsador & Dos contactos & GPIO27 y GND \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En muchos servos el cable rojo es la alimentación, el negro o café es tierra y el amarillo,
+        blanco o naranja es la señal. Los colores son una orientación, no una garantía; conviene verificar
+        el conector del dispositivo antes de energizarlo. En el pulsador se aprovechará la resistencia
+        interna de elevación, o <em>pull-up</em>, mediante <code>INPUT_PULLUP</code>. Esta resistencia
+        mantiene GPIO27 en alto mientras el contacto está abierto; al pulsar se conecta a tierra y
+        la lectura pasa a <code>LOW</code>. GPIO34 pertenece a ADC1 y solo funciona como entrada,
+        una condición apropiada para leer el cursor del potenciómetro.</p>
+
+      <p>El capacitor C1 del circuito (b) se coloca cerca de GPIO34 y reduce las perturbaciones rápidas
+        de la señal del cursor. No debe confundirse con el desacoplamiento de la alimentación del servo,
+        que atiende un problema diferente.</p>
+
+      <p>Un capacitor cerca de los terminales del servo puede ayudar ante perturbaciones rápidas de
+        alimentación, siempre que tenga la polaridad y la tensión nominal correctas. Su valor depende
+        del montaje y no compensa una fuente insuficiente o un cableado con demasiada resistencia.
+        Cuando aparezcan reinicios o movimientos erráticos, medir la tensión en los terminales del servo
+        durante el movimiento suele aportar más información que aumentar indiscriminadamente los tiempos
+        de espera del programa.</p>
+
+      <h2>Preparar PlatformIO en Visual Studio Code</h2>
+
+      <p>PlatformIO organiza el código, las bibliotecas y las herramientas de compilación mediante un
+        proyecto. Instala la extensión oficial <strong>PlatformIO IDE</strong> en VS Code y crea un
+        proyecto desde PlatformIO Home. Selecciona <strong>Espressif ESP32 Dev Module</strong>
+        y el framework <strong>Arduino</strong>. La configuración <code>esp32dev</code> corresponde
+        aquí a una placa con ESP32 clásico y 4 MB de memoria flash. Arduino designa el entorno de
+        programación utilizado sobre el ESP32; no es el modelo de la placa.</p>
+
+      <p>Los archivos que editaremos son <code>platformio.ini</code>, en la raíz del proyecto, y
+        <code>src/main.cpp</code>, que contiene el programa. La estructura mínima es</p>
+
+      <script type="text/text">
+servo-practica/
+├── platformio.ini
+└── src/
+    └── main.cpp
+</script>
+
+      <p>La configuración siguiente fija una combinación compatible de herramientas y biblioteca.
+        Espressif 32 6.12.0 proporciona el núcleo Arduino-ESP32 2.0.17, para el que utilizaremos
+        ESP32Servo 1.1.1. PlatformIO descargará las dependencias al compilar por primera vez.
+        Una actualización del núcleo debe acompañarse de la revisión de la biblioteca, porque
+        la interfaz del periférico LEDC cambió en Arduino-ESP32 3.</p>
+
+      <script type="text/text" data-source="servo-ejemplos/calibracion/platformio.ini">
+[env:esp32dev]
+platform = espressif32@6.12.0
+board = esp32dev
+framework = arduino
+lib_deps = madhephaestus/ESP32Servo@1.1.1
+monitor_speed = 115200
+</script>
+
+      <p>Cada ejemplo es un programa completo y se coloca por separado en <code>src/main.cpp</code>.
+        No deben concatenarse, porque cada uno define sus propias funciones <code>setup()</code> y
+        <code>loop()</code>. También puedes descargar los
+        <a href="/drautomatica/html/servo-ejemplos.zip" download>tres proyectos listos para abrir en VS Code</a> y trabajar
+        directamente en la carpeta de cada práctica.</p>
+
+      <p>Las tareas <strong>Build</strong>, <strong>Upload</strong> y <strong>Monitor</strong> permiten
+        compilar, cargar el programa y abrir el monitor serial. Desde la terminal de PlatformIO,
+        situada en la carpeta del proyecto, sus equivalentes son</p>
+
+      <script type="text/shell">
+pio run
+pio run --target upload
+pio device monitor --baud 115200
+</script>
+
+      <p>El puerto de carga suele detectarse automáticamente. Si hay varias placas conectadas, se puede
+        indicar el puerto correcto mediante <code>upload_port</code> y <code>monitor_port</code> en
+        la configuración. Cierra cualquier otro monitor que esté ocupando ese puerto antes de cargar
+        el programa.</p>
+
+      <h3>Generación de pulsos con ESP32Servo</h3>
+
+      <p>El objeto <code>Servo</code> representa un canal de mando. Antes de asociarlo al pin,
+        <code>setPeriodHertz(50)</code> fija la frecuencia de repetición; después,
+        <code>attach(18, 1000, 2000)</code> configura GPIO18 y el intervalo de pulsos en microsegundos.
+        Los programas imponen límites adicionales de acuerdo con el montaje. Estos argumentos
+        establecen la escala de la orden, pero no miden ni calibran los ángulos del eje.</p>
+
+      <p>La llamada <code>setTimerWidth(16)</code> selecciona 16 bits para el temporizador PWM.
+        Con un periodo de 20 ms, el intervalo entre cuentas es aproximadamente
+        \(20000/2^{16}=0.305\) microsegundos. Esta resolución permite representar los pequeños
+        cambios de pulso de los ejemplos, aunque la precisión mecánica sigue dependiendo del servo
+        y de su calibración.</p>
+
+      <p><code>writeMicroseconds()</code> solicita directamente un ancho de pulso. En cambio,
+        <code>write()</code> puede interpretar valores como grados y convertirlos usando el intervalo
+        configurado por la biblioteca. Esa conversión supone una escala de software; no demuestra
+        que el dispositivo tenga un recorrido físico de 180 grados. Por eso utilizaremos una relación
+        explícita entre el ángulo calibrado y el pulso.</p>
+
+      <section class="remark">
+        <p><code>servo.read()</code> y <code>servo.readMicroseconds()</code> devuelven información de la
+          última orden almacenada por la biblioteca. No leen el potenciómetro interno del servo.
+          Tampoco <code>detach()</code> equivale a cortar su alimentación o a garantizar una parada
+          mecánica; solamente deja de generar la señal de mando.</p>
+      </section>
+
+      <p>La biblioteca reserva recursos del periférico LEDC. Si el proyecto utiliza otros canales PWM,
+        su asignación debe coordinarse para evitar que otra función modifique el temporizador del servo.
+        Los GPIO18, 27 y 34 se identifican por su número lógico, no por la posición del contacto en
+        la hilera de pines de la placa.</p>
+
+      <h2>Ejemplo 1. Ajustar el pulso antes de asignar ángulos</h2>
+
+      <p>La primera práctica permite cambiar la orden desde el monitor serial. El programa comienza en
+        1500 microsegundos y acepta <code>+</code> o <code>-</code> para variar el pulso en pasos
+        de 10 microsegundos. La letra <code>c</code> vuelve al valor inicial. El intervalo permitido
+        por el programa es de 1200 a 1800 microsegundos, más estrecho que el configurado en la biblioteca.</p>
+
+      <p>Estos valores son un punto de partida para un servo cuya documentación admita ese intervalo;
+        no constituyen una calibración universal. Realiza la primera prueba con el servo fijado y el
+        brazo sin carga ni posibilidad de chocar con el mecanismo. La posición previa al encendido
+        es desconocida y la primera orden puede producir un movimiento inmediato.</p>
+
+      <script type="text/cpp" data-source="servo-ejemplos/calibracion/src/main.cpp">
+#include <Arduino.h>
+#include <ESP32Servo.h>
+
+constexpr uint8_t PIN_SERVO = 18;
+constexpr int PULSO_MIN_US = 1200;
+constexpr int PULSO_MAX_US = 1800;
+constexpr int PULSO_INICIAL_US = 1500;
+constexpr int PASO_US = 10;
+
+Servo servo;
+int pulsoUs = PULSO_INICIAL_US;
+
+void enviarPulso(int solicitadoUs) {
+    pulsoUs = constrain(solicitadoUs, PULSO_MIN_US, PULSO_MAX_US);
+    servo.writeMicroseconds(pulsoUs);
+    Serial.print("Pulso solicitado (us): ");
+    Serial.println(pulsoUs);
+}
+
+void setup() {
+    Serial.begin(115200);
+    servo.setPeriodHertz(50);
+    servo.setTimerWidth(16);
+    servo.attach(PIN_SERVO, 1000, 2000);
+    enviarPulso(PULSO_INICIAL_US);
+    Serial.println("+ aumenta, - disminuye, c vuelve a 1500 us.");
+}
+
+void loop() {
+    if (Serial.available() == 0) {
+        return;
+    }
+    const char orden = static_cast<char>(Serial.read());
+    switch (orden) {
+        case '+':
+            enviarPulso(pulsoUs + PASO_US);
+            break;
+        case '-':
+            enviarPulso(pulsoUs - PASO_US);
+            break;
+        case 'c':
+        case 'C':
+            enviarPulso(PULSO_INICIAL_US);
+            break;
+        default:
+            break;  // Ignora también los finales de línea.
+    }
+}
+</script>
+
+      <p>El programa usa <code>constrain()</code> para limitar toda orden, incluidas las pulsaciones
+        repetidas. <code>Serial.available()</code> evita esperar a que llegue un carácter, y los finales
+        de línea del monitor se ignoran. Al separar la recepción de caracteres de la generación
+        de pulsos, el servo conserva la última consigna mientras el usuario prepara la siguiente orden.</p>
+
+      <p>Para calibrar, fija una referencia angular en el soporte y mide la orientación con un transportador
+        o un sensor externo. Registra varios pares de valores, pulso y ángulo, mientras recorres un
+        intervalo libre de topes. Si necesitas ampliarlo respecto del programa inicial, modifica sus
+        límites gradualmente y dentro de lo admitido por el fabricante. Un zumbido persistente contra un
+        tope, ausencia de avance o aumento de corriente no deben utilizarse como un procedimiento normal
+        para encontrar el extremo.</p>
+
+      <h3>Una conversión angular basada en la calibración</h3>
+
+      <p>Supongamos que se eligió una zona aproximadamente lineal y se obtuvieron dos puntos de calibración
+        \((\theta_{\min},t_{p,\min})\) y \((\theta_{\max},t_{p,\max})\). La interpolación lineal permite
+        convertir una consigna angular en el pulso correspondiente,</p>
+
+      <div class="equation">\[
+        t_p(\theta_d)=t_{p,\min}
+        +\frac{\theta_d-\theta_{\min}}{\theta_{\max}-\theta_{\min}}
+        \left(t_{p,\max}-t_{p,\min}\right).
+      \]</div>
+
+      <p>La tabla 3 establece una <strong>calibración ilustrativa</strong> que utilizaremos en los
+        siguientes programas. Sus números no proceden de una medición de un servo particular ni de
+        la ficha técnica de un modelo. Deben sustituirse por los resultados del montaje que se construya.
+        Para obtener los pulsos extremos de esta tabla con la primera práctica habría que ampliar sus
+        límites, una vez comprobado que el dispositivo permite hacerlo.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Relación ilustrativa para los ejemplos 2 y 3; debe reemplazarse por una calibración real.">
+\begin{tabular}{lrr}
+\hline
+Referencia & Ángulo (grados) & Pulso (microsegundos) \\
+\hline
+Extremo inferior de trabajo & 20 & 1100 \\
+Punto intermedio & 60 & 1500 \\
+Extremo superior de trabajo & 100 & 1900 \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Esta relación tiene una pendiente de 10 microsegundos por grado. La resolución de la orden,
+        sin embargo, no debe confundirse con la exactitud de la posición. La holgura de los engranajes,
+        la zona muerta del controlador, la carga y la calibración introducen diferencias entre el ángulo
+        solicitado y el real. Conviene medir tanto al avanzar como al regresar; la diferencia entre
+        ambas lecturas revela parte de la histéresis del mecanismo.</p>
+
+      <h2>Ejemplo 2. Posicionar una compuerta con un potenciómetro</h2>
+
+      <p>Un mando manual es útil para orientar un sensor o ajustar la apertura de una compuerta ligera.
+        Los extremos del potenciómetro se conectan a 3V3 y GND, y el cursor a GPIO34, como indica la
+        <a href="#fig-servo-conexion">Figura 3b</a>. El programa configura el convertidor
+        analógico-digital a 12 bits, de modo que la lectura \(a_k\) toma valores enteros entre
+        0 y \(2^{12}-1=4095\). La atenuación de entrada se fija en 11 dB para ampliar el intervalo
+        de tensión que puede medir ADC1.</p>
+
+      <p>La resolución en bits no significa que el ADC mida con exactitud cualquier tensión entre
+        0 y 3.3 V. Para el ESP32 clásico, Espressif indica un intervalo de medida aproximado de
+        0.15 a 3.1 V con esa atenuación. Cerca de los extremos puede haber saturación y falta de
+        linealidad, de modo que el mando puede presentar pequeñas zonas sin cambio. El montaje es
+        suficiente para ajustar una consigna manual; si se requiere proporcionalidad precisa con
+        el giro de la perilla, hay que acondicionar la tensión al intervalo útil y calibrar la
+        conversión. Esta calibración del mando es independiente de la del servo.</p>
+
+      <p>Una correspondencia directa sería suficiente para mover el servo, pero pequeñas variaciones
+        de la lectura podrían causar vibraciones. Aplicaremos un filtro de primer orden que combina
+        la lectura actual con el valor filtrado anterior,</p>
+
+      <div class="equation">\[
+        \bar a_k=\bar a_{k-1}+\alpha(a_k-\bar a_{k-1}),
+        \qquad \alpha=0.15.
+      \]</div>
+
+      <p>El subíndice \(k\) identifica una actualización del programa. Un valor menor de \(\alpha\)
+        atenúa más las variaciones rápidas, aunque hace que el mando responda con mayor retraso.
+        La lectura filtrada se transforma después en un ángulo objetivo dentro del intervalo calibrado,</p>
+
+      <div class="equation">\[
+        \theta_{\mathrm{obj},k}=
+        \theta_{\min}+(\theta_{\max}-\theta_{\min})\frac{\bar a_k}{4095}.
+      \]</div>
+
+      <p>Para evitar saltos de consigna al mover rápidamente la perilla limitaremos su cambio por
+        actualización. Con un periodo nominal \(T_s=20\) ms y una velocidad de consigna máxima de
+        \(45^\circ/\mathrm{s}\), el incremento permitido es</p>
+
+      <div class="equation">\[
+        \Delta\theta_{\max}=\omega_{\max}T_s
+        =45^\circ/\mathrm{s}\,(0.020\ \mathrm{s})=0.9^\circ.
+      \]</div>
+
+      <p>El programa incorpora además una banda de \(0.5^\circ\): si el objetivo difiere de la consigna
+        en menos de esa cantidad, conserva la orden anterior. Esta banda es una decisión del programa,
+        independiente de la zona muerta física del servo. El filtrado, la limitación del cambio y la banda
+        cumplen funciones distintas y se ajustan según la respuesta que requiera la aplicación.</p>
+
+      <script type="text/cpp" data-source="servo-ejemplos/potenciometro/src/main.cpp">
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include <math.h>
+
+constexpr uint8_t PIN_SERVO = 18;
+constexpr uint8_t PIN_POT = 34;  // ADC1, entrada únicamente.
+constexpr float ADC_MAX = 4095.0f;
+constexpr uint32_t PERIODO_MS = 20;
+constexpr float ALFA = 0.15f;
+constexpr float VELOCIDAD_GRADOS_S = 45.0f;
+constexpr float BANDA_GRADOS = 0.5f;
+
+// Valores ilustrativos: sustituir por la calibración del montaje.
+constexpr float ANGULO_MIN = 20.0f;
+constexpr float ANGULO_MAX = 100.0f;
+constexpr int PULSO_MIN_US = 1100;
+constexpr int PULSO_MAX_US = 1900;
+
+Servo servo;
+float lecturaFiltrada = 0.0f;
+float consigna = 60.0f;
+uint32_t ultimoControl = 0;
+uint32_t ultimoReporte = 0;
+int ultimoPulso = -1;
+
+int anguloAPulso(float grados) {
+    const float limitado = constrain(grados, ANGULO_MIN, ANGULO_MAX);
+    const float fraccion = (limitado - ANGULO_MIN) /
+                           (ANGULO_MAX - ANGULO_MIN);
+    return static_cast<int>(lroundf(
+        PULSO_MIN_US + fraccion * (PULSO_MAX_US - PULSO_MIN_US)));
+}
+
+void setup() {
+    Serial.begin(115200);
+    analogReadResolution(12);
+    analogSetPinAttenuation(PIN_POT, ADC_11db);
+    servo.setPeriodHertz(50);
+    servo.setTimerWidth(16);
+    servo.attach(PIN_SERVO, 1000, 2000);
+    ultimoPulso = anguloAPulso(consigna);
+    servo.writeMicroseconds(ultimoPulso);
+    lecturaFiltrada = static_cast<float>(analogRead(PIN_POT));
+    ultimoControl = millis();
+    ultimoReporte = ultimoControl;
+}
+
+void loop() {
+    const uint32_t ahora = millis();
+    if (static_cast<uint32_t>(ahora - ultimoControl) < PERIODO_MS) {
+        return;
+    }
+    ultimoControl = ahora;
+
+    const float lectura = static_cast<float>(analogRead(PIN_POT));
+    lecturaFiltrada += ALFA * (lectura - lecturaFiltrada);
+    const float objetivo = ANGULO_MIN +
+        (ANGULO_MAX - ANGULO_MIN) * lecturaFiltrada / ADC_MAX;
+
+    const float error = objetivo - consigna;
+    const float pasoMax = VELOCIDAD_GRADOS_S * PERIODO_MS / 1000.0f;
+    if (fabsf(error) > BANDA_GRADOS) {
+        consigna += constrain(error, -pasoMax, pasoMax);
+    }
+
+    const int pulsoUs = anguloAPulso(consigna);
+    if (pulsoUs != ultimoPulso) {
+        servo.writeMicroseconds(pulsoUs);
+        ultimoPulso = pulsoUs;
+    }
+
+    if (static_cast<uint32_t>(ahora - ultimoReporte) >= 200U) {
+        ultimoReporte = ahora;
+        Serial.print("Objetivo: ");
+        Serial.print(objetivo, 1);
+        Serial.print(" deg; consigna: ");
+        Serial.print(consigna, 1);
+        Serial.print(" deg; pulso: ");
+        Serial.println(pulsoUs);
+    }
+}
+</script>
+
+      <p><code>anguloAPulso()</code> implementa la interpolación calibrada y restringe el ángulo antes
+        de enviarlo. El monitor muestra el objetivo de la perilla, la consigna que se está enviando
+        y el ancho de pulso. Ninguna de esas cantidades representa una medición del eje. Durante un giro
+        rápido del potenciómetro se apreciará cómo el objetivo cambia primero y la consigna lo alcanza
+        progresivamente.</p>
+
+      <p>La resta entre tiempos sin signo permite comparar intervalos aunque el contador de
+        <code>millis()</code> pase por su desbordamiento, siempre que el programa siga ejecutándose
+        regularmente. Si una iteración tarda más de 20 ms, esta implementación conserva el incremento
+        máximo de \(0.9^\circ\); la consigna avanzará más despacio, en lugar de intentar recuperar el
+        retraso mediante un salto mayor.</p>
+
+      <p>Al arrancar se solicita la posición intermedia de \(60^\circ\). La limitación de velocidad
+        se aplica a las consignas posteriores; no puede limitar el primer desplazamiento desde una
+        posición física desconocida. Tampoco constituye un controlador de velocidad real del eje,
+        ya que para regularla y comprobarla haría falta medir el movimiento.</p>
+
+      <h2>El par y la carga determinan si el movimiento es viable</h2>
+
+      <p>Antes de automatizar un mecanismo hay que comprobar que el servo puede moverlo. El
+        <strong>par</strong> o torque es el momento de una fuerza respecto del eje. Si una carga de
+        masa \(m_c\) está al final de un brazo horizontal de longitud \(L\), su peso produce un par
+        de magnitud \(m_cgL\). Si el brazo es uniforme y tiene masa \(m_b\), su peso actúa en el centro,
+        a una distancia \(L/2\), como muestra la <a href="#fig-servo-par">Figura 4</a>.</p>
+
+      <div class="equation">\[
+        \tau_{\mathrm{estática}}=m_cgL+m_bg\frac{L}{2}.
+      \]</div>
+
+      <figure id="fig-servo-par">
+        <img src="/drautomatica/html/servo-par.png" alt="Brazo horizontal accionado por un servo, con carga en el extremo y peso propio aplicado en el centro, indicando los brazos de palanca L y L sobre dos."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Balance de momentos en la posición horizontal. La longitud del brazo
+          puede aumentar la exigencia de par tanto como el aumento de la masa transportada.
+          La flecha curva representa el par aplicado por el servo para oponerse a los momentos
+          de los pesos.</figcaption>
+      </figure>
+
+      <p>Por ejemplo, con una carga de 150 g, un brazo de 30 g y una longitud de 8 cm, el par estático
+        es aproximadamente \(0.1295\ \mathrm{N\,m}\). En catálogos de servos pequeños es frecuente
+        encontrar la unidad \(\mathrm{kgf\,cm}\), a veces abreviada de forma imprecisa como
+        «kg·cm». Su conversión es</p>
+
+      <div class="equation">\[
+        1\ \mathrm{kgf\,cm}=0.0980665\ \mathrm{N\,m},
+        \qquad
+        0.1295\ \mathrm{N\,m}\approx1.32\ \mathrm{kgf\,cm}.
+      \]</div>
+
+      <p>El fabricante TowerPro, por ejemplo, publica un par de bloqueo de \(1.8\ \mathrm{kgf\,cm}\)
+        a 4.8 V para su SG90 analógico. El <strong>par de bloqueo</strong> corresponde al eje impedido
+        de girar y no debe tomarse como una capacidad continua de trabajo. En el ejemplo anterior,
+        comparar 1.32 con 1.8 y concluir que «alcanza» omitiría la aceleración, el rozamiento, los impactos,
+        el calentamiento y la caída de tensión. La selección requiere margen y datos de servicio
+        compatibles con el ciclo de operación.</p>
+
+      <p>Durante el movimiento también interviene la inercia. En un modelo simplificado del eje,
+        el par que debe entregar el actuador satisface</p>
+
+      <div class="equation">\[
+        \tau_{\mathrm{salida}}
+        =J_{\mathrm{eq}}\frac{\mathrm{d}^2\theta}{\mathrm{d}t^2}
+        +\tau_{\mathrm{gravedad}}(\theta)
+        +\tau_{\mathrm{rozamiento}},
+      \]</div>
+
+      <p>donde \(J_{\mathrm{eq}}\) es la inercia equivalente referida al eje de salida. Para esta ecuación,
+        el ángulo se expresa en radianes y los signos se eligen de acuerdo con el sentido de giro.
+        Una trayectoria que exija aceleraciones elevadas necesita más par que mantener inmóvil la misma
+        carga. Por eso una orden angular aparentemente sencilla puede producir golpes o vibraciones
+        si se cambia bruscamente.</p>
+
+      <h2>Ejemplo 3. Una barrera de maqueta con apertura suave</h2>
+
+      <p>Construiremos una barrera ligera que, al recibir una pulsación, abra, permanezca abierta durante
+        tres segundos y vuelva a cerrar. El pulsador se conecta entre GPIO27 y GND. Los estados del programa
+        describen la secuencia de consignas; no confirman posiciones físicas mediante sensores.</p>
+
+      <p>La posición cerrada se asocia a \(20^\circ\) y la abierta a \(100^\circ\) de la calibración
+        ilustrativa. Al montar el brazo se hace corresponder la primera con la orientación horizontal
+        de la barrera. El desplazamiento entre ambas es de \(80^\circ\); la referencia angular del servo
+        no tiene por qué coincidir con el ángulo medido desde la horizontal del mecanismo.</p>
+
+      <h3>Construir una trayectoria de referencia</h3>
+
+      <p>En lugar de cambiar instantáneamente de una posición a otra, usaremos una interpolación cúbica.
+        Sean \(\theta_i\) y \(\theta_f\) los ángulos inicial y final, \(T_m\) la duración del movimiento
+        y \(u=t/T_m\) el tiempo normalizado entre 0 y 1. La consigna se define mediante</p>
+
+      <div class="equation">\[
+        \theta_d(t)=\theta_i+(\theta_f-\theta_i)(3u^2-2u^3),
+        \qquad 0\leq u\leq1.
+      \]</div>
+
+      <p>El polinomio \(3u^2-2u^3\) vale cero al comienzo y uno al final, por lo que la consigna
+        recorre exactamente el intervalo deseado. Su derivada respecto del tiempo es</p>
+
+      <div class="equation">\[
+        \dot\theta_d(t)=
+        \frac{\theta_f-\theta_i}{T_m}(6u-6u^2).
+      \]</div>
+
+      <p>La velocidad de la consigna comienza y termina en cero y alcanza su magnitud máxima a la
+        mitad del trayecto. Para un desplazamiento de \(80^\circ\) en 1.5 s, esa magnitud es
+        \(\frac{1.5(80^\circ)}{1.5\ \mathrm{s}}=80^\circ/\mathrm{s}\). Esto suaviza la entrada y salida
+        del movimiento, aunque no hace continua la aceleración al unir el tramo con un reposo.
+        Aplicaciones más exigentes pueden necesitar perfiles con aceleración y variación de aceleración
+        también limitadas.</p>
+
+      <p>La <a href="#fig-servo-trayectoria">Figura 5</a> muestra la barrera y las curvas calculadas
+        con estas ecuaciones para un ciclo completo. Son referencias matemáticas, no mediciones de
+        un servo real. El seguimiento físico depende de la alimentación, la carga y la respuesta
+        del dispositivo.</p>
+
+      <figure id="fig-servo-trayectoria">
+        <img src="/drautomatica/html/servo-trayectoria.png" alt="Barrera en posiciones cerrada y abierta separadas 80 grados, junto a las curvas teóricas de consigna angular y velocidad para apertura, pausa y cierre."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. Apertura de 1.5 s, pausa de 3 s y cierre de 1.5 s. El programa envía
+          muestras de la consigna aproximadamente cada 20 ms; la curva continua muestra el perfil ideal.</figcaption>
+      </figure>
+
+      <h3>Organizar la secuencia sin detener el programa</h3>
+
+      <p>Una <strong>máquina de estados</strong> representa una tarea mediante etapas y condiciones de
+        transición. Usaremos <code>INICIO</code> para la espera inicial, <code>LISTA</code> para admitir
+        una pulsación, <code>APERTURA</code> y <code>CIERRE</code> para los movimientos y
+        <code>PAUSA</code> para mantener la consigna superior. Las transiciones se deciden con
+        <code>millis()</code>, por lo que el programa puede seguir atendiendo entradas mientras avanza
+        el ciclo.</p>
+
+      <p>El contacto de un pulsador puede alternar varias veces al cerrarse. Para no interpretar ese
+        rebote como varias órdenes, el programa acepta un cambio de nivel solo después de 30 ms de
+        estabilidad. Una pulsación mantenida genera un único evento. Las pulsaciones recibidas durante
+        un ciclo se descartan, y para iniciar otro es necesario liberar el botón y volver a pulsarlo
+        cuando el sistema esté listo.</p>
+
+      <script type="text/cpp" data-source="servo-ejemplos/barrera/src/main.cpp">
+#include <Arduino.h>
+#include <ESP32Servo.h>
+#include <math.h>
+
+constexpr uint8_t PIN_SERVO = 18;
+constexpr uint8_t PIN_BOTON = 27;
+constexpr uint32_t PERIODO_MS = 20;
+constexpr uint32_t MOVIMIENTO_MS = 1500;
+constexpr uint32_t PAUSA_MS = 3000;
+constexpr uint32_t ANTIRREBOTE_MS = 30;
+
+// Valores ilustrativos: sustituir por la calibración del montaje.
+constexpr float ANGULO_MIN = 20.0f;
+constexpr float ANGULO_MAX = 100.0f;
+constexpr int PULSO_MIN_US = 1100;
+constexpr int PULSO_MAX_US = 1900;
+constexpr float CERRADA = 20.0f;
+constexpr float ABIERTA = 100.0f;
+
+enum class Estado { INICIO, LISTA, APERTURA, PAUSA, CIERRE };
+Estado estado = Estado::INICIO;
+Servo servo;
+uint32_t inicioEstado = 0;
+uint32_t ultimoControl = 0;
+uint32_t ultimoCambio = 0;
+bool lecturaAnterior = HIGH;
+bool nivelEstable = HIGH;
+int ultimoPulso = -1;
+
+int anguloAPulso(float grados) {
+    const float limitado = constrain(grados, ANGULO_MIN, ANGULO_MAX);
+    const float fraccion = (limitado - ANGULO_MIN) /
+                           (ANGULO_MAX - ANGULO_MIN);
+    return static_cast<int>(lroundf(
+        PULSO_MIN_US + fraccion * (PULSO_MAX_US - PULSO_MIN_US)));
+}
+
+bool nuevaPulsacion(uint32_t ahora) {
+    const bool lectura = digitalRead(PIN_BOTON);
+    if (lectura != lecturaAnterior) {
+        lecturaAnterior = lectura;
+        ultimoCambio = ahora;
+    }
+    if (static_cast<uint32_t>(ahora - ultimoCambio) >= ANTIRREBOTE_MS &&
+        lectura != nivelEstable) {
+        nivelEstable = lectura;
+        return nivelEstable == LOW;
+    }
+    return false;
+}
+
+float interpolar(float inicial, float final, uint32_t transcurrido) {
+    const float u = constrain(
+        static_cast<float>(transcurrido) / MOVIMIENTO_MS, 0.0f, 1.0f);
+    const float s = u * u * (3.0f - 2.0f * u);
+    return inicial + (final - inicial) * s;
+}
+
+void cambiarEstado(Estado siguiente, uint32_t ahora) {
+    estado = siguiente;
+    inicioEstado = ahora;
+    switch (estado) {
+        case Estado::LISTA:    Serial.println("Lista para un nuevo ciclo."); break;
+        case Estado::APERTURA: Serial.println("Consigna de apertura."); break;
+        case Estado::PAUSA:    Serial.println("Pausa programada."); break;
+        case Estado::CIERRE:   Serial.println("Consigna de cierre."); break;
+        default: break;
+    }
+}
+
+void setup() {
+    Serial.begin(115200);
+    pinMode(PIN_BOTON, INPUT_PULLUP);
+    servo.setPeriodHertz(50);
+    servo.setTimerWidth(16);
+    servo.attach(PIN_SERVO, 1000, 2000);
+    ultimoPulso = anguloAPulso(CERRADA);
+    servo.writeMicroseconds(ultimoPulso);
+    inicioEstado = millis();
+    ultimoControl = inicioEstado;
+}
+
+void loop() {
+    const uint32_t ahora = millis();
+    const bool pulsado = nuevaPulsacion(ahora);
+    const uint32_t transcurrido = ahora - inicioEstado;
+
+    switch (estado) {
+        case Estado::INICIO:
+            if (transcurrido >= 1000U) {
+                cambiarEstado(Estado::LISTA, ahora);
+            }
+            break;
+        case Estado::LISTA:
+            if (pulsado) {
+                cambiarEstado(Estado::APERTURA, ahora);
+            }
+            break;
+        case Estado::APERTURA:
+            if (transcurrido >= MOVIMIENTO_MS) {
+                cambiarEstado(Estado::PAUSA, ahora);
+            }
+            break;
+        case Estado::PAUSA:
+            if (transcurrido >= PAUSA_MS) {
+                cambiarEstado(Estado::CIERRE, ahora);
+            }
+            break;
+        case Estado::CIERRE:
+            if (transcurrido >= MOVIMIENTO_MS) {
+                cambiarEstado(Estado::LISTA, ahora);
+            }
+            break;
+    }
+
+    if (static_cast<uint32_t>(ahora - ultimoControl) < PERIODO_MS) {
+        return;
+    }
+    ultimoControl = ahora;
+    const uint32_t tiempoMovimiento = ahora - inicioEstado;
+    float consigna = CERRADA;
+    if (estado == Estado::APERTURA) {
+        consigna = interpolar(CERRADA, ABIERTA, tiempoMovimiento);
+    } else if (estado == Estado::PAUSA) {
+        consigna = ABIERTA;
+    } else if (estado == Estado::CIERRE) {
+        consigna = interpolar(ABIERTA, CERRADA, tiempoMovimiento);
+    }
+
+    const int pulsoUs = anguloAPulso(consigna);
+    if (pulsoUs != ultimoPulso) {
+        servo.writeMicroseconds(pulsoUs);
+        ultimoPulso = pulsoUs;
+    }
+}
+</script>
+
+      <p>La función <code>interpolar()</code> calcula el perfil cúbico y limita el tiempo normalizado
+        al intervalo de 0 a 1. Cada cambio de estado guarda un nuevo instante de referencia. La espera
+        inicial de un segundo permite separar el arranque de la primera orden del pulsador, pero no
+        garantiza que el servo ya haya llegado a la posición cerrada.</p>
+
+      <p>El programa mantiene la señal de mando durante la pausa y después del cierre. Así el servo
+        puede oponerse a una carga que intente mover el eje, dentro de su capacidad. Eliminar los pulsos
+        para reducir consumo no garantiza que el mecanismo conserve su posición. Una instalación real
+        también necesitaría confirmar posiciones, detectar obstáculos y definir qué ocurre ante una
+        falla de alimentación; este ejemplo está destinado a una maqueta de baja energía.</p>
+
+      <h2>Comprobar el resultado en el banco de trabajo</h2>
+
+      <p>La compilación verifica que el programa es compatible con las herramientas y bibliotecas
+        seleccionadas, pero no valida la calibración ni la capacidad mecánica. En una prueba de banco
+        conviene comenzar por el primer ejemplo y verificar con un osciloscopio o analizador lógico
+        que GPIO18 entrega el ancho solicitado, niveles lógicos compatibles con el servo y un periodo
+        cercano a 20 ms. Después se mide la posición
+        del eje y se comprueba que el recorrido útil queda dentro de los límites del mecanismo.</p>
+
+      <p>En el segundo ejemplo, gira lentamente el potenciómetro para revisar el sentido de avance y
+        luego haz un cambio rápido para observar la limitación de la consigna. En el tercero, una pulsación
+        debe producir un único ciclo, incluso si mantienes el botón presionado. Las curvas de la Figura 5
+        permiten anticipar el comportamiento solicitado; una medición angular externa permitiría compararlo
+        con la respuesta real.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 4. Síntomas frecuentes y comprobaciones útiles durante la puesta en marcha.">
+\begin{tabular}{ll}
+\hline
+Síntoma & Comprobación inicial \\
+\hline
+El ESP32 se reinicia al mover & Tensión bajo carga y retorno de corriente \\
+El servo gira continuamente & Variante de rotación continua o identificación errónea \\
+Vibra cerca de una posición & Alimentación, pulso, ruido del mando y holgura \\
+Zumba y no alcanza la posición & Obstáculo, tope o par insuficiente \\
+El ángulo difiere del solicitado & Calibración, referencia mecánica y carga \\
+El botón repite ciclos & Cableado, rebote y detección por nivel o por evento \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Un servo de rotación continua merece una interpretación distinta. En muchos modelos un pulso
+        cercano a 1500 microsegundos solicita reposo, y apartarse de él cambia el sentido y la rapidez,
+        con un punto de detención que requiere ajuste. No se puede pedir una vuelta exacta únicamente
+        a partir de ese pulso y un tiempo supuesto. Para medir desplazamiento angular acumulado hace
+        falta realimentación, por ejemplo mediante un encoder.</p>
+
+      <p>Si el proyecto requiere conocer la posición, corriente o temperatura del actuador, conviene
+        considerar una interfaz con telemetría. Si necesita un eje de uso continuo, alta rigidez o
+        una respuesta dinámica especificada, la selección debe hacerse como un servosistema completo,
+        incluyendo motor, transmisión, sensor, accionamiento y alimentación. Los principios de referencia,
+        realimentación y dimensionamiento siguen siendo los mismos, aunque la electrónica y el protocolo
+        de comunicación cambien.</p>
+
+      <h2>Archivos para reproducir las prácticas</h2>
+
+      <p>El paquete <a href="/drautomatica/html/servo-ejemplos.zip" download>servo-ejemplos.zip</a> contiene tres proyectos
+        independientes, cada uno con su configuración y su archivo <code>src/main.cpp</code>. Abre en
+        VS Code la carpeta <code>calibracion</code>, <code>potenciometro</code> o <code>barrera</code>,
+        según la práctica que quieras cargar. Los códigos mostrados en el artículo corresponden a esos
+        mismos archivos.</p>
+
+      <p>Los proyectos se verificaron por compilación para ESP32 con Espressif 32 6.12.0,
+        Arduino-ESP32 2.0.17 y ESP32Servo 1.1.1. Estas pruebas de software no sustituyen las mediciones de pulso, corriente, ángulo
+        y carga en el equipo real. Si se cambia a otra placa, hay que revisar la biblioteca compatible,
+        los pines, la resolución del convertidor analógico-digital y las tensiones de entrada y salida;
+        compartir el framework de Arduino no hace idéntico el hardware.</p>
+
+      <p>Las ilustraciones son esquemas y cálculos elaborados para este tutorial. El archivo
+        <a href="/drautomatica/html/servo-figuras.py" download><code>servo-figuras.py</code></a> las genera con NumPy y
+        Matplotlib. En particular, la gráfica de movimiento se obtiene de la ecuación cúbica usada
+        en el tercer ejemplo y no debe interpretarse como un registro experimental.</p>
+
+      <h2>Referencias</h2>
+      <ul class="references">
+        <li>Arduino. (2024). <em>Servo motor basics with Arduino</em>. Arduino Documentation.
+          <a href="https://docs.arduino.cc/learn/electronics/servo-motors/">Fundamentos y conexiones de servomotores</a>.</li>
+        <li>Espressif Systems. (2026). <em>ESP32-DevKitC V4</em>.
+          <a href="https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html">Guía de la placa, alimentación y asignación de pines</a>.</li>
+        <li>Espressif Systems. (2026). <em>ADC</em>. Arduino ESP32 Documentation.
+          <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/api/adc.html">Resolución, atenuación y lectura del convertidor analógico-digital</a>.</li>
+        <li>Harrington, K., y Bennett, J. K. (2023). <em>ESP32Servo</em> (versión 1.1.1) [Biblioteca de software].
+          <a href="https://registry.platformio.org/libraries/madhephaestus/ESP32Servo/versions">Versiones publicadas en el registro de PlatformIO</a>.</li>
+        <li>Jan. (2011). <em>Electrical characteristics of servos and introduction to the servo control interface</em>. Pololu.
+          <a href="https://www.pololu.com/blog/16/electrical-characteristics-of-servos-and-introduction-to-the-servo-control-interface">Características eléctricas de los servos RC</a>.</li>
+        <li>Jan. (2011). <em>Servo control interface in detail</em>. Pololu.
+          <a href="https://www.pololu.com/blog/17/servo-control-interface-in-detail">Ancho de pulso, periodo y calibración</a>.</li>
+        <li>PlatformIO. (2026). <em>PlatformIO IDE for VSCode</em>. PlatformIO Documentation.
+          <a href="https://docs.platformio.org/en/latest/integration/ide/vscode.html">Configuración y uso de PlatformIO en VS Code</a>.</li>
+        <li>PlatformIO. (2026). <em>Espressif ESP32 Dev Module</em>. PlatformIO Documentation.
+          <a href="https://docs.platformio.org/en/latest/boards/espressif32/esp32dev.html">Configuración de la placa ESP32</a>.</li>
+        <li>TowerPro. (2014). <em>SG90 Analog</em> [Especificaciones del fabricante].
+          <a href="https://towerpro.com.tw/product/sg90-analog/">Ficha del SG90 analógico</a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
