@@ -1,0 +1,1077 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Control de motores de CD: de la etapa analógica al puente H | drAutomática</title><meta name="description" content="Control de motores de corriente directa mediante amplificador push-pull con opamp, PWM y puente H. Diagramas y proyectos C++ para ESP32 y PlatformIO con TB6612FNG y VNH5019."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/motor/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Control de motores de CD: de la etapa analógica al puente H | drAutomática"><meta property="og:description" content="Control de motores de corriente directa mediante amplificador push-pull con opamp, PWM y puente H. Diagramas y proyectos C++ para ESP32 y PlatformIO con TB6612FNG y VNH5019."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/motor/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Control de motores de corriente directa mediante amplificador push-pull con opamp, PWM y puente H. Diagramas y proyectos C++ para ESP32 y PlatformIO con TB6612FNG y VNH5019."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Control de motores de CD: de la etapa analógica al puente H | drAutomática"><meta name="twitter:description" content="Control de motores de corriente directa mediante amplificador push-pull con opamp, PWM y puente H. Diagramas y proyectos C++ para ESP32 y PlatformIO con TB6612FNG y VNH5019."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="cpp,shell,text" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell"><article class="article-inner">
+  <header class="article-header">
+    <p class="article-kicker">Actuadores y electrónica de potencia</p>
+    <h1>Control de motores de CD: de la etapa analógica al puente H</h1>
+    <p class="subtitle">Tensión, corriente y sentido de giro, con circuitos analógicos y proyectos para ESP32</p>
+    <div class="article-meta"><span><strong>Ildeberto de los Santos Ruiz</strong></span><span>Noviembre, 2026</span></div>
+  </header>
+
+  <section class="abstract">
+    <p>Gobernar un motor de corriente directa requiere relacionar la orden del controlador con la
+      tensión y la corriente que recibe el devanado. Esa relación determina el par, la velocidad,
+      el calentamiento y la respuesta ante una carga. Este tutorial desarrolla el modelo de un motor
+      con escobillas e imanes permanentes y estudia tres recursos para accionarlo: un amplificador
+      lineal con opamp y transistores complementarios, la modulación por ancho de pulso y el puente H.
+      A partir de esos fundamentos se construyen ejemplos en C++ para ESP32 y PlatformIO, desde
+      un MOSFET para giro unidireccional hasta módulos TB6612FNG y VNH5019 para motores de distinta
+      capacidad de corriente. También se explican la inversión del giro, el frenado, la selección
+      de la etapa de potencia y la diferencia entre ordenar una tensión y regular una velocidad.</p>
+  </section>
+
+  <h2>Qué significa controlar un motor de corriente directa</h2>
+
+  <p>Una banda transportadora debe mantener su avance cuando recibe una pieza; la rueda de un robot
+    necesita arrancar, cambiar su esfuerzo e invertir el giro; una bomba dosificadora debe responder
+    de manera reproducible a una orden. En todas estas aplicaciones, el motor convierte energía
+    eléctrica en movimiento, pero el resultado depende tanto de la carga como de la electrónica
+    que lo alimenta. Por ello, antes de elegir un circuito o escribir un programa conviene distinguir
+    qué magnitud se desea modificar y cuál se puede medir.</p>
+
+  <p>Un <strong>motor de corriente directa</strong>, abreviado CD o DC por la expresión inglesa
+    <em>direct current</em>, puede construirse de distintas maneras. Aquí estudiaremos el motor
+    <strong>con escobillas e imanes permanentes</strong>, habitual en pequeños accionamientos y
+    motorreductores. Su estator, la parte fija, proporciona el campo magnético, mientras que el rotor
+    contiene devanados que producen un par o esfuerzo de giro al circular corriente. Las escobillas
+    y el conmutador cambian internamente la conexión de esos devanados conforme gira el eje,
+    de modo que el par mantenga su sentido.</p>
+
+  <p>El motor presenta dos terminales de potencia. Invertir la corriente de armadura invierte el par,
+    aunque un rotor que ya está girando primero debe desacelerar antes de cambiar de sentido.
+    Esta descripción corresponde al motor de imanes permanentes; un motor sin escobillas o BLDC
+    necesita conmutación electrónica de sus fases, y un motor con devanado de campo requiere
+    considerar también cómo se alimenta ese campo.</p>
+
+  <p>La <strong>etapa de potencia</strong>, también llamada <em>driver</em>, recibe una orden de baja potencia y entrega al motor la
+    energía procedente de una fuente. El microcontrolador establece esa orden, pero sus terminales
+    no suministran la corriente del devanado. Estudiaremos primero una etapa analógica que reproduce
+    una tensión continua, después la conmutación por PWM y finalmente el puente H que permite
+    aplicar ambas polaridades con una sola fuente. El PWM puede utilizarse dentro de un puente H;
+    uno describe la modulación temporal y el otro la disposición de los interruptores de potencia.</p>
+
+  <h2>La tensión produce corriente y la corriente produce par</h2>
+
+  <p>Para comprender el efecto de cada etapa necesitamos un modelo del motor. La
+    <a href="#fig-motor-modelo">Figura 1</a> representa la armadura, el conjunto de devanados del rotor,
+    mediante su resistencia
+    \(R_a\), su inductancia \(L_a\) y una tensión inducida \(e\). La inductancia expresa la
+    oposición a cambios rápidos de corriente; la tensión inducida aparece al girar el rotor y se
+    denomina <strong>fuerza contraelectromotriz</strong>. Tomando una polaridad de referencia para
+    la tensión \(v_a\) y la corriente \(i_a\), la ecuación eléctrica es</p>
+
+  <div class="equation">\[
+    v_a(t)=R_a i_a(t)+L_a\frac{\mathrm{d}i_a}{\mathrm{d}t}+K_e\omega(t),
+    \qquad e(t)=K_e\omega(t).
+  \]</div>
+
+  <p>La velocidad angular \(\omega\) se expresa en radianes por segundo y \(K_e\) relaciona esa
+    velocidad con la tensión inducida. Si el flujo de los imanes permanece aproximadamente constante,
+    el par electromagnético es proporcional a la corriente,</p>
+
+  <div class="equation">\[
+    \tau_m=K_t i_a,\qquad
+    J\frac{\mathrm{d}\omega}{\mathrm{d}t}=K_t i_a-b\omega-\tau_L,
+    \qquad \frac{\mathrm{d}\theta}{\mathrm{d}t}=\omega.
+  \]</div>
+
+  <p>Aquí \(K_t\) es la constante de par, \(J\) la inercia equivalente referida al eje,
+    \(b\) un coeficiente de rozamiento viscoso, \(\tau_L\) el par de carga y \(\theta\) la posición
+    angular. El signo de \(\tau_L\) debe corresponder al convenio elegido; en los ejemplos de giro
+    positivo se toma como un esfuerzo resistente. En unidades SI coherentes, \(K_t\) y \(K_e\)
+    tienen el mismo valor numérico, aunque sus unidades son distintas.</p>
+
+  <figure id="fig-motor-modelo">
+    <img src="/drautomatica/html/motor-modelo.png" alt="Circuito equivalente de armadura relacionado con el rotor y la carga, representados como un cilindro cuyo giro se indica mediante un arco con flecha y la velocidad angular omega."
+      style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 1. Modelo eléctrico y mecánico de un motor de CD con imanes permanentes.
+      La tensión inducida depende de la velocidad y el par depende de la corriente.</figcaption>
+  </figure>
+
+  <p>Cuando la velocidad y la corriente se estabilizan, las derivadas se anulan. Sustituyendo la
+    ecuación mecánica en la eléctrica obtenemos</p>
+
+  <div class="equation">\[
+    \omega_{\mathrm{est}}=
+    \frac{K_t v_a-R_a\tau_L}{R_a b+K_tK_e}.
+  \]</div>
+
+  <p>Esta expresión muestra por qué una tensión constante no garantiza una velocidad constante.
+    Si aumenta el par resistente, la velocidad disminuye; al disminuir la fuerza contraelectromotriz,
+    aumenta la corriente y el motor desarrolla más par. Para recuperar exactamente la velocidad
+    anterior debe modificarse la tensión aplicada mediante un controlador que utilice una medición
+    del movimiento.</p>
+
+  <h3>El arranque y el bloqueo fijan exigencias diferentes</h3>
+
+  <p>Al arrancar, \(\omega=0\) y la fuerza contraelectromotriz todavía no limita la corriente.
+    Esta no salta instantáneamente porque existe inductancia, pero puede crecer con rapidez.
+    Si el eje permanece bloqueado y se aplica una tensión constante, el modelo conduce a</p>
+
+  <div class="equation">\[
+    I_{\mathrm{bloqueo}}\approx\frac{V_a}{R_a},\qquad
+    P_{\mathrm{cobre}}=I_{\mathrm{RMS}}^2R_a.
+  \]</div>
+
+  <p>La primera relación omite las caídas en escobillas y conexiones; la segunda expresa el
+    calentamiento resistivo, con \(I_{\mathrm{RMS}}\) como valor eficaz de corriente. Un motor
+    que consume 200 mA girando libremente puede requerir mucho más durante el arranque o un atasco.
+    La corriente sin carga sirve para caracterizar pérdidas, pero la selección del driver debe
+    considerar también corriente de trabajo, arranque, bloqueo y duración de cada condición.</p>
+
+  <h2>Control analógico con opamp y transistores complementarios</h2>
+
+  <p>Una forma de modificar \(v_a\) consiste en utilizar un amplificador de potencia lineal.
+    Su salida sigue de manera continua una señal de mando \(v_c\), sin conmutar intencionalmente
+    entre dos niveles. Un <strong>amplificador operacional</strong>, u opamp, puede comparar tensiones
+    con precisión, pero su corriente de salida suele ser insuficiente para un motor. Una pareja
+    de transistores complementarios permite aumentar esa capacidad de corriente.</p>
+
+  <p>La <a href="#fig-motor-pushpull">Figura 2</a> combina un transistor NPN BD139 y un PNP BD140
+    en una etapa <em>push-pull</em>. El NPN proporciona corriente desde el riel positivo y el PNP
+    permite extraerla hacia el negativo. Sus emisores se conectan al nodo de salida mediante
+    resistencias de \(0.47\ \Omega\). El otro terminal del motor permanece a masa, por lo que
+    una alimentación simétrica permite aplicar tensiones positivas o negativas al devanado.</p>
+
+  <p>Cada transistor bipolar tiene una base, un colector y un emisor. La base recibe la excitación
+    del opamp y permite controlar una corriente mayor entre colector y emisor. En este montaje,
+    los colectores van a los rieles de alimentación y los emisores entregan la corriente al nodo
+    del motor; la pareja amplifica la capacidad de corriente de la salida del opamp.</p>
+
+  <figure id="fig-motor-pushpull">
+    <img src="/drautomatica/html/motor-pushpull.png" alt="Amplificador no inversor con opamp OPA197, transistores complementarios BD139 y BD140, realimentación desde la salida, resistencias de emisor y diodos de protección."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 2. Etapa lineal de principio para ensayos de baja corriente. El lazo de
+      realimentación conecta la salida \(v_a\), después de los transistores y de las resistencias
+      de emisor, con la entrada inversora mediante \(R_f\). Los rieles de ±9 V y la masa
+      corresponden a una fuente simétrica.</figcaption>
+  </figure>
+
+  <p>La conexión de realimentación es decisiva. El opamp compara \(v_c\), en su entrada no inversora,
+    con una fracción de la tensión que realmente recibe el motor. Ajusta la excitación de las bases
+    hasta aproximar ambas entradas. Mientras el conjunto conserva margen de tensión, corriente y
+    estabilidad, la ganancia resulta</p>
+
+  <div class="equation">\[
+    v_a\approx\left(1+\frac{R_f}{R_g}\right)v_c.
+  \]</div>
+
+  <p>Con \(R_f=R_g=10\ \mathrm{k\Omega}\), una orden de \(+2\) V solicita aproximadamente \(+4\) V
+    al motor y una de \(-2\) V solicita \(-4\) V. La potencia procede de los rieles de ±9 V;
+    la entrada de mando solo entrega una señal. Las resistencias de base de 100 Ω limitan corrientes
+    transitorias y ayudan a desacoplar las bases de la salida del opamp.</p>
+
+  <p>Esta realimentación regula la tensión de salida, pero no mide el eje. Aunque \(v_a\) siga
+    correctamente a su consigna, la velocidad todavía puede cambiar cuando varía la carga,
+    como mostró el modelo del motor. Para regular el movimiento se necesita un lazo que incluya
+    esa medición.</p>
+
+  <h3>Qué ocurre al cruzar por cero</h3>
+
+  <p>Un transistor bipolar necesita cierta tensión entre base y emisor antes de conducir de manera
+    apreciable. Con las bases excitadas conjuntamente, alrededor de cero puede existir un intervalo
+    en el que ninguno conduce con suficiente corriente. Esta <strong>distorsión de cruce</strong>
+    es característica de la etapa clase B. La realimentación tomada desde \(v_a\) permite que el
+    opamp compense buena parte de esa caída; tomarla antes de los transistores dejaría sus errores
+    fuera del lazo.</p>
+
+  <p>La corrección no vuelve ideal al circuito. La ganancia y el ancho de banda del opamp son finitos,
+    el motor introduce una carga inductiva y las capacitancias de los transistores afectan la
+    estabilidad. En una implementación deben comprobarse las formas de onda y la compensación
+    con la carga real. También puede utilizarse una polarización clase AB para reducir el cruce,
+    pero esa modificación requiere controlar la corriente de reposo y su variación térmica;
+    no basta con agregar diodos sin revisar el diseño.</p>
+
+  <h3>Corriente de base, disipación y protección</h3>
+
+  <p>La corriente del motor exige corriente de base al opamp. Si \(\beta\) es la ganancia de corriente
+    del transistor activo, una estimación inicial es \(I_B\approx I_a/\beta\), empleando un valor
+    conservador de \(\beta\), no uno típico favorable. El OPA197 admite alimentación de ±9 V,
+    pero ni su capacidad de salida ni los máximos absolutos de los BD139/BD140 equivalen a una
+    especificación de corriente continua del circuito completo.</p>
+
+  <p>Como banco inicial puede considerarse un motor cuya corriente a las tensiones de ensayo no
+    supere unos 150 mA de trabajo y 200 mA de bloqueo, con limitación de corriente en la fuente.
+    Son condiciones propuestas para el ensayo, no prestaciones garantizadas de cualquier montaje.
+    Deben revisarse el área de operación segura de los transistores, la temperatura, la capacidad
+    de excitación de U1 y el margen de salida bajo carga.</p>
+
+  <p>En giro positivo y con corriente positiva, la disipación aproximada del transistor superior es</p>
+
+  <div class="equation">\[
+    P_{Q1}\approx(V_+-v_a)I_a.
+  \]</div>
+
+  <p>Con \(V_+=9\) V, \(v_a=4\) V e \(I_a=0.15\) A, se disipan aproximadamente 0.75 W en ese
+    transistor, mientras el motor recibe 0.60 W eléctricos. El caso negativo es análogo para Q2.
+    El encapsulado y el disipador deben evacuar ese calor. La eficiencia disminuye especialmente
+    cuando la tensión del motor es pequeña frente a la alimentación y la corriente sigue siendo alta.</p>
+
+  <p>D1 y D2 ofrecen caminos hacia los rieles para las excursiones inductivas de la salida; D3 y D4
+    limitan la polarización inversa entre base y emisor. Cada riel necesita desacoplamiento local,
+    por ejemplo 100 nF junto al opamp y capacidad de reserva junto a la etapa de potencia. Si el
+    motor devuelve energía, la fuente y los condensadores deben poder absorberla o debe existir
+    un circuito de limitación del riel. Estos diodos no constituyen un limitador de corriente del motor.</p>
+
+  <p>Para gobernar esta etapa desde un ESP32 hace falta acondicionar la señal analógica. El
+    convertidor digital-analógico, o DAC, del ESP32 clásico entrega una tensión unipolar;
+    no produce directamente una orden negativa.
+    Una etapa de desplazamiento y escala puede generar, por ejemplo,
+    \(v_c=k(v_{\mathrm{DAC}}-V_{\mathrm{ref}})\). La referencia y la ganancia se eligen según el
+    recorrido deseado y se calibra el cero. Por esa necesidad de acondicionamiento y por las pérdidas
+    de la etapa lineal, resulta útil estudiar una alternativa basada en conmutación.</p>
+
+  <h2>PWM para modificar la tensión media</h2>
+
+  <p>La <strong>modulación por ancho de pulso</strong>, o PWM, conmuta la alimentación rápidamente
+    y modifica la fracción de tiempo durante la que se aplica. Si el periodo es \(T\), el tiempo
+    de conducción es \(t_{\mathrm{on}}\) y la frecuencia es \(f\), definimos el ciclo de trabajo
+    \(D\) mediante</p>
+
+  <div class="equation">\[
+    D=\frac{t_{\mathrm{on}}}{T},\qquad f=\frac{1}{T},\qquad 0\leq D\leq1.
+  \]</div>
+
+  <p>Cuando la tensión conmuta idealmente entre \(V_s\) y cero durante un periodo completo,</p>
+
+  <div class="equation">\[
+    \overline{v_a}=D V_s.
+  \]</div>
+
+  <p>Así, una alimentación de 6 V con \(D=0.5\) produce una tensión media ideal de 3 V, pero la
+    tensión instantánea sigue siendo pulsante. La inductancia suaviza la corriente y la inercia
+    suaviza la velocidad, en grados que dependen del motor y de la frecuencia. El par medio depende
+    de la corriente media, mientras que el calentamiento resistivo depende de su valor eficaz;
+    por eso también interesa cuánto oscila la corriente dentro de cada periodo. La
+    <a href="#fig-motor-pwm">Figura 3</a> muestra esas diferencias con señales y corrientes calculadas.</p>
+
+  <figure id="fig-motor-pwm">
+    <img src="/drautomatica/html/motor-pwm.png" alt="Tres ciclos de trabajo PWM con su tensión media ideal y la corriente calculada de una carga de motor con resistencia, inductancia y fuerza contraelectromotriz."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 3. A la izquierda se idealiza la tensión PWM entre 0 y 6 V. A la derecha se
+      calcula la corriente con un diodo ideal de rueda libre, \(R_a=4\ \Omega\), \(L_a=1\) mH,
+      \(e=2\) V y 20 kHz. Con un ciclo pequeño, la corriente puede extinguirse antes del pulso
+      siguiente; en ese intervalo la tensión del motor no está fijada por un interruptor conductor.</figcaption>
+  </figure>
+
+  <p>La aproximación \(\overline{v_a}=DV_s\) debe relacionarse con el circuito utilizado. Durante la
+    recirculación por un diodo, la tensión puede ser ligeramente negativa; si se abre el circuito
+    después de extinguirse la corriente, el motor conserva su fuerza contraelectromotriz. También
+    existen caídas en transistores y cables. El valor medio ideal explica la modulación, pero no
+    sustituye el análisis de los caminos de corriente.</p>
+
+  <p>La frecuencia y el ciclo de trabajo son decisiones distintas. Aumentar \(D\) modifica la
+    tensión media; aumentar \(f\) reduce el tiempo disponible para que cambie la corriente, aunque
+    eleva las pérdidas de conmutación. En estos ejemplos se utilizan 20 kHz, compatibles con las
+    etapas elegidas. El comportamiento acústico y térmico debe comprobarse en el montaje; el motor
+    puede producir vibraciones audibles aunque la frecuencia portadora sea elevada.</p>
+
+  <h2>Un MOSFET para mover el motor en un solo sentido</h2>
+
+  <p>La forma más sencilla de aplicar ese PWM es colocar un MOSFET de canal N entre el motor y
+    el negativo de la fuente, como en la <a href="#fig-motor-mosfet">Figura 4</a>. Se denomina
+    conmutación de lado bajo. El motor recibe energía al conducir Q1 y su corriente puede continuar
+    por el diodo de rueda libre cuando Q1 se apaga. La carga queda unida al positivo de la fuente,
+    por lo que este circuito permite regular la excitación en un solo sentido.</p>
+
+  <figure id="fig-motor-mosfet">
+    <img src="/drautomatica/html/motor-mosfet.png" alt="MOSFET AO3400A de lado bajo con motor de 6 V, resistencia de puerta, resistencia de descarga, diodo SS34 de rueda libre y desacoplamiento de alimentación."
+      style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 4. Etapa PWM unidireccional. El cátodo del SS34 va al positivo de la fuente
+      y el ánodo al drenador. C1 y C2 se conectan en paralelo, próximos
+      a la etapa. La puerta recibe la señal; la corriente del motor circula por drenador y fuente.</figcaption>
+  </figure>
+
+  <p>Se propone un AO3400A montado en una placa adaptadora apropiada y un motor de ensayo de 6 V
+    cuya corriente de bloqueo no supere 0.5 A. La tensión entre puerta G y fuente S controla
+    la conducción entre drenador D y fuente S. Su hoja de datos especifica resistencia de conducción
+    con \(V_{GS}=2.5\) V, lo que permite evaluar su uso desde lógica de 3.3 V. El valor
+    \(V_{GS(\mathrm{th})}\), llamado tensión umbral, solo indica el comienzo de conducción a una
+    corriente de prueba pequeña; no demuestra que un MOSFET esté completamente encendido.</p>
+
+  <p>La resistencia de 220 Ω limita los picos de carga de puerta y la de 47 kΩ mantiene Q1 apagado
+    cuando el GPIO está en alta impedancia. El SS34 debe soportar la corriente de recirculación y
+    la tensión inversa del montaje. Como punto inicial se añaden 100 µF y 100 nF entre alimentación
+    y masa, con tensión nominal adecuada y conexiones cortas. La capacidad final se determina
+    observando los transitorios de la fuente.</p>
+
+  <p>La pérdida de conducción del MOSFET puede aproximarse por
+    \(P_{\mathrm{cond}}=I_{Q,\mathrm{RMS}}^2R_{DS(\mathrm{on})}\); a ella se suman las pérdidas de
+    conmutación. La cifra de corriente del encapsulado no garantiza la capacidad de una placa
+    adaptadora. Para corrientes o cargas de puerta mayores se utiliza un driver de puerta y una
+    etapa dimensionada para esa condición, en lugar de cargar directamente el GPIO.</p>
+
+  <h2>El puente H permite invertir la polaridad</h2>
+
+  <p>Para obtener ambos sentidos con una sola fuente debemos cambiar qué terminal del motor se
+    conecta al positivo y cuál al negativo. El <strong>puente H</strong> dispone cuatro interruptores
+    alrededor de la carga. En la <a href="#fig-motor-puente">Figura 5</a>, S1 y S2 pertenecen a
+    una rama y S3 y S4 a la otra; el motor se conecta entre los puntos medios A y B.</p>
+
+  <figure id="fig-motor-puente">
+    <img src="/drautomatica/html/motor-puente-h.png" alt="Tres estados de un puente H ideal: alimentación del motor con polaridad positiva, polaridad negativa y frenado con los dos interruptores inferiores cerrados."
+      style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 5. Estados de un puente H representado con interruptores ideales. Las
+      flechas de los estados de alimentación indican la referencia de corriente de cada sentido.
+      Un puente real necesita circuitos de excitación y caminos de recirculación.</figcaption>
+  </figure>
+
+  <p>Al cerrar S1 y S4 se aplica una polaridad, y al cerrar S3 y S2 se aplica la contraria. El PWM
+    puede alternar un estado de alimentación con uno de recirculación. Los MOSFET de potencia
+    incluyen diodos de cuerpo, y los drivers pueden utilizar conducción síncrona para que la
+    corriente recircule por transistores encendidos y reduzca pérdidas.</p>
+
+  <p>Encender simultáneamente los dos interruptores de una misma rama crea un camino directo entre
+    los rieles, denominado conducción cruzada. Un driver de puente debe coordinar las compuertas
+    e introducir un <strong>tiempo muerto</strong>, el intervalo eléctrico durante el cual ambos
+    dispositivos de esa rama permanecen apagados al conmutar. Este intervalo es diferente del
+    tiempo que necesita el mecanismo para detenerse antes de invertir el movimiento.</p>
+
+  <h3>Giro libre, frenado y devolución de energía</h3>
+
+  <p>Con todos los interruptores abiertos, las salidas quedan en <strong>alta impedancia</strong>:
+    el puente deja de imponerles una tensión, aunque la corriente inductiva todavía pueda circular
+    transitoriamente por sus diodos. Después, el motor gira libremente y pierde velocidad por sus
+    pérdidas y la carga. Al unir ambos terminales mediante los interruptores inferiores se obtiene
+    <strong>frenado dinámico</strong>; la tensión generada por el giro produce una corriente que
+    se opone al movimiento y disipa energía en el devanado y en el puente.</p>
+
+  <p>El frenado dinámico no fija una posición como lo haría un freno mecánico. Su acción disminuye
+    al reducirse la velocidad. El <strong>frenado regenerativo</strong> implica devolver energía
+    a la alimentación mediante estados y caminos apropiados. Si una fuente de laboratorio no
+    absorbe esa corriente, su tensión puede elevarse; el condensador del bus y, cuando corresponda,
+    un circuito de frenado deben manejar esa energía.</p>
+
+  <p>Por ello, no debe agregarse un único diodo en paralelo con un motor bidireccional como se hizo
+    en la Figura 4: conduciría al aplicar una de las polaridades. En un puente H se utiliza la red
+    de recirculación correspondiente a sus dos ramas. Tampoco basta con cambiar bruscamente DIR.
+    Mientras el motor gira, invertir la tensión suma el efecto de la fuente y la fuerza
+    contraelectromotriz sobre la corriente; primero deben reducirse la excitación y el movimiento.</p>
+
+  <h2>Elegir un módulo según el motor y su ciclo de trabajo</h2>
+
+  <p>Los módulos integrados reúnen los interruptores, su excitación y diversas protecciones. Para
+    comparar dos capacidades de corriente utilizaremos el TB6612FNG en la placa portadora,
+    o <em>carrier</em>, Pololu #713 y el VNH5019 en el carrier Pololu #1451.
+    La tabla 1 corresponde a esas placas documentadas;
+    otros módulos con el mismo integrado pueden tener distinta refrigeración, protecciones o
+    conexiones auxiliares.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 1. Dos módulos de referencia para motores con necesidades de corriente diferentes.">
+\begin{tabular}{lll}
+\hline
+Característica & TB6612FNG, carrier 713 & VNH5019, carrier 1451 \\
+\hline
+Puentes H & Dos & Uno \\
+Alimentación de motor & 4.5 a 13.5 V recomendados & 5.5 a 24 V \\
+Corriente continua publicada & 1 A por canal & 12 A \\
+Corriente pico publicada & 3 A por canal & 30 A \\
+Lógica usada en el tutorial & VCC de 3.3 V & VDD de 3.3 V \\
+PWM del ejemplo & 20 kHz & 20 kHz \\
+Información adicional & STBY para espera & Diagnóstico y salida de corriente \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>La corriente pico se admite durante condiciones y tiempos limitados; no reemplaza la corriente
+    continua ni especifica por sí sola cuánto dura un arranque. Incluso la corriente continua
+    publicada depende de la temperatura y de la evacuación de calor. La potencia admisible tampoco
+    se obtiene multiplicando sin más las máximas cifras de tensión y corriente de una publicación.</p>
+
+  <p>El TB6612FNG resulta adecuado para la práctica con un motor pequeño de 6 V cuya corriente de
+    bloqueo permanezca por debajo de 0.7 A. Para el VNH5019 consideraremos un motor de 12 V que
+    requiera, por ejemplo, 2 A durante el trabajo y hasta 6 A al arrancar. Estos valores definen
+    escenarios de selección, no identifican un modelo comercial concreto. En el segundo caso,
+    fuente, conductores, conectores y protección de rama deben manejar ese arranque y la energía
+    de la carga.</p>
+
+  <p>El VNH5019 permite estudiar una etapa de mayor potencia que el TB6612FNG, pero su protección
+    interna no es un regulador ajustado a la corriente nominal de cualquier motor. Un devanado puede
+    sobrecalentarse con una corriente que todavía sea admisible para el puente. Cuando se necesita
+    limitar el par o proteger el motor frente a un atasco, se mide la corriente y se establece un
+    límite apropiado, mediante un circuito o un accionamiento que incorpore esa función.</p>
+
+  <section class="remark"><p>La comparación con módulos antiguos como el L298N debe incluir su caída
+    de tensión y su disipación. Un puente con transistores bipolares puede perder una fracción
+    importante de la alimentación en motores de baja tensión. La elección se hace con las
+    características de la etapa y del motor, además de su disponibilidad.</p></section>
+
+  <h2>Preparar el ESP32 y los programas en PlatformIO</h2>
+
+  <p>Conocidas las etapas de potencia, podemos programar la señal de mando. Los tres proyectos
+    utilizan una ESP32-DevKitC con ESP32-WROOM-32E y la placa <code>esp32dev</code>, el framework
+    de Arduino y el monitor serial a 115200 bit/s. En VS Code se instala PlatformIO IDE y se abre
+    la carpeta de un proyecto. La fuente del motor es externa; el ESP32 se alimenta por USB y
+    comparte la referencia GND con la etapa mediante un cableado que evita que la corriente del
+    motor circule por la placa de control.</p>
+
+  <p>El archivo <code>platformio.ini</code> fija Espressif 32 6.12.0, que utiliza Arduino-ESP32 2.0.17.
+    Los programas emplean la API LEDC de esa versión. Arduino-ESP32 3.x cambió las funciones de
+    configuración, por lo que sus ejemplos no deben mezclarse sin adaptar las llamadas.</p>
+
+  <script type="text/text" data-source="motor-ejemplos/pwm-mosfet/platformio.ini">
+[env:esp32dev]
+platform = espressif32@6.12.0
+board = esp32dev
+framework = arduino
+monitor_speed = 115200
+</script>
+
+  <p>Cada proyecto tiene <code>src/main.cpp</code> y dos archivos comunes dentro de
+    <code>include</code>. <code>PwmCD.h</code> genera la señal y <code>MandoCD.h</code> recibe
+    órdenes y limita su rapidez de cambio. Las tres carpetas son programas independientes y
+    no se concatenan sus archivos principales.</p>
+
+  <h3>Generar PWM por hardware</h3>
+
+  <p>El periférico LEDC del ESP32 mantiene los pulsos sin que el programa tenga que esperar cada
+    encendido y apagado. Usaremos GPIO25, frecuencia de 20 kHz y resolución de 11 bits.
+    Los GPIO son terminales programables de entrada y salida; su número no representa su posición
+    física en el conector. HIGH y LOW designan sus niveles lógicos alto y bajo.
+    Con \(N\) bits, la cuenta máxima utilizada por el programa y la
+    conversión de una orden \(m\) entre −1000 y 1000 son</p>
+
+  <div class="equation">\[
+    q_{\max}=2^N-1=2047,\qquad
+    D\approx\frac{q}{q_{\max}},\qquad
+    q=\operatorname{redondear}\!\left(\frac{|m|}{1000}q_{\max}\right).
+  \]</div>
+
+  <p>El signo se reserva para el sentido de giro y la magnitud para el ciclo de trabajo. En el
+    montaje unidireccional solo se aceptan órdenes positivas. Este es el contenido de
+    <code>include/PwmCD.h</code>.</p>
+
+  <script type="text/cpp" data-source="motor-ejemplos/pwm-mosfet/include/PwmCD.h">
+#pragma once
+#include <Arduino.h>
+
+// API LEDC de Arduino-ESP32 2.0.17, fijada en platformio.ini.
+constexpr uint8_t PIN_PWM = 25;
+constexpr uint8_t CANAL_PWM = 0;
+constexpr uint32_t FRECUENCIA_PWM = 20000;
+constexpr uint8_t BITS_PWM = 11;
+constexpr uint32_t CUENTA_MAX = (1u << BITS_PWM) - 1;
+
+inline void prepararPWM() {
+    digitalWrite(PIN_PWM, LOW);
+    pinMode(PIN_PWM, OUTPUT);
+    ledcSetup(CANAL_PWM, FRECUENCIA_PWM, BITS_PWM);
+    ledcAttachPin(PIN_PWM, CANAL_PWM);
+    ledcWrite(CANAL_PWM, 0);
+}
+inline void escribirPWM(int mando) {
+    const uint32_t magnitud = static_cast<uint32_t>(abs(constrain(mando, -1000, 1000)));
+    const uint32_t cuenta = (magnitud * CUENTA_MAX + 500u) / 1000u;
+    ledcWrite(CANAL_PWM, cuenta);
+}
+</script>
+
+  <p><code>prepararPWM()</code> establece la salida y su cuenta inicial en cero.
+    <code>escribirPWM()</code> transforma la orden normalizada en una cuenta LEDC. La salida es
+    lógica de 3.3 V: el nivel alto del GPIO no es la tensión que alimenta al motor. La fuente y
+    el transistor o el puente realizan esa conversión de potencia.</p>
+
+  <h3>Recibir consignas y cambiar gradualmente la excitación</h3>
+
+  <p>Una <strong>consigna</strong> es el valor que deseamos aplicar al mando. El monitor serial
+    recibirá un entero seguido de Enter, con la terminación de línea configurada como LF o CRLF.
+    La letra <code>x</code>, también seguida de Enter, desactiva la salida. El programa conserva
+    una consigna hasta recibir otra; cerrar el monitor no constituye una orden de parada.</p>
+
+  <p>El siguiente archivo evita esperar una línea completa dentro de una función bloqueante.
+    <code>MandoCD</code> examina un número limitado de caracteres en cada llamada y valida el
+    intervalo permitido. <code>RampaCD</code> cambia la orden como máximo 10 unidades cada 10 ms,
+    de modo que pasar de cero a 1000 requiere aproximadamente un segundo. Una entrada
+    <code>0</code> solicita esa reducción gradual; <code>x</code> lleva inmediatamente el mando
+    a cero cuando se procesa la línea.</p>
+
+  <p>Si se solicita el sentido contrario, primero se reduce la orden a cero y se dejan transcurrir
+    al menos 500 ms antes de excitar el sentido nuevo. Esa pausa es un parámetro de la práctica:
+    debe verificarse con un motor desacoplado que el mecanismo se detiene en ese tiempo. Para una
+    carga que tarde más se amplía el intervalo o se confirma la parada con un sensor. Una rampa
+    de PWM tampoco impone una aceleración mecánica determinada, porque todavía no se mide la velocidad.</p>
+
+  <script type="text/cpp" data-source="motor-ejemplos/pwm-mosfet/include/MandoCD.h">
+#pragma once
+#include <Arduino.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+// Una línea contiene un entero o la letra x. No espera datos del puerto.
+class MandoCD {
+public:
+    enum class Evento { Ninguno, Consigna, Parar, Invalido };
+    explicit MandoCD(int minimo) : minimo_(minimo) {}
+    Evento leer(int& valor) {
+        for (uint8_t n = 0; n < 32 && Serial.available(); ++n) {
+            const char c = static_cast<char>(Serial.read());
+            if (c == '\r') continue;
+            if (c != '\n') {
+                if (usados_ + 1 < sizeof(linea_)) linea_[usados_++] = c;
+                else desborde_ = true;
+                continue;
+            }
+            linea_[usados_] = '\0';
+            const bool mala = desborde_;
+            usados_ = 0;
+            desborde_ = false;
+            if (mala) return Evento::Invalido;
+            if (linea_[0] == '\0') continue;
+            if (linea_[0] == 'x' && linea_[1] == '\0') return Evento::Parar;
+            const char* inicio = linea_;
+            if (*inicio == '+' || *inicio == '-') ++inicio;
+            if (!isdigit(static_cast<unsigned char>(*inicio))) return Evento::Invalido;
+            for (const char* p = inicio; *p; ++p)
+                if (!isdigit(static_cast<unsigned char>(*p))) return Evento::Invalido;
+            char* fin = nullptr;
+            const long numero = strtol(linea_, &fin, 10);
+            if (*fin || numero < minimo_ || numero > 1000) return Evento::Invalido;
+            valor = static_cast<int>(numero);
+            return Evento::Consigna;
+        }
+        return Evento::Ninguno;
+    }
+private:
+    int minimo_;
+    char linea_[16] = {};
+    uint8_t usados_ = 0;
+    bool desborde_ = false;
+};
+
+class RampaCD {
+public:
+    void solicitar(int valor) { objetivo_ = constrain(valor, -1000, 1000); }
+    void parar(uint32_t ahora) {
+        if (actual_ != 0) desdeCero_ = ahora;
+        actual_ = objetivo_ = 0;
+        ultimo_ = ahora;
+    }
+    int actualizar(uint32_t ahora) {
+        if (ahora - ultimo_ < 10) return actual_;
+        ultimo_ = ahora;
+        int meta = objetivo_;
+        if (actual_ != 0 && signo(actual_) * signo(meta) < 0) meta = 0;
+        if (actual_ == 0 && signo(meta) != 0 && ultimoSentido_ != 0 &&
+            signo(meta) != ultimoSentido_ && ahora - desdeCero_ < PAUSA_MS)
+            return 0;
+        const int anterior = actual_;
+        if (actual_ < meta) actual_ = min(actual_ + 10, meta);
+        if (actual_ > meta) actual_ = max(actual_ - 10, meta);
+        if (actual_ != 0) ultimoSentido_ = signo(actual_);
+        else if (anterior != 0) desdeCero_ = ahora;
+        return actual_;
+    }
+private:
+    static int signo(int x) { return (x > 0) - (x < 0); }
+    static constexpr uint32_t PAUSA_MS = 500;
+    int actual_ = 0, objetivo_ = 0, ultimoSentido_ = 0;
+    uint32_t ultimo_ = 0, desdeCero_ = 0;
+};
+
+inline void atenderMando(MandoCD& mando, RampaCD& rampa, uint32_t ahora) {
+    int pedido = 0;
+    switch (mando.leer(pedido)) {
+        case MandoCD::Evento::Consigna:
+            rampa.solicitar(pedido);
+            Serial.print("Consigna de mando: ");
+            Serial.println(pedido);
+            break;
+        case MandoCD::Evento::Parar:
+            rampa.parar(ahora);
+            Serial.println("Salida desactivada.");
+            break;
+        case MandoCD::Evento::Invalido:
+            Serial.println("Orden inválida; se conserva la consigna anterior.");
+            break;
+        default: break;
+    }
+}
+</script>
+
+  <p>El tiempo muerto del integrado evita conducción cruzada durante una conmutación; la pausa
+    de <code>RampaCD</code> atiende la inversión de un mecanismo. Las dos funciones operan en
+    escalas y con objetivos diferentes. La orden <code>x</code> es una detención del mando por
+    software y no sustituye el seccionamiento de la potencia cuando se trabaja en el montaje.</p>
+
+  <p>En la terminal de cada proyecto, las órdenes para compilar, cargar y abrir el monitor son</p>
+
+  <script type="text/shell">pio run
+pio run --target upload
+pio device monitor --baud 115200</script>
+
+  <h2>Ejemplo 1. Una bomba o ventilador con giro unidireccional</h2>
+
+  <p>La etapa de la Figura 4 puede utilizarse con una pequeña bomba o un motor con hélice cuyo giro
+    solo necesite un sentido. Antes de acoplar la carga se comprueba el montaje con el motor
+    fijado. Se conecta GPIO25 a la resistencia de puerta de 220 Ω, el positivo del motor a 6 V
+    y el negativo de la fuente a la referencia común. El diodo y la resistencia de descarga
+    deben estar instalados antes de aplicar energía.</p>
+
+  <script type="text/cpp" data-source="motor-ejemplos/pwm-mosfet/src/main.cpp">
+#include <Arduino.h>
+#include "PwmCD.h"
+#include "MandoCD.h"
+
+MandoCD mando(0); // Este montaje solo admite un sentido.
+RampaCD rampa;
+
+void setup() {
+    prepararPWM();
+    Serial.begin(115200);
+    Serial.println("PWM unidireccional. Enviar 0..1000 o x, seguido de Enter.");
+}
+void loop() {
+    const uint32_t ahora = millis();
+    atenderMando(mando, rampa, ahora);
+    escribirPWM(rampa.actualizar(ahora));
+}
+</script>
+
+  <p><code>setup()</code> se ejecuta una vez al arrancar y <code>loop()</code> atiende continuamente
+    las órdenes. Enviar <code>300</code> solicita aproximadamente 30 % de ciclo; <code>700</code>,
+    70 %. La rampa modifica la transición entre ambos valores. <code>0</code> reduce gradualmente
+    el ciclo a cero y <code>x</code> lo anula de inmediato. Al apagar Q1 todavía puede existir
+    corriente de recirculación; la velocidad cae según la carga y las pérdidas.</p>
+
+  <p>Una orden del 30 % no significa 30 % de velocidad ni 30 % de caudal. Un motor puede necesitar
+    cierto esfuerzo para vencer el rozamiento inicial y una bomba puede presentar una carga que
+    cambia con la presión. Para obtener una dosificación o velocidad repetible se necesita medir
+    la variable correspondiente o caracterizar el sistema dentro de condiciones de uso bien definidas.</p>
+
+  <h2>Ejemplo 2. Movimiento bidireccional con TB6612FNG</h2>
+
+  <p>La segunda práctica conserva el PWM, la rampa y el protocolo de órdenes, pero sustituye el
+    transistor único por un puente H. Utilizaremos el canal A de la placa TB6612FNG, como se indica
+    en la <a href="#fig-motor-tb6612">Figura 6</a>. VM recibe 6 V para el motor y VCC recibe 3.3 V
+    para la lógica. Alimentar VCC con 3.3 V permite que los niveles del ESP32 satisfagan sus entradas.</p>
+
+  <figure id="fig-motor-tb6612">
+    <img src="/drautomatica/html/motor-tb6612.png" alt="Conexiones funcionales del ESP32 a PWMA, AIN1, AIN2 y STBY del TB6612FNG, con alimentación de motor de 6 V, lógica de 3.3 V y motor en AO1 y AO2."
+      style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 6. Conexiones por etiqueta del carrier TB6612FNG. La posición dibujada de los
+      terminales es funcional. C1 proporciona capacidad local de reserva y C2 desacoplamiento; el canal B
+      se mantiene sin utilizar.</figcaption>
+  </figure>
+
+  <script type="text/tabjax" data-caption="Tabla 2. Conexiones del ejemplo TB6612FNG.">
+\begin{tabular}{lll}
+\hline
+Terminal del módulo & Conexión & Función \\
+\hline
+VM & Fuente externa de 6 V & Alimentación del motor \\
+VCC & 3V3 del ESP32 & Alimentación lógica \\
+GND & Masa común & Referencia y retorno \\
+PWMA & GPIO25 & Ciclo de trabajo \\
+AIN1 y AIN2 & GPIO26 y GPIO27 & Polaridad \\
+STBY & GPIO14 & Espera y habilitación \\
+AO1 y AO2 & Dos terminales del motor & Salida de potencia \\
+BIN1, BIN2 y PWMB & GND & Entradas del canal B sin uso \\
+BO1 y BO2 & Sin conectar & Salidas del canal B \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>STBY es una entrada de espera: LOW pone ambos puentes en alta impedancia y HIGH permite su
+    operación. En esta placa está inicialmente llevada a nivel bajo. Conviene distinguir ese
+    estado del que resulta al poner solamente PWMA en cero, pues con una polaridad seleccionada
+    el TB6612FNG utiliza frenado de cortocircuito durante los intervalos bajos del PWM.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 3. Estados relevantes del canal A del TB6612FNG; HIGH y LOW son niveles lógicos.">
+\begin{tabular}{lllll}
+\hline
+STBY & AIN1 & AIN2 & PWMA & Resultado \\
+\hline
+HIGH & HIGH & LOW & PWM & Alimentación en sentido positivo y recirculación \\
+HIGH & LOW & HIGH & PWM & Alimentación en sentido negativo y recirculación \\
+HIGH & HIGH & LOW & LOW & Frenado, ambas salidas bajas \\
+HIGH & HIGH & HIGH & Cualquiera & Frenado, ambas salidas bajas \\
+LOW & Cualquiera & Cualquiera & Cualquiera & Alta impedancia \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>El programa utiliza <code>aplicar()</code> para seleccionar la polaridad y activar STBY.
+    Cuando la orden aplicada vale cero, baja STBY para dejar libre el motor. Así la condición
+    de parada queda definida explícitamente y no depende de interpretar un PWM de ciclo nulo
+    como si todos los drivers lo resolvieran de la misma manera.</p>
+
+  <script type="text/cpp" data-source="motor-ejemplos/tb6612/src/main.cpp">
+#include <Arduino.h>
+#include "PwmCD.h"
+#include "MandoCD.h"
+
+constexpr uint8_t PIN_IN1 = 26;
+constexpr uint8_t PIN_IN2 = 27;
+constexpr uint8_t PIN_STBY = 14;
+MandoCD mando(-1000);
+RampaCD rampa;
+
+void aplicar(int valor) {
+    if (valor == 0) {
+        digitalWrite(PIN_STBY, LOW); // Ambos puentes en alta impedancia.
+        escribirPWM(0);
+        digitalWrite(PIN_IN1, LOW);
+        digitalWrite(PIN_IN2, LOW);
+        return;
+    }
+    digitalWrite(PIN_IN1, valor > 0 ? HIGH : LOW);
+    digitalWrite(PIN_IN2, valor > 0 ? LOW : HIGH);
+    escribirPWM(valor);
+    digitalWrite(PIN_STBY, HIGH);
+}
+void setup() {
+    digitalWrite(PIN_STBY, LOW);
+    pinMode(PIN_STBY, OUTPUT);
+    digitalWrite(PIN_IN1, LOW);
+    digitalWrite(PIN_IN2, LOW);
+    pinMode(PIN_IN1, OUTPUT);
+    pinMode(PIN_IN2, OUTPUT);
+    prepararPWM();
+    Serial.begin(115200);
+    Serial.println("TB6612: enviar -1000..1000 o x, seguido de Enter.");
+}
+void loop() {
+    const uint32_t ahora = millis();
+    atenderMando(mando, rampa, ahora);
+    aplicar(rampa.actualizar(ahora));
+}
+</script>
+
+  <p>Enviar <code>500</code> solicita 50 % en un sentido y <code>-500</code> en el otro.
+    El signo indica una referencia del programa, no un sentido horario universal: intercambiar
+    los cables del motor invierte esa correspondencia. Antes de probar la inversión con una carga
+    se verifica la detención durante la pausa configurada. STBY afecta a ambos canales; si se
+    utilizaran dos motores, no sería una habilitación independiente de cada uno.</p>
+
+  <h2>Ejemplo 3. Una etapa de mayor corriente con VNH5019</h2>
+
+  <p>La misma separación entre magnitud y signo se aplica a un motor que exige más corriente.
+    En la <a href="#fig-motor-vnh5019">Figura 7</a>, el VNH5019 recibe PWM, INA e INB, pero añade
+    dos líneas compartidas de habilitación y diagnóstico. Usaremos una alimentación de motor
+    de 12 V. Aunque el carrier admite hasta 24 V, ese límite no autoriza una batería denominada
+    de 24 V, cuya tensión cargada puede superar el margen del módulo.</p>
+
+  <figure id="fig-motor-vnh5019">
+    <img src="/drautomatica/html/motor-vnh5019.png" alt="Conexiones del ESP32 al carrier VNH5019 con PWM, dirección, habilitaciones de drenador abierto, alimentación de motor de 12 V y lógica de 3.3 V."
+      style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 7. Conexión funcional del carrier VNH5019. VDD alimenta las resistencias
+      de elevación de ENA y ENB. Las resistencias externas R1 y R2, de 10 kΩ a GND en INA e INB,
+      definen el estado durante el arranque. Las cruces identifican terminales que se dejan
+      sin conectar en esta práctica.</figcaption>
+  </figure>
+
+  <p>VDD se conecta a 3.3 V y no a VIN. En este carrier, su función es alimentar las resistencias
+    de elevación de las líneas ENA/DIAGA y ENB/DIAGB. Cuando no hay falla, una línea alta habilita
+    su media rama; cuando el integrado detecta una condición de falla puede llevarla a LOW.
+    El ESP32 debe poder leer ese nivel sin forzar al mismo tiempo una salida alta.</p>
+
+  <p>Para ello se utiliza una salida de <strong>drenador abierto</strong>: LOW conecta la línea a
+    masa y HIGH deja de conducir para que la resistencia del módulo la eleve. La entrada digital
+    permite observar su nivel real. Esa disposición evita enfrentar una salida alta del
+    microcontrolador con el diagnóstico que intenta llevarla a nivel bajo.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 4. Conexiones del ejemplo VNH5019 y funciones que se dejan disponibles.">
+\begin{tabular}{lll}
+\hline
+Terminal del carrier & Conexión & Observación \\
+\hline
+VIN y GND & Fuente de 12 V y retorno & Conductores para corriente de potencia \\
+VDD & 3V3 del ESP32 & Pull-ups de las habilitaciones \\
+PWM & GPIO25 & 20 kHz \\
+INA y INB & GPIO26 y GPIO27 & Añadir 10 kΩ a GND en cada línea \\
+ENA/DIAGA y ENB/DIAGB & GPIO32 y GPIO33 & Drenador abierto y lectura de diagnóstico \\
+OUTA y OUTB & Motor & Ningún terminal del motor a GND \\
+CS y CS_DIS & Sin conectar & No se mide corriente en este programa \\
+VOUT & Sin conectar & No es una entrada de alimentación \\
+\hline
+\end{tabular}
+  </script>
+
+  <p>La función <code>libre()</code> lleva ambas habilitaciones a LOW, anula PWM y deja las salidas
+    en alta impedancia. Al aplicar una orden distinta de cero se selecciona la polaridad y se
+    liberan las habilitaciones. Tras un margen inicial de 1 ms para su establecimiento, el programa
+    supervisa los dos diagnósticos. Si alguno permanece en LOW, enclava el error, desactiva el
+    puente y requiere corregir la causa y reiniciar la placa.</p>
+
+  <script type="text/cpp" data-source="motor-ejemplos/vnh5019/src/main.cpp">
+#include <Arduino.h>
+#include "PwmCD.h"
+#include "MandoCD.h"
+
+constexpr uint8_t PIN_INA = 26;
+constexpr uint8_t PIN_INB = 27;
+constexpr uint8_t PIN_ENA = 32;
+constexpr uint8_t PIN_ENB = 33;
+MandoCD mando(-1000);
+RampaCD rampa;
+bool habilitado = false;
+bool fallo = false;
+uint32_t inicioHabilitacionUs = 0;
+
+void libre() {
+    // OPEN_DRAIN: LOW deshabilita; HIGH libera la línea hacia el pull-up.
+    digitalWrite(PIN_ENA, LOW);
+    digitalWrite(PIN_ENB, LOW);
+    escribirPWM(0);
+    digitalWrite(PIN_INA, LOW);
+    digitalWrite(PIN_INB, LOW);
+    habilitado = false;
+}
+void aplicar(int valor) {
+    if (valor == 0) { libre(); return; }
+    digitalWrite(PIN_INA, valor > 0 ? HIGH : LOW);
+    digitalWrite(PIN_INB, valor > 0 ? LOW : HIGH);
+    if (!habilitado) {
+        digitalWrite(PIN_ENA, HIGH);
+        digitalWrite(PIN_ENB, HIGH);
+        inicioHabilitacionUs = micros();
+        habilitado = true;
+    }
+    escribirPWM(valor);
+}
+void setup() {
+    digitalWrite(PIN_ENA, LOW);
+    digitalWrite(PIN_ENB, LOW);
+    pinMode(PIN_ENA, OUTPUT_OPEN_DRAIN);
+    pinMode(PIN_ENB, OUTPUT_OPEN_DRAIN);
+    digitalWrite(PIN_INA, LOW);
+    digitalWrite(PIN_INB, LOW);
+    pinMode(PIN_INA, OUTPUT);
+    pinMode(PIN_INB, OUTPUT);
+    prepararPWM();
+    libre();
+    Serial.begin(115200);
+    Serial.println("VNH5019: enviar -1000..1000 o x, seguido de Enter.");
+}
+void loop() {
+    const uint32_t ahora = millis();
+    if (fallo) return; // Corregir la causa y reiniciar la placa.
+    if (habilitado && micros() - inicioHabilitacionUs >= 1000 &&
+        (digitalRead(PIN_ENA) == LOW || digitalRead(PIN_ENB) == LOW)) {
+        fallo = true;
+        rampa.parar(ahora);
+        libre();
+        Serial.println("Falla indicada por el driver. Salida desactivada.");
+        return;
+    }
+    atenderMando(mando, rampa, ahora);
+    aplicar(rampa.actualizar(ahora));
+}
+</script>
+
+  <p>La respuesta eléctrica inmediata frente a las fallas reconocidas pertenece a las protecciones
+    del integrado; el programa añade la supervisión y evita reanudar automáticamente el movimiento.
+    La protección térmica del driver no verifica la temperatura del motor ni sustituye un límite
+    de corriente ajustado al devanado. El bloqueo del programa por una falla mantiene la salida
+    deshabilitada, aunque continúen llegando órdenes seriales.</p>
+
+  <p>El carrier proporciona además CS, una salida aproximadamente proporcional a la corriente,
+    útil para instrumentar un regulador o detectar cambios de esfuerzo. No se conecta directamente
+    al ADC en esta práctica: primero deben revisarse su escala, tolerancias, filtrado e intervalo
+    máximo de tensión para el convertidor del ESP32. Una indicación de corriente tampoco equivale
+    por sí sola a una protección independiente frente a sobrecorriente.</p>
+
+  <h2>De ordenar PWM a regular la velocidad</h2>
+
+  <p>Los tres ejemplos anteriores trabajan en <strong>lazo abierto</strong> respecto de la velocidad.
+    La rampa conoce la orden enviada, pero no las revoluciones alcanzadas. Para que una banda mantenga
+    su avance al recibir carga, se agrega un sensor y se compara la medición con una velocidad
+    deseada. Un encoder incremental permite estimar la velocidad a partir de sus cuentas.</p>
+
+  <p>Si \(N_c\) es el número de cuentas por revolución que entrega el método de decodificación
+    utilizado y \(\Delta n\) son las cuentas con signo durante un intervalo \(T_s\),</p>
+
+  <div class="equation">\[
+    \widehat{\omega}[k]=\frac{2\pi\,\Delta n[k]}{N_cT_s},\qquad
+    n_{\mathrm{rpm}}=\frac{60}{2\pi}\widehat{\omega}.
+  \]</div>
+
+  <p>Es necesario definir \(N_c\) después de considerar la decodificación de los canales A y B y
+    la relación del reductor, si la medición se refiere al eje de salida. Una cifra de pulsos del
+    fabricante no siempre equivale a la cuenta final del programa. En intervalos muy cortos y a
+    baja velocidad puede haber pocas cuentas; el filtrado y el periodo de medición deben elegirse
+    según la dinámica que interesa observar.</p>
+
+  <p>Con esa medición puede construirse un regulador proporcional-integral, o <strong>PI</strong>.
+    La parte proporcional responde al error actual y la integral acumula ese error para compensar
+    un esfuerzo persistente. Para una consigna \(\omega_d\), un estado integral \(z\) y una
+    orden normalizada \(u\), una forma discreta es la siguiente. La normalización corresponde
+    al mando aplicado de las prácticas mediante \(u=m/1000\).</p>
+
+  <div class="equation">\[
+    e[k]=\omega_d[k]-\widehat{\omega}[k],\qquad
+    z[k+1]=z[k]+T_s e[k],\qquad
+    u^{\ast}[k]=u_{\mathrm{ff}}[k]+K_p e[k]+K_i z[k].
+  \]</div>
+
+  <p>El término \(u_{\mathrm{ff}}\) es una estimación anticipada del mando requerido, y puede
+    omitirse si no se dispone de ella. La etapa impone límites, por ejemplo
+    \(u=\operatorname{sat}_{[-1,1]}(u^{\ast})\) en un puente bidireccional. Cuando el mando
+    satura, la integral no debe seguir creciendo sin control: una estrategia <em>anti-windup</em>
+    detiene o corrige esa acumulación. La protección de corriente debe coexistir con el regulador
+    de velocidad, pues exigir mantener una velocidad ante una carga excesiva puede aumentar
+    peligrosamente el esfuerzo eléctrico.</p>
+
+  <p>La <a href="#fig-motor-respuesta">Figura 8</a> ilustra la diferencia con el modelo del inicio.
+    Se parte de un régimen establecido con \(D=0.5\); en \(t=1\) s se agrega un par resistente
+    de 0.02 N·m. Con mando fijo disminuye la velocidad. El PI incrementa el ciclo de trabajo y
+    recupera su referencia, dentro de los límites del modelo. Esta simulación no representa una
+    medición ni atribuye esos resultados a los programas de las tres prácticas.</p>
+
+  <figure id="fig-motor-respuesta">
+    <img src="/drautomatica/html/motor-respuesta.png" alt="Respuesta simulada de velocidad y ciclo de trabajo ante una carga adicional, comparando PWM fijo con un regulador PI de velocidad."
+      style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+    <figcaption>Figura 8. Simulación con modelo de tensión promediada. Parámetros ilustrativos:
+      \(R_a=2\ \Omega\), \(L_a=2\) mH, \(K_t=K_e=0.04\) en unidades SI,
+      \(J=2\times10^{-4}\ \mathrm{kg\,m^2}\), \(b=2\times10^{-5}\ \mathrm{N\,m\,s/rad}\)
+      y \(V_s=12\) V. El PI usa \(K_p=0.006\), \(K_i=0.08\), referencia inicial constante
+      y \(u_{\mathrm{ff}}=0.5\), con saturación entre 0 y 1 y bloqueo condicional de la integral.
+      El cálculo utiliza un paso de 20 µs, con velocidad en rad/s y tiempo en segundos.</figcaption>
+  </figure>
+
+  <p>Las ganancias de la figura pertenecen exclusivamente a ese modelo y a sus unidades. Para
+    aplicarlas a un motor real se identifica la dinámica, se elige un periodo de muestreo y se
+    comprueban estabilidad, ruido, límites de corriente y transitorios. La etapa de potencia
+    determina qué tensiones y corrientes se pueden aplicar; el regulador utiliza esa capacidad
+    para corregir el movimiento que realmente se ha medido.</p>
+
+  <h2>Comprobar el montaje antes de acoplar la carga</h2>
+
+  <p>La puesta en marcha comienza por revisar tensión nominal, corriente y continuidad del cableado
+    con la alimentación desconectada. Después se prueba el motor fijado y desacoplado, con una fuente
+    limitada en corriente. El circuito de mando debe iniciar con la salida desactivada y los GPIO
+    definidos; los módulos y la etapa de MOSFET incluyen resistencias para mantener ese estado
+    mientras el ESP32 arranca. La etapa analógica necesita su propia comprobación de cero y de
+    secuencia de alimentación antes de conectar el motor.</p>
+
+  <p>Un osciloscopio permite observar la frecuencia, los flancos y los transitorios. En un puente H,
+    ambos terminales del motor conmutan: medir su tensión diferencial requiere una sonda diferencial
+    adecuada o un procedimiento de medición que respete las masas del instrumento. La pinza de masa
+    de un osciloscopio de banco no debe conectarse a una salida del puente como si fuera GND.</p>
+
+  <p>Se comprueban la orden cero, <code>x</code>, ambos sentidos y la pausa de inversión con el
+    mecanismo todavía desacoplado. La carga se incorpora después, observando corriente y temperatura
+    durante un ciclo representativo. Para corrientes de varios amperios se emplean conductores,
+    terminales y protecciones adecuados; una placa de contactos de laboratorio no es el camino de
+    potencia del motor. El paro por software mantiene su función dentro del programa, y el montaje
+    debe permitir interrumpir la alimentación de potencia de manera independiente.</p>
+
+  <script type="text/tabjax" data-caption="Tabla 5. Relación entre observaciones del montaje y comprobaciones iniciales.">
+\begin{tabular}{ll}
+\hline
+Observación & Qué comprobar \\
+\hline
+El ESP32 se reinicia al arrancar & Caída de alimentación, retorno de masa y desacoplamiento \\
+El motor no inicia con ciclo pequeño & Rozamiento, carga y par disponible \\
+Hay corriente sin giro & Bloqueo mecánico, tensión insuficiente o conexión incorrecta \\
+El driver se calienta mucho & Corriente eficaz, refrigeración y pérdidas de la etapa \\
+La velocidad cambia con la carga & Funcionamiento en lazo abierto y necesidad de realimentación \\
+La fuente sube de tensión al frenar & Energía devuelta al bus y capacidad de absorción \\
+Solo gira en un sentido & Señales de dirección, habilitaciones y cableado de salida \\
+\hline
+\end{tabular}
+  </script>
+
+  <h2>Archivos de las prácticas y de las figuras</h2>
+
+  <p>El archivo <a href="/drautomatica/html/motor-ejemplos.zip" download>motor-ejemplos.zip</a> incluye las carpetas
+    <code>pwm-mosfet</code>, <code>tb6612</code> y <code>vnh5019</code>, cada una con su configuración,
+    sus encabezados y su programa principal. Los bloques del artículo corresponden a esos archivos.
+    Los tres proyectos se verificaron por compilación para ESP32 con el entorno indicado; las
+    comprobaciones eléctricas y mecánicas corresponden al montaje utilizado.</p>
+
+  <p>Los diagramas y las curvas calculadas se generan con
+    <a href="/drautomatica/html/motor-figuras.py" download><code>motor-figuras.py</code></a>, mediante NumPy, Matplotlib
+    y Schemdraw 0.22. Los esquemas se incluyen en formato vectorial para conservar la nitidez
+    de los símbolos al ampliar o imprimir.
+    La Figura 3 utiliza un modelo conmutado con diodo ideal; la Figura 8 utiliza el modelo de tensión
+    promediada y un PI simulado. Sus parámetros son didácticos y no describen necesariamente
+    los motores de las prácticas.</p>
+
+  <h2>Referencias</h2>
+  <ul class="references">
+    <li>Alpha &amp; Omega Semiconductor. (2023, julio). <em>AO3400A: 30 V N-channel MOSFET</em>
+      (rev. 3.1). <a href="https://aosmd.com/res/data_sheets/AO3400A.pdf">Hoja de datos</a>.</li>
+    <li>Espressif Systems. (s. f.). <em>Migration from 2.x to 3.0</em>.
+      <a href="https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html">Cambios de la API Arduino-ESP32</a>.</li>
+    <li>Northwestern University. (s. f.). <em>Brushed DC motor theory</em>. Mechatronics Wiki.
+      <a href="https://hades.mech.northwestern.edu/index.php/Brushed_DC_Motor_Theory">Modelo electromecánico y constantes del motor</a>.</li>
+    <li>PlatformIO. (s. f.). <em>Espressif ESP32 Dev Module</em>.
+      <a href="https://docs.platformio.org/en/latest/boards/espressif32/esp32dev.html">Configuración de la placa esp32dev</a>.</li>
+    <li>Pololu. (s. f.). <em>TB6612FNG dual motor driver carrier</em>.
+      <a href="https://www.pololu.com/product/713">Especificaciones y conexiones del carrier 713</a>.</li>
+    <li>Pololu. (s. f.). <em>VNH5019 motor driver carrier</em>.
+      <a href="https://www.pololu.com/product/1451">Especificaciones y conexiones del carrier 1451</a>.</li>
+    <li>Schmid, W. (2024, 29 de agosto). <em>Motor data and simulation</em>. maxon Support.
+      <a href="https://support.maxongroup.com/hc/en-us/articles/360013761160-Motor-data-and-simulation">Interpretación de datos y modelos del motor</a>.</li>
+    <li>STMicroelectronics. (2008, mayo). <em>BD135–BD136, BD139–BD140: Complementary low voltage transistor</em>
+      (rev. 5). <a href="https://www.st.com/resource/en/datasheet/bd139.pdf">Hoja de datos de los transistores complementarios</a>.</li>
+    <li>STMicroelectronics. (s. f.). <em>VNH5019A-E: Automotive fully integrated H-bridge motor driver</em>
+      (DocID15701, rev. 11). <a href="https://www.pololu.com/file/0J504/vnh5019a-e.pdf">Hoja de datos y tabla de estados</a>.</li>
+    <li>Texas Instruments. (2018, marzo). <em>OPAx197 36-V, precision, rail-to-rail input/output,
+      low offset voltage, operational amplifiers</em> (SBOS737C).
+      <a href="https://www.ti.com/lit/ds/symlink/opa197.pdf">Hoja de datos del opamp</a>.</li>
+    <li>Toshiba. (2008, 9 de mayo). <em>TB6612FNG: Driver IC for dual DC motor</em>.
+      <a href="https://www.pololu.com/file/0J86/TB6612FNG.pdf">Hoja de datos y modos de operación</a>.</li>
+    <li>University of Colorado Boulder. (2026, 19 de agosto). <em>Lab 7: Transistors</em>.
+      Physics Undergraduate Labs.
+      <a href="https://physicslabs.colorado.edu/courses/phys-3330/lab-guides/lab7/">Etapa push-pull y realimentación con opamp</a>.</li>
+  </ul>
+  <footer class="article-footer ccby"></footer>
+</article></main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
