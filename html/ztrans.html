@@ -1,0 +1,1583 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Tutorial de transformada Z para ingeniería. Muestreo, región de convergencia, inversas, ecuaciones en diferencias, convolución y modelos físicos discretos con MATLAB, SymPy y Python." />
+  <title>Transformada Z</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="matlab,python" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Matemáticas para ingeniería</p>
+        <h1>Transformada Z</h1>
+        <p class="subtitle">Una guía para resolver modelos en tiempo discreto, interpretar sus respuestas y comprobar los resultados con MATLAB y Python.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Un controlador digital recibe mediciones y actualiza sus acciones en instantes
+          separados por un periodo de muestreo. Para describir esa evolución se utilizan
+          secuencias y ecuaciones en diferencias, cuya solución puede organizarse mediante
+          la transformada Z. Esta herramienta convierte los desplazamientos entre muestras
+          en operaciones algebraicas y permite relacionar la memoria de un algoritmo con
+          sus polos, su estabilidad y su respuesta. Partiremos de la definición, calcularemos
+          parejas de transformadas, estudiaremos la inversa y construiremos las propiedades
+          necesarias para resolver problemas con condiciones iniciales y entradas retardadas.
+          Un circuito RC y un mecanismo masa–resorte–amortiguador mostrarán cómo pasar de un
+          modelo físico continuo a una representación discreta. Los ejemplos en MATLAB y
+          Python incluyen cálculos simbólicos, simulación y comprobaciones de los resultados.</p>
+      </section>
+
+      <h2>Del fenómeno continuo al cálculo por muestras</h2>
+
+      <p>La velocidad de un motor, la posición de un mecanismo y la tensión de un capacitor
+        evolucionan de manera continua. Sin embargo, un microcontrolador no dispone en cada
+        instante de toda esa evolución. Lee un sensor, realiza un cálculo y modifica una
+        salida; después repite la operación. Entre una lectura y la siguiente transcurre un
+        tiempo que debe formar parte del modelo, porque un mismo algoritmo puede comportarse
+        de manera diferente al cambiar la frecuencia con la que se ejecuta.</p>
+
+      <p>Si las mediciones se realizan regularmente, llamamos <strong>periodo de muestreo</strong>
+        al intervalo $T_s$ entre dos adquisiciones consecutivas. La frecuencia de muestreo es
+        $f_s=1/T_s$. Representaremos la lectura obtenida en el instante $t=kT_s$ mediante
+        $x[k]$, donde el índice entero $k$ cuenta las muestras. Así,</p>
+
+      <div class="equation">\[
+        x[k]=x_c(kT_s),\qquad k=0,1,2,\ldots
+      \]</div>
+
+      <p>El subíndice de $x_c(t)$ distingue aquí la señal continua de la secuencia. Si
+        $T_s=0.02\,\mathrm{s}$, entonces $x[3]$ es la lectura correspondiente a
+        $t=0.06\,\mathrm{s}$. El índice 3 no significa tres segundos. Los corchetes indican
+        que la variable independiente toma valores enteros, mientras los paréntesis se
+        reservan para las funciones de tiempo continuo.</p>
+
+      <figure id="fig-z-muestreo">
+        <img src="./ztrans-muestreo.svg" alt="Una señal continua con muestras cada décima de segundo y la misma información como secuencia indexada por k."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. La misma colección de muestras puede ubicarse en el tiempo
+          físico o mediante un índice entero. Las líneas verticales de la derecha identifican
+          valores discretos; no describen el movimiento de la señal entre adquisiciones.</figcaption>
+      </figure>
+
+      <p>El muestreo separa los instantes de observación, pero no obliga a que las amplitudes
+        sean enteras. La <strong>cuantización</strong>, que aproxima una amplitud a uno de los
+        niveles disponibles en un convertidor, es una operación distinta. En este tutorial
+        estudiaremos modelos lineales con amplitudes reales o complejas, sin incorporar por
+        ahora los efectos de cuantización, saturación o errores de sincronización.</p>
+
+      <p>Cuando un modelo relaciona una muestra con otras muestras, aparece una
+        <strong>ecuación en diferencias</strong>. Por ejemplo,</p>
+
+      <div class="equation">\[
+        y[k+1]=a\,y[k]+c\,v[k]
+      \]</div>
+
+      <p>indica cómo calcular el siguiente valor de la salida $y$ a partir del valor actual
+        y de una entrada $v$. Los parámetros $a$ y $c$ determinan cuánto persiste el estado
+        anterior y cuánto influye la excitación. La ecuación necesita un valor inicial
+        $y[0]$ para generar una trayectoria concreta. Puede representar un filtro digital,
+        pero también las muestras de una magnitud física, siempre que sus coeficientes
+        procedan de un modelo adecuado.</p>
+
+      <h2>Qué cambia al utilizar una transformada</h2>
+
+      <p>Una <strong>transformada</strong> representa una señal mediante otra función en
+        un dominio diferente. Si se cumplen las condiciones de existencia e inversión,
+        el cambio conserva la información necesaria para recuperar la secuencia. Su utilidad
+        consiste en que ciertas operaciones complicadas en una representación se vuelven
+        sencillas en la otra.</p>
+
+      <p>La transformada de Laplace convierte las derivadas de ecuaciones diferenciales
+        lineales en expresiones algebraicas. La <strong>transformada Z</strong> cumple una
+        función semejante para las ecuaciones lineales en diferencias con coeficientes
+        constantes. Un retardo de una muestra se representa mediante un factor $z^{-1}$,
+        y un conjunto de recurrencias puede resolverse despejando una función de $z$.
+        Después, la transformada inversa permite regresar a los valores de la secuencia.</p>
+
+      <div class="equation">\[
+        \text{Ecuación en diferencias}
+        \xrightarrow{\;\mathcal Z\;}
+        \text{Ecuación algebraica en }z
+        \xrightarrow{\;\text{despeje}\;}Y(z)
+        \xrightarrow{\;\mathcal Z^{-1}\;}y[k].
+      \]</div>
+
+      <p>No se trata de reemplazar el índice $k$ por la letra $z$. Cada valor de la función
+        transformada reúne información de toda una secuencia mediante una suma ponderada.
+        Esta nueva representación facilita resolver recurrencias, estudiar filtros,
+        anticipar oscilaciones y diseñar controladores que se ejecutan periódicamente en
+        una computadora o en un sistema embebido.</p>
+
+      <h2>La definición y la región donde tiene sentido</h2>
+
+      <p>Usaremos principalmente la <strong>transformada Z unilateral</strong>, definida por</p>
+
+      <div class="equation">\[
+        X(z)=\mathcal Z\{x[k]\}
+        =\sum_{k=0}^{\infty}x[k]z^{-k},
+        \qquad z\in\mathbb C.
+      \]</div>
+
+      <p>Las mayúsculas identificarán las transformadas de las secuencias correspondientes.
+        La variable compleja puede escribirse como $z=\rho e^{j\Omega}$, donde
+        $j^2=-1$, $\rho$ es su módulo y $\Omega$ su argumento. Entonces el peso de la
+        muestra $k$ es $\rho^{-k}e^{-j\Omega k}$. El módulo controla la ponderación
+        exponencial y el argumento introduce una ponderación oscilatoria.</p>
+
+      <p>Tanto $z$ como $k$ son adimensionales. Si $x[k]$ se mide en voltios, $X(z)$
+        también tiene unidades de voltios; en esta definición no aparece un factor
+        $T_s$. La frecuencia angular discreta $\Omega$ se expresa habitualmente en
+        radianes por muestra y se relaciona con una frecuencia física $\omega$, en
+        radianes por segundo, mediante $\Omega=\omega T_s$.</p>
+
+      <h3>La convergencia forma parte de la transformada</h3>
+
+      <p>La suma infinita no converge para cualquier valor de $z$. Su
+        <strong>región de convergencia</strong>, abreviada ROC por sus siglas en inglés,
+        es el conjunto donde la serie converge absolutamente. Para una secuencia que
+        comienza en $k=0$ y crece como $a^k$, necesitaremos $|z|&gt;|a|$. Por eso una
+        secuencia creciente, como $1.1^k$, puede tener transformada aunque no tienda
+        a un valor finito. Existencia de la transformada y estabilidad son preguntas
+        diferentes.</p>
+
+      <p>También existe la <strong>transformada Z bilateral</strong>, cuya suma abarca
+        todos los índices enteros, desde $-\infty$ hasta $\infty$. Se utiliza cuando
+        interesa describir una señal a ambos lados del origen. La unilateral conserva
+        solamente las muestras con $k\geq0$; la información anterior necesaria para
+        resolver una recurrencia debe introducirse mediante sus condiciones iniciales.
+        Si extendemos una secuencia unilateral como cero para $k&lt;0$, ambas
+        transformadas coinciden.</p>
+
+      <p>La importancia de la ROC se aprecia con una misma expresión racional,</p>
+
+      <div class="equation">\[
+        X(z)=\frac{z}{z-a}.
+      \]</div>
+
+      <p>En el contexto bilateral corresponde a $a^k u[k]$ si $|z|&gt;|a|$, pero a
+        $-a^k u[-k-1]$ si $|z|&lt;|a|$, para $a\neq0$. La primera secuencia es
+        <strong>causal</strong>, pues se anula antes del origen; la segunda es
+        <strong>anticausal</strong>, pues solo tiene valores para índices negativos.
+        La fracción por sí sola no permite escoger entre ellas. En los problemas
+        unilaterales de este tutorial recuperaremos la extensión causal.</p>
+
+      <figure id="fig-z-convergencia">
+        <img src="./ztrans-convergencia.svg" alt="Regiones exterior e interior al círculo de radio 0.8, asociadas a dos secuencias diferentes con la misma expresión racional."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. La expresión $z/(z-0.8)$ representa secuencias diferentes
+          según su región de convergencia. La frontera punteada queda excluida. Esta
+          comparación bilateral explica por qué debe conservarse la ROC junto con la fórmula.</figcaption>
+      </figure>
+
+      <h3>Impulso y escalón en tiempo discreto</h3>
+
+      <p>Definiremos el escalón unitario como $u[k]=1$ para $k\geq0$ y $u[k]=0$ para
+        $k&lt;0$. El <strong>impulso unitario discreto</strong> o delta de Kronecker es</p>
+
+      <div class="equation">\[
+        \delta[k]=\begin{cases}1,&k=0,\\0,&k\neq0.\end{cases}
+        \qquad u[0]=1.
+      \]</div>
+
+      <p>A diferencia de la delta de Dirac del tiempo continuo, $\delta[k]$ es una
+        secuencia ordinaria con una muestra de amplitud uno y suma unitaria. No tiene
+        una altura infinita ni representa automáticamente un impulso físico de área
+        $1\,\mathrm{N\,s}$. Una fuerza aplicada durante un solo intervalo de duración
+        $T_s$ produce un impulso mecánico igual a su amplitud multiplicada por $T_s$.
+        Esta distinción evita confundir un experimento por muestras con una idealización
+        impulsiva continua.</p>
+
+      <h2>Calcular transformadas desde la definición</h2>
+
+      <h3>Una exponencial discreta</h3>
+
+      <p>Consideremos $x[k]=a^k u[k]$, con $a\neq0$. Sustituyendo en la suma,</p>
+
+      <div class="equation">\[
+        X(z)=\sum_{k=0}^{\infty}a^kz^{-k}
+        =\sum_{k=0}^{\infty}(az^{-1})^k
+        =\frac{1}{1-az^{-1}}
+        =\frac{z}{z-a},\qquad |z|&gt;|a|.
+      \]</div>
+
+      <p>Utilizamos la suma geométrica $1+r+r^2+\cdots=1/(1-r)$, válida si $|r|&lt;1$.
+        En este caso $r=az^{-1}$, por lo que la condición de convergencia aparece
+        durante el cálculo. Si $a=0.8$, las muestras son $1$, $0.8$, $0.64$ y
+        $0.512$, entre otras. Si $a=-0.8$, la magnitud disminuye de la misma manera,
+        pero el signo alterna en cada muestra.</p>
+
+      <p>Al tomar $a=1$ obtenemos la pareja del escalón,</p>
+
+      <div class="equation">\[
+        u[k]\ \longleftrightarrow\ \frac{z}{z-1},\qquad |z|&gt;1.
+      \]</div>
+
+      <p>Una entrada constante de 5 V aplicada desde $k=0$ tiene transformada
+        $5z/(z-1)$, no simplemente 5. Una transformada constante de valor 5
+        correspondería a $5\delta[k]$, es decir, una sola muestra.</p>
+
+      <h3>Una rampa y la multiplicación por el índice</h3>
+
+      <p>La derivada de la serie geométrica, dentro de su región de convergencia,
+        permite obtener una segunda pareja. Como
+        $\sum_{k=0}^{\infty}kr^k=r/(1-r)^2$, resulta</p>
+
+      <div class="equation">\[
+        \mathcal Z\{k a^k u[k]\}
+        =\frac{az^{-1}}{(1-az^{-1})^2}
+        =\frac{az}{(z-a)^2},\qquad |z|&gt;|a|.
+      \]</div>
+
+      <p>Para $a=1$, la rampa $k u[k]$ se transforma en $z/(z-1)^2$. Si una
+        referencia de posición aumenta a velocidad física constante $v_0$, la
+        secuencia es $v_0T_s k u[k]$ y su transformada incluye el factor $T_s$.
+        Omitirlo confundiría el incremento por muestra con el incremento por segundo.</p>
+
+      <h3>Un pulso de duración finita</h3>
+
+      <p>Una entrada activa durante $N$ intervalos se escribe
+        $v[k]=A(u[k]-u[k-N])$, con $N$ entero positivo. Sus valores no nulos
+        corresponden a $k=0,\ldots,N-1$, de modo que</p>
+
+      <div class="equation">\[
+        V(z)=A\sum_{k=0}^{N-1}z^{-k}
+        =A\frac{1-z^{-N}}{1-z^{-1}}.
+      \]</div>
+
+      <p>La última forma parece tener un problema en $z=1$, pero allí la singularidad
+        es removible. La suma finita vale $AN$. Para $N&gt;1$ su ROC incluye todo
+        $z\neq0$; si $N=1$ la transformada es la constante $A$. Cuando la entrada
+        se mantiene entre actualizaciones, la duración física del pulso es $NT_s$.</p>
+
+      <h2>Una tabla de parejas para ir y volver</h2>
+
+      <p>La tabla siguiente se lee en ambos sentidos. Las secuencias se consideran
+        para $k\geq0$ y se extienden como cero hacia los índices negativos. Los
+        parámetros satisfacen $a\neq0$, $r&gt;0$ y $0&lt;\theta&lt;\pi$; $m$ es un
+        entero no negativo. Las restricciones sobre $\theta$ evitan los casos
+        degenerados de las parejas trigonométricas.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Parejas básicas de la transformada Z con extensión causal.">
+\begin{tabular}{lll}
+\hline
+Secuencia & Transformada & Convergencia \\
+\hline
+$\delta[k]$ & $1$ & Todo $z$ finito \\
+$\delta[k-m]$ & $z^{-m}$ & $z\ne0$ si $m>0$ \\
+$u[k]$ & $z/(z-1)$ & $|z|>1$ \\
+$k u[k]$ & $z/(z-1)^2$ & $|z|>1$ \\
+$a^k u[k]$ & $z/(z-a)$ & $|z|>|a|$ \\
+$k a^k u[k]$ & $az/(z-a)^2$ & $|z|>|a|$ \\
+$(k+1)a^k u[k]$ & $1/(1-az^{-1})^2$ & $|z|>|a|$ \\
+$r^k\cos(k\theta)u[k]$ & $z(z-r\cos\theta)/(z^2-2r\cos\theta\,z+r^2)$ & $|z|>r$ \\
+$r^k\sin(k\theta)u[k]$ & $rz\sin\theta/(z^2-2r\cos\theta\,z+r^2)$ & $|z|>r$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>El seno y el coseno aparecen porque una exponencial compleja puede
+        escribirse mediante $e^{jk\theta}=\cos(k\theta)+j\sin(k\theta)$.
+        Al combinar las transformadas de $r^ke^{jk\theta}$ y
+        $r^ke^{-jk\theta}$ se obtienen las dos últimas filas.</p>
+
+      <p>Para reconocer una pareja hay que conservar también el numerador. Por ejemplo,</p>
+
+      <div class="equation">\[
+        \mathcal Z^{-1}\!\left\{\frac{z}{(z-0.5)^2}\right\}
+        =k(0.5)^{k-1}u[k]
+        =2k(0.5)^k u[k].
+      \]</div>
+
+      <p>La pareja de $k a^k$ lleva $az$ en el numerador. En el ejemplo aparece
+        solamente $z$, por lo que debemos dividir entre $a=0.5$. De manera
+        semejante, $1/(1-0.5z^{-1})^2$ corresponde a $(k+1)(0.5)^k$, cuya
+        primera muestra vale uno. Las dos expresiones tienen el mismo polo
+        doble, pero no la misma secuencia.</p>
+
+      <h2>La inversa y las fracciones parciales</h2>
+
+      <p>Formalmente, la transformada inversa puede expresarse mediante una integral
+        cerrada en el plano complejo,</p>
+
+      <div class="equation">\[
+        x[k]=\frac{1}{2\pi j}\oint_{\Gamma}X(z)z^{k-1}\,\mathrm{d}z.
+      \]</div>
+
+      <p>El contorno $\Gamma$ recorre una vuelta en sentido antihorario alrededor del
+        origen y se elige dentro de la ROC. No necesitaremos evaluar esta integral
+        para resolver los modelos del tutorial. Las tablas, las fracciones parciales
+        y la expansión en potencias de $z^{-1}$ proporcionan procedimientos más
+        directos para las funciones racionales habituales en ingeniería.</p>
+
+      <h3>Polos reales distintos</h3>
+
+      <p>Un <strong>polo</strong> de una función racional es un valor de $z$ donde
+        su denominador se anula sin que el factor correspondiente se cancele con
+        el numerador. Esos valores determinan las formas exponenciales que pueden
+        aparecer en la respuesta. Consideremos</p>
+
+      <div class="equation">\[
+        X(z)=\frac{z}{(z-0.5)(z-0.8)},\qquad |z|&gt;0.8.
+      \]</div>
+
+      <p>Sus polos son $0.5$ y $0.8$. Para obtener términos con numerador $z$,
+        conviene descomponer primero $X(z)/z$,</p>
+
+      <div class="equation">\[
+        \frac{X(z)}{z}
+        =\frac{A}{z-0.5}+\frac{B}{z-0.8},\qquad
+        A=-\frac{10}{3},\quad B=\frac{10}{3}.
+      \]</div>
+
+      <p>Los coeficientes se encuentran multiplicando por el denominador común
+        y evaluando sucesivamente en cada polo. Después de restituir el factor
+        $z$, reconocemos las parejas,</p>
+
+      <div class="equation">\[
+        X(z)=-\frac{10}{3}\frac{z}{z-0.5}
+               +\frac{10}{3}\frac{z}{z-0.8},\qquad
+        x[k]=\frac{10}{3}\big[(0.8)^k-(0.5)^k\big]u[k].
+      \]</div>
+
+      <p>La primera muestra es cero y la segunda vale uno. Ambas exponenciales
+        decaen, pero la asociada al polo $0.8$ lo hace más lentamente y domina
+        la parte final del transitorio. Descomponer $X(z)$ directamente también
+        es válido; dividir primero entre $z$ facilita el reconocimiento de
+        las parejas de la tabla.</p>
+
+      <h3>Polos repetidos y polos complejos</h3>
+
+      <p>Si un polo se repite, no basta con sumar varias exponenciales iguales.
+        Un polo doble genera, en general, una exponencial multiplicada por un
+        polinomio de grado uno en $k$, como el ejemplo $k(0.5)^{k-1}$.
+        Para un polo de multiplicidad $m$ pueden aparecer factores polinomiales
+        de grado hasta $m-1$.</p>
+
+      <p>Cuando los coeficientes del modelo son reales, los polos complejos aparecen
+        en parejas conjugadas. Si son $r e^{\pm j\theta}$, el denominador
+        correspondiente es</p>
+
+      <div class="equation">\[
+        (z-r e^{j\theta})(z-r e^{-j\theta})
+        =z^2-2r\cos\theta\,z+r^2.
+      \]</div>
+
+      <p>La combinación real de esos modos tiene la forma
+        $r^k[A\cos(k\theta)+B\sin(k\theta)]$. El módulo $r$ describe cuánto
+        cambia la envolvente en cada muestra y el ángulo $\theta$ determina
+        cuánto avanza la fase. Volveremos a esta forma al estudiar el mecanismo
+        amortiguado.</p>
+
+      <h3>Leer muestras mediante una serie</h3>
+
+      <p>La propia definición permite verificar una inversa sin conocer todavía
+        toda su fórmula. Para una secuencia causal,</p>
+
+      <div class="equation">\[
+        X(z)=x[0]+x[1]z^{-1}+x[2]z^{-2}+\cdots.
+      \]</div>
+
+      <p>Podemos hacer $q=z^{-1}$ y expandir alrededor de $q=0$. Para el ejemplo
+        de polos distintos obtenemos</p>
+
+      <div class="equation">\[
+        X(z)=z^{-1}+1.3z^{-2}+1.29z^{-3}+1.157z^{-4}+\cdots.
+      \]</div>
+
+      <p>Los coeficientes son las muestras $0$, $1$, $1.3$, $1.29$ y $1.157$.
+        Esta expansión es especialmente útil para descubrir errores de
+        desplazamiento. También muestra que un término constante representa
+        una contribución a $\delta[k]$, mientras un término $c z^{-m}$ aporta
+        $c\delta[k-m]$.</p>
+
+      <h2>Desplazamientos y condiciones iniciales</h2>
+
+      <p>La <strong>linealidad</strong> permite transformar una combinación de
+        secuencias término a término. Si $x_1$ y $x_2$ tienen transformadas,
+        entonces $\mathcal Z\{\alpha x_1+\beta x_2\}=\alpha X_1+\beta X_2$
+        en la intersección de sus regiones de convergencia; una cancelación puede
+        ampliar la región resultante. Esta propiedad permite separar respuestas
+        debidas a entradas distintas y al estado inicial.</p>
+
+      <h3>Un retardo conserva la forma y cambia el instante</h3>
+
+      <p>Sea $m\geq0$ entero. Si $x$ se extiende como cero hacia índices negativos,
+        desplazar toda la secuencia $m$ muestras produce</p>
+
+      <div class="equation">\[
+        \mathcal Z\{x[k-m]u[k-m]\}=z^{-m}X(z).
+      \]</div>
+
+      <p>El retardo físico es $mT_s$. Por ejemplo,
+        $z^{-3}z/(z-1)$ representa un escalón que comienza en $k=3$.
+        Debe distinguirse $x[k-m]u[k-m]$ de $x[k]u[k-m]$, pues la segunda
+        expresión recorta las primeras muestras sin reiniciar el argumento de
+        la secuencia.</p>
+
+      <h3>El avance introduce los valores iniciales</h3>
+
+      <p>Para transformar $x[k+1]$ en la definición unilateral cambiamos el índice
+        de la suma y recuperamos el término que quedó fuera,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \mathcal Z\{x[k+1]\}
+        &=\sum_{k=0}^{\infty}x[k+1]z^{-k}\\
+        &=z\sum_{n=1}^{\infty}x[n]z^{-n}
+         =z\big[X(z)-x[0]\big].
+        \end{aligned}
+      \]</div>
+
+      <p>Repitiendo el procedimiento,</p>
+
+      <div class="equation">\[
+        \mathcal Z\{x[k+2]\}
+        =z^2X(z)-z^2x[0]-zx[1].
+      \]</div>
+
+      <p>Los valores iniciales ocupan aquí el lugar que tenían las condiciones
+        iniciales en las reglas de derivación de Laplace. Para una ecuación
+        de segundo orden escrita con avances, normalmente se necesitan $x[0]$
+        y $x[1]$. Si el modelo procede de un sistema físico continuo, la segunda
+        muestra debe calcularse a partir del estado inicial y de la entrada;
+        no es un dato que pueda elegirse independientemente de ellos.</p>
+
+      <aside class="remark">
+        <p><strong>Un retardo no siempre es solamente $z^{-1}$.</strong>
+          Si transformamos unilateralmente $x[k-1]$ y existe un valor anterior
+          $x[-1]\neq0$, la regla completa es
+          $\mathcal Z\{x[k-1]\}=z^{-1}X(z)+x[-1]$.
+          El término adicional desaparece cuando se supone historia nula.
+          Conviene indicar siempre en qué instante se conocen las condiciones
+          iniciales y desde qué índice es válida la recurrencia.</p>
+      </aside>
+
+      <h3>Diferencias y acumulación</h3>
+
+      <p>Una diferencia compara dos muestras consecutivas. Si usamos la diferencia
+        hacia atrás $\Delta x[k]=x[k]-x[k-1]$, su transformada es</p>
+
+      <div class="equation">\[
+        \mathcal Z\{\Delta x[k]\}
+        =(1-z^{-1})X(z)-x[-1].
+      \]</div>
+
+      <p>Con historia nula, el factor $1-z^{-1}$ representa la diferencia. Dividir
+        entre $T_s$ produce un cociente incremental que puede aproximar una
+        derivada cuando el muestreo es suficientemente rápido. La transformada
+        de una diferencia es exacta; identificar esa diferencia con una derivada
+        continua es un paso de aproximación adicional.</p>
+
+      <p>La operación complementaria es la suma acumulada. Para
+        $s[k]=\sum_{n=0}^{k}x[n]$, con acumulador inicialmente vacío,</p>
+
+      <div class="equation">\[
+        S(z)=\frac{X(z)}{1-z^{-1}}=\frac{z}{z-1}X(z).
+      \]</div>
+
+      <p>Un integrador numérico que acumula $T_s x[k]$ tiene el factor
+        $T_s/(1-z^{-1})$. El periodo aparece porque una integral física tiene
+        unidades de amplitud multiplicada por tiempo. El instante al que se
+        asigna cada suma importa; otras reglas de integración, como la
+        trapezoidal, producen factores diferentes.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Propiedades unilaterales. X(z) es la transformada de x[k]; las reglas causales suponen extensión nula para índices negativos.">
+\begin{tabular}{ll}
+\hline
+Operación & Transformada \\
+\hline
+$\alpha x_1[k]+\beta x_2[k]$ & $\alpha X_1(z)+\beta X_2(z)$ \\
+$x[k-m]u[k-m]$ & $z^{-m}X(z)$ \\
+$x[k+1]$ & $z(X(z)-x[0])$ \\
+$x[k+2]$ & $z^2X(z)-z^2x[0]-zx[1]$ \\
+$x[k]-x[k-1]$ & $(1-z^{-1})X(z)-x[-1]$ \\
+$\sum_{n=0}^{k}x[n]$ & $X(z)/(1-z^{-1})$ \\
+$a^k x[k]$ & $X(z/a)$ \\
+$k x[k]$ & $-z\,\mathrm{d}X(z)/\mathrm{d}z$ \\
+$(h*x)[k]$ & $H(z)X(z)$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En la modulación $a^k x[k]$ se supone $a\neq0$ y la ROC se escala en
+        módulo por $|a|$. La regla de multiplicación por $k$ se obtiene al
+        derivar la serie respecto de $z$ dentro de su región de convergencia.
+        Los productos y cocientes de la tabla deben acompañarse de una revisión
+        de convergencia; no toda manipulación conserva la misma ROC.</p>
+
+      <h2>Convolución y respuesta al impulso</h2>
+
+      <p>Un sistema es <strong>lineal</strong> si respeta la superposición y es
+        <strong>invariante en el tiempo</strong> si desplazar la entrada desplaza
+        de igual manera la salida. En tiempo discreto, ese desplazamiento se
+        mide en muestras enteras. Si además el sistema es causal, su salida
+        actual depende de la entrada presente y pasada, sin utilizar valores
+        futuros.</p>
+
+      <p>La <strong>respuesta al impulso</strong> $h[k]$ es la salida ante
+        $\delta[k]$ cuando el estado inicial es nulo. Cualquier entrada causal
+        puede descomponerse en impulsos desplazados, de modo que la salida
+        se construye sumando las respuestas a cada uno de ellos,</p>
+
+      <div class="equation">\[
+        v[k]=\sum_{n=0}^{\infty}v[n]\delta[k-n],\qquad
+        y[k]=(h*v)[k]=\sum_{n=0}^{k}h[k-n]v[n].
+      \]</div>
+
+      <p>Esta suma se denomina <strong>convolución discreta</strong>. Cada muestra
+        de la entrada produce una copia de $h$ con amplitud y retardo propios.
+        La salida actual contiene la superposición de los efectos que todavía
+        persisten. Bajo las condiciones de convergencia correspondientes,</p>
+
+      <div class="equation">\[
+        Y(z)=H(z)V(z).
+      \]</div>
+
+      <p>Consideremos $h[k]=(0.5)^k u[k]$ y una entrada de tres muestras unitarias,
+        $v[k]=\delta[k]+\delta[k-1]+\delta[k-2]$. Entonces</p>
+
+      <div class="equation">\[
+        y[k]=h[k]+h[k-1]+h[k-2],
+        \qquad V(z)=1+z^{-1}+z^{-2}.
+      \]</div>
+
+      <p>Las primeras salidas son $1$, $1.5$, $1.75$ y $0.875$. La entrada ya
+        terminó cuando $k=3$, pero el sistema conserva memoria y su respuesta
+        continúa decayendo. La Figura 3 representa esta suma; el código de los
+        modelos que aparece más adelante la calcula con <code>conv</code> en
+        MATLAB y <code>numpy.convolve</code> en Python, y la comprueba mediante
+        una recurrencia equivalente.</p>
+
+      <figure id="fig-z-convolucion">
+        <img src="./ztrans-convolucion.svg" alt="Entrada rectangular de tres muestras, respuesta al impulso exponencial y salida calculada por convolución."
+          style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. La convolución suma las contribuciones de las tres
+          muestras de entrada. La cola de la salida expresa la memoria del sistema,
+          incluso después de retirar la excitación.</figcaption>
+      </figure>
+
+      <h2>Función de transferencia, polos y estabilidad</h2>
+
+      <p>La <strong>función de transferencia</strong> $G(z)$ relaciona la entrada
+        y la salida de un sistema lineal e invariante bajo estado inicial nulo,
+        de modo que $G(z)=Y(z)/V(z)$. Coincide con la transformada de su respuesta
+        al impulso. Si hay energía inicial, la salida contiene un término
+        adicional y ya no es correcto identificar toda la razón $Y/V$ con la
+        función de transferencia del sistema.</p>
+
+      <p>Para la recurrencia $y[k+1]=a y[k]+c v[k]$, la regla de avance da</p>
+
+      <div class="equation">\[
+        z\big[Y(z)-y[0]\big]=aY(z)+cV(z),\qquad
+        Y(z)=\underbrace{\frac{c}{z-a}V(z)}_{\text{debida a la entrada}}
+        +\underbrace{\frac{z\,y[0]}{z-a}}_{\text{debida al estado inicial}}.
+      \]</div>
+
+      <p>Por tanto, $G(z)=c/(z-a)=c z^{-1}/(1-a z^{-1})$. El factor $z^{-1}$
+        indica que la entrada aplicada durante el intervalo $k$ influye en la
+        muestra $y[k+1]$. No es lo mismo que $c/(1-a z^{-1})$, cuya respuesta
+        al impulso empieza en $k=0$.</p>
+
+      <p>Además de los polos, una función de transferencia puede tener
+        <strong>ceros</strong>, valores de $z$ donde el numerador se anula sin
+        cancelar previamente un factor del denominador. Los ceros modifican la
+        combinación de los modos y la forma de la respuesta. Las cancelaciones
+        en una función de transferencia pueden ocultar modos internos; la
+        estabilidad de todos los estados debe comprobarse en un modelo de
+        estado cuando esa información sea relevante.</p>
+
+      <h3>El círculo unitario reemplaza al eje imaginario</h3>
+
+      <p>Un sistema es estable en el sentido de <strong>entrada acotada, salida
+        acotada</strong> si toda entrada de amplitud limitada produce una salida
+        también limitada, considerando estado inicial nulo. Para sistemas
+        lineales e invariantes, esto equivale a que la respuesta al impulso
+        sea absolutamente sumable,</p>
+
+      <div class="equation">\[
+        \sum_{k=0}^{\infty}|h[k]|&lt;\infty.
+      \]</div>
+
+      <p>En un modelo racional causal reducido, esta condición exige que todos
+        los polos de $G$ estén estrictamente dentro del <strong>círculo unitario</strong>,
+        $|z|&lt;1$. En términos de convergencia, la ROC de $G$ debe incluir la
+        circunferencia $|z|=1$. Un polo real positivo dentro del círculo produce
+        un modo que decae; uno negativo introduce alternancia; una pareja
+        compleja genera oscilaciones. Un polo de módulo mayor que uno produce
+        un modo creciente. La Figura 4 compara estas posibilidades.</p>
+
+      <figure id="fig-z-polos">
+        <img src="./ztrans-polos.svg" alt="Polos positivos, negativos y complejos dentro del círculo unitario y un polo exterior, con sus modos temporales correspondientes."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. La posición de los polos permite reconocer el carácter
+          de los modos discretos. El ángulo describe el avance de fase por muestra
+          y el módulo su decaimiento o crecimiento. Los programas de figuras generan
+          estas secuencias directamente a partir de las expresiones indicadas.</figcaption>
+      </figure>
+
+      <p>Un modo simple con $|p|=1$ puede permanecer acotado sin decaer, pero un
+        polo no cancelado sobre el círculo unitario impide la estabilidad de
+        entrada acotada, salida acotada. No debe confundirse una oscilación
+        libre de amplitud constante con un sistema capaz de limitar su salida
+        ante cualquier entrada acotada.</p>
+
+      <h2>Valores inicial y final sin calcular toda la inversa</h2>
+
+      <p>Para una secuencia causal cuya transformada converge en un entorno del
+        infinito, la expansión en $z^{-1}$ permite leer la primera muestra,</p>
+
+      <div class="equation">\[
+        x[0]=\lim_{z\to\infty}X(z).
+      \]</div>
+
+      <p>Este es el <strong>teorema del valor inicial</strong>. En la función
+        $z/[(z-0.5)(z-0.8)]$, el límite es cero, como ya habíamos obtenido.
+        Si se espera una primera muestra no nula y el límite da cero, conviene
+        revisar si se introdujo inadvertidamente un retardo.</p>
+
+      <p>El <strong>teorema del valor final</strong> permite obtener el régimen
+        permanente de muchas respuestas racionales causales,</p>
+
+      <div class="equation">\[
+        \lim_{k\to\infty}x[k]
+        =\lim_{z\to1}(1-z^{-1})X(z).
+      \]</div>
+
+      <p>Una condición suficiente habitual es que todos los polos de $X(z)$
+        estén estrictamente dentro del círculo unitario, salvo, a lo sumo,
+        un polo simple en $z=1$. De manera equivalente para este caso racional,
+        los polos que permanecen después de simplificar $(1-z^{-1})X(z)$
+        deben estar estrictamente dentro del círculo. La comprobación se hace
+        antes de interpretar el límite algebraico.</p>
+
+      <p>Por ejemplo, $x[k]=(-1)^k u[k]$ tiene transformada $z/(z+1)$ y no
+        posee límite, aunque sustituir $z=1$ en la expresión del teorema
+        produciría cero. El polo en $z=-1$ invalida la condición. Tampoco
+        puede utilizarse el teorema para asignar un valor final finito a una
+        rampa, cuya transformada tiene un polo doble en $z=1$.</p>
+
+      <h2>Resolver un circuito RC observado digitalmente</h2>
+
+      <p>Consideremos un capacitor $C$ que se carga a través de una resistencia
+        $R$ desde una tensión de entrada $v(t)$. La salida $v_C(t)$ es la
+        tensión del capacitor. La ley de corrientes conduce al modelo continuo</p>
+
+      <div class="equation">\[
+        RC\frac{\mathrm{d}v_C}{\mathrm{d}t}+v_C=v(t).
+      \]</div>
+
+      <figure id="fig-z-rc-circuito">
+        <img src="./ztrans-rc-circuito.svg" alt="Circuito RC con una resistencia en serie y la tensión del capacitor como salida."
+          style="display:block;width:100%;max-width:39rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. El circuito sigue siendo continuo aunque se mida
+          periódicamente. Para obtener su modelo discreto hay que especificar
+          cómo se aplica la entrada entre dos muestras.</figcaption>
+      </figure>
+
+      <h3>De la ecuación diferencial a una recurrencia exacta</h3>
+
+      <p>Supongamos que la entrada mantiene el valor $v[k]$ durante el intervalo
+        $kT_s\leq t&lt;(k+1)T_s$. Este mecanismo se denomina
+        <strong>retención de orden cero</strong> y describe una señal de mando
+        constante entre actualizaciones. Al resolver la ecuación diferencial
+        dentro de ese intervalo se obtiene</p>
+
+      <div class="equation">\[
+        v_C[k+1]=a v_C[k]+(1-a)v[k],\qquad
+        a=e^{-T_s/(RC)}.
+      \]</div>
+
+      <p>Esta relación reproduce exactamente las muestras del modelo continuo
+        ideal bajo la hipótesis de entrada retenida. No proviene de aproximar
+        la derivada mediante una diferencia. En cambio, una aproximación de
+        Euler hacia adelante daría $a_E=1-T_s/(RC)$ y un coeficiente de entrada
+        $T_s/(RC)$. Son discretizaciones diferentes y no deben mezclarse.</p>
+
+      <p>Tomemos los parámetros de la tabla y una entrada constante de 5 V
+        aplicada desde $k=0$. La tensión inicial es $v_C[0]=1$ V.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Parámetros del circuito RC muestreado.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Símbolo & Valor \\
+\hline
+Resistencia & $R$ & $1000\ \Omega$ \\
+Capacitancia & $C$ & $100\ \mu\mathrm{F}$ \\
+Constante de tiempo & $RC$ & $0.1\ \mathrm{s}$ \\
+Periodo de muestreo & $T_s$ & $0.02\ \mathrm{s}$ \\
+Tensión inicial & $v_C[0]$ & $1\ \mathrm{V}$ \\
+Entrada constante & $V_{\mathrm{in}}$ & $5\ \mathrm{V}$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>El coeficiente es $a=e^{-0.2}\approx0.81873075$. Una muestra conserva
+        aproximadamente el 81.9 % de la desviación anterior respecto al
+        equilibrio. Como $0&lt;a&lt;1$, el transitorio decae.</p>
+
+      <h3>Transformar, despejar e invertir</h3>
+
+      <p>Denotemos por $V_C(z)$ y $V(z)$ las transformadas de la salida y de
+        la entrada. La regla de avance proporciona</p>
+
+      <div class="equation">\[
+        z\big[V_C(z)-v_C[0]\big]
+        =aV_C(z)+(1-a)V(z),\qquad
+        V(z)=5\frac{z}{z-1}.
+      \]</div>
+
+      <p>Al despejar y separar fracciones,</p>
+
+      <div class="equation">\[
+        V_C(z)=\frac{z}{z-a}
+        +\frac{5(1-a)z}{(z-a)(z-1)}
+        =5\frac{z}{z-1}-4\frac{z}{z-a}.
+      \]</div>
+
+      <p>La inversa causal es, por tanto,</p>
+
+      <div class="equation">\[
+        v_C[k]=5-4a^k,\qquad k\geq0.
+      \]</div>
+
+      <p>En $k=0$ recuperamos 1 V, y la primera actualización produce
+        $v_C[1]\approx1.7251$ V. También podemos distinguir la respuesta
+        debida a la energía inicial, $a^k$, de la debida a la entrada,
+        $5(1-a^k)$. El teorema del valor final da 5 V, porque los únicos
+        polos de la salida son $a$ y un polo simple en 1.</p>
+
+      <figure id="fig-z-rc-respuesta">
+        <img src="./ztrans-rc.svg" alt="Muestras de la tensión del capacitor coincidentes con la solución continua y sus componentes debidas a la entrada y a la condición inicial."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. Las muestras del modelo discreto coinciden con la
+          solución continua en los instantes de adquisición. La suma de las
+          contribuciones inicial y forzada produce la tensión total. El programa
+          de modelos reproduce la gráfica y verifica esa igualdad.</figcaption>
+      </figure>
+
+      <p>La función de transferencia del circuito muestreado es
+        $G(z)=(1-a)/(z-a)$, con ROC $|z|&gt;a$. La transformada de su respuesta
+        al escalón requiere $|z|&gt;1$, porque una salida que tiende a una
+        constante no nula no es absolutamente sumable. Esto no contradice
+        la estabilidad del circuito; la condición de estabilidad se aplica
+        a la respuesta al impulso, no a la respuesta al escalón.</p>
+
+      <h2>Del plano de Laplace al plano Z</h2>
+
+      <p>La relación entre ambos dominios se comprende observando un modo
+        exponencial continuo. Si $x_c(t)=e^{st}$, sus muestras son</p>
+
+      <div class="equation">\[
+        x[k]=e^{skT_s}=(e^{sT_s})^k,\qquad p=e^{sT_s}.
+      \]</div>
+
+      <p>Así se relaciona un polo continuo $s=\sigma+j\omega$ con su polo
+        discreto $p$. Su módulo es $|p|=e^{\sigma T_s}$ y su ángulo es
+        $\omega T_s$, tomado módulo $2\pi$. El semiplano izquierdo
+        $\sigma&lt;0$ se transforma en el interior del círculo unitario;
+        el eje imaginario cae sobre la circunferencia y el semiplano derecho
+        en el exterior. La Figura 4 permite interpretar el resultado en
+        términos de las muestras.</p>
+
+      <p>Para un polo estable no nulo, la constante de decaimiento equivalente
+        y la frecuencia angular principal pueden leerse como</p>
+
+      <div class="equation">\[
+        \sigma=\frac{\ln|p|}{T_s},\qquad
+        \omega=\frac{\arg(p)}{T_s}.
+      \]</div>
+
+      <p>La segunda relación elige una rama del argumento. Frecuencias
+        separadas por múltiplos de $2\pi/T_s$ generan el mismo factor
+        discreto, de modo que la recuperación de la frecuencia continua
+        necesita información adicional. Este es el origen de la
+        <strong>ambigüedad por aliasing</strong>. Para señales limitadas en
+        frecuencia, el muestreo debe superar el doble de la frecuencia
+        máxima presente y normalmente se utiliza un filtro analógico
+        previo para limitar componentes que podrían plegarse.</p>
+
+      <aside class="remark">
+        <p><strong>Relacionar polos no basta para discretizar una transferencia.</strong>
+          La identidad modal $z=e^{sT_s}$ no autoriza sustituir simplemente
+          $s=\ln(z)/T_s$ en una función de transferencia y esperar el modelo
+          de una planta con entrada retenida. También importa cómo actúa la
+          entrada entre muestras. Los ceros y las ganancias se obtienen al
+          discretizar el modelo completo con esa hipótesis.</p>
+      </aside>
+
+      <h3>La respuesta en frecuencia sobre el círculo unitario</h3>
+
+      <p>Si la ROC de la función de transferencia incluye la circunferencia
+        unitaria, podemos evaluar $G(z)$ en $z=e^{j\Omega}$. La función
+        $G(e^{j\Omega})$ es la <strong>respuesta en frecuencia</strong>.
+        Para una entrada sinusoidal, su módulo describe la relación de
+        amplitudes en régimen permanente y su argumento el desfase, una vez
+        que ha desaparecido el transitorio de un sistema estable.</p>
+
+      <p>En el circuito RC muestreado,</p>
+
+      <div class="equation">\[
+        G(e^{j\Omega})=\frac{1-a}{e^{j\Omega}-a},\qquad
+        |G(e^{j\Omega})|
+        =\frac{1-a}{\sqrt{1+a^2-2a\cos\Omega}}.
+      \]</div>
+
+      <p>Para $\Omega=0$ la ganancia es uno. Para $\Omega=\pi$, que
+        corresponde a una alternancia de signo entre muestras, vale
+        $(1-a)/(1+a)\approx0.0997$ con los parámetros del ejemplo. El
+        circuito atenúa esa variación mucho más rápida que la entrada
+        constante. La respuesta discreta es periódica en $\Omega$ con
+        periodo $2\pi$; una banda principal habitual es
+        $-\pi\leq\Omega\leq\pi$, equivalente a frecuencias físicas entre
+        $-f_s/2$ y $f_s/2$. Esta descripción corresponde al sistema con
+        la entrada retenida que usamos para construir $G(z)$.</p>
+
+      <h2>Un mecanismo masa–resorte–amortiguador muestreado</h2>
+
+      <p>Una masa $m$ unida a un resorte de rigidez $K$ y a un amortiguador
+        viscoso $b$ responde a una fuerza $F(t)$ según</p>
+
+      <div class="equation">\[
+        m\ddot x(t)+b\dot x(t)+Kx(t)=F(t).
+      \]</div>
+
+      <p>La posición $x$ se mide respecto al equilibrio. Usamos $K$ mayúscula
+        para la rigidez, porque $k$ ya identifica el índice discreto. La
+        velocidad y la posición iniciales determinan la energía con la
+        que comienza el experimento.</p>
+
+      <figure id="fig-z-mecanismo">
+        <img src="./ztrans-mecanismo-esquema.svg" alt="Masa conectada a un resorte y un amortiguador, sometida a una fuerza externa y con posición x como salida."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. El mecanismo permite estudiar modos oscilatorios
+          amortiguados. En este artículo su posición se observa cada $T_s$
+          segundos y la fuerza permanece constante entre actualizaciones.</figcaption>
+      </figure>
+
+      <h3>El estado conserva posición y velocidad</h3>
+
+      <p>Una ecuación de segundo orden puede escribirse como dos ecuaciones
+        de primer orden introduciendo el <strong>vector de estado</strong>,
+        que reúne las variables necesarias para predecir la evolución desde
+        un instante dado. En este caso elegimos</p>
+
+      <div class="equation">\[
+        \boldsymbol{x}(t)=\begin{bmatrix}x(t)\\\dot x(t)\end{bmatrix},\qquad
+        \frac{\mathrm{d}\boldsymbol{x}}{\mathrm{d}t}
+        =A\boldsymbol{x}+BF,\qquad x=C_x\boldsymbol{x},
+      \]</div>
+
+      <div class="equation">\[
+        A=\begin{bmatrix}0&amp;1\\-K/m&amp;-b/m\end{bmatrix},\quad
+        B=\begin{bmatrix}0\\1/m\end{bmatrix},\quad
+        C_x=\begin{bmatrix}1&amp;0\end{bmatrix}.
+      \]</div>
+
+      <p>Con fuerza retenida durante cada intervalo, el modelo discreto exacto es</p>
+
+      <div class="equation">\[
+        \boldsymbol{x}[k+1]=A_d\boldsymbol{x}[k]+B_dF[k],\qquad
+        A_d=e^{AT_s},\qquad B_d=\int_0^{T_s}e^{A\tau}B\,\mathrm{d}\tau.
+      \]</div>
+
+      <p>La exponencial matricial $e^{AT_s}$ es la extensión de la exponencial
+        al caso de una matriz y se define por la serie
+        $I+AT_s+(AT_s)^2/2!+\cdots$. La identidad $I$ cumple el papel del
+        número uno. El primer término propaga el estado inicial de un
+        intervalo; el segundo suma el efecto de la fuerza durante ese
+        intervalo. Esta construcción también se aplica a motores, circuitos
+        y otros modelos lineales de varios estados.</p>
+
+      <p>Transformando la recurrencia de estado con condiciones iniciales nulas,
+        obtenemos la función de transferencia</p>
+
+      <div class="equation">\[
+        G(z)=C_x(zI-A_d)^{-1}B_d.
+      \]</div>
+
+      <p>Si el estado inicial es distinto de cero, se añade a la salida el
+        término $C_x(zI-A_d)^{-1}z\boldsymbol{x}[0]$. De nuevo, el efecto
+        de la energía inicial se separa del efecto de la entrada.</p>
+
+      <h3>Un modelo numérico con oscilaciones</h3>
+
+      <script type="text/tabjax" data-caption="Tabla 4. Parámetros del mecanismo y del experimento muestreado.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Símbolo & Valor \\
+\hline
+Masa & $m$ & $1\ \mathrm{kg}$ \\
+Amortiguamiento & $b$ & $2\ \mathrm{N\,s/m}$ \\
+Rigidez & $K$ & $5\ \mathrm{N/m}$ \\
+Periodo de muestreo & $T_s$ & $0.2\ \mathrm{s}$ \\
+Posición y velocidad iniciales & $x[0],\dot x[0]$ & $0,0$ \\
+Amplitud de fuerza & $F_0$ & $5\ \mathrm{N}$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Los polos continuos son las raíces de $s^2+2s+5=0$, es decir,
+        $s=-1\pm2j$. Por tanto, los polos discretos son</p>
+
+      <div class="equation">\[
+        p_{1,2}=e^{(-1\pm2j)T_s}
+        =e^{-0.2}e^{\pm j0.4}
+        \approx0.754101\pm j0.318829.
+      \]</div>
+
+      <p>El módulo $e^{-0.2}\approx0.818731$ indica decaimiento y el ángulo
+        $0.4$ rad por muestra corresponde a $2$ rad/s. La exponencial
+        matricial produce, con cifras redondeadas,</p>
+
+      <div class="equation">\[
+        A_d\approx\begin{bmatrix}
+          0.913515&amp;0.159414\\-0.797072&amp;0.594687
+        \end{bmatrix},\qquad
+        B_d\approx\begin{bmatrix}0.017297\\0.159414\end{bmatrix}.
+      \]</div>
+
+      <p>Al sustituir estas matrices en la expresión de $G$ y conservar
+        mayor precisión para los cálculos, resulta</p>
+
+      <div class="equation">\[
+        G(z)\approx
+        \frac{0.01729693048\,z+0.01512669422}
+        {z^2-1.50820192250\,z+0.67032004604}.
+      \]</div>
+
+      <p>El numerador también contiene información física. Su cero es
+        aproximadamente $-0.87453$ y no se obtiene solamente al trasladar
+        los polos continuos. Para implementar la ecuación dividimos
+        numerador y denominador entre $z^2$,</p>
+
+      <div class="equation">\[
+        G(z)=\frac{\beta_1z^{-1}+\beta_2z^{-2}}
+          {1+\alpha_1z^{-1}+\alpha_2z^{-2}},
+      \]</div>
+
+      <p>donde $\alpha_1\approx-1.50820192250$, $\alpha_2\approx0.67032004604$,
+        $\beta_1\approx0.01729693048$ y $\beta_2\approx0.01512669422$.
+        La ecuación equivalente es</p>
+
+      <div class="equation">\[
+        x[k]+\alpha_1x[k-1]+\alpha_2x[k-2]
+        =\beta_1F[k-1]+\beta_2F[k-2].
+      \]</div>
+
+      <p>Esta forma utiliza historia nula para iniciar el experimento desde
+        el reposo. La primera fuerza afecta a $x[1]$, porque no hay salto
+        instantáneo de posición en $x[0]$. En los programas calcularemos
+        la misma salida tanto con la recurrencia de estado como con esta
+        ecuación y verificaremos su coincidencia.</p>
+
+      <h3>Respuesta a una fuerza constante</h3>
+
+      <p>Para $F[k]=5u[k]$, la transformada de la salida es
+        $X(z)=G(z)\,5z/(z-1)$. Si escribimos
+        $r=e^{-0.2}$ y $\theta=0.4$, su descomposición puede expresarse
+        directamente en las parejas trigonométricas,</p>
+
+      <div class="equation">\[
+        X(z)=\frac{z}{z-1}
+        -\frac{z(z-r\cos\theta)}{z^2-2r\cos\theta\,z+r^2}
+        -\frac{1}{2}\frac{rz\sin\theta}{z^2-2r\cos\theta\,z+r^2}.
+      \]</div>
+
+      <p>La transformada inversa da la posición, en metros,</p>
+
+      <div class="equation">\[
+        x_s[k]=1-e^{-0.2k}\left[\cos(0.4k)+\frac12\sin(0.4k)\right],
+        \qquad k\geq0.
+      \]</div>
+
+      <p>La fórmula satisface $x_s[0]=0$ y $x_s[1]\approx0.08648465$ m.
+        Es también la solución continua de este experimento evaluada en
+        $t=kT_s$. La ganancia estática es $G(1)=1/K=0.2$ m/N, así que la
+        posición final es $5G(1)=1$ m. El teorema del valor final es aplicable
+        porque los dos polos de la planta están dentro del círculo y el
+        escalón añade únicamente un polo simple en 1.</p>
+
+      <h3>Aplicar la fuerza y retirarla después</h3>
+
+      <p>Si la fuerza de 5 N se mantiene durante $N=10$ intervalos, la excitación
+        dura $NT_s=2$ s y su transformada es
+        $5(1-z^{-10})z/(z-1)$. Por linealidad y retardo,</p>
+
+      <div class="equation">\[
+        x_p[k]=x_s[k]u[k]-x_s[k-10]u[k-10].
+      \]</div>
+
+      <p>En esta expresión la fórmula de $x_s$ se utiliza solo para argumentos
+        no negativos. Antes de la décima muestra, la respuesta coincide
+        con la del escalón. Después se resta la respuesta de un segundo
+        escalón que comienza cuando se retira la fuerza. La posición y la
+        velocidad no desaparecen en ese instante; el mecanismo sigue
+        oscilando mientras disipa su energía.</p>
+
+      <figure id="fig-z-mecanismo-respuesta">
+        <img src="./ztrans-mecanismo.svg" alt="Respuestas del mecanismo a una fuerza constante y a una fuerza retirada a los dos segundos; las muestras discretas coinciden con la evolución continua."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 8. Simulación con retención de orden cero, estado
+          inicial nulo y $T_s=0.2$ s. Los puntos se obtienen mediante el
+          modelo discreto y las curvas mediante las soluciones continuas.
+          El programa comprueba ambas respuestas muestra por muestra.</figcaption>
+      </figure>
+
+      <h2>Transformadas e inversas con MATLAB y SymPy</h2>
+
+      <p>El cálculo simbólico ayuda a conservar fracciones exactas, verificar
+        descomposiciones y detectar errores de índice. La interpretación
+        de la ROC, la causalidad y los datos iniciales sigue siendo parte
+        del problema. Una expresión racional correcta puede representar
+        una secuencia diferente si se interpreta con otra convergencia.</p>
+
+      <h3>MATLAB y Symbolic Math Toolbox</h3>
+
+      <p>Las funciones <a href="https://www.mathworks.com/help/symbolic/sym.ztrans.html"><code>ztrans</code></a>
+        e <a href="https://www.mathworks.com/help/symbolic/sym.iztrans.html"><code>iztrans</code></a>
+        calculan la transformada unilateral y su inversa. Indicamos
+        explícitamente las variables para evitar elecciones automáticas.
+        El programa utiliza $k\geq0$ entero y comprueba las inversas de
+        los ejemplos con polos distintos y repetidos.</p>
+
+      <p>Archivo completo: <a href="./ztrans_transformadas.m" download><code>ztrans_transformadas.m</code></a>.</p>
+
+      <script type="text/matlab">
+% Transformadas e inversas. Requiere Symbolic Math Toolbox.
+clear
+syms k integer
+assumeAlso(k >= 0)
+syms z
+
+a = sym(1)/2;
+b = sym(4)/5;
+funciones = [a^k, k*a^k];
+for f = funciones
+    disp('Secuencia y transformada:');
+    disp(f);
+    disp(simplify(ztrans(f,k,z)));
+end
+
+X = z/((z-a)*(z-b));
+x = simplify(iztrans(X,z,k));
+xEsperada = (b^k-a^k)/(b-a);
+disp('Fracciones parciales de X(z)/z:');
+disp(partfrac(X/z,z));
+disp('Inversa causal para k >= 0:'); disp(x);
+assert(isAlways(simplify(x-xEsperada) == 0));
+assert(isAlways(simplify(ztrans(x,k,z)-X) == 0));
+
+X2 = z/(z-a)^2;
+x2 = simplify(iztrans(X2,z,k));
+assert(isAlways(simplify(x2-k*a^(k-1)) == 0));
+disp('Inversa con polo repetido:'); disp(x2);
+
+% El impulso de Kronecker no se confunde con la delta de Dirac.
+disp('Inversa de z^(-3):'); disp(iztrans(z^(-3),z,k));
+
+syms Y V y0 c
+Ysol = simplify(solve(z*(Y-y0) == a*Y+c*V,Y));
+disp('Solución con condición inicial:'); disp(Ysol);
+disp('Valor inicial:'); disp(limit(Ysol,z,Inf));
+      </script>
+
+      <p>Las transformadas directas deben ser $z/(z-1/2)$ y
+        $(z/2)/(z-1/2)^2$, con ROC $|z|&gt;1/2$. MATLAB devuelve la expresión
+        simbólica; la región se obtiene de la serie que la define.
+        <code>partfrac(X/z,z)</code> realiza la descomposición racional que
+        utilizamos manualmente. La inversa de $z^{-3}$ es un impulso de
+        Kronecker ubicado en $k=3$.</p>
+
+      <aside class="remark">
+        <p><strong>El escalón discreto vale uno en el origen.</strong>
+          Las funciones simbólicas <code>heaviside</code> y
+          <code>Heaviside</code> suelen asignar el valor $1/2$ en cero.
+          Esa convención no coincide con nuestro $u[0]=1$ y aquí sí cambia
+          una muestra y su transformada. Para entradas numéricas utilizamos
+          comparaciones como <code>k &gt;= N</code>; para las sumas unilaterales
+          describimos directamente la secuencia sobre $k\geq0$.</p>
+      </aside>
+
+      <h3>Python con SymPy</h3>
+
+      <p>En Python podemos construir el cálculo a partir de la definición
+        mediante <a href="https://docs.sympy.org/latest/modules/concrete.html"><code>summation</code></a>,
+        realizar fracciones parciales con
+        <a href="https://docs.sympy.org/latest/modules/polys/reference.html#sympy.polys.partfrac.apart"><code>apart</code></a>
+        y recuperar las primeras muestras mediante una serie en $q=z^{-1}$.
+        El siguiente programa usa estas operaciones de SymPy y conserva
+        las condiciones que acompañan a las sumas infinitas.</p>
+
+      <p>Archivo completo: <a href="./ztrans_transformadas.py" download><code>ztrans_transformadas.py</code></a>.
+        Para ejecutar todos los ejemplos de este artículo se requieren SymPy,
+        NumPy, SciPy y Matplotlib, instalables mediante
+        <code>python -m pip install sympy numpy scipy matplotlib</code>.</p>
+
+      <script type="text/python">
+"""Transformada Z unilateral mediante sumas, fracciones parciales y series."""
+import sympy as sp
+
+k = sp.symbols("k", integer=True, nonnegative=True)
+z, q = sp.symbols("z q")
+a, b = sp.Rational(1, 2), sp.Rational(4, 5)
+
+# summation devuelve también las condiciones de convergencia.
+for x in (a**k, k*a**k):
+    resultado = sp.summation(x*z**(-k), (k, 0, sp.oo))
+    print("\nSecuencia:", x)
+    print("Transformada y condiciones:", resultado)
+
+# La inversa causal se reconoce descomponiendo X(z)/z.
+X = z/((z-a)*(z-b))
+x = (b**k-a**k)/(b-a)
+print("\nFracciones parciales de X(z)/z:", sp.apart(X/z, z))
+print("Inversa para k >= 0:", x)
+assert sp.cancel(X - (z/(z-b)-z/(z-a))/(b-a)) == 0
+
+# z^{-1}=q: el coeficiente de q^k es x[k].
+serie = sp.series(X.subs(z, 1/q), q, 0, 9).removeO().expand()
+for n in range(9):
+    assert sp.simplify(serie.coeff(q, n)-x.subs(k, n)) == 0
+print("Primeras muestras:", [x.subs(k, n) for n in range(6)])
+
+# Un polo repetido genera un factor k, no un exponencial aislado.
+X2 = z/(z-a)**2
+x2 = k*a**(k-1)
+serie2 = sp.series(X2.subs(z, 1/q), q, 0, 9).removeO().expand()
+for n in range(9):
+    assert sp.simplify(serie2.coeff(q, n)-x2.subs(k, n)) == 0
+print("Inversa con polo repetido:", x2)
+
+# Ecuación y[k+1] = a*y[k] + c*v[k], con y[0] = y0.
+Y, V, y0, c = sp.symbols("Y V y0 c")
+ecuacion = sp.Eq(z*(Y-y0), a*Y+c*V)
+Ysol = sp.factor(sp.solve(ecuacion, Y)[0])
+print("\nSolución transformada con condición inicial:", Ysol)
+print("Valor inicial:", sp.limit(Ysol, z, sp.oo))
+      </script>
+
+      <p>La salida <code>Piecewise</code> distingue la expresión cerrada de la
+        suma que permanece sin evaluar cuando no se cumple la condición.
+        Para el primer ejemplo, <code>1/Abs(z) &lt; 2</code> equivale a
+        $|z|&gt;1/2$. La expansión en $q$ confirma las primeras nueve muestras
+        de cada inversa. No es una rutina general de inversión; es una
+        comprobación independiente de los ejemplos cuyas fórmulas ya
+        identificamos mediante las parejas.</p>
+
+      <h3>Fracciones parciales en potencias de retardo</h3>
+
+      <p>Las funciones <a href="https://www.mathworks.com/help/signal/ref/residuez.html"><code>residuez</code></a>
+        de MATLAB y <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.residuez.html"><code>scipy.signal.residuez</code></a>
+        trabajan con coeficientes ordenados en potencias crecientes de
+        $z^{-1}$. En el ejemplo de polos distintos,</p>
+
+      <div class="equation">\[
+        X(z)=\frac{z^{-1}}{1-1.3z^{-1}+0.4z^{-2}},\qquad
+        \boldsymbol b=[0,1],\quad\boldsymbol a=[1,-1.3,0.4].
+      \]</div>
+
+      <p>Los residuos multiplican términos $1/(1-pz^{-1})$, por lo que sus
+        inversas son $p^k u[k]$. Si aparecen potencias repetidas o una parte
+        polinomial, deben usarse las parejas correspondientes. El cero
+        inicial del vector del numerador conserva el retardo; eliminarlo
+        cambia la secuencia. La función <code>residuez</code> de MATLAB
+        requiere Signal Processing Toolbox y no es necesaria para ejecutar
+        los programas principales de simulación.</p>
+
+      <h2>Simular los modelos y reproducir las gráficas</h2>
+
+      <p>Los programas siguientes generan las Figuras 3, 6 y 8. En el RC
+        comparan la recurrencia con la expresión obtenida por transformada Z.
+        En el mecanismo construyen el modelo retenido a partir de la matriz
+        continua y verifican que la simulación de estado, la ecuación en
+        diferencias y la solución analítica coincidan.</p>
+
+      <p>Para obtener $A_d$ y $B_d$ sin invertir $A$, calculamos la exponencial
+        de una matriz aumentada,</p>
+
+      <div class="equation">\[
+        \exp\!\left(
+        \begin{bmatrix}A&amp;B\\0&amp;0\end{bmatrix}T_s\right)
+        =\begin{bmatrix}A_d&amp;B_d\\0&amp;1\end{bmatrix}.
+      \]</div>
+
+      <p>Este procedimiento sigue siendo válido si $A$ es singular. MATLAB
+        lo implementa con <code>expm</code> y Python con
+        <code>scipy.linalg.expm</code>. También se puede obtener el modelo
+        retenido con <code>c2d</code> en Control System Toolbox o con
+        <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.cont2discrete.html"><code>scipy.signal.cont2discrete</code></a>
+        seleccionando el método <code>zoh</code>.</p>
+
+      <h3>Modelos y gráficas en MATLAB</h3>
+
+      <p>El código numérico utiliza funciones de MATLAB básico y conserva los
+        coeficientes sin redondearlos. En los vectores, el primer elemento
+        corresponde a la muestra $k=0$, aunque MATLAB lo indexe con 1.
+        Archivo completo: <a href="./ztrans_sistemas.m" download><code>ztrans_sistemas.m</code></a>.</p>
+
+      <script type="text/matlab">
+% Convolución, RC y mecanismo. Los modelos numéricos usan MATLAB básico.
+clear
+
+k = 0:15;
+v = [1 1 1 zeros(1,13)];
+h = 0.5.^k;
+y = conv(v,h); y = y(1:numel(k));
+assert(max(abs(y-filter(1,[1 -0.5],v))) < 1e-12);
+figure; tiledlayout(3,1);
+valores = {v,h,y};
+titulos = {'Entrada v[k]','Respuesta al impulso h[k]', ...
+           'Salida y[k] = (h * v)[k]'};
+for j = 1:3
+    nexttile; stem(k,valores{j},'filled');
+    ylabel('Amplitud'); title(titulos{j}); grid on;
+end
+xlabel('Índice k');
+
+% Circuito RC con tensión inicial no nula.
+R = 1000; C = 100e-6; Ts = 0.02;
+a = exp(-Ts/(R*C));
+k = 0:30; t = k*Ts;
+V0 = 1; Vin = 5;
+vc = zeros(size(k)); vc(1) = V0;
+for n = 1:numel(k)-1
+    vc(n+1) = a*vc(n)+(1-a)*Vin;
+end
+inicial = V0*a.^k;
+forzada = Vin*(1-a.^k);
+assert(max(abs(vc-inicial-forzada)) < 1e-12);
+residuo = diff(vc) - (1-a)*(Vin-vc(1:end-1));
+assert(max(abs(residuo)) < 1e-12);
+figure;
+tt = linspace(0,t(end),601);
+plot(tt,Vin+(V0-Vin)*exp(-tt/(R*C)), ...
+     t,forzada,'--',t,inicial,':',t,vc,'o','LineWidth',1.2);
+xlabel('Tiempo (s)'); ylabel('Tensión del capacitor (V)'); grid on;
+legend('Evolución continua','Debida a la entrada', ...
+       'Debida al estado inicial','Muestras del modelo discreto');
+
+% Mecanismo masa-resorte-amortiguador con fuerza constante por intervalos.
+m = 1; b = 2; K = 5; Ts = 0.2;
+A = [0 1; -K/m -b/m]; B = [0; 1/m];
+E = expm([A B; zeros(1,3)]*Ts);
+Ad = E(1:2,1:2); Bd = E(1:2,3);
+r = exp(-Ts); theta = 2*Ts;
+den = [1 -2*r*cos(theta) r^2];
+beta1 = (1-r*(cos(theta)+0.5*sin(theta)))/K;
+beta2 = sum(den)/K-beta1;
+disp('Ad, Bd y polos:'); disp(Ad); disp(Bd); disp(eig(Ad));
+disp('Numerador y denominador en z^(-1):');
+disp([0 beta1 beta2]); disp(den);
+assert(all(abs(eig(Ad)) < 1));
+
+k = 0:40; t = k*Ts; F0 = 5; N = 10;
+fuerzas = {F0*ones(size(k)), F0*double(k<N)};
+titulos = {'Fuerza constante de 5 N','Pulso de 5 N durante 2 s'};
+figure; tiledlayout(2,1);
+for j = 1:2
+    fuerza = fuerzas{j};
+    estado = zeros(2,numel(k));
+    for n = 1:numel(k)-1
+        estado(:,n+1) = Ad*estado(:,n)+Bd*fuerza(n);
+    end
+    y = estado(1,:);
+    yFiltro = filter([0 beta1 beta2],den,fuerza);
+    assert(max(abs(y-yFiltro)) < 1e-12);
+    exacta = F0/K*(1-exp(-t).*(cos(2*t)+0.5*sin(2*t)));
+    tt = linspace(0,t(end),1601);
+    yc = F0/K*(1-exp(-tt).*(cos(2*tt)+0.5*sin(2*tt)));
+    if j == 2
+        activos = k>=N; tr = t(activos)-N*Ts;
+        exacta(activos) = exacta(activos)- ...
+            F0/K*(1-exp(-tr).*(cos(2*tr)+0.5*sin(2*tr)));
+        activos = tt>=N*Ts; tr = tt(activos)-N*Ts;
+        yc(activos) = yc(activos)- ...
+            F0/K*(1-exp(-tr).*(cos(2*tr)+0.5*sin(2*tr)));
+    end
+    assert(max(abs(y-exacta)) < 1e-12);
+    nexttile;
+    plot(t,y,'o',tt,yc,'LineWidth',1.2);
+    title(titulos{j}); ylabel('Posición (m)'); grid on;
+    legend('Modelo discreto exacto','Evolución continua');
+end
+xlabel('Tiempo (s)');
+      </script>
+
+      <h3>Modelos y gráficas en Python</h3>
+
+      <p>En Python el primer elemento tiene índice cero, pero todavía hay que
+        distinguir el instante actual de la actualización siguiente.
+        <code>lfilter</code> recibe los coeficientes en el mismo orden de
+        potencias de $z^{-1}$ que la ecuación en diferencias.
+        Archivo completo: <a href="./ztrans_sistemas.py" download><code>ztrans_sistemas.py</code></a>.</p>
+
+      <script type="text/python">
+"""Convolución, circuito RC y mecanismo muestreado con retención de orden cero."""
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import expm
+from scipy.signal import lfilter
+
+
+def crear_figuras():
+    figuras = {}
+
+    # Convolución causal: la salida tiene una cola aunque la entrada termine.
+    k = np.arange(16)
+    entrada = np.array([1., 1., 1.])
+    h = 0.5**k
+    salida = np.convolve(entrada, h)[:len(k)]
+    salida_rec = lfilter([1.], [1., -0.5], np.pad(entrada, (0, 13)))
+    assert np.allclose(salida, salida_rec, rtol=0, atol=1e-12)
+    fig, axes = plt.subplots(3, 1, sharex=True, layout="constrained")
+    for ax, valores, titulo in zip(axes, (np.pad(entrada, (0, 13)), h, salida),
+                                   ("Entrada v[k]", "Respuesta al impulso h[k]",
+                                    "Salida y[k] = (h * v)[k]")):
+        ax.stem(k, valores, basefmt=" ")
+        ax.set(ylabel="Amplitud", title=titulo)
+        ax.grid(alpha=0.2)
+    axes[-1].set_xlabel("Índice k")
+    figuras["convolucion"] = fig
+
+    # RC: R = 1 kohm, C = 100 microfaradios, Ts = 20 ms.
+    R, C, Ts = 1000., 100e-6, 0.02
+    a = np.exp(-Ts/(R*C))
+    k = np.arange(31)
+    t = k*Ts
+    V0, Vin = 1., 5.
+    vc = np.empty(len(k)); vc[0] = V0
+    for n in range(len(k)-1):
+        vc[n+1] = a*vc[n] + (1-a)*Vin
+    inicial = V0*a**k
+    forzada = Vin*(1-a**k)
+    assert np.allclose(vc, inicial+forzada, rtol=0, atol=1e-12)
+    assert np.allclose(vc, Vin+(V0-Vin)*a**k, rtol=0, atol=1e-12)
+    assert np.allclose(np.diff(vc), (1-a)*(Vin-vc[:-1]), rtol=0, atol=1e-12)
+    fig, ax = plt.subplots(layout="constrained")
+    tt = np.linspace(0, t[-1], 601)
+    ax.plot(tt, Vin+(V0-Vin)*np.exp(-tt/(R*C)), color="0.55",
+            lw=1.3, label="Evolución continua")
+    ax.plot(t, forzada, "--", label="Debida a la entrada")
+    ax.plot(t, inicial, ":", label="Debida al estado inicial")
+    ax.plot(t, vc, "o", ms=4, label="Muestras del modelo discreto")
+    ax.set(xlabel="Tiempo (s)", ylabel="Tensión del capacitor (V)")
+    ax.grid(alpha=0.2); ax.legend()
+    figuras["rc"] = fig
+
+    # Mecanismo: m = 1 kg, b = 2 N s/m, K = 5 N/m, Ts = 0.2 s.
+    m, b, K, Ts = 1., 2., 5., 0.2
+    A = np.array([[0., 1.], [-K/m, -b/m]])
+    B = np.array([[0.], [1/m]])
+    # Exponencial de la matriz aumentada: no requiere invertir A.
+    E = expm(np.block([[A, B], [np.zeros((1, 3))]])*Ts)
+    Ad, Bd = E[:2, :2], E[:2, 2]
+    polos = np.linalg.eigvals(Ad)
+    r, theta = np.exp(-Ts), 2*Ts
+    den = np.array([1., -2*r*np.cos(theta), r*r])
+    beta1 = (1-r*(np.cos(theta)+0.5*np.sin(theta)))/K
+    beta2 = (1+den[1]+den[2])/K-beta1
+    print("Ad =\n", Ad, "\nBd =", Bd)
+    print("Polos:", polos)
+    print("G(z): numerador en z^-1 =", [0., beta1, beta2])
+    print("G(z): denominador en z^-1 =", den)
+    assert np.all(np.abs(polos) < 1)
+
+    k = np.arange(41); t = k*Ts
+    F0, N = 5., 10
+    fuerzas = (np.full(len(k), F0), F0*(k < N))
+    titulos = ("Fuerza constante de 5 N", "Pulso de 5 N durante 2 s")
+    fig, axes = plt.subplots(2, 1, sharex=True, layout="constrained")
+    for ax, fuerza, titulo in zip(axes, fuerzas, titulos):
+        estado = np.zeros((len(k), 2))
+        for n in range(len(k)-1):
+            estado[n+1] = Ad@estado[n] + Bd*fuerza[n]
+        y = estado[:, 0]
+        y_filtro = lfilter([0., beta1, beta2], den, fuerza)
+        assert np.allclose(y, y_filtro, rtol=0, atol=1e-12)
+        continua = F0/K*(1-np.exp(-t)*(np.cos(2*t)+0.5*np.sin(2*t)))
+        if fuerza[-1] == 0:
+            activos = k >= N
+            tr = t[activos]-N*Ts
+            continua[activos] -= F0/K*(1-np.exp(-tr)*(np.cos(2*tr)+0.5*np.sin(2*tr)))
+        assert np.allclose(y, continua, rtol=0, atol=1e-12)
+        ax.plot(t, y, "o", ms=4, label="Modelo discreto exacto")
+        tt = np.linspace(0, t[-1], 1601)
+        yc = F0/K*(1-np.exp(-tt)*(np.cos(2*tt)+0.5*np.sin(2*tt)))
+        if fuerza[-1] == 0:
+            mask = tt >= N*Ts; tr = tt[mask]-N*Ts
+            yc[mask] -= F0/K*(1-np.exp(-tr)*(np.cos(2*tr)+0.5*np.sin(2*tr)))
+        ax.plot(tt, yc, color="0.55", lw=1.2, label="Evolución continua")
+        ax.set(ylabel="Posición (m)", title=titulo)
+        ax.grid(alpha=0.2); ax.legend()
+    axes[-1].set_xlabel("Tiempo (s)")
+    figuras["mecanismo"] = fig
+    return figuras
+
+
+if __name__ == "__main__":
+    crear_figuras()
+    plt.show()
+      </script>
+
+      <p>Las instrucciones <code>assert</code> comprueban las igualdades con
+        una tolerancia numérica de $10^{-12}$. Los puntos del mecanismo
+        deben coincidir con la solución continua dentro de esa tolerancia,
+        porque las entradas del experimento son constantes por intervalos
+        y la discretización es exacta para ese supuesto. Esto verifica la
+        coherencia entre representaciones del mismo modelo, sin convertir
+        al modelo ideal en una descripción exacta de cualquier montaje real.</p>
+
+      <p>Las Figuras 1, 2, 4, 5 y 7 se generan con
+        <a href="./ztrans_figuras.py" download><code>ztrans_figuras.py</code></a>,
+        que también exporta las gráficas de los modelos en SVG y PNG.
+        Para reproducirlas debe estar en la misma carpeta que
+        <code>ztrans_sistemas.py</code>. Los programas anteriores muestran
+        las gráficas en pantalla sin guardar archivos automáticamente.</p>
+
+      <h2>De la transformada a un controlador digital</h2>
+
+      <p>La misma notación permite describir algoritmos de control. Sea
+        $e[k]=r[k]-y[k]$ el error entre una referencia $r$ y una medición
+        $y$. Una acción <strong>proporcional</strong> multiplica el error
+        actual por una ganancia $K_p$; una acción <strong>integral</strong>
+        acumula errores para corregir desviaciones persistentes.</p>
+
+      <p>Un controlador PI discreto sencillo puede escribirse como</p>
+
+      <div class="equation">\[
+        I[k]=I[k-1]+T_s e[k],\qquad
+        v[k]=K_p e[k]+K_i I[k].
+      \]</div>
+
+      <p>Si el acumulador comienza con $I[-1]=0$, su función de transferencia es</p>
+
+      <div class="equation">\[
+        C(z)=\frac{V(z)}{E(z)}
+        =K_p+\frac{K_iT_s}{1-z^{-1}}.
+      \]</div>
+
+      <p>Con una planta $G(z)$ y realimentación negativa unitaria, la relación
+        entre la referencia y la salida, bajo condiciones iniciales nulas,
+        resulta</p>
+
+      <div class="equation">\[
+        \frac{Y(z)}{R(z)}=\frac{C(z)G(z)}{1+C(z)G(z)}.
+      \]</div>
+
+      <p>La estabilidad del lazo depende de los polos de esta relación y de
+        los modos internos del conjunto. El integrador introduce un polo
+        en $z=1$ cuando se considera el controlador aislado, pero eso no
+        determina por sí solo la estabilidad del sistema realimentado.
+        Las ganancias se escogen analizando el lazo completo. Una saturación
+        del actuador puede hacer crecer el acumulador sin producir más
+        esfuerzo; ese efecto, conocido como <em>windup</em>, necesita una
+        estrategia adicional de limitación o corrección de la integral.</p>
+
+      <p>La elección de $T_s$ también debe incluir la dinámica del sensor,
+        el filtrado, el tiempo de cálculo y los retardos de comunicación.
+        Un retraso adicional de una muestra introduce otro factor $z^{-1}$
+        y puede modificar el margen de estabilidad. Por eso no basta con
+        trasladar una fórmula al programa; el orden temporal de medición,
+        cálculo y actuación debe coincidir con el modelo utilizado.</p>
+
+      <h2>Cómo revisar una solución discreta</h2>
+
+      <p>Una comprobación comienza por identificar qué representa cada índice
+        y cuándo se aplica la entrada. Después conviene revisar varios
+        aspectos que pueden quedar ocultos en una expresión algebraica.</p>
+
+      <ul class="formal">
+        <li>Conservar $T_s$ y las unidades físicas. El índice $k$ no es un
+          tiempo en segundos, y una suma no es una integral sin el factor
+          temporal apropiado.</li>
+        <li>Indicar la convención unilateral o bilateral y la ROC. Una
+          fracción racional no siempre identifica una única secuencia.</li>
+        <li>Comprobar la muestra inicial y al menos dos actualizaciones
+          directas de la recurrencia. Es una forma eficaz de detectar
+          retardos introducidos o eliminados por error.</li>
+        <li>Separar la respuesta debida a la entrada de la debida al estado
+          inicial. La función de transferencia presupone estado inicial nulo.</li>
+        <li>Verificar los polos antes de aplicar el teorema del valor final.
+          Un límite algebraico finito no garantiza que la secuencia tenga límite.</li>
+        <li>Conservar la precisión de los coeficientes durante la simulación.
+          Las cifras redondeadas del texto sirven para interpretar el modelo,
+          pero no para reemplazar innecesariamente sus valores completos.</li>
+        <li>Comparar la solución cerrada con una simulación de la ecuación
+          original y revisar la hipótesis usada para discretizar la planta.</li>
+      </ul>
+
+      <h3>Variaciones para comprobar la comprensión</h3>
+
+      <p>En el RC, duplique $T_s$ sin cambiar $R$ ni $C$. El coeficiente pasa
+        de $e^{-0.2}$ a $e^{-0.4}$ y la respuesta sigue describiendo la misma
+        carga física, pero con menos puntos por constante de tiempo.
+        Si se utilizara Euler hacia adelante, el polo sería
+        $1-T_s/(RC)$ y solo permanecería dentro del círculo unitario cuando
+        $0&lt;T_s&lt;2RC$. Una elección demasiado grande podría hacer que la
+        aproximación pareciera inestable aunque el circuito real fuera estable.</p>
+
+      <p>En el mecanismo, cambie el instante de retiro de la fuerza de diez
+        a cinco intervalos. El factor de retardo pasa de $z^{-10}$ a
+        $z^{-5}$ y el pulso dura un segundo. La planta conserva sus polos;
+        lo que cambia es la combinación de respuestas y el estado que
+        alcanza antes de retirar la entrada.</p>
+
+      <p>La transformada Z conecta las ecuaciones de un sistema muestreado
+        con los algoritmos que pueden ejecutarse en una computadora. Sus
+        factores de retardo hacen visible la memoria, sus polos describen
+        los modos y la inversa recupera una predicción por muestras.
+        Mantener explícitos el periodo, las condiciones iniciales y la
+        forma de aplicar las entradas permite que el resultado algebraico
+        conserve su significado físico.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Frazzoli, E. (2011). <a href="https://ocw.mit.edu/courses/6-241j-dynamic-systems-and-control-spring-2011/3bf509c94d0977a81bf16f1d0e15c47e_MIT6_241JS11_lec09.pdf"><em>Lecture 9:
+          Transfer functions</em></a> [Notas del curso 6.241J, Dynamic Systems
+          and Control]. Massachusetts Institute of Technology, MIT OpenCourseWare.</li>
+        <li>Massachusetts Institute of Technology. (2011).
+          <a href="https://live.ocw.mit.edu/courses/6-003-signals-and-systems-fall-2011/64490a008c1c5c25c86044351465abf7_MIT6_003F11_lec05.pdf"><em>Lecture 5:
+          Z transform</em></a> [Diapositivas del curso 6.003, Signals and Systems].
+          MIT OpenCourseWare.</li>
+        <li>SciPy Community. (s. f.-a).
+          <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.cont2discrete.html"><em>cont2discrete</em></a>.
+          SciPy documentation.</li>
+        <li>SciPy Community. (s. f.-b).
+          <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.residuez.html"><em>residuez</em></a>.
+          SciPy documentation.</li>
+        <li>SymPy Development Team. (2025a).
+          <a href="https://docs.sympy.org/latest/modules/concrete.html"><em>Concrete</em></a>.
+          SymPy 1.14.0 documentation.</li>
+        <li>SymPy Development Team. (2025b).
+          <a href="https://docs.sympy.org/latest/modules/polys/reference.html#sympy.polys.partfrac.apart"><em>Polynomials
+          manipulation module reference</em></a>. SymPy 1.14.0 documentation.</li>
+        <li>The MathWorks, Inc. (2026a).
+          <a href="https://www.mathworks.com/help/control/ug/continuous-discrete-conversion-methods.html"><em>Continuous-discrete
+          conversion methods</em></a>. Control System Toolbox documentation.</li>
+        <li>The MathWorks, Inc. (2026b).
+          <a href="https://www.mathworks.com/help/symbolic/sym.iztrans.html"><em>iztrans:
+          Inverse Z-transform</em></a>. Symbolic Math Toolbox documentation.</li>
+        <li>The MathWorks, Inc. (2026c).
+          <a href="https://www.mathworks.com/help/signal/ref/residuez.html"><em>residuez:
+          Z-transform partial-fraction expansion</em></a>. Signal Processing Toolbox documentation.</li>
+        <li>The MathWorks, Inc. (2026d).
+          <a href="https://www.mathworks.com/help/symbolic/sym.ztrans.html"><em>ztrans:
+          Z-transform</em></a>. Symbolic Math Toolbox documentation.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+</html>
