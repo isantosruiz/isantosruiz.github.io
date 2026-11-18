@@ -1,0 +1,727 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Actuadores neumáticos: movimiento y sujeción con aire | drAutomática</title><meta name="description" content="Actuadores neumáticos para instrumentación mecatrónica. Cilindros de simple y doble efecto, ventosas, pinzas, diafragmas y actuadores giratorios; fuerza, presión, vacío, consumo de aire y sensores."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/actuadoresn/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Actuadores neumáticos: movimiento y sujeción con aire | drAutomática"><meta property="og:description" content="Actuadores neumáticos para instrumentación mecatrónica. Cilindros de simple y doble efecto, ventosas, pinzas, diafragmas y actuadores giratorios; fuerza, presión, vacío, consumo de aire y sensores."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/actuadoresn/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Actuadores neumáticos para instrumentación mecatrónica. Cilindros de simple y doble efecto, ventosas, pinzas, diafragmas y actuadores giratorios; fuerza, presión, vacío, consumo de aire y sensores."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Actuadores neumáticos: movimiento y sujeción con aire | drAutomática"><meta name="twitter:description" content="Actuadores neumáticos para instrumentación mecatrónica. Cilindros de simple y doble efecto, ventosas, pinzas, diafragmas y actuadores giratorios; fuerza, presión, vacío, consumo de aire y sensores."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Actuadores neumáticos: movimiento y sujeción con aire</h1>
+        <p class="subtitle">Cilindros, ventosas y otros dispositivos que convierten una diferencia de presión en una acción sobre el proceso.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>El aire comprimido permite desplazar, sujetar, orientar y manipular piezas
+          mediante actuadores de construcción relativamente sencilla. Los cilindros
+          producen movimiento lineal; las pinzas transforman ese movimiento en agarre;
+          los actuadores giratorios orientan herramientas y los de diafragma posicionan
+          válvulas de proceso. Las ventosas utilizan una presión inferior a la ambiental
+          para sostener objetos sin rodearlos con mordazas. Revisaremos estos principios,
+          las relaciones básicas de fuerza y consumo y los elementos de mando necesarios
+          para integrarlos en un sistema mecatrónico. La presión, la posición y la
+          presencia de una pieza deberán interpretarse como mediciones diferentes,
+          porque ninguna de ellas describe por sí sola toda la acción del actuador.</p>
+      </section>
+
+      <h2>Una señal eléctrica que termina moviendo una pieza</h2>
+
+      <p>En una estación de ensamble, un controlador puede ordenar que una pieza
+        avance, quede sujeta y sea presentada ante una cámara. La salida eléctrica
+        del controlador contiene la orden, pero la energía para realizar el trabajo
+        puede proceder de una red de aire comprimido. Una electroválvula dirige el
+        aire hacia el actuador y este aplica la fuerza o el movimiento requeridos.</p>
+
+      <p>La <strong>neumática</strong> utiliza gases presurizados, habitualmente aire,
+        para transmitir energía y producir acciones mecánicas. Se emplea en
+        alimentadores, dispositivos de sujeción, máquinas de empaque, manipulación
+        de piezas y regulación de válvulas. La rapidez de las maniobras y la
+        posibilidad de distribuir aire a varios equipos favorecen su uso en
+        automatización, aunque la compresibilidad y las pérdidas de aire deben
+        considerarse desde el diseño.</p>
+
+      <figure id="fig-an-cadena">
+        <img src="/drautomatica/html/actuadoresn-cadena.png" alt="Cadena funcional desde el controlador a la electroválvula, el actuador y la carga, con alimentación neumática y realimentación de sensores."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. La electroválvula enlaza el mando eléctrico con
+          la potencia neumática. Los sensores permiten comprobar el resultado
+          de la acción y las condiciones en las que se realiza.</figcaption>
+      </figure>
+
+      <p>Conviene distinguir el <strong>actuador</strong>, que realiza la acción
+        mecánica, de las <strong>válvulas de mando</strong>, que encaminan o
+        regulan el aire. El compresor, el depósito, los filtros y los reguladores
+        forman parte del suministro. Para comprender un cilindro no hace falta
+        estudiar todos los detalles del compresor, pero sí conocer la presión
+        disponible en sus cámaras y la capacidad de alimentar y evacuar aire.</p>
+
+      <h2>La diferencia de presión es la que produce fuerza</h2>
+
+      <p>La presión es fuerza por unidad de superficie. Cuando dos lados de una
+        superficie tienen presiones distintas, aparece una fuerza neta. En el
+        caso más sencillo, con la misma área efectiva $A$ en ambos lados,</p>
+
+      <div class="equation">\[
+        F=\Delta p\,A.
+      \]</div>
+
+      <p>La presión debe expresarse en pascales y el área en metros cuadrados
+        para obtener la fuerza en newtons. Un bar equivale exactamente a
+        $10^5$ Pa. La presión atmosférica depende de la altitud y del tiempo;
+        cerca del nivel del mar es aproximadamente 1.013 bar y no constituye
+        la definición de un bar.</p>
+
+      <p>La <strong>presión absoluta</strong> se mide respecto al vacío y la
+        <strong>presión manométrica</strong> respecto a la atmósfera local,</p>
+
+      <div class="equation">\[
+        p_{\mathrm{abs}}=p_g+p_{\mathrm{atm}}.
+      \]</div>
+
+      <p>Si un manómetro indica 5 bar, normalmente informa una presión
+        manométrica. Para calcular la fuerza contra una cámara abierta a la
+        atmósfera se utiliza esa diferencia de presión. En cambio, para
+        relacionar la cantidad de aire con su volumen y temperatura se emplean
+        presiones absolutas. Mezclar ambas referencias altera los cálculos
+        de consumo y de vacío.</p>
+
+      <p>El aire también se comprime. Una parte del flujo que entra puede
+        elevar la presión antes de que la carga comience a moverse, y una
+        fuerza externa puede desplazar un pistón comprimiendo el aire
+        atrapado. Esta elasticidad explica por qué los topes mecánicos y los
+        sensores de posición son importantes cuando se exige repetibilidad.</p>
+
+      <h2>Cilindros de simple efecto</h2>
+
+      <p>Un <strong>cilindro neumático</strong> contiene un émbolo que se
+        desplaza dentro de una camisa. El sello del émbolo separa las cámaras,
+        mientras el vástago transmite el movimiento a la carga. En un
+        <strong>cilindro de simple efecto</strong>, el aire presurizado realiza
+        el trabajo en un solo sentido. El retorno se obtiene mediante un
+        resorte o una fuerza externa.</p>
+
+      <figure id="fig-an-simple">
+        <img src="/drautomatica/html/actuadoresn-simple.png" alt="Sección de un cilindro de simple efecto con cámara posterior presurizada, resorte de retorno y respiradero en el lado del vástago."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Ejemplo de simple efecto con avance neumático
+          y retorno por resorte. La cámara del resorte comunica con la
+          atmósfera mediante un respiradero.</figcaption>
+      </figure>
+
+      <p>En el montaje mostrado, el aire entra por la cámara posterior,
+        desplaza el émbolo y comprime el resorte. Para regresar, esa cámara
+        debe poder descargar al escape. Cerrar solamente la alimentación
+        puede dejar aire atrapado que se oponga al retorno. También existen
+        configuraciones en las que el resorte mantiene el vástago extendido
+        y el aire produce la retracción.</p>
+
+      <p>Si el resorte tiene precarga $F_0$, rigidez $k$ y compresión
+        adicional $x$, una estimación de la fuerza útil durante el avance es</p>
+
+      <div class="equation">\[
+        F_{\mathrm{útil}}\approx p_g A-F_0-kx-F_f,
+      \]</div>
+
+      <p>donde $F_f$ representa la fricción que se opone a ese movimiento.
+        La fuerza disponible cambia a lo largo de la carrera aunque la
+        presión sea constante. Estos cilindros son apropiados para expulsar,
+        marcar o sujetar cuando basta con accionar neumáticamente un sentido
+        y la fuerza de retorno es suficiente para la tarea.</p>
+
+      <p>El resorte define una tendencia de retorno, pero el movimiento real
+        depende de que exista una ruta de descarga, de la carga y de la
+        fricción. La posición que se obtiene al perder el mando se debe
+        comprobar en el conjunto de cilindro, válvula y mecanismo.</p>
+
+      <h2>Cilindros de doble efecto</h2>
+
+      <p>En un <strong>cilindro de doble efecto</strong>, ambas cámaras tienen
+        conexiones de aire. Para avanzar se presuriza la cámara posterior
+        y se descarga la del vástago; para retroceder se invierten las
+        conexiones. El aire puede producir trabajo en ambos sentidos,
+        lo que permite mover, aproximar y retirar una herramienta con
+        control activo de las dos carreras.</p>
+
+      <figure id="fig-an-doble">
+        <img src="/drautomatica/html/actuadoresn-doble.png" alt="Sección de un cilindro de doble efecto durante el avance, con aire entrando por A y saliendo por B, y las presiones de ambas cámaras identificadas."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. En el avance, A recibe aire y B descarga.
+          Para retraer el vástago se alimenta B y se descarga A.
+          La cámara del vástago tiene una superficie efectiva menor.</figcaption>
+      </figure>
+
+      <p>Si el diámetro del émbolo es $D$ y el del vástago es $d$, las
+        superficies útiles son</p>
+
+      <div class="equation">\[
+        A_p=\frac{\pi D^2}{4},\qquad
+        A_r=\frac{\pi d^2}{4},\qquad
+        A_a=A_p-A_r.
+      \]</div>
+
+      <p>$A_p$ es el área completa del pistón, $A_r$ el área del vástago
+        y $A_a$ el área anular. Con el sentido positivo hacia el avance
+        y presiones manométricas $p_A$ y $p_B$, la fuerza neumática es</p>
+
+      <div class="equation">\[
+        F_{\mathrm{aire}}=p_A A_p-p_B A_a.
+      \]</div>
+
+      <p>La presión de la cámara que descarga no siempre es cero. Los
+        conductos, los silenciadores y la regulación del escape pueden
+        generar contrapresión. Durante un avance, el balance de fuerzas
+        puede escribirse como</p>
+
+      <div class="equation">\[
+        m_{\mathrm{eq}}\ddot x=p_A A_p-p_B A_a-F_f-F_{\mathrm{carga}},
+      \]</div>
+
+      <p>donde $m_{\mathrm{eq}}$ es la masa efectiva que se acelera y, en
+        esta expresión, la fricción y la carga se consideran opuestas
+        al avance. Por tanto, la fuerza que se calcula a partir de la
+        presión no necesariamente coincide con la transmitida a una pieza.</p>
+
+      <h3>Un ejemplo para comparar avance y retroceso</h3>
+
+      <p>Consideremos $D=40$ mm, $d=16$ mm y una presión de alimentación
+        de 5 bar manométricos. Si la cámara opuesta se aproxima a la
+        presión atmosférica y se omite la fricción,</p>
+
+      <div class="equation">\[
+        A_p=1256.6\ \mathrm{mm^2},\qquad
+        A_a=1055.6\ \mathrm{mm^2},
+      \]</div>
+
+      <div class="equation">\[
+        F_{\mathrm{avance}}\approx628.3\ \mathrm{N},\qquad
+        F_{\mathrm{retroceso}}\approx527.8\ \mathrm{N}.
+      \]</div>
+
+      <p>El retroceso dispone de menos fuerza porque el vástago ocupa
+        parte de la superficie sobre la que actúa la presión. Estas son
+        fuerzas teóricas; la selección final utiliza las condiciones
+        reales de presión y los datos del fabricante. En un cilindro
+        de doble vástago con áreas iguales en ambas cámaras, esta
+        asimetría geométrica desaparece.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Comparación funcional de cilindros de simple y doble efecto.">
+\begin{tabular}{lll}
+\hline
+Aspecto & Simple efecto & Doble efecto \\
+\hline
+Cámaras alimentadas & Una & Dos, alternadamente \\
+Retorno & Resorte o fuerza externa & Aire en la cámara opuesta \\
+Trabajo neumático & En un sentido & En ambos sentidos \\
+Mando habitual & Válvula 3/2 & Válvula 5/2 o 4/2 \\
+Fuerza disponible & Afectada por el retorno y la fricción & Afectada por áreas y contrapresión \\
+Uso típico & Expulsión y sujeción sencilla & Manipulación y desplazamiento reversible \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La lectura complementaria de
+        <a href="https://soytecnoteacher.com/cilindro-de-simple-efecto-y-doble-efecto/" target="_blank" rel="noopener">Jaime Aniorte sobre cilindros de simple y doble efecto</a>
+        presenta cortes y simulaciones para observar el llenado y
+        vaciado de las cámaras. Resulta útil comparar esas maniobras
+        con las áreas y las fuerzas del modelo anterior.</p>
+
+      <h2>Válvulas para decidir hacia dónde se mueve el aire</h2>
+
+      <p>Una válvula distribuidora se identifica por el número de
+        <strong>vías</strong> y de <strong>posiciones</strong>.
+        Las vías son las conexiones funcionales y las posiciones
+        son los estados de comunicación entre ellas. Cada posición
+        se representa con un cuadro, dentro del cual las flechas
+        indican las rutas disponibles y los remates transversales
+        señalan pasos bloqueados.</p>
+
+      <p>Una <strong>3/2</strong> tiene tres vías y dos posiciones.
+        En un mando típico de simple efecto conecta la alimentación
+        con el cilindro al accionarse y conecta el cilindro con el
+        escape al regresar. Una <strong>5/2</strong> tiene cinco vías
+        y permite alimentar una cámara mientras descarga la otra.
+        Las conexiones habituales se identifican como 1 para la
+        alimentación, 2 y 4 para utilización, y 3 y 5 para los escapes.</p>
+
+      <figure id="fig-an-valvula">
+        <img src="/drautomatica/html/actuadoresn-valvula.png" alt="Representación de una válvula 5/2 con accionamiento eléctrico y retorno por resorte. El cuadro de reposo alimenta B y descarga A; el accionado alimenta A y descarga B."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Distribuidora 5/2 con bobina y retorno
+          por resorte. La posición junto al resorte es la de reposo.
+          En este ejemplo, al accionar se conecta 1 con 2 y 4 con 5;
+          en reposo, 1 con 4 y 2 con 3.</figcaption>
+      </figure>
+
+      <p>En una válvula <strong>monoestable</strong>, un resorte
+        establece el estado al retirar el mando. Una
+        <strong>biestable</strong> conserva la última posición
+        hasta recibir la orden contraria. Esta memoria pertenece
+        a la válvula; no garantiza que un cilindro mantenga su
+        posición frente a una carga o a una pérdida de presión.</p>
+
+      <p>Las distribuidoras de tres posiciones permiten otras
+        conexiones centrales, como bloquear o descargar las cámaras.
+        El comportamiento depende del centro elegido. En especial,
+        encerrar aire no equivale a instalar un bloqueo mecánico
+        rígido. La posición ante una parada se estudia junto con
+        la carga, la descarga de energía y los dispositivos de retención.</p>
+
+      <h3>Regular presión y regular velocidad son tareas distintas</h3>
+
+      <p>Un regulador ajusta la presión disponible y, con ella, el
+        nivel de fuerza que puede desarrollar el actuador. Para
+        ajustar la velocidad se utilizan elementos de control de
+        caudal; en muchos cilindros de doble efecto se estrangula
+        el aire que sale, permitiendo entrada libre en el sentido
+        contrario mediante una válvula de retención.</p>
+
+      <p>Esta regulación del escape introduce contrapresión y puede
+        estabilizar el desplazamiento, pero la velocidad sigue
+        dependiendo de la carga, la presión y la fricción. La
+        relación $Q\approx Av$ sirve como aproximación cinemática
+        cuando la presión en la cámara cambia poco y $Q$ representa
+        el caudal volumétrico en las condiciones de esa cámara.
+        No debe aplicarse directamente a un caudal referido a
+        condiciones atmosféricas.</p>
+
+      <h2>La carrera también consume aire</h2>
+
+      <p>Para un cilindro de doble efecto con carrera $L$, los
+        volúmenes barridos en un ciclo completo de avance y
+        retroceso suman</p>
+
+      <div class="equation">\[
+        V_{\mathrm{barrido}}=(A_p+A_a)L.
+      \]</div>
+
+      <p>Es un volumen geométrico, no todavía la cantidad equivalente
+        de aire que debe suministrar el compresor. Si ambas cámaras
+        se llenan hasta la misma presión absoluta, y se omiten
+        los volúmenes muertos, las fugas y las diferencias de
+        temperatura, una estimación referida a $p_{\mathrm{ref}}$
+        y $T_{\mathrm{ref}}$ es</p>
+
+      <div class="equation">\[
+        V_{\mathrm{ref}}\approx V_{\mathrm{barrido}}
+        \frac{p_{\mathrm{abs}}}{p_{\mathrm{ref}}}
+        \frac{T_{\mathrm{ref}}}{T_{\mathrm{aire}}}.
+      \]</div>
+
+      <p>Las temperaturas se expresan en kelvin. Para el cilindro
+        del ejemplo, una carrera de 100 mm produce
+        $V_{\mathrm{barrido}}\approx0.231$ litros por ciclo.
+        Si tomamos $p_{\mathrm{atm}}=1$ bar absoluto, la alimentación
+        de 5 bar manométricos corresponde a 6 bar absolutos.
+        A igual temperatura y con referencia de 1 bar absoluto,
+        el consumo estimado es 1.387 litros de aire libre por ciclo.</p>
+
+      <p>A 20 ciclos por minuto serían aproximadamente 27.7 L/min
+        en esa referencia, antes de sumar tuberías, volúmenes
+        adicionales y fugas. En las especificaciones comerciales
+        se deben identificar las condiciones de referencia del
+        caudal. Confundir litros dentro del cilindro con litros
+        de aire libre puede subestimar considerablemente el suministro.</p>
+
+      <h2>Ventosas y sistemas de vacío</h2>
+
+      <p>Una <strong>ventosa</strong> permite tomar una pieza por
+        una superficie accesible, sin envolverla con dedos.
+        Se utiliza para manipular láminas, envases, paneles y
+        componentes delicados. Su funcionamiento se basa en
+        reducir la presión entre la ventosa y la pieza, de manera
+        que la presión exterior produzca la fuerza de sujeción.</p>
+
+      <figure id="fig-an-ventosa">
+        <img src="/drautomatica/html/actuadoresn-ventosa.png" alt="Sección de una ventosa sellada sobre una pieza. La presión interior es menor que la atmosférica y la diferencia genera una fuerza de sujeción normal a la superficie."
+          style="display:block;width:100%;max-width:42rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. El generador evacua aire de la cámara
+          sellada por la ventosa. La diferencia entre la presión
+          atmosférica y la presión interior sostiene la pieza.</figcaption>
+      </figure>
+
+      <p>El vacío puede producirse mediante una bomba o mediante un
+        <strong>eyector neumático</strong>. En este último, un chorro
+        de aire comprimido pasa por una boquilla y arrastra aire
+        desde una conexión de aspiración. El eyector necesita tanto
+        una alimentación adecuada como una descarga que no genere
+        contrapresión excesiva.</p>
+
+      <p>La fuerza ideal de sujeción normal a la superficie es</p>
+
+      <div class="equation">\[
+        F_{\mathrm{vac}}=(p_{\mathrm{atm}}-p_{\mathrm{vac}})A_{\mathrm{ef}}
+        =\Delta p\,A_{\mathrm{ef}}.
+      \]</div>
+
+      <p>$A_{\mathrm{ef}}$ es el área efectiva de succión, que no
+        siempre coincide con la calculada a partir del diámetro
+        exterior. Como la presión absoluta no puede disminuir
+        por debajo de cero, la diferencia disponible tiene como
+        límite la presión atmosférica local. La altitud influye
+        por ello en la capacidad de sujeción.</p>
+
+      <h3>Un cálculo preliminar de agarre</h3>
+
+      <p>Supongamos un diámetro efectivo de 40 mm, presión ambiental
+        de 100 kPa absolutos y presión bajo la ventosa de 40 kPa
+        absolutos. La diferencia es 60 kPa y resulta</p>
+
+      <div class="equation">\[
+        F_{\mathrm{vac}}=60\,000\frac{\pi(0.040)^2}{4}
+        \approx75.4\ \mathrm{N}.
+      \]</div>
+
+      <p>Para elevar una pieza de masa $m$ con aceleración ascendente
+        $a_z$, un criterio preliminar para $n$ ventosas que comparten
+        la carga de manera uniforme es</p>
+
+      <div class="equation">\[
+        n\Delta p A_{\mathrm{ef}}\geq S\,m(g+a_z),
+      \]</div>
+
+      <p>donde $S$ es un factor de diseño que introduce margen.
+        Para $m=1.5$ kg, $a_z=3\,\mathrm{m/s^2}$ y $S=2$, la
+        exigencia es aproximadamente 38.4 N. La fuerza ideal del
+        ejemplo supera ese valor, pero la selección requiere
+        comprobar el área efectiva y la fuerza admisible del
+        fabricante en la superficie real.</p>
+
+      <p>La rugosidad, la porosidad, los orificios y las deformaciones
+        pueden introducir fugas o impedir un sellado adecuado.
+        Las ventosas de fuelle se adaptan a diferencias de altura,
+        mientras las planas pueden ofrecer una referencia de apoyo
+        más definida. También importa la capacidad de evacuación
+        del generador y el tiempo necesario para alcanzar el vacío
+        de trabajo.</p>
+
+      <p>Si la superficie de agarre es vertical y el peso actúa
+        tangencialmente, la fricción y los momentos de vuelco
+        adquieren importancia; no basta con comparar el peso
+        con $\Delta p A$. Un vacuostato permite confirmar un
+        umbral de vacío y detectar pérdidas, aunque esa señal
+        debe interpretarse según el material y el estado del sello.</p>
+
+      <h2>Pinzas neumáticas</h2>
+
+      <p>Las <strong>pinzas</strong> utilizan un pistón y un mecanismo
+        interno para mover mordazas paralelas, angulares o
+        autocentrantes. Pueden sujetar una pieza desde el exterior
+        o expandirse dentro de una abertura. Son útiles cuando
+        una superficie no permite sellar una ventosa o cuando
+        se necesita una referencia geométrica entre la pieza
+        y los dedos.</p>
+
+      <figure id="fig-an-pinza">
+        <img src="/drautomatica/html/actuadoresn-pinza.png" alt="Vista funcional de una pinza neumática de dos mordazas paralelas que se aproximan a una pieza desde ambos lados."
+          style="display:block;width:100%;max-width:37rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. La pinza transforma el movimiento
+          del accionamiento interno en aproximación de sus
+          mordazas. La geometría de los dedos interviene en
+          la fuerza y en los momentos que soporta el conjunto.</figcaption>
+      </figure>
+
+      <p>La fuerza de agarre depende de la presión, de la transmisión
+        interna y de la distancia desde la guía hasta el punto
+        de contacto. Por eso se consulta la fuerza especificada
+        para la longitud de dedo y la apertura elegidas, además
+        de las cargas y momentos admisibles.</p>
+
+      <p>En un agarre vertical por fricción con dos contactos iguales,
+        cada dedo aplicando una fuerza normal $F_d$, una estimación es</p>
+
+      <div class="equation">\[
+        2\mu F_d\geq S\,m(g+a_z),
+      \]</div>
+
+      <p>con $\mu$ como coeficiente de fricción efectivo. La fuerza
+        normal debe ser suficiente para sostener la pieza sin
+        dañarla. Los sensores de apertura o cierre informan de
+        la posición de las mordazas; para confirmar un agarre
+        correcto puede necesitarse también detectar la pieza
+        o verificar una posición de cierre característica.</p>
+
+      <h2>Diafragmas y válvulas de proceso</h2>
+
+      <p>Un <strong>actuador de diafragma</strong> utiliza una membrana
+        flexible para convertir una diferencia de presión en
+        fuerza sobre un vástago. Se emplea para desplazar el
+        obturador de una válvula de proceso, regulando el paso
+        de agua, vapor u otro fluido. El aire de mando y el fluido
+        que atraviesa la válvula pertenecen a circuitos diferentes.</p>
+
+      <figure id="fig-an-diafragma">
+        <img src="/drautomatica/html/actuadoresn-diafragma.png" alt="Actuador de diafragma con presión en la cámara superior, resorte en la cámara ventilada y vástago de salida."
+          style="display:block;width:100%;max-width:36rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. La presión de mando actúa sobre
+          el área efectiva del diafragma y se equilibra con el
+          resorte y la carga del vástago. Se muestra un montaje
+          en el que el aumento de presión desplaza el vástago hacia abajo.</figcaption>
+      </figure>
+
+      <p>En un equilibrio simplificado,</p>
+
+      <div class="equation">\[
+        p_g A_{\mathrm{ef}}=F_0+kx+F_{\mathrm{carga}}+F_f.
+      \]</div>
+
+      <p>Si la precarga, el área y la carga se mantienen constantes,
+        y la fricción es pequeña, el desplazamiento puede variar
+        aproximadamente de forma lineal con la presión. En una
+        válvula real, la fuerza del fluido, la fricción de la
+        empaquetadura y la variación del área efectiva alteran
+        esa relación.</p>
+
+      <p>Un convertidor de corriente a presión, llamado
+        <strong>I/P</strong>, puede transformar una señal de
+        4–20 mA en una señal neumática, por ejemplo de aproximadamente
+        20–100 kPa manométricos. Un <strong>posicionador</strong>
+        mide la posición del vástago y ajusta el aire para que
+        siga la consigna, compensando parte de las perturbaciones
+        mecánicas.</p>
+
+      <p>La posición del vástago no equivale directamente al caudal
+        de proceso. Este también depende del perfil del obturador,
+        de la diferencia de presión y de las propiedades del
+        fluido. Las características inherentes lineal o de igual
+        porcentaje describen relaciones bajo condiciones definidas;
+        la respuesta instalada depende asimismo de la tubería.</p>
+
+      <h2>Actuadores giratorios y motores neumáticos</h2>
+
+      <p>Un <strong>actuador semigiratorio</strong> produce un giro
+        limitado para orientar una pieza, accionar una compuerta
+        o cambiar la posición de una válvula. Puede utilizar un
+        pistón con piñón y cremallera o una paleta solidaria al
+        eje dentro de una cámara dividida.</p>
+
+      <figure id="fig-an-giratorio">
+        <img src="/drautomatica/html/actuadoresn-giratorio.png" alt="Actuador de paleta con dos cámaras, un separador fijo, una paleta móvil y un arco que indica el giro del eje."
+          style="display:block;width:100%;max-width:38rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 8. La diferencia de presión entre las
+          cámaras aplica un par a la paleta. El separador y los
+          topes limitan el recorrido angular; el arco representa
+          el giro del eje.</figcaption>
+      </figure>
+
+      <p>En un accionamiento de cremallera, la fuerza tangencial
+        $F_t$ sobre un piñón de radio primitivo $r_p$ produce
+        aproximadamente $\tau=F_t r_p$. En uno de paleta, el par
+        depende de la diferencia de presión y de la geometría
+        efectiva de la cámara. En ambos casos se revisan también
+        la inercia de la carga y la energía que debe absorberse
+        al llegar a los topes.</p>
+
+      <p>Para rotación continua se utiliza un <strong>motor neumático</strong>.
+        En el de paletas, un rotor excéntrico y varias paletas
+        forman cámaras de volumen variable. La expansión del
+        aire produce par y el escape permite continuar el ciclo.
+        Se utiliza en herramientas, mezcladores y accionamientos
+        donde interesa una unidad compacta. Su velocidad depende
+        del suministro y de la carga; para regularla con precisión
+        se necesita medirla y actuar sobre el mando correspondiente.</p>
+
+      <h2>Otras formas de actuación con aire</h2>
+
+      <p>Los <strong>cilindros sin vástago</strong> desplazan un carro
+        mediante un acoplamiento mecánico o magnético con el pistón
+        interno. Permiten recorridos largos sin un vástago que se
+        extienda más allá de la camisa. Las guías absorben los
+        esfuerzos laterales y los momentos; en un acoplamiento
+        magnético debe respetarse también su capacidad de transmisión.</p>
+
+      <p>Los <strong>cilindros tándem</strong> combinan superficies de
+        pistón para aumentar el empuje dentro de una envolvente
+        estrecha. Los guiados, compactos y de varias posiciones
+        resuelven necesidades de montaje, rigidez o recorridos
+        específicos. Su elección parte de la tarea y de las
+        capacidades indicadas para cada construcción.</p>
+
+      <p>Los <strong>fuelles neumáticos</strong> cambian su altura
+        al presurizarse y sirven para elevaciones cortas, prensado
+        o aislamiento de vibraciones. La fuerza depende del área
+        efectiva y de la deformación del fuelle, por lo que no
+        se supone constante durante toda la carrera. El retorno
+        puede requerir una carga externa.</p>
+
+      <p>Un <strong>músculo neumático</strong> contiene una membrana
+        tubular reforzada que se ensancha y se acorta al recibir
+        presión. Produce tracción, con una relación entre fuerza,
+        presión y contracción que es no lineal. Resulta útil
+        cuando interesa un accionamiento ligero y flexible,
+        aunque requiere un modelo o una caracterización apropiados
+        para regular fuerza o posición.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Actuadores y funciones frecuentes en mecatrónica.">
+\begin{tabular}{lll}
+\hline
+Actuador & Acción principal & Aplicación \\
+\hline
+Cilindro con vástago & Empuje y tracción lineal & Expulsión, sujeción y transferencia \\
+Cilindro sin vástago & Traslación de un carro & Alimentación y recorridos largos \\
+Ventosa & Sujeción por diferencia de presión & Manipulación de láminas y envases \\
+Pinza & Cierre o apertura de mordazas & Agarre y ensamble \\
+Diafragma & Desplazamiento de un vástago & Válvulas de proceso \\
+Semigiratorio & Rotación limitada & Orientación y apertura de compuertas \\
+Motor neumático & Rotación continua & Herramientas y mezcladores \\
+Fuelle & Elevación corta y elasticidad & Prensado y aislamiento \\
+Músculo neumático & Contracción y tracción & Accionamientos flexibles \\
+\hline
+\end{tabular}
+      </script>
+
+      <h2>Qué debe medir un sistema mecatrónico</h2>
+
+      <p>Una orden enviada a una electroválvula no confirma que
+        el actuador haya completado el movimiento. Un sensor
+        magnético de cilindro puede detectar el imán del pistón
+        cerca de un extremo; un transductor continuo permite
+        conocer posiciones intermedias. El presostato informa
+        de un umbral de presión y el vacuostato de una condición
+        de vacío.</p>
+
+      <p>La presión elevada puede indicar contacto con una pieza,
+        llegada a un tope o un atasco. Para medir una fuerza
+        de proceso con buena trazabilidad puede ser necesaria
+        una celda de carga, porque los sellos, el resorte y la
+        contrapresión intervienen entre $pA$ y la fuerza útil.
+        Del mismo modo, detectar el cierre completo de una pinza
+        puede significar que no encontró ninguna pieza.</p>
+
+      <p>En una estación que toma una pieza por vacío, la secuencia
+        puede organizarse con estados y condiciones de transición.
+        La tabla muestra un ejemplo funcional; los sensores y
+        umbrales se ajustan a la máquina y al material manejado.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Ejemplo de secuencia de toma y depósito con una ventosa y ejes neumáticos.">
+\begin{tabular}{lll}
+\hline
+Estado & Acción ordenada & Confirmación para continuar \\
+\hline
+Aproximación & Llevar la ventosa a la pieza & Posición de toma alcanzada \\
+Agarre & Activar el generador de vacío & Vacío suficiente y toma verificada \\
+Elevación & Retraer el eje de aproximación & Posición elevada alcanzada \\
+Transferencia & Mover al punto de depósito & Posición de destino alcanzada \\
+Depósito & Apoyar y liberar la pieza & Apoyo y liberación confirmados \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Cada movimiento necesita un tiempo máximo de ejecución.
+        Si la confirmación no llega, la secuencia debe identificar
+        la condición y evitar continuar como si la acción hubiera
+        terminado. La reacción ante una pérdida de presión se
+        define según la carga y la tarea; descargar aire, mantener
+        vacío o aplicar un bloqueo son acciones con consecuencias
+        físicas distintas.</p>
+
+      <h2>Elegir el conjunto desde la aplicación</h2>
+
+      <p>La selección comienza por el tipo de acción, la fuerza o
+        el par, el recorrido y el tiempo de ciclo. Después se
+        revisan la presión disponible bajo consumo, el caudal,
+        las pérdidas en tuberías y escapes, el montaje y las
+        cargas laterales. El aire debe tener la calidad y la
+        lubricación que requieran los componentes; añadir
+        lubricación indiscriminadamente tampoco es una solución
+        universal.</p>
+
+      <p>Las fugas, la generación continua de vacío y el uso de
+        una presión mayor que la necesaria aumentan el consumo.
+        Los conductos próximos al actuador, el dimensionamiento
+        del mando y la supervisión de presión y vacío ayudan a
+        mantener el desempeño. Reducir el diámetro del cilindro
+        sin revisar la carga o cerrar un regulador de caudal sin
+        revisar la contrapresión puede cambiar el funcionamiento
+        de toda la estación.</p>
+
+      <p>La neumática resulta especialmente útil cuando la acción
+        requerida se comprende junto con su forma de medición.
+        Conocer qué cámara recibe aire, qué superficie produce
+        fuerza y qué sensor confirma el resultado permite pasar
+        de una orden de control a una operación verificable.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Aniorte, J. (2026, 10 de octubre).
+          <a href="https://soytecnoteacher.com/cilindro-de-simple-efecto-y-doble-efecto/"><em>Cilindro de simple efecto y doble efecto: las diferencias</em></a>.
+          Soy Tecno Teacher.</li>
+        <li>Bolton, W. (2017). <em>Mecatrónica: Sistemas de control
+          electrónico en la ingeniería mecánica y eléctrica.
+          Un enfoque multidisciplinario</em> (6.ª ed., cap. 7,
+          «Sistemas de actuación neumática e hidráulica», pp. 165–187).
+          Alfaomega.</li>
+        <li>Festo. (s. f.-a).
+          <a href="https://www.festo.com/us/en/c/products/actuators-and-drives/pneumatic-cylinders/diaphragm-actuators-and-pneumatic-spring-actuators-id_pim222"><em>Diaphragm actuators / pneumatic spring actuators</em></a>.</li>
+        <li>Festo. (s. f.-b).
+          <a href="https://www.festo.com/gb/en/c/products/grippers-id_pim227"><em>Gripper systems</em></a>.</li>
+        <li>Festo. (s. f.-c).
+          <a href="https://www.festo.com/us/en/c/products/actuators-and-drives/pneumatic-cylinders-id_pim135"><em>Pneumatic cylinders</em></a>.</li>
+        <li>Festo. (s. f.-d).
+          <a href="https://www.festo.com/gb/en/c/products/actuators/pneumatic-cylinders/rodless-cylinders-id_pim216"><em>Rodless cylinders</em></a>.</li>
+        <li>J. Schmalz GmbH. (s. f.-a).
+          <a href="https://www.schmalz.com/en-se/support/know-how/vacuum-knowledge/the-vacuum-system-and-its-components/vacuum-suction-cups/design-of-the-suction-cup"><em>Design of the suction cup</em></a>.</li>
+        <li>J. Schmalz GmbH. (s. f.-b).
+          <a href="https://www.schmalz.com/en/support/know-how/glossary/holding-force"><em>Holding force</em></a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
