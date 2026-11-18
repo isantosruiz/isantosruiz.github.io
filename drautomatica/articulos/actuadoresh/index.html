@@ -1,0 +1,821 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Actuadores hidráulicos: fuerza y movimiento bajo control | drAutomática</title><meta name="description" content="Actuadores hidráulicos en mecatrónica. Cilindros, motores, válvulas y acumuladores; cálculo de fuerza, velocidad y potencia, ejemplos de dimensionamiento e instrumentación para controlar movimiento y carga."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/actuadoresh/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Actuadores hidráulicos: fuerza y movimiento bajo control | drAutomática"><meta property="og:description" content="Actuadores hidráulicos en mecatrónica. Cilindros, motores, válvulas y acumuladores; cálculo de fuerza, velocidad y potencia, ejemplos de dimensionamiento e instrumentación para controlar movimiento y carga."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/actuadoresh/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Actuadores hidráulicos en mecatrónica. Cilindros, motores, válvulas y acumuladores; cálculo de fuerza, velocidad y potencia, ejemplos de dimensionamiento e instrumentación para controlar movimiento y carga."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Actuadores hidráulicos: fuerza y movimiento bajo control | drAutomática"><meta name="twitter:description" content="Actuadores hidráulicos en mecatrónica. Cilindros, motores, válvulas y acumuladores; cálculo de fuerza, velocidad y potencia, ejemplos de dimensionamiento e instrumentación para controlar movimiento y carga."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Actuadores hidráulicos: fuerza y movimiento bajo control</h1>
+        <p class="subtitle">Cómo un líquido presurizado permite desplazar cargas, producir giro y regular acciones mecánicas en un sistema mecatrónico.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Los actuadores hidráulicos convierten la energía de un líquido
+          presurizado en fuerza y movimiento. Su capacidad para accionar cargas
+          importantes con mecanismos compactos explica su presencia en prensas,
+          equipos de elevación, maquinaria móvil y bancos de ensayo. Para
+          comprenderlos es necesario relacionar la presión con la fuerza, el
+          caudal con la velocidad y ambas magnitudes con la potencia. A partir
+          de estas relaciones estudiaremos los cilindros de simple y doble
+          efecto, los actuadores giratorios y los motores hidráulicos, junto
+          con las válvulas y los acumuladores que condicionan su funcionamiento.
+          Los ejemplos de cálculo y la selección de sensores permitirán
+          vincular el dimensionamiento mecánico con el control y la
+          instrumentación del proceso.</p>
+      </section>
+
+      <h2>Del mando eléctrico al trabajo mecánico</h2>
+
+      <p>Una prensa debe aproximar una herramienta, aplicar una fuerza
+        considerable y retirarla una vez terminada la operación. El controlador
+        puede generar las órdenes eléctricas de esa secuencia, pero necesita
+        una fuente de energía y un mecanismo que las convierta en trabajo sobre
+        la pieza. En un accionamiento hidráulico, una bomba alimenta el circuito
+        con líquido y una válvula dirige ese líquido hacia un cilindro o un
+        motor. El actuador transforma la energía recibida en desplazamiento
+        lineal o en giro.</p>
+
+      <p>La <strong>hidráulica de potencia</strong> utiliza líquidos para
+        transmitir energía, habitualmente mediante aceites que también lubrican
+        los componentes. Existen fluidos acuosos, resistentes al fuego y
+        biodegradables para aplicaciones particulares; el fluido se selecciona
+        junto con los sellos, la temperatura y las condiciones de servicio.
+        Aunque el agua que circula por una tubería también pertenece al estudio
+        de la hidráulica, aquí nos ocuparemos de los circuitos destinados a
+        accionar máquinas.</p>
+
+      <p>Los cilindros de una excavadora, el accionamiento de una prensa, la
+        orientación de una compuerta y el movimiento de un banco de pruebas
+        comparten este principio. La elevada fuerza por unidad de tamaño
+        favorece la solución hidráulica cuando las cargas son grandes o los
+        esfuerzos cambian durante la operación. A cambio, el conjunto requiere
+        controlar la limpieza del fluido, las fugas, la temperatura y la
+        energía almacenada bajo presión.</p>
+
+      <h2>La central hidráulica y el recorrido del aceite</h2>
+
+      <p>La <strong>central hidráulica</strong> reúne los elementos de suministro
+        y acondicionamiento. En un circuito abierto al depósito, como el de la
+        figura 1, un motor eléctrico acciona una bomba que aspira aceite del
+        depósito y lo entrega a la línea de alimentación. La válvula direccional
+        conecta esta línea con la cámara que debe recibir aceite y establece
+        el retorno desde la otra cámara. El fluido vuelve al depósito para
+        utilizarse de nuevo.</p>
+
+      <figure id="fig-ah-central">
+        <img src="/drautomatica/html/actuadoresh-central.png" alt="Recorrido funcional del aceite desde el depósito a la bomba, la válvula direccional y el cilindro, con retorno al depósito y una rama de alivio de presión."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Diagrama funcional de un accionamiento hidráulico.
+          El alivio comunica la descarga de la bomba con el depósito cuando
+          se alcanza su presión de apertura. Los bloques de válvula y actuador
+          representan funciones, no sus detalles constructivos.</figcaption>
+      </figure>
+
+      <p>La bomba <strong>entrega caudal</strong>; la presión que se desarrolla
+        depende de la carga y de las resistencias al paso del aceite. Una bomba
+        de desplazamiento fijo que alimenta un conducto bloqueado no deja de
+        impulsar líquido por sí sola. La presión aumenta hasta que actúa el
+        alivio, se modifica el suministro mediante otro dispositivo o se alcanza
+        un límite del equipo. Por ello, el mando de la bomba y las válvulas
+        deben concebirse como parte del mismo circuito.</p>
+
+      <p>Las bombas de <strong>desplazamiento positivo</strong> trasladan un
+        volumen geométrico por vuelta, con pérdidas debidas a fugas internas.
+        Las de engranajes transportan el aceite entre los dientes y la carcasa;
+        las de paletas emplean elementos deslizantes en un rotor, y las de
+        pistones modifican cíclicamente el volumen de sus cámaras. Algunas
+        bombas de pistones permiten variar el desplazamiento para adaptar el
+        suministro a la demanda.</p>
+
+      <p>El depósito proporciona una reserva de fluido y favorece la disipación
+        térmica y la separación del aire. Los filtros retienen partículas y,
+        cuando el balance térmico lo exige, un enfriador extrae calor del
+        circuito. Una válvula de retención permite el paso en un sentido y lo
+        bloquea en el contrario. Estos componentes acondicionan o encaminan el
+        fluido; el <strong>actuador</strong> es el elemento que realiza la
+        acción mecánica sobre la carga.</p>
+
+      <h2>Presión para ejercer fuerza, caudal para moverse</h2>
+
+      <p>La presión expresa fuerza por unidad de superficie. Si una superficie
+        de área efectiva $A$ separa dos regiones con una diferencia de presión
+        $\Delta p$, la fuerza ideal resultante es</p>
+
+      <div class="equation">\[
+        F=\Delta p\,A.
+      \]</div>
+
+      <p>Con la presión en pascales y el área en metros cuadrados se obtiene
+        la fuerza en newtons. En hidráulica es habitual utilizar bar, donde
+        $1\,\mathrm{bar}=10^5\,\mathrm{Pa}$, o megapascales, con
+        $1\,\mathrm{MPa}=10\,\mathrm{bar}$. Un émbolo de 50 mm de diámetro
+        tiene un área de aproximadamente $1.9635\times10^{-3}$ m². A 150 bar
+        puede desarrollar una fuerza ideal de 29.45 kN si el lado opuesto
+        descarga a presión manométrica nula.</p>
+
+      <p>La <strong>presión manométrica</strong> se mide respecto a la atmósfera
+        local; la <strong>absoluta</strong>, respecto al vacío. En los balances
+        de fuerza siguientes utilizaremos presiones manométricas. Cuando
+        aparezca un gas, como el de un acumulador, se utilizará su presión
+        absoluta, relacionada con la anterior mediante
+        $p_{\mathrm{abs}}=p_g+p_{\mathrm{atm}}$.</p>
+
+      <p>Para mover el émbolo también debe entrar un volumen de líquido. El
+        <strong>caudal volumétrico</strong> $Q$ es el volumen que atraviesa
+        una sección por unidad de tiempo. Si el aceite se considera
+        incompresible, no hay fugas y el área es constante,</p>
+
+      <div class="equation">\[
+        Q=\frac{\mathrm{d}V}{\mathrm{d}t}
+        =A\frac{\mathrm{d}x}{\mathrm{d}t}=Av,
+        \qquad v=\frac{Q}{A}.
+      \]</div>
+
+      <p>Un litro por minuto equivale a $1.6667\times10^{-5}$ m³/s.
+        Aumentar el área permite obtener más fuerza con la misma presión,
+        pero reduce la velocidad cuando el caudal disponible permanece
+        constante. Por eso no basta con escoger un cilindro que soporte la
+        carga; también hay que comprobar que complete el recorrido en el
+        tiempo requerido.</p>
+
+      <section class="remark">
+        <p>Una presión elevada no implica movimiento. Un cilindro puede
+          sostener una carga sin desplazarse, mientras una línea con gran
+          caudal y poca presión puede transportar aceite sin ejercer una
+          fuerza importante. Presión y caudal describen aspectos diferentes
+          del accionamiento y deben interpretarse conjuntamente.</p>
+      </section>
+
+      <h2>La potencia disponible y sus pérdidas</h2>
+
+      <p>La <strong>potencia hidráulica</strong> transmitida entre dos puertos
+        con diferencia de presión $\Delta p$ y caudal $Q$ es</p>
+
+      <div class="equation">\[
+        P_h=\Delta p\,Q,
+        \qquad
+        P_h\,[\mathrm{kW}]
+        =\frac{\Delta p\,[\mathrm{bar}]\;Q\,[\mathrm{L/min}]}{600}.
+      \]</div>
+
+      <p>Para un actuador ideal de igual área en ambas caras, las relaciones
+        anteriores conducen a $P_h=Fv$. Una mayor fuerza y una mayor velocidad
+        exigen más potencia; una transmisión hidráulica puede intercambiar
+        fuerza por velocidad, pero no multiplicar ambas sin aumentar la
+        energía suministrada. En un cilindro de áreas desiguales, el balance
+        se escribe considerando por separado la potencia que entra y sale
+        por cada cámara.</p>
+
+      <p>El motor eléctrico debe aportar además las pérdidas de la bomba y
+        del circuito. Si el caudal atraviesa una restricción con caída de
+        presión $\Delta p_v$, se disipa aproximadamente una potencia
+        $P_{\mathrm{pérdida}}=\Delta p_v Q$. Con 12 L/min y una caída de
+        30 bar, esa pérdida es de 0.60 kW. El calor resultante explica por
+        qué estrangular continuamente un caudal o descargarlo por el alivio
+        puede calentar el depósito aunque la máquina realice poco trabajo
+        útil.</p>
+
+      <h2>Cilindros de simple efecto</h2>
+
+      <p>Un <strong>cilindro de simple efecto</strong> utiliza la presión
+        hidráulica para producir trabajo en un solo sentido. El regreso
+        depende de un resorte, del peso de la carga o de otra fuerza externa.
+        La figura 2 muestra una configuración de <strong>émbolo buzo</strong>,
+        en la que un elemento macizo se desplaza por una guía sellada. El
+        aceite que entra eleva el émbolo y la carga; para descender, el
+        mismo puerto debe permitir la salida controlada del líquido.</p>
+
+      <figure id="fig-ah-simple">
+        <img src="/drautomatica/html/actuadoresh-simple.png" alt="Sección de un cilindro hidráulico de émbolo buzo con una única conexión de aceite, guía y sello superiores y carga exterior que produce el retorno."
+          style="display:block;width:100%;max-width:39rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Simple efecto con retorno por la carga.
+          La entrada de aceite produce elevación y la salida permite el
+          descenso. El dibujo representa el principio constructivo;
+          la válvula que controla el retorno no se muestra.</figcaption>
+      </figure>
+
+      <p>Si el área transversal del émbolo buzo es $A_b$, la fuerza ascendente
+        ideal es $p_g A_b$. Para elevar una masa $M$ con aceleración vertical
+        $\ddot{x}$, despreciando otras cargas y representando la fricción
+        durante la subida por $F_f$, se requiere</p>
+
+      <div class="equation">\[
+        p_g A_b-Mg-F_f=M\ddot{x}.
+      \]</div>
+
+      <p>Durante el descenso, la gravedad puede impulsar el movimiento. Abrir
+        una comunicación amplia al depósito sin regular la salida permitiría
+        que la carga adquiriera una velocidad excesiva. La forma de retenerla
+        y controlar su bajada es parte del diseño, incluso si la elevación
+        se resuelve con un cilindro sencillo. Los gatos, ciertos elevadores
+        y los mecanismos de volteo emplean variantes de este principio.</p>
+
+      <h2>Cilindros de doble efecto y superficies útiles</h2>
+
+      <p>En un <strong>cilindro de doble efecto</strong>, el émbolo separa
+        dos cámaras que pueden recibir aceite presurizado. El vástago
+        transmite la fuerza al mecanismo exterior. Para avanzar se alimenta
+        la cámara posterior y se permite el retorno desde la cámara del
+        vástago; al invertir las conexiones, el cilindro se retrae. Así
+        puede realizar trabajo en ambos sentidos.</p>
+
+      <figure id="fig-ah-doble">
+        <img src="/drautomatica/html/actuadoresh-doble.png" alt="Cilindro de doble efecto durante el avance, con presión p A sobre el área completa del pistón y presión p B sobre el área anular, y caudales de entrada y salida."
+          style="display:block;width:100%;max-width:48rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. Durante el avance, el aceite entra por A y
+          sale por B. Las presiones de ambas cámaras ejercen fuerzas
+          opuestas sobre superficies de distinto tamaño.</figcaption>
+      </figure>
+
+      <p>Si el diámetro interior del cilindro es $D$ y el diámetro del
+        vástago es $d$, el área completa del émbolo $A_p$, el área del
+        vástago $A_r$ y el área anular $A_a$ son</p>
+
+      <div class="equation">\[
+        A_p=\frac{\pi D^2}{4},\qquad
+        A_r=\frac{\pi d^2}{4},\qquad
+        A_a=A_p-A_r.
+      \]</div>
+
+      <p>Con el sentido positivo hacia la extensión y presiones
+        manométricas $p_A$ y $p_B$, la fuerza hidráulica neta es</p>
+
+      <div class="equation">\[
+        F_h=p_A A_p-p_B A_a.
+      \]</div>
+
+      <p>La contrapresión del retorno reduce la fuerza de avance, aunque
+        esa cámara esté conectada al depósito a través de una válvula.
+        Además, una parte de $F_h$ vence la fricción y otra puede acelerar
+        la masa. Durante un avance con carga resistente $F_L$,</p>
+
+      <div class="equation">\[
+        p_A A_p-p_B A_a-F_f-F_L=M\ddot{x}.
+      \]</div>
+
+      <p>Esta ecuación permite distinguir la fuerza hidráulica calculada
+        con presiones de la fuerza que realmente recibe la carga. El
+        término $F_f$ se ha escrito como una resistencia positiva durante
+        el avance; para modelar inversiones de movimiento debe cambiar
+        su sentido de acuerdo con la velocidad y considerar, cuando sea
+        necesario, la fricción de arranque.</p>
+
+      <p>Si se desprecian compresibilidad y fugas, en un avance a velocidad
+        $v$ los caudales son</p>
+
+      <div class="equation">\[
+        Q_A=A_p v,\qquad Q_B=A_a v.
+      \]</div>
+
+      <p>El caudal que sale es menor que el que entra. En el retroceso se
+        invierte la situación, porque se alimenta el área anular y se vacía
+        la cámara de área completa. Esto importa al dimensionar la válvula
+        y la tubería de retorno, cuyo caudal puede superar al de la bomba.</p>
+
+      <h2>Un ejemplo de dimensionamiento</h2>
+
+      <p>Supongamos que una estación debe empujar una carga resistente de
+        15 kN a lo largo de 250 mm. Se estudia un cilindro con diámetro
+        $D=50$ mm y vástago de $d=30$ mm. Durante el avance se dispone de
+        100 bar en la cámara A, mientras la cámara B presenta una
+        contrapresión de 5 bar. Estimaremos la fricción en 500 N y
+        utilizaremos un caudal de entrada de 12 L/min.</p>
+
+      <p>Las superficies útiles calculadas con los diámetros son</p>
+
+      <div class="equation">\[
+        A_p=1.9635\times10^{-3}\,\mathrm{m^2},\qquad
+        A_a=1.2566\times10^{-3}\,\mathrm{m^2}.
+      \]</div>
+
+      <p>A velocidad constante, la fuerza que podría equilibrar una carga
+        resistente, una vez descontada la fricción, es</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        F_{\mathrm{disp}}&=p_A A_p-p_B A_a-F_f\\
+        &=(10^7)(1.9635\times10^{-3})
+        -(5\times10^5)(1.2566\times10^{-3})-500\\
+        &\approx18.51\,\mathrm{kN}.
+        \end{aligned}
+      \]</div>
+
+      <p>El resultado supera los 15 kN requeridos. Representa una capacidad
+        en las condiciones de presión supuestas; si la carga es menor,
+        la presión real puede disminuir o la fuerza sobrante puede
+        producir aceleración. La selección definitiva debe contemplar
+        variaciones de carga, pérdidas de presión, montaje y pandeo del
+        vástago, que es su posible inestabilidad lateral bajo compresión.</p>
+
+      <p>Con $Q=2.0\times10^{-4}$ m³/s, la velocidad ideal de avance
+        y el tiempo de recorrido uniforme son</p>
+
+      <div class="equation">\[
+        v_{\mathrm{av}}=\frac{Q}{A_p}\approx0.102\,\mathrm{m/s},
+        \qquad
+        t_{\mathrm{av}}=\frac{0.250}{v_{\mathrm{av}}}
+        \approx2.45\,\mathrm{s}.
+      \]</div>
+
+      <p>Para comparar ambas carreras, supongamos ahora que durante la
+        retracción se mantienen 100 bar en B, 5 bar en A y el mismo
+        caudal de entrada. La tabla 1 reúne los resultados, considerando
+        de nuevo 500 N de fricción en oposición al movimiento.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Comparación ideal de las carreras del cilindro de 50 mm con vástago de 30 mm, a 12 L/min de entrada.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Avance & Retroceso \\
+\hline
+Área alimentada & 1963.5 mm² & 1256.6 mm² \\
+Fuerza disponible tras la fricción & 18.51 kN & 11.08 kN \\
+Velocidad uniforme & 0.102 m/s & 0.159 m/s \\
+Tiempo para recorrer 250 mm & 2.45 s & 1.57 s \\
+Caudal que sale del cilindro & 7.68 L/min & 18.75 L/min \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>El retroceso resulta más rápido, pero ofrece menos fuerza. Los
+        tiempos no incluyen aceleración, desaceleración ni amortiguación
+        al final de carrera. La estimación de potencia de alimentación
+        a 100 bar y 12 L/min es de 2 kW; el motor que accione la bomba
+        debe cubrir además las pérdidas y el régimen de trabajo previsto.</p>
+
+      <h2>Otras configuraciones de cilindros</h2>
+
+      <p>Un cilindro de <strong>doble vástago</strong> puede presentar áreas
+        anulares iguales en ambos lados si los vástagos tienen el mismo
+        diámetro. Esto facilita obtener fuerzas y velocidades simétricas
+        al invertir el movimiento. La instalación necesita espacio para
+        la salida de ambos extremos, por lo que la ventaja geométrica
+        debe valorarse junto con el montaje.</p>
+
+      <p>Los cilindros <strong>telescópicos</strong> contienen varias etapas
+        concéntricas para conseguir una carrera larga a partir de una
+        longitud recogida relativamente corta. Se utilizan, por ejemplo,
+        en plataformas y mecanismos de volteo. Al cambiar la etapa activa
+        cambia el área efectiva, de modo que también pueden cambiar la
+        fuerza y la velocidad con la misma presión y caudal. Existen
+        versiones de simple y doble efecto.</p>
+
+      <p>Los cilindros <strong>tándem</strong> acoplan varios pistones a una
+        misma salida para sumar fuerzas sin aumentar tanto el diámetro.
+        En todos los casos se debe respetar la función de las guías
+        exteriores de la máquina. El vástago transmite principalmente
+        esfuerzos axiales; una carga lateral o una desalineación aumentan
+        el desgaste y pueden comprometer el movimiento.</p>
+
+      <h2>Dirigir el movimiento con válvulas</h2>
+
+      <p>Una <strong>válvula direccional</strong> modifica las conexiones
+        entre alimentación, retorno y actuador. Su designación indica
+        el número de vías y el de posiciones. Una válvula 4/3 tiene cuatro
+        conexiones principales y tres posiciones. Habitualmente se
+        identifican como P la alimentación, T el retorno al depósito y
+        A y B las conexiones del actuador.</p>
+
+      <figure id="fig-ah-valvula">
+        <img src="/drautomatica/html/actuadoresh-valvula.png" alt="Símbolo de válvula hidráulica de cuatro vías y tres posiciones con centro cerrado, dos solenoides y resortes de centrado. Avance conecta P con A y B con T; retroceso conecta P con B y A con T."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Válvula 4/3 con centro cerrado.
+          Cada cuadro representa una posición y las flechas indican
+          las comunicaciones internas. Los trazos terminados en una
+          barra indican conexiones bloqueadas.</figcaption>
+      </figure>
+
+      <p>En la figura 4, una posición conecta P con A y B con T, y la
+        contraria conecta P con B y A con T. El cuadro central bloquea
+        las cuatro vías. En el símbolo, las conexiones exteriores se
+        dibujan junto al cuadro de referencia; al cambiar de posición
+        se interpreta que el cuadro seleccionado ocupa ese lugar.
+        Los resortes centran el distribuidor cuando desaparece el
+        accionamiento correspondiente.</p>
+
+      <p>El <strong>centro cerrado</strong> interrumpe nominalmente el paso
+        por A y B, pero la fuga interna de una válvula de carrete puede
+        permitir una deriva lenta del cilindro. Tampoco debe conectarse
+        sin más a una bomba de desplazamiento fijo que permanezca
+        entregando caudal. Hace falta una estrategia de descarga,
+        regulación o variación del suministro; de lo contrario, el
+        caudal puede circular continuamente por el alivio y generar calor.</p>
+
+      <p>Existen otros centros. En un <strong>centro tándem</strong>, P
+        comunica con T mientras A y B quedan bloqueadas; en uno
+        <strong>flotante</strong>, A y B comunican con T y P queda
+        bloqueada. Sus efectos sobre la carga y la bomba son distintos.
+        La posición central se elige a partir del comportamiento que
+        debe tener la máquina al detenerse, no solo por el número
+        de conexiones de la válvula.</p>
+
+      <p>La <strong>válvula de alivio</strong> limita la presión aguas
+        arriba al abrir una ruta de descarga. Una <strong>reductora
+        de presión</strong> mantiene una presión menor en una rama
+        aguas abajo, dentro de sus condiciones de funcionamiento.
+        Una válvula de secuencia habilita una comunicación cuando se
+        alcanza cierta presión. Ninguna de estas funciones confirma,
+        por sí misma, que un cilindro haya llegado a su posición final.</p>
+
+      <h2>Regular la velocidad y sostener una carga</h2>
+
+      <p>Para regular la velocidad se controla el caudal que entra o sale
+        del actuador. Una abertura variable estrangula el paso del aceite.
+        Para un orificio en régimen predominantemente turbulento puede
+        utilizarse la aproximación</p>
+
+      <div class="equation">\[
+        Q=C_d A_v\sqrt{\frac{2\Delta p_v}{\rho}},
+      \]</div>
+
+      <p>donde $C_d$ es el coeficiente de descarga, $A_v$ el área de
+        abertura, $\Delta p_v$ la caída de presión en la válvula y
+        $\rho$ la densidad del líquido. Esta relación muestra que una
+        abertura fija no garantiza caudal constante cuando cambia la
+        carga. Un regulador con compensación de presión intenta mantener
+        aproximadamente constante la caída de presión en la sección
+        dosificadora, dentro de su intervalo de operación.</p>
+
+      <p>Una carga que se opone al movimiento puede regularse de forma
+        distinta de otra que lo impulsa, como ocurre durante el descenso
+        de una plataforma. En este último caso hay que evitar que la
+        carga arrastre al actuador más rápido de lo que se alimenta la
+        cámara opuesta. Esa condición puede provocar pérdida de control
+        y una presión demasiado baja para mantener el aceite continuo.</p>
+
+      <p>Una <strong>válvula de contrabalance</strong> permite retener
+        una carga y modular su salida durante el movimiento. Una
+        <strong>retención pilotada</strong> bloquea un sentido de paso
+        hasta recibir una presión de apertura por una conexión auxiliar
+        de mando, llamada pilotaje. Esta última se emplea para bloqueo,
+        pero no equivale a una válvula modulante para controlar un
+        descenso suave. Su selección e instalación dependen de la carga,
+        las presiones y la estabilidad del circuito (Sun Hydraulics, 2023).</p>
+
+      <p>En los ejes que elevan personas, herramientas o masas importantes,
+        la retención se resuelve cerca del actuador y se considera también
+        el efecto de una rotura de conducción. La inmovilidad requerida
+        puede exigir un bloqueo mecánico adicional. La decisión pertenece
+        al diseño de la máquina y no se deduce únicamente de que el
+        símbolo direccional tenga A y B cerradas.</p>
+
+      <h2>Actuadores giratorios y motores hidráulicos</h2>
+
+      <p>El movimiento hidráulico también puede ser angular. Un
+        <strong>actuador giratorio de recorrido limitado</strong> convierte
+        el desplazamiento de uno o varios pistones en giro mediante una
+        cremallera y un piñón, un mecanismo helicoidal u otra transmisión.
+        También puede utilizar una paleta que separa cámaras dentro de
+        una carcasa. Su salida recorre un ángulo definido y resulta útil
+        para orientar herramientas, abrir compuertas o posicionar mesas.</p>
+
+      <p>Un <strong>motor hidráulico</strong>, en cambio, está diseñado
+        para producir rotación continua. Los motores de engranajes,
+        orbitales, de paletas y de pistones emplean distintas geometrías
+        para convertir el caudal y la diferencia de presión en movimiento
+        del eje. La bomba recibe trabajo mecánico y entrega energía al
+        líquido; el motor realiza la conversión inversa, aunque un
+        componente no debe utilizarse indistintamente en ambas funciones
+        sin verificar que su diseño lo permita.</p>
+
+      <figure id="fig-ah-motor">
+        <img src="/drautomatica/html/actuadoresh-motor.png" alt="Símbolo de un motor hidráulico reversible con triángulos sólidos dirigidos hacia el interior, conexiones de entrada y salida y eje mecánico con una flecha curva de giro."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. Motor hidráulico reversible.
+          Los triángulos sólidos dirigidos hacia el interior identifican
+          la conversión de energía hidráulica en mecánica. El arco
+          representa la rotación del eje, con par $\tau$ y velocidad
+          angular $\omega$.</figcaption>
+      </figure>
+
+      <p>El <strong>desplazamiento volumétrico</strong> $V_d$ es el volumen
+        geométrico que corresponde a una vuelta del eje. En funcionamiento
+        como motor, la eficiencia volumétrica $\eta_v$ representa la
+        fracción del caudal suministrado que contribuye al giro, y la
+        eficiencia hidromecánica $\eta_m$ relaciona el par real con el
+        ideal. Para una condición de operación dada,</p>
+
+      <div class="equation">\[
+        n=\eta_v\frac{Q}{V_d},\qquad
+        \omega=2\pi n,\qquad
+        \tau=\eta_m\frac{\Delta p\,V_d}{2\pi}.
+      \]</div>
+
+      <p>Si $Q$ se expresa en m³/s y $V_d$ en m³ por vuelta, $n$ queda
+        en vueltas por segundo, $\omega$ en rad/s y $\tau$ en N·m.
+        La diferencia $\Delta p$ se toma entre los puertos del motor.
+        Al utilizar litros por minuto y litros por vuelta, la misma
+        relación para $n$ entrega directamente revoluciones por minuto.</p>
+
+      <p>Por ejemplo, con $V_d=50$ cm³ por vuelta, $Q=15$ L/min,
+        $\eta_v=0.90$, $\Delta p=80$ bar y $\eta_m=0.85$, se obtiene</p>
+
+      <div class="equation">\[
+        n=270\,\mathrm{rpm},\qquad
+        \tau\approx54.1\,\mathrm{N\,m}.
+      \]</div>
+
+      <p>La potencia hidráulica es 2 kW y la potencia mecánica
+        $\tau\omega$ es aproximadamente 1.53 kW. Su cociente,
+        $\eta_v\eta_m=0.765$, concuerda con las eficiencias supuestas.
+        Los valores reales cambian con la presión, la velocidad y la
+        temperatura; la selección requiere las curvas del fabricante,
+        incluidos los límites de arranque y de funcionamiento continuo
+        (Danfoss, 2021).</p>
+
+      <p>Estos motores accionan transportadores, mezcladores, cabrestantes
+        y mecanismos de maquinaria móvil. Si la carga puede impulsar el
+        eje, como en un cabrestante que baja un peso, también se necesita
+        controlar el frenado y la retención. Cuando el fabricante especifica
+        un drenaje de carcasa, su conexión y contrapresión admisible se
+        consideran aparte de los dos puertos principales.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Configuraciones de actuación hidráulica y aplicaciones habituales.">
+\begin{tabular}{lll}
+\hline
+Actuador & Rasgo principal & Ejemplo de uso \\
+\hline
+Simple efecto & Impulso en un sentido & Gatos y volteo \\
+Doble efecto & Empuje y tracción & Prensas y sujeción \\
+Doble vástago & Áreas iguales & Ejes simétricos \\
+Telescópico & Gran carrera & Plataformas \\
+Tándem & Suma de fuerzas & Prensado \\
+Giratorio limitado & Ángulo acotado & Mesas y compuertas \\
+Motor continuo & Giro sostenido & Mezcladores y cabrestantes \\
+\hline
+\end{tabular}
+      </script>
+
+      <h2>El acumulador y la energía almacenada</h2>
+
+      <p>Un <strong>acumulador hidráulico</strong> almacena energía al
+        recibir líquido contra una fuerza que luego puede devolverlo
+        al circuito. En un acumulador hidroneumático esa fuerza procede
+        de un gas comprimido, habitualmente nitrógeno, separado del
+        aceite por una vejiga, un diafragma o un pistón. El acumulador
+        puede cubrir demandas breves de caudal, amortiguar pulsaciones
+        o mantener presión durante ciertos intervalos.</p>
+
+      <figure id="fig-ah-acumulador">
+        <img src="/drautomatica/html/actuadoresh-acumulador.png" alt="Sección de un acumulador de vejiga con nitrógeno en el interior de la membrana flexible y aceite alrededor, una conexión inferior al circuito y válvula superior de carga del gas."
+          style="display:block;width:100%;max-width:39rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. Acumulador de vejiga.
+          Al entrar aceite se comprime el gas; cuando el circuito
+          admite la descarga, el gas se expande y devuelve líquido.
+          La vejiga mantiene separados ambos medios.</figcaption>
+      </figure>
+
+      <p>La <strong>precarga</strong> es la presión inicial del gas con
+        el lado hidráulico descargado, a una temperatura especificada.
+        Cuando la presión del circuito supera la condición necesaria
+        para admitir aceite, este entra y comprime el gas. La relación
+        entre presión y volumen puede aproximarse mediante una ley
+        politrópica,</p>
+
+      <div class="equation">\[
+        p_{\mathrm{abs}}V^{\kappa}=\text{constante},
+        \qquad
+        p_{1,\mathrm{abs}}V_1^{\kappa}
+        =p_{2,\mathrm{abs}}V_2^{\kappa}.
+      \]</div>
+
+      <p>El exponente $\kappa$ describe el intercambio térmico.
+        Un proceso lento se aproxima al caso isotérmico,
+        $\kappa=1$; uno rápido puede aproximarse al adiabático,
+        cercano a $\kappa=1.4$ para nitrógeno en condiciones ideales.
+        Si $p_2&gt;p_1$, el gas ocupa un volumen menor $V_2$ y la
+        diferencia $V_1-V_2$ corresponde al volumen de aceite
+        recibido entre esos estados.</p>
+
+      <p>El acumulador no crea energía ni mantiene una presión
+        perfectamente constante durante toda la descarga. Su capacidad
+        útil depende de la precarga, los límites de presión y la
+        temperatura. Puede conservar energía con la bomba apagada,
+        por lo que su aislamiento y descarga controlada forman parte
+        de la instalación (HYDAC, 2022).</p>
+
+      <h2>La rigidez del aceite tiene un límite</h2>
+
+      <p>Frente al aire, el aceite es poco compresible. Esta propiedad
+        favorece la rigidez del accionamiento, entendida como su
+        resistencia a cambiar de posición cuando varía la carga.
+        Sin embargo, el líquido se comprime ligeramente, las mangueras
+        se dilatan y el aire atrapado puede aumentar mucho la
+        deformación del conjunto.</p>
+
+      <p>El <strong>módulo volumétrico efectivo</strong> $\beta_e$
+        relaciona, en una aproximación local, el cambio de presión con
+        el cambio de volumen del fluido confinado y su envolvente,</p>
+
+      <div class="equation">\[
+        \beta_e=-V\frac{\mathrm{d}p}{\mathrm{d}V},
+        \qquad
+        \Delta V\approx-\frac{V}{\beta_e}\Delta p.
+      \]</div>
+
+      <p>El signo negativo indica que un aumento de presión reduce el
+        volumen. Por ejemplo, con $V=1$ L, $\beta_e=1.0$ GPa y un
+        incremento de 100 bar, la reducción estimada es de 10 mL.
+        Aunque sea pequeña, esa cantidad puede producir un desplazamiento
+        apreciable al liberarse o retrasar el establecimiento de presión
+        al iniciar una maniobra.</p>
+
+      <p>Para estudiar transitorios de una cámara que aumenta su volumen
+        al avanzar el pistón, una forma simplificada de la continuidad es</p>
+
+      <div class="equation">\[
+        Q_A=A_p\dot{x}
+        +\frac{V_A(x)}{\beta_e}\dot{p}_A
+        +Q_{\mathrm{fuga}}.
+      \]</div>
+
+      <p>El caudal de entrada se reparte entre desplazamiento del pistón,
+        compresión del fluido y fuga neta desde esa cámara. La ecuación
+        supone temperatura aproximadamente constante y agrupa la
+        flexibilidad en $\beta_e$. Cuando la presión apenas cambia y
+        la fuga es pequeña, recuperamos $Q_A\approx A_p\dot{x}$.
+        Esta transición explica por qué las relaciones estáticas son
+        útiles para dimensionar, pero no describen por sí solas las
+        oscilaciones o la respuesta rápida de un eje hidráulico.</p>
+
+      <h2>Instrumentación y control del actuador</h2>
+
+      <p>Una electroválvula de posiciones definidas puede bastar para
+        llevar un cilindro entre dos extremos. Si se necesita regular
+        una trayectoria o mantener una fuerza, se utiliza con frecuencia
+        una <strong>válvula proporcional</strong>, cuya abertura varía
+        de manera continua mediante un mando eléctrico. Una
+        <strong>servoválvula</strong> está concebida para regulación
+        dinámica exigente, a menudo mediante etapas de pilotaje y
+        realimentación interna. La respuesta final depende de todo
+        el conjunto, no solo de la denominación de la válvula.</p>
+
+      <p>En un <strong>lazo cerrado</strong>, el controlador compara
+        una referencia con una medición y modifica el mando para reducir
+        la diferencia. La figura 7 muestra el principio aplicado a la
+        posición. El transductor informa dónde está realmente el
+        vástago, mientras la válvula modifica el caudal que entra y
+        sale para corregir su movimiento.</p>
+
+      <figure id="fig-ah-control">
+        <img src="/drautomatica/html/actuadoresh-control.png" alt="Lazo cerrado de posición con referencia x ref, comparación, controlador, válvula proporcional, cilindro y carga, y transductor que realimenta la posición medida."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. Control electrohidráulico de posición.
+          La realimentación permite corregir el movimiento ante cambios
+          de carga, dentro de los límites de caudal, presión y respuesta
+          del accionamiento.</figcaption>
+      </figure>
+
+      <p>La posición puede medirse con un transductor magnetostrictivo,
+        un LVDT —transformador diferencial de desplazamiento lineal—
+        u otro sensor compatible con la geometría y el entorno. Los
+        finales de carrera solo detectan posiciones particulares.
+        Para un motor se utiliza un encoder o un sensor de velocidad,
+        según la variable que se quiera regular.</p>
+
+      <p>Medir las presiones de <strong>ambas cámaras</strong> permite
+        estimar la fuerza hidráulica con $F_h=p_A A_p-p_B A_a$.
+        Para conocer la fuerza de contacto con buena exactitud puede
+        ser necesaria una celda de carga, porque la fricción, la
+        aceleración y la transmisión mecánica separan esa estimación
+        de la fuerza realmente aplicada a la pieza.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 3. Mediciones útiles para supervisar un accionamiento hidráulico.">
+\begin{tabular}{lll}
+\hline
+Variable & Instrumento & Información \\
+\hline
+Posición & Transductor lineal & Recorrido y seguimiento \\
+Presión en A y B & Transductores de presión & Fuerza hidráulica estimada \\
+Fuerza de proceso & Celda de carga & Esfuerzo sobre la pieza \\
+Caudal & Caudalímetro & Balance de flujo \\
+Temperatura & Sensor térmico & Condición del fluido \\
+Caída en filtro & Indicador diferencial & Resistencia al paso \\
+Velocidad de giro & Encoder & Giro del motor \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En una prensa, la secuencia puede comenzar con aproximación
+        regulada en posición o velocidad. Tras detectar el contacto,
+        se cambia a control de fuerza durante el prensado y finalmente
+        se ordena el retorno. El cambio entre modos debe evitar saltos
+        de mando y contemplar la energía almacenada en el fluido.
+        Una subida de presión sin avance puede indicar contacto,
+        un tope o un atasco; la interpretación requiere combinar
+        las mediciones y el estado de la secuencia.</p>
+
+      <h2>Seleccionar el conjunto para la tarea</h2>
+
+      <p>El dimensionamiento comienza por la fuerza o el par, el
+        recorrido, la velocidad, las aceleraciones y el ciclo de
+        trabajo. Con esos requisitos se eligen las superficies o el
+        desplazamiento volumétrico del actuador y se estiman presión,
+        caudal y potencia. Después se comprueban las pérdidas de las
+        conducciones, la capacidad de las válvulas, los caudales de
+        retorno y las condiciones de la bomba.</p>
+
+      <p>La selección mecánica incluye las articulaciones, la alineación,
+        las cargas laterales y la estabilidad del vástago. Cuando la
+        masa debe detenerse al final de carrera, la amortiguación del
+        cilindro o una desaceleración controlada reducen el impacto.
+        Para un motor también se comprueban las cargas sobre el eje
+        y la capacidad de frenado del mecanismo.</p>
+
+      <p>La limpieza y la temperatura afectan directamente al control.
+        Las partículas desgastan sellos y superficies de ajuste; la
+        viscosidad cambia con la temperatura y modifica las fugas
+        y las pérdidas. La <strong>cavitación</strong> aparece cuando
+        la presión local cae lo suficiente para formar vapor, cuyas
+        cavidades pueden colapsar al recuperar presión. El aire
+        incorporado al aceite produce otro problema, la aireación,
+        que aumenta la compresibilidad y puede volver irregular el
+        movimiento. Una aspiración adecuada, el retorno bien dispuesto
+        y el purgado contribuyen a evitar estas condiciones.</p>
+
+      <p>La hidráulica permite aplicar grandes esfuerzos con movimientos
+        regulados cuando se diseña como un conjunto de suministro,
+        mando, actuador y medición. Conocer qué presión actúa sobre
+        cada superficie, cuánto aceite debe desplazarse y qué sensor
+        confirma la acción proporciona una base para seleccionar y
+        evaluar el accionamiento en una máquina mecatrónica.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Bolton, W. (2017). <em>Mecatrónica: Sistemas de control
+          electrónico en la ingeniería mecánica y eléctrica.
+          Un enfoque multidisciplinario</em> (6.ª ed., cap. 7,
+          «Sistemas de actuación neumática e hidráulica», pp. 165–187).
+          Alfaomega.</li>
+        <li>Danfoss. (2021, diciembre).
+          <a href="https://assets.danfoss.com/documents/latest/195953/BC152886483554en-000401.pdf"><em>Orbital motors: General. Technical information</em></a>
+          (BC152886483554en-000401).</li>
+        <li>HYDAC. (2022, 20 de enero).
+          <a href="https://www.hydac.com.au/news/post/how-an-accumulator-works.html"><em>How an accumulator works</em></a>.</li>
+        <li>Sun Hydraulics. (2023, junio).
+          <a href="https://www.sunhydraulics.com/sites/default/files/media_library/tech_resources/TT_US_Ctrbal_POCk_Jun2023_Final_0.pdf"><em>Counterbalance &amp; pilot-to-open check cartridges</em></a>
+          [Nota técnica].</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
