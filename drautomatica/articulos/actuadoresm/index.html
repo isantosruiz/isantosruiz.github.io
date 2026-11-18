@@ -1,0 +1,724 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Actuadores mecánicos: dar forma al movimiento | drAutomática</title><meta name="description" content="Actuadores y mecanismos para instrumentación mecatrónica. Engranes, bandas, tornillo sin fin, cremallera, husillo, levas y barras; conversión de movimiento, fuerza y exactitud de posicionamiento."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/actuadoresm/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Actuadores mecánicos: dar forma al movimiento | drAutomática"><meta property="og:description" content="Actuadores y mecanismos para instrumentación mecatrónica. Engranes, bandas, tornillo sin fin, cremallera, husillo, levas y barras; conversión de movimiento, fuerza y exactitud de posicionamiento."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/actuadoresm/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Actuadores y mecanismos para instrumentación mecatrónica. Engranes, bandas, tornillo sin fin, cremallera, husillo, levas y barras; conversión de movimiento, fuerza y exactitud de posicionamiento."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Actuadores mecánicos: dar forma al movimiento | drAutomática"><meta name="twitter:description" content="Actuadores y mecanismos para instrumentación mecatrónica. Engranes, bandas, tornillo sin fin, cremallera, husillo, levas y barras; conversión de movimiento, fuerza y exactitud de posicionamiento."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Instrumentación</p>
+        <h1>Actuadores mecánicos: dar forma al movimiento</h1>
+        <p class="subtitle">Cómo transmitir giro, obtener desplazamientos y adaptar fuerzas para que una acción de control llegue al proceso.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Entre la orden de un controlador y la acción sobre un proceso suele existir una
+          cadena de elementos mecánicos que adapta el movimiento disponible a la tarea.
+          Engranes, bandas, cremalleras, husillos, levas y mecanismos articulados permiten
+          modificar velocidades, transmitir fuerzas y generar trayectorias. Su elección
+          también influye en la calidad de la instrumentación, porque las holguras, la
+          fricción y las deformaciones pueden separar la posición medida en un motor de la
+          posición real de la carga. Revisaremos las funciones básicas de estos mecanismos,
+          sus relaciones cinemáticas y sus aplicaciones, acompañadas de ilustraciones y
+          animaciones interactivas para observar cómo trabajan.</p>
+      </section>
+
+      <h2>Del controlador a la acción física</h2>
+
+      <p>Regular la apertura de una válvula, orientar un sensor o desplazar una muestra
+        bajo una cámara exige algo más que calcular una señal de mando. Esa señal debe
+        producir un movimiento con el recorrido, la velocidad y la fuerza adecuados.
+        Un motor puede girar rápidamente y, aun así, necesitar una transmisión para
+        mover con lentitud y suficiente empuje el elemento que actúa sobre el proceso.</p>
+
+      <p>Un <strong>actuador</strong> convierte energía en una acción física. En un
+        accionamiento electromecánico, el motor realiza la conversión de energía
+        eléctrica a mecánica y el mecanismo adapta ese movimiento a la carga. Por
+        extensión, se habla de <strong>actuación mecánica</strong> para estudiar
+        el conjunto de transmisiones, articulaciones y elementos de guiado que
+        conduce la acción hasta su destino.</p>
+
+      <figure id="fig-am-cadena">
+        <img src="/drautomatica/html/actuadoresm-cadena.png" alt="Cadena de actuación formada por controlador, motor, transmisión y carga, con medición en el motor y realimentación desde la carga."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. La transmisión forma parte de la cadena de actuación.
+          Medir el giro del motor y medir directamente la variable de la carga
+          proporcionan información diferente cuando existen pérdidas de movimiento.</figcaption>
+      </figure>
+
+      <p>La instrumentación cierra esta cadena mediante sensores. Un encoder puede
+        medir el giro del motor, una regla lineal el desplazamiento de una mesa y
+        una celda de carga la fuerza aplicada a una probeta. Elegir dónde medir
+        requiere comprender qué transforma el mecanismo y qué desviaciones puede
+        introducir entre la entrada y la salida.</p>
+
+      <h2>Qué puede transformar un mecanismo</h2>
+
+      <p>Los movimientos elementales de un cuerpo rígido son la
+        <strong>traslación</strong>, que cambia su posición, y la
+        <strong>rotación</strong>, que cambia su orientación. Un mecanismo combina
+        piezas resistentes, llamadas <strong>eslabones</strong>, mediante uniones
+        que permiten ciertos movimientos y restringen otros. Una unión de giro
+        permite rotación relativa; una corredera guiada permite desplazamiento
+        a lo largo de una dirección.</p>
+
+      <p>El número de variables independientes necesarias para describir una
+        configuración se denomina <strong>grados de libertad</strong>. Un cuerpo
+        libre en el espacio tiene seis, mientras una mesa ideal guiada sobre un
+        eje tiene uno. En muchos mecanismos, una sola entrada determina la posición
+        de todas las demás piezas dentro de una rama de movimiento. Las guías y
+        los apoyos deben eliminar los movimientos indeseados sin provocar
+        desalineaciones o esfuerzos internos por restricciones incompatibles.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Funciones básicas de los mecanismos de actuación.">
+\begin{tabular}{lll}
+\hline
+Función & Mecanismos habituales & Aplicación \\
+\hline
+Adaptar velocidad y par & Engranes y tornillo sin fin & Orientación de una plataforma \\
+Transmitir giro a distancia & Bandas y cadenas & Accionamiento de ejes separados \\
+Obtener desplazamiento lineal & Piñón–cremallera y husillo & Posicionamiento de una mesa \\
+Programar un ciclo de movimiento & Leva–seguidor & Elevación y permanencia de herramientas \\
+Obtener oscilación o una trayectoria & Barras articuladas & Apertura de una pinza \\
+Producir movimiento alternativo & Biela–manivela y yugo & Bombeo o ensayo cíclico \\
+Guiar y sostener cargas & Cojinetes y guías & Conservación de la alineación \\
+Retener un sentido de movimiento & Rueda dentada y trinquete & Avance por pasos \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Estudiar la geometría del movimiento sin considerar sus causas es hacer
+        <strong>cinemática</strong>. Para dimensionar una transmisión también se
+        necesitan las fuerzas, la inercia, la resistencia de los materiales y la
+        vida útil. Una animación ayuda a comprender cómo se mueve un conjunto;
+        sus dimensiones y cargas admisibles necesitan un análisis adicional.</p>
+
+      <h2>Velocidad y fuerza se intercambian mediante el trabajo</h2>
+
+      <p>Una palanca permite obtener más fuerza a cambio de un recorrido menor.
+        Una reducción por engranes aplica el mismo principio al giro, entregando
+        más par a una velocidad menor. El <strong>par</strong> $\tau$ es el
+        efecto de una fuerza que tiende a hacer girar un cuerpo. La potencia
+        mecánica instantánea se expresa como</p>
+
+      <div class="equation">\[
+        P=\tau\omega\qquad\text{en rotación},\qquad
+        P=Fv\qquad\text{en traslación},
+      \]</div>
+
+      <p>donde $\omega$ es la velocidad angular, $F$ la fuerza en la dirección
+        del movimiento y $v$ la velocidad lineal. En unidades SI se utilizan
+        $\mathrm{N\,m}$, $\mathrm{rad/s}$, $\mathrm{N}$ y $\mathrm{m/s}$,
+        respectivamente, para obtener potencia en watts.</p>
+
+      <p>Definamos la relación de reducción por magnitudes como
+        $i=|\omega_{\mathrm{entrada}}|/|\omega_{\mathrm{salida}}|$.
+        Si $i&gt;1$, la salida gira más lentamente. En un régimen donde
+        la energía almacenada en el mecanismo no cambia apreciablemente,</p>
+
+      <div class="equation">\[
+        |\tau_{\mathrm{salida}}|\approx
+        \eta\,i|\tau_{\mathrm{entrada}}|,\qquad
+        \eta=\frac{P_{\mathrm{salida}}}{P_{\mathrm{entrada}}}.
+      \]</div>
+
+      <p>La eficiencia $\eta$ considera las pérdidas por fricción y otros
+        efectos disipativos. Durante una aceleración, parte del par también
+        se dedica a cambiar la velocidad de las masas y de los ejes. La
+        reducción adapta la potencia disponible, pero no la multiplica.</p>
+
+      <h2>Transmitir giro entre dos ejes</h2>
+
+      <h3>Engranes y trenes de engranes</h3>
+
+      <p>Los <strong>engranes</strong> transmiten movimiento mediante dientes
+        que mantienen una relación geométrica entre sus giros. En dos
+        engranes exteriores de ejes paralelos, los sentidos son opuestos
+        y las velocidades cumplen</p>
+
+      <div class="equation">\[
+        \frac{\omega_2}{\omega_1}=-\frac{z_1}{z_2},\qquad
+        i=\frac{z_2}{z_1},
+      \]</div>
+
+      <p>donde $z_1$ y $z_2$ son los números de dientes de entrada y salida.
+        Un piñón de 20 dientes que mueve una rueda de 40 produce una
+        reducción de dos a uno. Si la entrada gira a 60 rpm, la salida
+        gira a 30 rpm en sentido contrario. Para que el contacto funcione,
+        los dientes deben tener geometrías compatibles; en engranes
+        cilíndricos esto incluye el módulo y el ángulo de presión.</p>
+
+      <p>Un <strong>tren compuesto</strong> combina varias etapas y su relación
+        total es el producto de las reducciones de cada etapa. Un engrane
+        intermedio en un tren simple puede cambiar el sentido o permitir
+        una separación distinta entre ejes sin modificar la magnitud de
+        la relación final. Los engranes cónicos permiten transmitir giro
+        entre ejes que se intersectan, frecuentemente a 90°; los helicoidales
+        ofrecen un contacto más progresivo, aunque pueden generar empuje axial.</p>
+
+      <p><strong>Exploración interactiva.</strong> En la
+        <a href="https://drautomatica.vercel.app/engranes.html" target="_blank" rel="noopener">animación de engranes</a>,
+        cambia los dientes de la rueda de salida y observa su velocidad.
+        Las referencias primitivas permiten relacionar la geometría con
+        el contacto entre ambos engranes.</p>
+
+      <figure id="fig-am-engranes">
+        <img src="/drautomatica/html/actuadoresm-engranes.png" alt="Dos engranes exteriores de diferente diámetro, con sus ejes de entrada y salida y la distancia entre centros."
+          style="display:block;width:100%;max-width:40rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Los engranes exteriores giran en sentidos
+          opuestos. La relación entre sus números de dientes determina
+          la relación de velocidades.</figcaption>
+      </figure>
+
+      <h3>Bandas y cadenas</h3>
+
+      <p>Cuando los ejes están separados, una <strong>banda</strong> puede
+        transmitir giro mediante poleas. Sin deslizamiento, la velocidad
+        de la banda coincide con la velocidad tangencial de cada polea,</p>
+
+      <div class="equation">\[
+        |\omega_1|r_1=|\omega_2|r_2,\qquad i=\frac{r_2}{r_1}.
+      \]</div>
+
+      <p>Una banda abierta hace girar ambas poleas en el mismo sentido,
+        mientras una disposición cruzada adecuada invierte el sentido.
+        Las bandas planas y trapezoidales transmiten fuerza por fricción;
+        las dentadas utilizan acoplamiento entre dientes y son apropiadas
+        para conservar la sincronización. Aun una banda dentada tiene
+        elasticidad, y su tensión y su montaje influyen en la posición
+        de salida.</p>
+
+      <p>La diferencia entre la tensión del ramal más cargado $T_1$ y
+        la del menos cargado $T_2$ produce un par de magnitud
+        $\tau=(T_1-T_2)r$ sobre una polea de radio $r$. Las
+        <strong>cadenas</strong> también transmiten movimiento entre ejes
+        separados, pero mediante eslabones que engranan con ruedas
+        dentadas. Admiten cargas importantes y evitan el deslizamiento
+        por fricción; requieren atender lubricación, desgaste y variaciones
+        de velocidad asociadas al paso de los eslabones.</p>
+
+      <p><strong>Exploración interactiva.</strong> La
+        <a href="https://drautomatica.vercel.app/banda.html" target="_blank" rel="noopener">animación de transmisión por banda</a>
+        permite modificar los diámetros y comparar las disposiciones
+        abierta y cruzada. Su relación ideal supone ausencia de deslizamiento.</p>
+
+      <figure id="fig-am-banda">
+        <img src="/drautomatica/html/actuadoresm-banda.png" alt="Transmisión por banda abierta entre una polea motriz pequeña y una polea conducida de mayor diámetro."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. La banda abierta conserva el sentido
+          de giro entre las poleas. Sin deslizamiento, sus radios
+          determinan la relación de velocidades.</figcaption>
+      </figure>
+
+      <h3>Tornillo sin fin y corona</h3>
+
+      <p>El <strong>tornillo sin fin</strong> transmite giro a una corona
+        mediante una superficie helicoidal. Sus ejes suelen ser
+        perpendiculares y no se intersectan. Permite obtener reducciones
+        elevadas en una etapa, por lo que resulta útil en orientadores,
+        ajustes y mecanismos de baja velocidad.</p>
+
+      <div class="equation">\[
+        i=\frac{z_c}{n_e},
+      \]</div>
+
+      <p>Aquí $z_c$ es el número de dientes de la corona y $n_e$ el número
+        de entradas o hélices independientes del tornillo. Una corona de
+        40 dientes con un tornillo de dos entradas produce $i=20$.
+        El contacto tiene un componente importante de deslizamiento, que
+        influye en la eficiencia y el calentamiento.</p>
+
+      <figure id="fig-am-tornillo">
+        <img src="/drautomatica/html/actuadoresm-tornillo.png" alt="Tornillo sin fin engranado con una corona, con sus ejes de giro perpendiculares."
+          style="display:block;width:100%;max-width:35rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. El tornillo sin fin y la corona producen
+          una transmisión de giro a giro. Esta función es diferente de
+          la conversión a desplazamiento de un husillo con tuerca.</figcaption>
+      </figure>
+
+      <p>Algunos conjuntos dificultan o impiden que la corona haga girar
+        al tornillo, propiedad denominada <strong>autobloqueo</strong>.
+        Su existencia depende de la geometría y de la fricción; no debe
+        suponerse para cualquier tornillo sin fin. Si la función exige
+        retener una carga, la capacidad de retención se verifica para el
+        conjunto real y, cuando corresponde, se utiliza un freno.</p>
+
+      <p><strong>Exploración interactiva.</strong> En la
+        <a href="https://drautomatica.vercel.app/tornillo.html" target="_blank" rel="noopener">animación del tornillo sin fin y corona</a>,
+        compara una y dos entradas con el mismo número de dientes de la
+        corona. La mano de la hélice y la orientación de los ejes
+        determinan el sentido de transmisión.</p>
+
+      <h2>Convertir una rotación en desplazamiento lineal</h2>
+
+      <h3>Piñón y cremallera</h3>
+
+      <p>Una <strong>cremallera</strong> es una pieza dentada recta que
+        engrana con un piñón. Al girar este, desplaza la cremallera, como
+        ocurre en un eje de posicionamiento o en ciertos sistemas de
+        dirección. Con radio primitivo $r_p$, el modelo ideal cumple</p>
+
+      <div class="equation">\[
+        \Delta x=r_p\Delta\theta,\qquad v=r_p\omega,\qquad
+        |F|\approx\frac{\eta|\tau|}{r_p}.
+      \]</div>
+
+      <p>El ángulo se expresa en radianes y el sentido positivo se escoge
+        de acuerdo con el montaje. Las relaciones anteriores describen
+        magnitudes compatibles con la misma dirección de transmisión.
+        Un piñón más pequeño entrega más fuerza para el mismo par,
+        pero recorre menos distancia por vuelta.</p>
+
+      <figure id="fig-am-cremallera">
+        <img src="/drautomatica/html/actuadoresm-cremallera.png" alt="Un piñón engranado con una cremallera horizontal, que convierte el giro en desplazamiento lineal."
+          style="display:block;width:100%;max-width:42rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. El desplazamiento depende del radio primitivo
+          del piñón. La cremallera necesita una guía que mantenga el contacto
+          y soporte las componentes de fuerza que no producen avance.</figcaption>
+      </figure>
+
+      <p><strong>Exploración interactiva.</strong> La
+        <a href="https://drautomatica.vercel.app/cremallera.html" target="_blank" rel="noopener">animación de piñón y cremallera</a>
+        relaciona el giro acumulado con el desplazamiento. Al cambiar
+        el módulo o los dientes del piñón cambia su radio primitivo y,
+        con él, la distancia recorrida por revolución.</p>
+
+      <h3>Husillo y tuerca</h3>
+
+      <p>Un <strong>husillo</strong> o tornillo de avance convierte el
+        giro relativo entre una rosca y una tuerca en desplazamiento
+        axial. En una disposición habitual, el husillo gira sin
+        trasladarse y la tuerca, unida al carro, avanza sin girar.
+        Una guía independiente evita la rotación del carro.</p>
+
+      <p>El <strong>paso</strong> $p$ es la separación axial entre
+        crestas consecutivas de la rosca, mientras el
+        <strong>avance</strong> $L$ es la distancia recorrida por
+        revolución. Para una rosca de $n_e$ entradas,</p>
+
+      <div class="equation">\[
+        L=n_e p,\qquad
+        \Delta x=\frac{L}{2\pi}\Delta\theta,\qquad
+        v=\frac{L}{2\pi}\omega.
+      \]</div>
+
+      <p>Solo en una rosca de una entrada coinciden paso y avance.
+        Si $p=4$ mm y hay dos entradas, la tuerca avanza 8 mm por
+        revolución. El sentido depende de la mano de la rosca, de
+        qué elemento gira y del convenio de ejes.</p>
+
+      <figure id="fig-am-husillo">
+        <img src="/drautomatica/html/actuadoresm-husillo.png" alt="Husillo con una tuerca acoplada a un carro y dos guías que impiden su giro."
+          style="display:block;width:100%;max-width:40rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. El husillo transmite el esfuerzo axial;
+          las guías determinan el movimiento permitido del carro.
+          La tuerca debe tener una restricción de giro para convertir
+          la rotación relativa en avance.</figcaption>
+      </figure>
+
+      <p>Despreciando la aceleración del conjunto, una estimación del
+        empuje a partir del par aplicado al husillo es</p>
+
+      <div class="equation">\[
+        |F|\approx\frac{2\pi\eta|\tau|}{L}.
+      \]</div>
+
+      <p>Un avance pequeño favorece el empuje y la resolución geométrica,
+        pero exige más revoluciones para completar el recorrido. Los
+        husillos de contacto deslizante pueden tener fricción apreciable;
+        los de bolas recirculantes reducen esa fricción mediante elementos
+        rodantes. La eficiencia, la holgura y la facilidad de retroceso
+        dependen de la construcción. Ni la ausencia de juego ni el
+        autobloqueo se deducen del nombre del mecanismo.</p>
+
+      <p><strong>Exploración interactiva.</strong> En la
+        <a href="https://drautomatica.vercel.app/husillo.html" target="_blank" rel="noopener">animación de husillo y tuerca</a>,
+        conserva el paso y aumenta las entradas. Comprueba que crece
+        el desplazamiento por vuelta y disminuye el tiempo necesario
+        para cubrir el mismo recorrido a igual velocidad de giro.</p>
+
+      <h2>Producir movimientos cíclicos y trayectorias</h2>
+
+      <p>En una dosificadora, una pinza o un equipo de ensayo no siempre
+        interesa una relación constante entre entrada y salida. Puede
+        necesitarse avanzar, permanecer en una posición y regresar,
+        o convertir una rotación uniforme en una oscilación. La
+        geometría del mecanismo permite establecer esas relaciones.</p>
+
+      <h3>Leva y seguidor</h3>
+
+      <p>Una <strong>leva</strong> es una pieza cuyo perfil impone el
+        movimiento de un <strong>seguidor</strong> en contacto con ella.
+        Su giro puede producir ascenso, reposo y descenso. Un rodillo
+        en el seguidor reduce el deslizamiento local, y un resorte u
+        otro sistema de cierre ayuda a mantener el contacto.</p>
+
+      <figure id="fig-am-leva">
+        <img src="/drautomatica/html/actuadoresm-leva.png" alt="Leva de perfil variable en contacto con un seguidor de rodillo guiado verticalmente y cerrado mediante un resorte."
+          style="display:block;width:100%;max-width:30rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. La geometría de la leva relaciona el
+          ángulo de entrada con la elevación del seguidor. La guía
+          limita su movimiento a la dirección vertical.</figcaption>
+      </figure>
+
+      <p>Si el desplazamiento es $s=s(\theta)$, su velocidad depende
+        tanto de la forma de la curva como de la velocidad de giro,</p>
+
+      <div class="equation">\[
+        v=\frac{\mathrm{d}s}{\mathrm{d}\theta}\omega,\qquad
+        a=\frac{\mathrm{d}^2s}{\mathrm{d}\theta^2}\omega^2
+        +\frac{\mathrm{d}s}{\mathrm{d}\theta}\alpha,
+      \]</div>
+
+      <p>donde $\alpha=\mathrm{d}\omega/\mathrm{d}t$ es la aceleración
+        angular. Por ello, un perfil con cambios bruscos de pendiente
+        puede exigir aceleraciones grandes y elevar las fuerzas de
+        contacto. Las leyes de movimiento se escogen considerando
+        también la suavidad de sus derivadas.</p>
+
+      <p>Una ley polinómica 3–4–5 para subir una altura $h$ durante
+        un ángulo $\beta$ es</p>
+
+      <div class="equation">\[
+        s(\theta)=h(10u^3-15u^4+6u^5),\qquad
+        u=\frac{\theta}{\beta},\quad 0\leq\theta\leq\beta.
+      \]</div>
+
+      <p>La variable $u$ representa la fracción del ascenso completada.
+        El desplazamiento pasa de cero a $h$ con velocidad y
+        aceleración nulas en los extremos si el giro es uniforme.
+        El ciclo completo puede incorporar reposos y una ley de retorno.</p>
+
+      <figure id="fig-am-ciclo">
+        <img src="/drautomatica/html/actuadoresm-ciclo-leva.png" alt="Ciclo de leva con ascenso polinómico de 120 grados, reposo alto de 60 grados, descenso de 120 grados y reposo bajo de 60 grados."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 8. Ciclo con ascenso de 120°, reposo alto
+          de 60°, descenso de 120° y reposo bajo de 60°. La alzada
+          se divide entre $h$ para mostrar la forma de la ley,
+          independientemente de la altura elegida.</figcaption>
+      </figure>
+
+      <p><strong>Exploración interactiva.</strong> La
+        <a href="https://drautomatica.vercel.app/leva.html" target="_blank" rel="noopener">animación de leva y seguidor</a>
+        permite cambiar la alzada, los intervalos del ciclo y la ley
+        de movimiento. En sus gráficas se puede comparar cómo estas
+        decisiones modifican desplazamiento, velocidad y aceleración.</p>
+
+      <h3>Mecanismos de barras articuladas</h3>
+
+      <p>Una <strong>cadena de cuatro barras</strong> contiene cuatro
+        eslabones unidos mediante articulaciones de giro. Uno de ellos
+        es el bastidor fijo; los otros pueden formar una manivela,
+        un acoplador y un balancín. Según las longitudes y el eslabón
+        fijado, se obtienen giros completos, oscilaciones o trayectorias
+        útiles para abrir una pinza y orientar una herramienta.</p>
+
+      <figure id="fig-am-barras">
+        <img src="/drautomatica/html/actuadoresm-barras.png" alt="Mecanismo de cuatro barras con dos pivotes fijos, manivela de entrada, acoplador y balancín de salida."
+          style="display:block;width:100%;max-width:42rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 9. Los eslabones forman una cadena cerrada.
+          El movimiento de un punto del acoplador puede seguir una
+          trayectoria distinta de la de las articulaciones.</figcaption>
+      </figure>
+
+      <p>La <strong>condición de Grashof</strong> ayuda a clasificar la
+        movilidad de un cuadrilátero articulado. Si $s$ y $l$ son las
+        longitudes menor y mayor, y $p$ y $q$ las restantes,</p>
+
+      <div class="equation">\[
+        s+l\leq p+q.
+      \]</div>
+
+      <p>En un cuadrilátero ensamblable, la desigualdad estricta permite
+        configuraciones con una rotación relativa completa; el eslabón
+        fijado determina el tipo de mecanismo que se obtiene. El caso
+        de igualdad presenta posiciones de alineación especiales.
+        Cerca de una alineación, la transmisión de fuerza y movimiento
+        puede cambiar de manera muy pronunciada, por lo que no basta
+        con comprobar que el dibujo cierre.</p>
+
+      <p><strong>Exploración interactiva.</strong> En la
+        <a href="https://drautomatica.vercel.app/barras.html" target="_blank" rel="noopener">animación de cuatro barras</a>,
+        compara los montajes disponibles y modifica las longitudes.
+        El punto del acoplador permite observar cómo una entrada
+        angular genera una trayectoria más elaborada.</p>
+
+      <h3>Biela–manivela y yugo escocés</h3>
+
+      <p>La <strong>biela–manivela–corredera</strong> convierte giro en
+        movimiento rectilíneo alternativo, o realiza la conversión
+        inversa, como ocurre en un motor de pistón. Para una corredera
+        alineada con el centro de giro, radio de manivela $r$, longitud
+        de biela $\ell&gt;r$ y la rama de montaje mostrada, su posición
+        medida desde el eje de la manivela es</p>
+
+      <div class="equation">\[
+        x(\theta)=r\cos\theta+
+        \sqrt{\ell^2-r^2\sin^2\theta}.
+      \]</div>
+
+      <p>La carrera entre los extremos es $2r$, pero la evolución dentro
+        de la carrera depende de $\ell/r$. En general, el movimiento
+        no es una sinusoide exacta. Esta diferencia importa en bombas
+        de pistón y ensayos donde se necesita relacionar desplazamiento,
+        velocidad y fuerza durante el ciclo.</p>
+
+      <figure id="fig-am-biela">
+        <img src="/drautomatica/html/actuadoresm-biela.png" alt="Mecanismo biela–manivela–corredera con una manivela giratoria, una biela y una corredera horizontal entre guías fijas."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 10. La biela transmite el movimiento de la
+          manivela a la corredera. Su longitud modifica la evolución
+          del desplazamiento y de la velocidad durante la carrera.</figcaption>
+      </figure>
+
+      <p>En el <strong>yugo escocés</strong>, un pasador de la manivela
+        desliza en una ranura transversal y desplaza un carro guiado.
+        Si el origen está en el centro de su carrera,</p>
+
+      <div class="equation">\[
+        x(\theta)=r\cos\theta,\qquad
+        v=-r\omega\sin\theta.
+      \]</div>
+
+      <p>Con giro uniforme, el desplazamiento es armónico simple y
+        también tiene carrera $2r$. La simplicidad cinemática se
+        acompaña de contacto deslizante en la ranura, que influye
+        en la fricción y el desgaste.</p>
+
+      <figure id="fig-am-yugo">
+        <img src="/drautomatica/html/actuadoresm-yugo.png" alt="Yugo escocés con un pasador que gira con la manivela y desliza en una ranura vertical, desplazando horizontalmente el carro guiado."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 11. El pasador desliza en la ranura del
+          yugo y produce un desplazamiento armónico cuando la
+          manivela gira a velocidad constante.</figcaption>
+      </figure>
+
+      <p><strong>Exploración interactiva.</strong> En el
+        <a href="https://drautomatica.vercel.app/yugo.html" target="_blank" rel="noopener">yugo escocés</a>,
+        observa la proyección del pasador y su relación con la
+        posición del carro. Después, en la
+        <a href="https://drautomatica.vercel.app/biela.html" target="_blank" rel="noopener">biela–manivela–corredera</a>,
+        cambia $\ell/r$ y compara las gráficas de velocidad.
+        Las dos animaciones permiten examinar el movimiento por fases.</p>
+
+      <p>Otros arreglos articulados generan <strong>retorno rápido</strong>,
+        con tiempos distintos para el avance útil y el regreso aun
+        cuando la entrada gira uniformemente. Esto puede aprovecharse
+        para mover una herramienta lentamente durante el trabajo y
+        regresarla con rapidez. El efecto procede de la geometría
+        particular y no es una propiedad de todo mecanismo alternativo.</p>
+
+      <h2>Guiar, acoplar y retener también forman parte de la actuación</h2>
+
+      <p>Una transmisión necesita apoyos que mantengan la posición de
+        sus ejes y guías que sostengan las cargas. Los
+        <strong>cojinetes de deslizamiento</strong> utilizan superficies
+        de contacto con materiales y lubricación adecuados; los
+        <strong>rodamientos</strong> interponen bolas o rodillos.
+        Debe distinguirse la carga radial, perpendicular al eje, de
+        la axial, dirigida a lo largo de él. La selección del apoyo
+        depende de ambas, de la velocidad, la rigidez y el entorno.</p>
+
+      <p>Los <strong>acoplamientos</strong> unen ejes y transmiten par.
+        Algunos admiten pequeñas desalineaciones, pero su flexibilidad
+        torsional también puede introducir una diferencia angular
+        bajo carga. Una guía o un rodamiento no aporta por sí mismo
+        energía de accionamiento; hace posible que el movimiento
+        ocurra en la dirección prevista.</p>
+
+      <p>La <strong>rueda dentada con trinquete</strong> permite avanzar
+        en un sentido y bloquear el contrario. Puede servir para
+        retener una posición o producir avances por pasos. Su
+        funcionamiento discreto resulta útil para indexar, aunque
+        no equivale a una regulación continua de posición. En un
+        sistema instrumentado, los finales de carrera y los sensores
+        de referencia complementan estas funciones mecánicas.</p>
+
+      <h2>Por qué la mecánica afecta a la medición</h2>
+
+      <p>El controlador puede conocer exactamente cuántas cuentas
+        registró un encoder y aun así desconocer la posición real
+        del extremo de trabajo. Al invertir el giro, la
+        <strong>holgura</strong> puede consumir una parte del
+        movimiento antes de que la carga responda. Bajo fuerza,
+        los eslabones y las transmisiones se deforman; en una
+        aproximación elástica lineal,</p>
+
+      <div class="equation">\[
+        \delta=\frac{F}{k_{\mathrm{eq}}},
+      \]</div>
+
+      <p>donde $k_{\mathrm{eq}}$ es la rigidez equivalente en la
+        dirección de interés. La fricción puede impedir pequeños
+        desplazamientos y producir movimientos a saltos. La
+        temperatura modifica dimensiones, y el desgaste puede
+        cambiar con el uso una calibración inicialmente correcta.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Efectos mecánicos que deben considerarse al instrumentar un eje.">
+\begin{tabular}{lll}
+\hline
+Efecto & Consecuencia observable & Medida habitual \\
+\hline
+Holgura & Retraso al invertir el movimiento & Precarga y medición en la carga \\
+Deformación elástica & Posición dependiente de la fuerza & Mayor rigidez y compensación caracterizada \\
+Fricción & Umbral para iniciar el movimiento & Guiado, lubricación y control adecuados \\
+Deslizamiento & Pérdida de correspondencia entre giros & Transmisión síncrona o sensor de salida \\
+Desalineación & Cargas adicionales y desgaste & Alineación y apoyos compatibles \\
+Deriva térmica & Cambio lento de la posición & Estabilización y compensación térmica \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La <strong>resolución</strong> es el incremento distinguible
+        por la medición o por el mando. La <strong>repetibilidad</strong>
+        describe la dispersión al volver a una misma posición bajo
+        condiciones equivalentes. La <strong>exactitud</strong>
+        expresa la proximidad al valor de referencia. Una resolución
+        pequeña no garantiza por sí sola buena repetibilidad ni
+        buena exactitud de posicionamiento.</p>
+
+      <h2>Un eje de posicionamiento como ejemplo</h2>
+
+      <p>Supongamos que una mesa para orientar una muestra debe
+        desplazarse a 12 mm/s mientras vence una fuerza resistente
+        de 120 N. Elegimos un husillo con avance $L=4$ mm por
+        revolución y suponemos una eficiencia de trabajo de
+        $\eta_h=0.40$. Para movimiento uniforme,</p>
+
+      <div class="equation">\[
+        n_h=\frac{v}{L}=3\ \mathrm{rev/s}=180\ \mathrm{rpm},\qquad
+        \tau_h\approx\frac{FL}{2\pi\eta_h}
+        =0.191\ \mathrm{N\,m}.
+      \]</div>
+
+      <p>En el cálculo del par se convirtió $L$ a metros. Si un
+        reductor de relación $i=5$ y eficiencia $\eta_g=0.90$
+        conecta el motor al husillo, el punto de trabajo aproximado
+        del motor es</p>
+
+      <div class="equation">\[
+        n_m=i n_h=900\ \mathrm{rpm},\qquad
+        \tau_m\approx\frac{\tau_h}{\eta_g i}
+        =0.0424\ \mathrm{N\,m}.
+      \]</div>
+
+      <p>Estos valores corresponden al régimen uniforme del ejemplo.
+        La selección final añade las exigencias de aceleración,
+        fricción adicional, capacidad térmica y cargas de servicio.
+        El punto de trabajo debe estar dentro de las capacidades
+        del motor y de la transmisión.</p>
+
+      <p>Con un encoder que entrega $N=1000$ cuentas efectivas por
+        revolución del motor, la relación geométrica proporciona</p>
+
+      <div class="equation">\[
+        \Delta x_{\mathrm{cuenta}}=\frac{L}{iN}
+        =\frac{4\ \mathrm{mm}}{5(1000)}
+        =0.0008\ \mathrm{mm}=0.8\ \mu\mathrm{m}.
+      \]</div>
+
+      <p>Las cuentas efectivas ya incluyen el modo de lectura del
+        encoder. El resultado expresa la distancia ideal asociada
+        a una cuenta, no una garantía de exactitud de 0.8 µm.
+        Si el husillo tiene juego o la estructura se deforma,
+        la mesa puede desviarse mucho más. Una regla lineal en
+        la carga permite observar errores que el encoder del
+        motor no distingue.</p>
+
+      <h2>Elegir el mecanismo desde la tarea</h2>
+
+      <p>El diseño comienza con el movimiento que necesita el
+        proceso, las fuerzas que debe transmitir y la variable
+        que realmente interesa medir. Un eje largo y rápido puede
+        favorecer una banda; un ajuste lineal con empuje elevado,
+        un husillo; un ciclo repetitivo con reposos, una leva.
+        Las barras articuladas permiten resolver trayectorias
+        cuando la geometría forma parte de la función.</p>
+
+      <p>Después se revisan recorrido, velocidad, aceleración,
+        carga, rigidez, holgura, vida útil y mantenimiento, junto
+        con la ubicación de los sensores. La elección resulta
+        más sólida cuando la transmisión y la instrumentación
+        se estudian como partes del mismo sistema. La mecánica
+        determina cómo llega la acción al proceso; la medición
+        permite comprobar que esa acción se produjo como se esperaba.</p>
+
+      <h2>Referencias y animaciones</h2>
+
+      <ul class="references">
+        <li>Bolton, W. (2017). <em>Mecatrónica: Sistemas de control
+          electrónico en la ingeniería mecánica y eléctrica. Un
+          enfoque multidisciplinario</em> (6.ª ed., cap. 8,
+          «Sistemas de actuación mecánica», pp. 188–206).
+          Alfaomega. <a href="https://api.pageplace.de/preview/DT0400.9789587783476_A43538324/preview-9789587783476_A43538324.pdf">Información editorial y vista previa</a>.</li>
+        <li>Santos-Ruiz, I. (2025). <em>Animaciones interactivas</em>. Los nueve
+          mecanismos enlazados en el texto permiten modificar
+          parámetros y consultar gráficas de su movimiento.</li>
+        <li>Kohara Gear Industry Co., Ltd. (2021).
+          <a href="https://d2t1xqejof9utc.cloudfront.net/files/227482/gear_guide1.pdf?1634738312="><em>KHK technical data</em></a>.
+          KHK Gears.</li>
+        <li>Thomson Industries, Inc. (2026).
+          <a href="https://www.thomsonlinear.com/en/support/articles/Customizing-Lead-Screws-for-Performance-Compactness-Cost-and-Compliance"><em>Customizing
+          lead screws for performance, compactness, cost and compliance</em></a>.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
