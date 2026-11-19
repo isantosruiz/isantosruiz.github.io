@@ -1,17 +1,8 @@
-<!doctype html>
-<html lang="es">
-
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato." />
-  <title>Electrostática: de las cargas al voltaje</title>
-  <link rel="stylesheet" href="./scientific-template.css" />
-  <script src="./scientific-template.js" defer></script>
-</head>
-
-<body class="bookdown-style">
-  <main class="article-shell">
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Electrostática: de las cargas al voltaje | drAutomática</title><meta name="description" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/electrostatica/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Electrostática: de las cargas al voltaje | drAutomática"><meta property="og:description" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/electrostatica/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Electrostática: de las cargas al voltaje | drAutomática"><meta name="twitter:description" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" defer></script><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
     <article class="article-inner">
       <header class="article-header">
         <p class="article-kicker">Física</p>
@@ -71,7 +62,7 @@
         materiales y de sus condiciones superficiales.</p>
 
       <figure id="fig-es-polarizacion">
-        <img src="./electrostatica-polarizacion.png"
+        <img src="/drautomatica/html/electrostatica-polarizacion.png"
           alt="Un globo con carga negativa atrae un papel neutro. En el papel se representa una ligera separación de carga, con el lado positivo más próximo al globo."
           style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 1. Un objeto cargado también puede atraer un
@@ -98,7 +89,7 @@
         vector y se mide en newtons, N.</p>
 
       <figure id="fig-es-fuerzas">
-        <img src="./electrostatica-fuerzas.png"
+        <img src="/drautomatica/html/electrostatica-fuerzas.png"
           alt="Dos cargas positivas se repelen con fuerzas opuestas; una carga positiva y otra negativa se atraen. En ambos casos se señala la distancia r entre ellas."
           style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 2. Las fuerzas entre dos cargas puntuales
@@ -167,7 +158,7 @@
         prueba ideal.</p>
 
       <figure id="fig-es-campo">
-        <img src="./electrostatica-campo.png"
+        <img src="/drautomatica/html/electrostatica-campo.png"
           alt="Líneas radiales que salen de una carga positiva. En un punto P se muestra un vector de campo eléctrico dirigido hacia afuera."
           style="display:block;width:100%;max-width:35rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 3. El campo de una carga puntual positiva
@@ -269,7 +260,7 @@
         en lugar de sumar direcciones.</p>
 
       <figure id="fig-es-potencial">
-        <img src="./electrostatica-potencial.png"
+        <img src="/drautomatica/html/electrostatica-potencial.png"
           alt="Circunferencias equipotenciales alrededor de una carga positiva, con valores de 60, 30 y 20 volts al aumentar el radio. El campo apunta hacia los valores menores."
           style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 4. Un mapa de potencial alrededor de una
@@ -350,7 +341,7 @@
         química y el circuito la entrega a otros procesos.</p>
 
       <figure id="fig-es-voltimetro">
-        <img src="./electrostatica-voltimetro.png"
+        <img src="/drautomatica/html/electrostatica-voltimetro.png"
           alt="Circuito con pila de 9 volts, una resistencia y un voltímetro conectado en paralelo entre los nodos A y B. La punta positiva está en A y la negativa en B."
           style="display:block;width:100%;max-width:42rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 5. El voltímetro compara dos puntos y se
@@ -399,7 +390,7 @@
         la geometría.</p>
 
       <figure id="fig-es-placas">
-        <img src="./electrostatica-placas.png"
+        <img src="/drautomatica/html/electrostatica-placas.png"
           alt="Placas paralelas a 9 y 0 volts separadas 5 milímetros. El campo uniforme apunta de la placa positiva a la negativa y cruza líneas de 6 y 3 volts. Se indican fuerzas opuestas sobre cargas positiva y negativa."
           style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 6. El campo apunta de potenciales mayores
@@ -446,7 +437,7 @@
         medio porque tienen igual magnitud y signo contrario.</p>
 
       <figure id="fig-es-dipolo">
-        <img src="./electrostatica-dipolo.png"
+        <img src="/drautomatica/html/electrostatica-dipolo.png"
           alt="Dipolo con una carga positiva a la izquierda y otra negativa a la derecha. En el punto medio P, el potencial es cero, pero los campos de ambas cargas apuntan hacia la derecha y se suman."
           style="display:block;width:100%;max-width:30rem;height:auto;margin-inline:auto;" />
         <figcaption>Figura 7. En P, los potenciales se cancelan
@@ -522,6 +513,58 @@ Diferencia de potencial & Comparación entre dos puntos & V \\
 
       <footer class="article-footer ccby"></footer>
     </article>
-  </main>
-</body>
-</html>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>
