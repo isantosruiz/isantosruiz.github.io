@@ -1,0 +1,1343 @@
+<!DOCTYPE html><html lang="es"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Función de transferencia y respuesta en tiempo discreto | drAutomática</title><meta name="description" content="Función de transferencia y respuesta en tiempo discreto. Descomposición de secuencias en impulsos, convolución, transformada Z, ecuaciones en diferencias, estabilidad y régimen permanente, con un promediador móvil y un integrador trapezoidal en MATLAB."><meta name="robots" content="index, follow"><meta name="theme-color" content="#0a2342"><link rel="canonical" href="https://isantosruiz.github.io/drautomatica/articulos/funtrand/"><meta property="og:type" content="article"><meta property="og:site_name" content="drAutomática"><meta property="og:title" content="Función de transferencia y respuesta en tiempo discreto | drAutomática"><meta property="og:description" content="Función de transferencia y respuesta en tiempo discreto. Descomposición de secuencias en impulsos, convolución, transformada Z, ecuaciones en diferencias, estabilidad y régimen permanente, con un promediador móvil y un integrador trapezoidal en MATLAB."><meta property="og:url" content="https://isantosruiz.github.io/drautomatica/articulos/funtrand/"><meta property="og:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:secure_url" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Función de transferencia y respuesta en tiempo discreto. Descomposición de secuencias en impulsos, convolución, transformada Z, ecuaciones en diferencias, estabilidad y régimen permanente, con un promediador móvil y un integrador trapezoidal en MATLAB."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Función de transferencia y respuesta en tiempo discreto | drAutomática"><meta name="twitter:description" content="Función de transferencia y respuesta en tiempo discreto. Descomposición de secuencias en impulsos, convolución, transformada Z, ecuaciones en diferencias, estabilidad y régimen permanente, con un promediador móvil y un integrador trapezoidal en MATLAB."><meta name="twitter:image" content="https://isantosruiz.github.io/drautomatica/banner_1200x630.png"><link rel="icon" type="image/png" href="/drautomatica/arm.png"><link rel="apple-touch-icon" href="/drautomatica/arm.png"><link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css"><link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-teal.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script><link rel="stylesheet" href="/drautomatica/html/scientific-template.css" />
+  <script src="/drautomatica/html/scientific-template.js" data-codehl-languages="matlab" defer></script>
+  <style>
+    @media print {
+      .article-inner h2, .article-inner h3 { break-after: avoid; page-break-after: avoid; }
+      .article-inner figure { break-inside: avoid; page-break-inside: avoid; }
+      .article-inner .references { break-inside: avoid; page-break-inside: avoid; }
+    }
+  </style><style>:root{--teal:#009688;--ink:#263238;--bg:#f7f9fb}*{box-sizing:border-box}html,body{margin:0;font-family:Roboto,sans-serif;color:var(--ink);background:var(--bg)}h1{color:#373737!important}h2{color:#737373!important}h1.author,.author h1{color:#373773!important;margin-bottom:0}div.author,.author div{font-size:1.4rem}a{color:#0645ad;text-decoration:none}a:hover{text-decoration:underline}.sidebar{z-index:3;width:250px}.sidebar .w3-bar-item{padding:16px;font-weight:700}.sidebar a.w3-bar-item:hover,.sidebar a.w3-bar-item:focus,.sidebar a.w3-bar-item:focus-visible{text-decoration:none}.brand img{display:block;width:100%;height:auto}.main{min-width:0}.masthead{padding:8px 32px}.masthead h1{margin:0;color:#fafafa!important;font-family:Great Vibes,cursive;font-weight:400;font-size:2.4rem}.content{max-width:1080px;margin:0 auto;padding:32px;background:#fff;min-height:75vh}.content img{max-width:100%;height:auto}.content li:not(:last-child){margin-bottom:8px}.footbar a{color:#fff;text-decoration:none}.footbar a:hover{text-decoration:underline}code,pre{background:#f1f3f5;border-radius:4px}code{display:inline;margin:0;white-space:pre;padding:2px 4px;font-size:.95em}pre{display:inline-block;width:auto;max-width:100%;white-space:pre;padding:10px;overflow:auto;border:1px solid #ccc;font-size:.95em}details{width:85%;max-width:90%;font-size:.9em;overflow-wrap:break-word}details>summary{padding:4px 6px;width:12em;background:#ddd;border:none;cursor:pointer}details>p{border-radius:0 0 8px 8px;background:#ddd;padding:8px;margin:0;box-shadow:3px 3px 4px #303030}details[open]>summary{background:#ccf}details.collapsible-section{width:100%;max-width:100%;margin:20px 0 24px;font-size:1em;border:1px solid #c9dedb;border-radius:8px;background:#f8fcfb;overflow:hidden}details.collapsible-section>summary{width:100%;padding:12px 16px;background:#e7f2f0;color:#3f5f5b;font-weight:700;list-style:none;cursor:pointer}details.collapsible-section>summary::-webkit-details-marker{display:none}details.collapsible-section>summary:before{content:"+";display:inline-flex;align-items:center;justify-content:center;width:1.25rem;height:1.25rem;margin-right:10px;border-radius:50%;background:#009688;color:#fff;font-weight:700;line-height:1}details.collapsible-section[open]>summary{background:#d8ebe8}details.collapsible-section[open]>summary:before{content:"-"}.collapsible-section-body{padding:12px 16px 16px;background:#fff}.collapsible-section-body ul{margin-bottom:0}.latex-button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:#79b;color:#fff;border-radius:8px;text-decoration:none;transition:background-color .3s ease}.latex-button:hover{background:#6b9;text-decoration:none}.python-app-button .fa-python{font-size:1.35em}.latex-app-button .latex-app-icon{height:1.2em;width:auto;max-width:none}.latex-logo{height:24px}.imagen-adaptable{width:50%;height:auto;margin:0 auto;display:block}.centrado{text-align:center}.centrado img{display:inline-block}@media print{body *{visibility:hidden}#panel-content,#panel-content *{visibility:visible}#panel-content{position:absolute;top:0;left:0}}@media(max-width:768px){.imagen-adaptable{width:100%}.content{padding:24px 18px}.masthead{padding:10px 18px}}
+</style></head> <body> <nav class="w3-sidebar w3-bar-block w3-collapse w3-animate-left w3-card sidebar" id="mySidebar"> <a class="w3-bar-item w3-large brand" href="/drautomatica/"> <img src="/drautomatica/banner-sidebar.jpg" alt="drAutomática" width="500" height="333" decoding="async"> </a> <button class="w3-bar-item w3-button w3-hide-large w3-large" type="button" data-close-sidebar>
+Cerrar <i class="fa fa-remove"></i> </button> <a class="w3-bar-item w3-button" href="/drautomatica/">Inicio</a><a class="w3-bar-item w3-button" href="/drautomatica/modelado/">Modelado</a><a class="w3-bar-item w3-button" href="/drautomatica/simulacion/">Simulación</a><a class="w3-bar-item w3-button" href="/drautomatica/control/">Control</a><a class="w3-bar-item w3-button" href="/drautomatica/optimizacion/">Optimización</a> <button class="w3-bar-item w3-button" type="button" data-accordion="software-menu">
+Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" class="w3-hide"> <a class="w3-bar-item w3-button" href="/drautomatica/software/python/">&nbsp;&nbsp; Python</a><a class="w3-bar-item w3-button" href="/drautomatica/software/matlab/">&nbsp;&nbsp; MATLAB</a><a class="w3-bar-item w3-button" href="/drautomatica/software/latex/">&nbsp;&nbsp; LaTeX</a> </div> <a class="w3-bar-item w3-button" href="/drautomatica/miscelanea/">Miscelánea</a> </nav> <div class="w3-overlay w3-hide-large w3-animate-opacity" data-close-sidebar style="cursor:pointer" id="myOverlay"></div> <div class="w3-main main" style="margin-left:250px;"> <div id="myTop" class="w3-container w3-top w3-theme"> <p> <button type="button" class="w3-button w3-teal w3-hide-large w3-xlarge" data-open-sidebar aria-label="Abrir navegación"> <i class="fa fa-bars"></i> </button> <span id="myIntro" class="w3-hide">drAutomática</span> </p> </div> <header class="w3-container w3-theme masthead"> <h1>drAutomática</h1> </header> <div id="panel-content" class="w3-container content">  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Dinámica de sistemas y control</p>
+        <h1>Función de transferencia y respuesta en tiempo discreto</h1>
+        <p class="subtitle">De las secuencias y sus impulsos a la convolución, las recurrencias y la memoria de los algoritmos mecatrónicos.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>Un algoritmo digital transforma muestras mediante operaciones que
+          conservan información de instantes anteriores. Para comprender esa
+          memoria, primero expresaremos una secuencia como suma de impulsos
+          desplazados y escalados. La linealidad y la invariancia temporal
+          permitirán obtener la convolución discreta y relacionarla después
+          con la transformada Z y la función de transferencia. Un promediador
+          móvil de tres términos y un integrador trapezoidal mostrarán cómo
+          calcular respuestas, incorporar condiciones iniciales y determinar
+          estabilidad y régimen permanente. Los ejemplos y el código MATLAB
+          distinguen el índice de muestra del tiempo físico y prestan especial
+          atención a la inicialización de las memorias del algoritmo.</p>
+      </section>
+
+      <h2>De una medición a la siguiente</h2>
+
+      <p>Un controlador puede recibir muestras de velocidad, suavizarlas y
+        acumular sus efectos para estimar una posición. En cada actualización
+        utiliza la lectura actual y algunos valores que conserva en memoria.
+        La relación entre esas muestras constituye un sistema dinámico en
+        tiempo discreto, aunque el mecanismo del que proceden se mueva
+        continuamente.</p>
+
+      <p>Si el periodo de muestreo es $T_s$, la muestra $u[k]$ corresponde
+        al instante $t_k=kT_s$. El índice entero $k$ cuenta actualizaciones;
+        no expresa segundos. Con $T_s=0.1$ s, la muestra de índice 3 se
+        obtiene en 0.3 s. La frecuencia de muestreo es $f_s=1/T_s$, en
+        este caso 10 Hz. Las amplitudes de una secuencia pueden ser reales;
+        el muestreo temporal y la cuantización de amplitud son operaciones
+        diferentes.</p>
+
+      <p>Una <strong>ecuación en diferencias</strong> o recurrencia relaciona
+        muestras de la entrada y la salida. Como primer ejemplo, el
+        <strong>promediador móvil de tres términos</strong> calcula</p>
+
+      <div class="equation">\[
+        y[k]=\frac{u[k]+u[k-1]+u[k-2]}{3}.
+      \]</div>
+
+      <p>La salida es el promedio de la muestra actual y las dos anteriores.
+        Es un algoritmo causal porque no utiliza valores futuros. Para
+        comenzar a ejecutarlo es necesario especificar qué valores se
+        encuentran en las dos posiciones de memoria. Al hablar de
+        <strong>reposo inicial</strong> tomaremos esas memorias iguales
+        a cero, una decisión que no siempre coincide con la historia real
+        de una medición.</p>
+
+      <p>Antes de transformar esta recurrencia conviene estudiar cómo puede
+        construirse cualquier entrada a partir de elementos muy sencillos.
+        Ese procedimiento permitirá deducir la convolución sin presentarla
+        como una fórmula aislada.</p>
+
+      <h2>Una secuencia puede descomponerse en impulsos</h2>
+
+      <p>El <strong>impulso discreto unitario</strong>, también llamado
+        impulso de Kronecker, es la secuencia</p>
+
+      <div class="equation">\[
+        \delta[k]=\begin{cases}1,&k=0,\\0,&k\ne0.\end{cases}
+      \]</div>
+
+      <p>A diferencia del impulso ideal de tiempo continuo, es una secuencia
+        ordinaria de amplitud finita. $\delta[k-\ell]$ vale uno únicamente
+        cuando $k=\ell$; al multiplicarla por $u[\ell]$, se coloca en ese
+        índice una muestra con la amplitud deseada. Por tanto,</p>
+
+      <div class="equation">\[
+        u[k]=\sum_{\ell=-\infty}^{\infty}
+        u[\ell]\,\delta[k-\ell].
+      \]</div>
+
+      <p>Para un valor fijo de $k$, todos los términos de la suma son cero
+        excepto el de $\ell=k$, que recupera exactamente $u[k]$. No se
+        trata de una aproximación por pulsos estrechos. Es una identidad
+        entre secuencias.</p>
+
+      <p>Por ejemplo, una entrada que vale 2, −1 y 3 en los índices 0,
+        1 y 2, respectivamente, y cero en los demás, se escribe</p>
+
+      <div class="equation">\[
+        u[k]=2\delta[k]-\delta[k-1]+3\delta[k-2].
+      \]</div>
+
+      <figure id="fig-fd-descomposicion">
+        <img src="/drautomatica/html/funtrand-descomposicion.png" alt="Tres impulsos escalados y desplazados, de amplitudes 2, menos 1 y 3 en los índices 0, 1 y 2. Su suma recupera la secuencia de entrada."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Cada impulso aporta una sola muestra.
+          La secuencia del panel inferior es la suma de los tres
+          superiores. Los segmentos verticales identifican muestras;
+          no describen una evolución continua entre ellas.</figcaption>
+      </figure>
+
+      <p>En MATLAB, el primer elemento de un vector ocupa la posición 1,
+        aunque represente la muestra matemática de índice 0. Por eso se
+        conservará un vector de índices explícito para dibujar las
+        secuencias y evitar confundir posiciones del arreglo con tiempo.</p>
+
+      <p>El archivo completo
+        <a href="/drautomatica/html/funtrand_matlab.m" download><code>funtrand_matlab.m</code></a>
+        reproduce los cálculos y las gráficas numéricas del artículo.
+        Los ejemplos se han comprobado con MATLAB R2025a. Las operaciones
+        <code>filter</code>, <code>conv</code> y <code>cumtrapz</code>
+        pertenecen a MATLAB base; los modelos <code>tf</code>,
+        <code>ss</code> y sus simulaciones requieren
+        <em>Control System Toolbox</em>. No se necesita
+        <em>Signal Processing Toolbox</em>.</p>
+
+      <script type="text/matlab">
+%% Muestras e impulsos desplazados
+% Función de transferencia y respuesta en tiempo discreto.
+% Los modelos requieren Control System Toolbox.
+% No requiere Signal Processing Toolbox ni Simulink.
+clear; close all; clc;
+Ts = 0.1;                    % s
+k = (-2:7)';
+delta = @(n) double(n==0);
+uEjemplo = 2*delta(k)-delta(k-1)+3*delta(k-2);
+componentes = [2*delta(k), -delta(k-1), 3*delta(k-2)];
+assert(max(abs(uEjemplo-sum(componentes,2)))<1e-14);
+figure('Name','Una secuencia como suma de impulsos');
+tiledlayout(4,1);
+for j = 1:3
+    nexttile; stem(k,componentes(:,j),'filled'); grid on;
+    ylabel(sprintf('Componente %d',j));
+end
+nexttile; stem(k,uEjemplo,'filled'); grid on;
+xlabel('Índice k'); ylabel('u[k]');
+      </script>
+
+      <h2>De los impulsos de entrada a las respuestas desplazadas</h2>
+
+      <p>Un sistema <strong>lineal e invariante en el tiempo</strong>,
+        LTI, permite separar y recombinar las contribuciones de la
+        entrada. La linealidad significa que multiplicar entradas por
+        constantes y sumarlas produce la misma combinación de salidas.
+        La invariancia temporal significa que desplazar una entrada
+        un número de muestras desplaza la salida en ese mismo número.</p>
+
+      <p>Consideraremos primero el sistema con estado inicial nulo.
+        Sea $\mathcal{T}$ el operador que transforma la entrada en
+        la salida y definamos su <strong>respuesta al impulso</strong>
+        mediante $h[k]=\mathcal{T}\{\delta[k]\}$. La invariancia
+        temporal implica</p>
+
+      <div class="equation">\[
+        \mathcal{T}\{\delta[k-\ell]\}=h[k-\ell].
+      \]</div>
+
+      <p>La respuesta a $u[\ell]\delta[k-\ell]$ es entonces
+        $u[\ell]h[k-\ell]$. Para una entrada de soporte finito,
+        la linealidad permite sumar todas las contribuciones,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        y[k]&=\mathcal{T}\!\left\{\sum_\ell
+            u[\ell]\delta[k-\ell]\right\}\\
+        &=\sum_\ell u[\ell]\,
+            \mathcal{T}\{\delta[k-\ell]\}
+          =\sum_\ell u[\ell]h[k-\ell].
+        \end{aligned}
+      \]</div>
+
+      <p>Esta es la idea de la <strong>convolución discreta</strong>.
+        Para entradas infinitas, la expresión se extiende cuando
+        la suma correspondiente converge. Se utiliza la notación</p>
+
+      <div class="equation">\[
+        y[k]=(h*u)[k]=\sum_{\ell=-\infty}^{\infty}
+        u[\ell]h[k-\ell].
+      \]</div>
+
+      <p>La respuesta no depende solamente de la entrada en el instante
+        actual. Cada muestra anterior deja una contribución que evoluciona
+        según la respuesta al impulso. Si tanto la entrada como el sistema
+        son causales, $u[k]=0$ y $h[k]=0$ para índices negativos, y para
+        $k\geq0$ la suma se reduce a</p>
+
+      <div class="equation">\[
+        y[k]=\sum_{\ell=0}^{k}u[\ell]h[k-\ell].
+      \]</div>
+
+      <p>No aparece un factor $T_s$ añadido a esta suma. Aquí se están
+        combinando secuencias exactamente, no aproximando una integral
+        continua. Si la física del algoritmo necesita un periodo de
+        muestreo, como sucederá en el integrador trapezoidal, ese factor
+        ya estará incorporado en sus coeficientes y en $h[k]$.</p>
+
+      <h3>La convolución del ejemplo, muestra por muestra</h3>
+
+      <p>Al aplicar $\delta[k]$ al promediador de tres términos se obtiene</p>
+
+      <div class="equation">\[
+        h_M[k]=\frac{\delta[k]+\delta[k-1]+\delta[k-2]}{3}.
+      \]</div>
+
+      <p>Esta respuesta solo es no nula en los índices 0, 1 y 2,
+        y vale cero a partir de $k=3$. Por ello, el promediador
+        móvil de tres términos es un filtro de
+        <strong>respuesta al impulso de duración finita (FIR)</strong>,
+        del inglés <em>finite impulse response</em>.</p>
+
+      <p>Por tanto, la entrada $2\delta[k]-\delta[k-1]+3\delta[k-2]$
+        produce $2h_M[k]-h_M[k-1]+3h_M[k-2]$. La figura 2 muestra
+        cómo esas tres respuestas se superponen.</p>
+
+      <figure id="fig-fd-superposicion">
+        <img src="/drautomatica/html/funtrand-superposicion.png" alt="Respuestas 2h de k, menos h de k menos 1 y 3h de k menos 2, y su suma. La salida final ocupa cinco índices aunque la entrada solo tenga tres muestras no nulas."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Cada impulso de entrada genera una
+          copia desplazada y escalada de $h_M$. La suma de esas
+          copias determina la salida completa.</figcaption>
+      </figure>
+
+      <p>Otra manera de organizar el mismo cálculo consiste en fijar
+        $k$ y recorrer el índice $\ell$. Como función de $\ell$,
+        $h[k-\ell]$ es una versión invertida y desplazada de $h$.
+        Se multiplican las muestras que coinciden y se suman los
+        productos. Para $k=3$, solo contribuyen los valores
+        $u[1]h[2]$ y $u[2]h[1]$.</p>
+
+      <figure id="fig-fd-convolucion">
+        <img src="/drautomatica/html/funtrand-convolucion.png" alt="Construcción de y de 3. La entrada y la respuesta h de 3 menos el índice de suma se multiplican muestra a muestra, dando menos un tercio y uno como contribuciones no nulas."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. La suma del panel inferior da
+          $y[3]=2/3$. Invertir y desplazar el núcleo es una
+          forma gráfica de evaluar la misma superposición
+          de la figura 2.</figcaption>
+      </figure>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Convolución de las secuencias del ejemplo.">
+\begin{tabular}{lll}
+\hline
+Índice & Suma de productos & Salida \\
+\hline
+$0$ & $2/3$ & $2/3$ \\
+$1$ & $-1/3+2/3$ & $1/3$ \\
+$2$ & $1-1/3+2/3$ & $4/3$ \\
+$3$ & $1-1/3$ & $2/3$ \\
+$4$ & $1$ & $1$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>La convolución completa de dos vectores finitos de longitudes
+        $N_u$ y $N_h$ tiene $N_u+N_h-1$ posiciones. En este caso son
+        cinco. <code>filter</code> entrega tantas muestras como reciba,
+        por lo que se añaden dos ceros de entrada para observar la
+        cola del promediador. El siguiente bloque compara la suma,
+        la recurrencia explícita y la función de filtrado.</p>
+
+      <script type="text/matlab">
+%% Convolución, recurrencia y filtro causal
+bM = [1 1 1]/3; aM = 1;
+uCorto = [2; -1; 3];
+hM = bM(:);
+yConv = conv(uCorto,hM);
+% Añadir dos ceros permite observar la cola completa del FIR.
+uExtendida = [uCorto; zeros(2,1)];
+yFilter = filter(bM,aM,uExtendida);
+yRec = zeros(size(uExtendida));
+uPrev1 = 0; uPrev2 = 0;
+for j = 1:numel(uExtendida)
+    actual = uExtendida(j);
+    yRec(j) = (actual+uPrev1+uPrev2)/3;
+    uPrev2 = uPrev1; uPrev1 = actual;
+end
+yEsperada = [2;1;4;2;3]/3;
+assert(max(abs(yConv-yEsperada))<1e-14);
+assert(max(abs(yConv-yFilter))<1e-14);
+assert(max(abs(yConv-yRec))<1e-14);
+disp('Convolución completa:'); disp(yConv.');
+figure('Name','Salida del promediador');
+stem((0:numel(yConv)-1)',yConv,'filled'); grid on;
+xlabel('Índice k'); ylabel('y[k]');
+
+% Las respuestas a impulsos desplazados también se superponen.
+hIndice = @(n) double(n>=0 & n<=2)/3;
+respuestas = [2*hIndice(k),-hIndice(k-1),3*hIndice(k-2)];
+figure('Name','Superposición de las respuestas');
+tiledlayout(4,1);
+for j = 1:3
+    nexttile; stem(k,respuestas(:,j),'filled'); grid on;
+    ylabel(sprintf('Aportación %d',j));
+end
+nexttile; stem(k,sum(respuestas,2),'filled'); grid on;
+xlabel('Índice k'); ylabel('y[k]');
+
+% Invertir y desplazar h como función del índice de suma.
+ell = k; indiceSalida = 3;
+uEll = 2*delta(ell)-delta(ell-1)+3*delta(ell-2);
+hDesplazada = hIndice(indiceSalida-ell);
+productos = uEll.*hDesplazada;
+assert(abs(sum(productos)-2/3)<1e-14);
+figure('Name','Construcción de y[3] por convolución');
+tiledlayout(3,1);
+nexttile; stem(ell,uEll,'filled'); grid on; ylabel('u[l]');
+nexttile; stem(ell,hDesplazada,'filled'); grid on;
+ylabel('h[3-l]');
+nexttile; stem(ell,productos,'filled'); grid on;
+xlabel('Índice de suma l'); ylabel('Producto');
+      </script>
+
+      <h2>La transformada Z organiza los retardos y las recurrencias</h2>
+
+      <p>La <strong>transformada Z bilateral</strong> de una secuencia
+        $u[k]$ se define por</p>
+
+      <div class="equation">\[
+        U(z)=\sum_{k=-\infty}^{\infty}u[k]z^{-k}.
+      \]</div>
+
+      <p>$z$ es una variable compleja y adimensional. La
+        <strong>región de convergencia</strong> reúne los valores
+        de $z$ para los que la serie converge. Una expresión racional
+        por sí sola no siempre identifica una secuencia única;
+        también importan esa región y la causalidad.</p>
+
+      <p>Con reposo inicial, un retardo de una muestra corresponde
+        a multiplicar por $z^{-1}$, y uno de dos muestras a
+        $z^{-2}$. Además, la convolución se transforma en un
+        producto, $Y(z)=G(z)U(z)$, donde</p>
+
+      <div class="equation">\[
+        G(z)=\mathcal{Z}\{h[k]\}
+        =\left.\frac{Y(z)}{U(z)}\right|_{\text{estado inicial nulo}}
+      \]</div>
+
+      <p>es la <strong>función de transferencia discreta</strong>.
+        Para una recurrencia general con coeficientes constantes,</p>
+
+      <div class="equation">\[
+        y[k]+\sum_{i=1}^{n}a_i y[k-i]
+        =\sum_{j=0}^{m}b_j u[k-j],
+      \]</div>
+
+      <p>se obtiene</p>
+
+      <div class="equation">\[
+        G(z)=\frac{b_0+b_1z^{-1}+\cdots+b_mz^{-m}}
+        {1+a_1z^{-1}+\cdots+a_nz^{-n}}.
+      \]</div>
+
+      <p>Al escribirla en potencias positivas de $z$, esta relación
+        causal es racional propia: el grado del numerador no
+        supera al del denominador. Los términos de retardo se
+        conservan en esa representación; no se pueden omitir
+        simplemente porque aparezcan potencias negativas.</p>
+
+      <p>Las condiciones iniciales no desaparecen por cambiar de
+        dominio. La transformada <strong>unilateral</strong>
+        $Y(z)=\sum_{k=0}^{\infty}y[k]z^{-k}$ permite conservarlas.
+        Por ejemplo,</p>
+
+      <div class="equation">\[
+        \mathcal{Z}\{y[k-1]\}
+        =z^{-1}Y(z)+y[-1].
+      \]</div>
+
+      <p>El término adicional contiene información de la muestra
+        anterior al origen. Ignorarlo equivaldría a imponer una
+        historia particular, aunque el sistema real hubiera
+        comenzado de otra manera.</p>
+
+      <h2>El promediador como función de transferencia</h2>
+
+      <p>Para la recurrencia de tres términos,</p>
+
+      <div class="equation">\[
+        G_M(z)=\frac{1+z^{-1}+z^{-2}}{3}
+        =\frac{z^2+z+1}{3z^2}.
+      \]</div>
+
+      <p>La figura 4 representa sus tres contribuciones. Un bloque
+        $z^{-1}$ guarda una muestra y un bloque $z^{-2}$ proporciona
+        la de dos instantes anteriores. Las señales se multiplican
+        por $1/3$ y se suman. En una implementación eficiente,
+        las muestras retardadas pueden compartirse en dos memorias.</p>
+
+      <figure id="fig-fd-promediador">
+        <img src="/drautomatica/html/funtrand-promediador.png" alt="Tres caminos reciben la misma entrada, con retardos de cero, una y dos muestras; cada uno tiene ganancia un tercio y entra en un puerto distinto de un sumador."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Representación funcional del
+          promediador causal. Las ramas indican qué muestra
+          se utiliza, no una necesidad de duplicar físicamente
+          las memorias de retardo.</figcaption>
+      </figure>
+
+      <p>Su clasificación FIR indica que una perturbación aislada
+        influye en la salida actual y en las dos siguientes,
+        y después desaparece. La secuencia escalón unitario, que denotaremos
+        por $r[k]$, vale uno para $k\geq0$ y cero para $k&lt;0$.
+        Su respuesta es</p>
+
+      <div class="equation">\[
+        y_{\mathrm{escalón}}[k]=
+        \begin{cases}
+        1/3,&k=0,\\2/3,&k=1,\\1,&k\geq2.
+        \end{cases}
+      \]</div>
+
+      <figure id="fig-fd-ma-respuestas">
+        <img src="/drautomatica/html/funtrand-ma-respuestas.png" alt="La respuesta al impulso del promediador vale un tercio en los índices cero, uno y dos. Su respuesta al escalón pasa por un tercio y dos tercios antes de llegar a uno."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. La salida no calcula un promedio
+          de menos datos durante el arranque. Con reposo inicial,
+          las memorias de muestras anteriores al inicio del
+          registro contienen ceros y el divisor permanece
+          igual a tres.</figcaption>
+      </figure>
+
+      <p>En MATLAB, <code>movmean(u,3)</code> no representa sin
+        más esta recurrencia, pues utiliza por defecto una
+        ventana centrada y un tratamiento particular de los
+        extremos. Aquí se usa <code>filter</code> para hacer
+        explícitos la causalidad y el reposo inicial.</p>
+
+      <p>También importa cómo se especifican los polinomios.
+        Con su variable predeterminada $z$, <code>tf</code>
+        interpreta los coeficientes en potencias descendentes
+        de $z$. Por eso el modelo positivo en $z$ tiene
+        numerador <code>[1 1 1]</code> y denominador
+        <code>[3 0 0]</code>. Los coeficientes de
+        <code>filter</code>, en cambio, corresponden a las
+        potencias $1,z^{-1},z^{-2},\ldots$ de la recurrencia.</p>
+
+      <section class="remark">
+        <p>En Control System Toolbox, <code>impulse</code>
+          normaliza el impulso de un modelo discreto como
+          una muestra de amplitud $1/T_s$. Para recuperar
+          la respuesta a $\delta[0]=1$ se multiplica su
+          resultado por $T_s$. No es un factor que deba
+          añadirse a la convolución matemática. Aplicar
+          <code>filter</code> a <code>[1;0;0;...]</code>
+          obtiene directamente la normalización usada aquí.</p>
+      </section>
+
+      <script type="text/matlab">
+%% Modelos en z y normalización del impulso
+% tf usa aquí potencias descendentes de z.
+GM = tf([1 1 1],[3 0 0],Ts);
+beta = Ts/2;
+bT = beta*[1 1]; aT = [1 -1];
+GT = tf(bT,aT,Ts);
+AM = [0 0; 1 0]; BM = [1;0];
+CM = [1 1]/3; DM = 1/3;
+sysM = ss(AM,BM,CM,DM,Ts);
+sysT = ss(1,Ts,1,beta,Ts);
+kd = (0:12)'; td = kd*Ts;
+delta0 = double(kd==0);
+hMFiltro = filter(bM,aM,delta0);
+hTFiltro = filter(bT,aT,delta0);
+hMImp = Ts*squeeze(impulse(GM,td));
+hTImp = Ts*squeeze(impulse(GT,td));
+assert(max(abs(hMImp(:)-hMFiltro))<1e-12);
+assert(max(abs(hTImp(:)-hTFiltro))<1e-12);
+assert(max(abs(lsim(sysM,delta0,td)-hMFiltro))<1e-12);
+assert(max(abs(lsim(sysT,delta0,td)-hTFiltro))<1e-12);
+fprintf('Ganancia estática del promediador: %.6f\n',dcgain(GM));
+fprintf('Promediador estable: %d\n',isstable(GM));
+fprintf('Integrador ideal BIBO estable: %d\n',isstable(GT));
+figure('Name','Impulso y escalón del promediador');
+tiledlayout(2,1);
+nexttile; stem(kd,hMFiltro,'filled'); grid on; ylabel('h_M[k]');
+nexttile; stem(kd,filter(bM,aM,ones(size(kd))),'filled');
+grid on; xlabel('Índice k'); ylabel('Escalón');
+      </script>
+
+      <h2>La memoria inicial y la respuesta libre</h2>
+
+      <p>Una representación de estados discreta escribe la
+        actualización interna y la lectura de salida como</p>
+
+      <div class="equation">\[
+        \mathbf{x}[k+1]=A_d\mathbf{x}[k]+B_du[k],\qquad
+        y[k]=C_d\mathbf{x}[k]+D_du[k].
+      \]</div>
+
+      <p>El estado recoge la información necesaria para
+        continuar el cálculo. $D_d$ representa el paso
+        directo de la entrada actual a la salida actual.
+        Esto es compatible con la causalidad; un sistema
+        estrictamente causal tendría $D_d=0$.</p>
+
+      <p>La solución, para $k\geq0$, separa las contribuciones
+        del estado inicial y de la entrada,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \mathbf{x}[k]&=A_d^k\mathbf{x}_0+
+          \sum_{\ell=0}^{k-1}A_d^{k-1-\ell}B_du[\ell],\\
+        y_{\mathrm{libre}}[k]&=C_dA_d^k\mathbf{x}_0,\\
+        y_{\mathrm{forzada}}[k]&=D_du[k]+
+          \sum_{\ell=0}^{k-1}C_dA_d^{k-1-\ell}B_du[\ell].
+        \end{aligned}
+      \]</div>
+
+      <p>La suma vacía para $k=0$ vale cero. La respuesta al
+        impulso del mismo modelo satisface $h[0]=D_d$ y
+        $h[k]=C_dA_d^{k-1}B_d$ para $k\geq1$. De este
+        modo, la expresión de la respuesta forzada coincide
+        exactamente con la convolución.</p>
+
+      <p>Para el promediador puede elegirse
+        $\mathbf{x}[k]=[u[k-1]\;u[k-2]]^{\mathsf T}$,
+        con matrices</p>
+
+      <div class="equation">\[
+        A_M=\begin{bmatrix}0&0\\1&0\end{bmatrix},\quad
+        B_M=\begin{bmatrix}1\\0\end{bmatrix},\quad
+        C_M=\frac{1}{3}\begin{bmatrix}1&1\end{bmatrix},\quad
+        D_M=\frac{1}{3}.
+      \]</div>
+
+      <p>Si antes de comenzar había valores $u[-1]=4$
+        y $u[-2]=-2$, la respuesta libre vale $2/3$
+        en $k=0$, $4/3$ en $k=1$ y cero después.
+        La influencia inicial se elimina porque $A_M^2=0$.
+        Al aplicar desde $k=0$ un escalón de amplitud 6,
+        la suma de esa respuesta libre y de la respuesta
+        con memoria inicial nula produce la figura 6.</p>
+
+      <figure id="fig-fd-ma-memoria">
+        <img src="/drautomatica/html/funtrand-ma-memoria.png" alt="Respuestas libre, forzada y total del promediador con dos muestras previas no nulas. A partir del índice dos, la influencia de la memoria inicial desaparece y la salida vale seis."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. La respuesta libre proviene de
+          los datos anteriores al comienzo del experimento.
+          La forzada tiene su propio arranque transitorio,
+          aunque las memorias iniciales sean cero.</figcaption>
+      </figure>
+
+      <p>Libre y forzada clasifican las contribuciones por
+        su origen, mientras transitoria y permanente las
+        clasifican por lo que ocurre a largo plazo. En
+        particular, la respuesta forzada no tiene por qué
+        ser permanente desde la primera muestra.</p>
+
+      <script type="text/matlab">
+%% Estado inicial y superposición en el promediador
+km = (0:8)'; tm = km*Ts;
+memoria0 = [4;-2];             % [u[-1]; u[-2]]
+entradaM = 6*ones(size(km));
+yLibreM = initial(sysM,memoria0,tm);
+yForzadaM = lsim(sysM,entradaM,tm,zeros(2,1));
+yTotalM = lsim(sysM,entradaM,tm,memoria0);
+assert(max(abs(yTotalM-yLibreM-yForzadaM))<1e-12);
+assert(max(abs(yLibreM-[2/3;4/3;zeros(7,1)]))<1e-12);
+figure('Name','Memoria inicial del promediador');
+stem(km,yLibreM,'filled'); hold on;
+stem(km,yForzadaM,'o'); stem(km,yTotalM,'x'); grid on;
+xlabel('Índice k'); ylabel('Salida');
+legend('Libre','Forzada','Total','Location','best');
+      </script>
+
+      <h2>Integrar muestras mediante la regla trapezoidal</h2>
+
+      <p>Supongamos ahora que $u[k]$ es velocidad en m/s
+        y que $y[k]$ representa una estimación de posición
+        en metros. Entre dos instantes consecutivos, el
+        desplazamiento es la integral de la velocidad.
+        La regla trapezoidal aproxima esa integral por
+        el área bajo la recta que une las dos muestras,</p>
+
+      <div class="equation">\[
+        y[k]-y[k-1]\approx
+        \frac{T_s}{2}\bigl(u[k]+u[k-1]\bigr).
+      \]</div>
+
+      <figure id="fig-fd-trapecio">
+        <img src="/drautomatica/html/funtrand-trapecio.png" alt="Área trapezoidal entre dos muestras de velocidad de 0.4 y 0.9 metros por segundo, separadas 0.1 segundos, con incremento de posición de 0.065 metros."
+          style="display:block;width:100%;max-width:40rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. El trapecio aproxima el
+          desplazamiento entre muestras. La recta representa
+          la hipótesis de interpolación del método; no
+          afirma que la velocidad real sea siempre lineal.</figcaption>
+      </figure>
+
+      <p>La aproximación se refiere a la integral física.
+        Una vez definido el algoritmo, su recurrencia se
+        ejecuta como una igualdad exacta sobre las muestras,
+        dejando aparte el redondeo numérico. Si se fija
+        la posición inicial $y[0]=y_0$, se comienza a
+        actualizar en $k=1$.</p>
+
+      <p>Para obtener una función de transferencia también
+        puede definirse el algoritmo causal para $k\geq0$,
+        con valores previos $u[-1]$ y $y[-1]$ especificados.
+        Con reposo inicial antes de $k=0$, la transformada
+        de la recurrencia da</p>
+
+      <div class="equation">\[
+        G_T(z)=\frac{T_s}{2}\frac{1+z^{-1}}{1-z^{-1}}
+        =\frac{T_s}{2}\frac{z+1}{z-1}.
+      \]</div>
+
+      <p>Su respuesta al impulso mantiene muestras no nulas
+        indefinidamente, por lo que se trata de un sistema de
+        <strong>respuesta al impulso de duración infinita (IIR)</strong>,
+        del inglés <em>infinite impulse response</em>. Al
+        desarrollar la serie causal para $|z|&gt;1$,</p>
+
+      <div class="equation">\[
+        G_T(z)=\frac{T_s}{2}+T_sz^{-1}+T_sz^{-2}+\cdots,
+      \]</div>
+
+      <div class="equation">\[
+        h_T[k]=\begin{cases}
+        T_s/2,&k=0,\\T_s,&k\geq1,\\0,&k&lt;0.
+        \end{cases}
+      \]</div>
+
+      <p>Los coeficientes tienen unidades de segundos,
+        coherentes con convertir velocidad en posición.
+        La convolución entrega, desde estado interno nulo,</p>
+
+      <div class="equation">\[
+        y_{\mathrm{cero\ estado}}[k]
+        =T_s\sum_{\ell=0}^{k-1}u[\ell]
+        +\frac{T_s}{2}u[k].
+      \]</div>
+
+      <h3>Por qué el primer valor puede ser diferente</h3>
+
+      <p>Con entrada unitaria desde $k=0$ y reposo previo,
+        la primera salida de esta transferencia es $T_s/2$,
+        no cero. Toda la respuesta al escalón es
+        $y[k]=T_s(k+1/2)$. En cambio, la cuadratura
+        que comienza con $y[0]=0$ sobre una velocidad
+        constante de 1 m/s produce $y[k]=kT_s$.</p>
+
+      <figure id="fig-fd-integrador">
+        <img src="/drautomatica/html/funtrand-integrador.png" alt="Respuesta al impulso del integrador, de valor Ts entre dos en el índice cero y Ts después. La respuesta al escalón del algoritmo desde reposo difiere de la cuadratura inicializada en cero por medio periodo de muestreo."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 8. Dos inicializaciones distintas
+          producen un desplazamiento constante entre las
+          respuestas. Ambas utilizan la misma recurrencia
+          a partir de la siguiente muestra.</figcaption>
+      </figure>
+
+      <p>Una realización de un solo estado hace explícita
+        la diferencia. Sea $w[k]$ la memoria acumulada
+        antes de procesar la muestra actual,</p>
+
+      <div class="equation">\[
+        w[k+1]=w[k]+T_su[k],\qquad
+        y[k]=w[k]+\frac{T_s}{2}u[k].
+      \]</div>
+
+      <p>Esta realización tiene $A_T=1$, $B_T=T_s$,
+        $C_T=1$ y $D_T=T_s/2$, y produce exactamente
+        $G_T$. El estado interno no es igual a la
+        posición de salida en el mismo instante.
+        Para imponer una posición física $y[0]=y_0$
+        se elige</p>
+
+      <div class="equation">\[
+        w[0]=y_0-\frac{T_s}{2}u[0].
+      \]</div>
+
+      <p>La posición calculada queda entonces</p>
+
+      <div class="equation">\[
+        y[k]=y_{\mathrm{cero\ estado}}[k]
+          +y_0-\frac{T_s}{2}u[0].
+      \]</div>
+
+      <p>El término añadido es la respuesta libre,
+        constante, de esa memoria inicial. Para
+        $k\geq1$ se recupera la suma trapezoidal
+        usual entre $t=0$ y $t=kT_s$. En MATLAB
+        coincide con <code>y0+cumtrapz(t,u)</code>.
+        Por ejemplo, con $y_0=0.2$ m y $u[0]=0.6$
+        m/s, el estado requerido es $w[0]=0.17$ m.</p>
+
+      <section class="remark">
+        <p>Especificar «condición inicial cero» exige
+          decir qué variable se está inicializando.
+          Con entrada inicial no nula, imponer
+          $w[0]=0$ e imponer $y[0]=0$ son decisiones
+          diferentes. La función de transferencia
+          describe la primera cuando se usa su
+          realización de estado en reposo.</p>
+      </section>
+
+      <p>La misma relación se obtiene con la transformada
+        unilateral de la recurrencia. La contribución
+        inicial es
+        $[y[-1]+(T_s/2)u[-1]]/(1-z^{-1})$,
+        cuya inversa es una constante para $k\geq0$.
+        Ese numerador coincide con $w[0]$ en la
+        realización anterior.</p>
+
+      <script type="text/matlab">
+%% Integrador trapezoidal y condición inicial física
+ki = (0:100)'; ti = ki*Ts;
+velocidad = 0.6*cos(1.2*ti);   % m/s
+posicion0 = 0.2;              % m
+w0 = posicion0-beta*velocidad(1);
+yCeroEstado = filter(bT,aT,velocidad);
+yCuadratura = posicion0+cumtrapz(ti,velocidad);
+yEstado = lsim(sysT,velocidad,ti,w0);
+yFilterInicial = filter(bT,aT,velocidad,w0);
+yLibreT = initial(sysT,w0,ti);
+assert(max(abs(yCuadratura-yEstado))<1e-12);
+assert(max(abs(yCuadratura-yFilterInicial))<1e-12);
+assert(max(abs(yCuadratura-yCeroEstado-yLibreT))<1e-12);
+fprintf('Estado inicial interno w[0]: %.6f m\n',w0);
+fprintf('Posición inicial física y[0]: %.6f m\n',yEstado(1));
+
+% Recurrencia de cuadratura: y[0] está fijada antes del primer paso.
+yRecT = zeros(size(ti)); yRecT(1) = posicion0;
+for j = 2:numel(ti)
+    yRecT(j) = yRecT(j-1) ...
+        + beta*(velocidad(j)+velocidad(j-1));
+end
+assert(max(abs(yRecT-yCuadratura))<1e-12);
+figure('Name','Respuesta del integrador a un escalón');
+kiCorto = (0:20)'; tiCorto = kiCorto*Ts;
+escalon = ones(size(kiCorto));
+yEscalonT = filter(bT,aT,escalon);
+yDesdeCero = cumtrapz(tiCorto,escalon);
+stem(kiCorto,yEscalonT,'o'); hold on;
+stem(kiCorto,yDesdeCero,'x'); grid on;
+xlabel('Índice k'); ylabel('Posición (m)');
+legend('Estado interno nulo','Cuadratura con y[0]=0');
+      </script>
+
+      <h2>Polos, ceros y estabilidad en el plano Z</h2>
+
+      <p>En tiempo discreto, un modo libre tiene la
+        forma $p^k$. Si $p=\rho e^{j\theta}$,
+        su magnitud varía como $\rho^k$ y su
+        oscilación avanza $\theta$ radianes por
+        muestra. Por eso el criterio de decaimiento
+        es $|p|&lt;1$, no que su parte real sea negativa.</p>
+
+      <p>Un polo en $0.8$ produce decaimiento sin
+        alternancia; uno en $-0.8$ también decae,
+        pero alterna de signo. Uno en $1.05$
+        amplifica el modo. La frontera relevante
+        es la <strong>circunferencia unidad</strong>,
+        $|z|=1$.</p>
+
+      <figure id="fig-fd-polos">
+        <img src="/drautomatica/html/funtrand-polos.png" alt="Plano Z con circunferencia unidad. El promediador tiene dos polos en cero y dos ceros sobre la circunferencia; el integrador tiene un polo en uno y un cero en menos uno."
+          style="display:block;width:100%;max-width:37rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 9. Los ceros sobre la circunferencia
+          unidad pueden anular frecuencias sin causar
+          inestabilidad. El criterio de estabilidad de una
+          transferencia causal racional se aplica a sus polos.</figcaption>
+      </figure>
+
+      <p>El promediador tiene dos polos en el origen,
+        asociados a los retardos de su representación
+        racional, y ceros en $e^{\pm j2\pi/3}$.
+        Que su ecuación no realimente salidas anteriores
+        no significa que carezca de memoria ni que su
+        expresión racional no tenga polos. La región de
+        convergencia de su respuesta causal excluye $z=0$.</p>
+
+      <p>El integrador trapezoidal tiene un polo en
+        $z=1$ y un cero en $z=-1$. Su región causal
+        $|z|&gt;1$ no contiene la circunferencia unidad.
+        Esa diferencia anticipa un comportamiento muy
+        distinto ante una entrada constante.</p>
+
+      <h3>Estabilidad interna y estabilidad BIBO</h3>
+
+      <p>El equilibrio del modelo de estados es
+        <strong>asintóticamente estable</strong> cuando
+        todos sus estados libres convergen a cero.
+        Para un sistema LTI de dimensión finita se
+        requiere</p>
+
+      <div class="equation">\[
+        |\lambda_i(A_d)|&lt;1\qquad\text{para todos sus eigenvalores}.
+      \]</div>
+
+      <p>En el promediador, ambos eigenvalores son cero
+        y el estado inicial desaparece en un número
+        finito de actualizaciones. En el integrador,
+        $A_T=1$ conserva una memoria inicial constante.
+        El equilibrio es estable en el sentido de
+        Lyapunov, porque una perturbación inicial pequeña
+        permanece pequeña con entrada cero, pero no es
+        asintóticamente estable.</p>
+
+      <p>En general, los eigenvalores de módulo uno
+        solo permiten estabilidad de Lyapunov si son
+        semisimples, sin los factores crecientes
+        $k$, $k^2$, etc., que pueden acompañar a
+        bloques de Jordan no triviales. Los de módulo
+        mayor que uno producen inestabilidad.</p>
+
+      <p>La estabilidad <strong>BIBO</strong> exige
+        que toda entrada acotada produzca una salida
+        acotada desde estado inicial nulo. En un
+        sistema causal LTI equivale a</p>
+
+      <div class="equation">\[
+        \sum_{k=0}^{\infty}|h[k]|&lt;\infty.
+      \]</div>
+
+      <p>Para una transferencia causal racional propia,
+        esto equivale a tener todos sus polos
+        estrictamente dentro de la circunferencia unidad.
+        El promediador cumple la condición porque la
+        suma absoluta de su respuesta al impulso es 1.
+        El integrador no la cumple, pues la cola de
+        $h_T$ permanece en $T_s$ y la suma diverge.</p>
+
+      <p>El escalón es una entrada acotada y produce
+        una rampa en el integrador, de modo que ofrece
+        un contraejemplo directo de estabilidad BIBO.
+        Que el integrador no amplifique una condición
+        inicial cuando la entrada es cero no modifica
+        ese resultado.</p>
+
+      <p>Como en tiempo continuo, la coincidencia entre
+        estabilidad interna y de entrada a salida
+        requiere una realización mínima. Esto significa
+        que no haya modos internos inaccesibles a la
+        entrada o invisibles en la salida. Una cancelación
+        en la transferencia reducida no demuestra por
+        sí sola estabilidad de todos los estados de
+        una realización original.</p>
+
+      <h3>Un criterio algebraico para un modelo de segundo orden</h3>
+
+      <p>Además de calcular raíces con <code>roots</code>
+        o polos con <code>pole</code>, pueden utilizarse
+        criterios de Schur o de Jury. Para el polinomio
+        real mónico $p(z)=z^2+a_1z+a_2$, las condiciones
+        necesarias y suficientes de estabilidad estricta son</p>
+
+      <div class="equation">\[
+        1+a_1+a_2&gt;0,\qquad
+        1-a_1+a_2&gt;0,\qquad
+        1-a_2&gt;0.
+      \]</div>
+
+      <p>Por ejemplo, $z^2-1.2z+0.5$ satisface
+        las tres desigualdades. Sus raíces
+        $0.6\pm j0.37417$ tienen módulo
+        $\sqrt{0.5}\approx0.7071$. El comando
+        <code>isstable</code> comprueba estabilidad
+        estricta; por eso devuelve falso para el
+        integrador con polo en uno.</p>
+
+      <h2>Régimen permanente y valor final</h2>
+
+      <p>Cuando el sistema es asintóticamente estable,
+        la influencia inicial desaparece y puede
+        establecerse un régimen que depende de la
+        entrada, no de la historia de arranque.
+        Ese régimen puede ser constante o periódico.
+        Una salida que sigue cambiando no es por
+        ese solo motivo un transitorio.</p>
+
+      <p>Para respuestas racionales, el teorema del
+        valor final discreto permite calcular</p>
+
+      <div class="equation">\[
+        \lim_{k\to\infty}y[k]
+        =\lim_{z\to1}(1-z^{-1})Y(z),
+      \]</div>
+
+      <p>si todos los polos del producto
+        $(1-z^{-1})Y(z)$ están estrictamente
+        dentro de la circunferencia unidad. La
+        condición se comprueba sobre la respuesta
+        completa, incluidas las condiciones iniciales
+        cuando corresponda.</p>
+
+      <p>Para un sistema internamente asintóticamente
+        estable y una entrada escalón de amplitud
+        $u_0$, resulta</p>
+
+      <div class="equation">\[
+        y_\infty=G(1)u_0.
+      \]</div>
+
+      <p>La ganancia estática discreta se evalúa en
+        $z=1$, no en $z=0$. El promediador tiene
+        $G_M(1)=1$ y preserva las señales constantes
+        una vez llenada la memoria. El integrador
+        tiene un polo en ese punto y no alcanza
+        una salida finita ante una entrada constante
+        no nula.</p>
+
+      <h2>Respuesta sinusoidal del promediador</h2>
+
+      <p>Una sinusoidal discreta se escribe
+        $u[k]=A_u\sin(\Omega k)$. La frecuencia
+        $\Omega$ se mide en radianes por muestra
+        y se relaciona con la frecuencia física
+        mediante $\Omega=\omega T_s=2\pi fT_s$.
+        Las secuencias no distinguen frecuencias
+        que difieren en múltiplos de $2\pi$.
+        El extremo $\Omega=\pi$ corresponde a
+        $f_s/2$, la frecuencia de Nyquist.</p>
+
+      <p>La respuesta en frecuencia se obtiene sobre
+        la circunferencia unidad, $z=e^{j\Omega}$.
+        Para un sistema internamente asintóticamente
+        estable, la respuesta
+        permanente a esa entrada es</p>
+
+      <div class="equation">\[
+        y_{\mathrm{permanente}}[k]=
+        A_u|G(e^{j\Omega})|
+        \sin\!\bigl(\Omega k+\arg G(e^{j\Omega})\bigr).
+      \]</div>
+
+      <p>En el promediador,</p>
+
+      <div class="equation">\[
+        G_M(e^{j\Omega})=
+        e^{-j\Omega}\frac{1+2\cos\Omega}{3}.
+      \]</div>
+
+      <p>Para frecuencias bajas, el factor real es
+        positivo y la fase es $-\Omega$, equivalente
+        a un retardo de una muestra. Con $T_s=0.1$
+        s son 0.1 s. Las oscilaciones lentas se
+        conservan aproximadamente, aunque con
+        atenuación; la componente de periodo tres
+        muestras, $\Omega=2\pi/3$, se anula.</p>
+
+      <figure id="fig-fd-ma-frecuencia">
+        <img src="/drautomatica/html/funtrand-ma-frecuencia.png" alt="Magnitud de la respuesta en frecuencia del promediador. Parte de uno, se anula en dos tercios de pi y aumenta después hasta un tercio en pi."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 10. El promedio suaviza, pero
+          no es un filtro que elimine uniformemente
+          toda frecuencia alta. Después del cero
+          vuelve a aparecer una banda de transmisión.</figcaption>
+      </figure>
+
+      <p>En $\Omega=\pi/6$, la ganancia es
+        aproximadamente 0.910684 y la fase es
+        $-30^\circ$. Para mostrar sus efectos,
+        construiremos una secuencia sintética de
+        velocidad con componente nominal
+        $1+0.4\sin(\pi k/6)$ y perturbación
+        $0.25\sin(2\pi k/3)$, en m/s.</p>
+
+      <figure id="fig-fd-sensor">
+        <img src="/drautomatica/html/funtrand-sensor.png" alt="Entrada sintética de velocidad con una componente de periodo tres muestras, y salida del promediador. La salida coincide con el régimen calculado desde el índice dos, con amplitud reducida y una muestra de retardo."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 11. Los datos se generan para
+          hacer reproducible la comparación, no son
+          registros de un sensor. La perturbación
+          elegida coincide con un cero del filtro;
+          un ruido real de banda amplia no se
+          eliminaría por completo.</figcaption>
+      </figure>
+
+      <p>Después del arranque, la salida coincide con
+        la constante 1 más una sinusoidal de amplitud
+        $0.4\times0.910684$ y una muestra de retardo.
+        Si el ruido fuera blanco, de media cero y
+        con muestras no correlacionadas, el promedio
+        reduciría su varianza a un tercio. Esa
+        afirmación estadística no se aplica sin
+        cambios a ruidos correlacionados ni elimina
+        el retardo introducido en la señal útil.</p>
+
+      <p>En una aplicación, las muestras procederían
+        de la adquisición y deberían revisarse el
+        muestreo, el filtrado antialias y las
+        unidades antes de interpretar la señal.
+        El periodo elegido forma parte del modelo,
+        no es solo una preferencia de visualización.</p>
+
+      <script type="text/matlab">
+%% Respuesta en frecuencia y mediciones sintéticas
+Omega = linspace(0,pi,501)';    % rad/muestra
+HM = (1+exp(-1i*Omega)+exp(-2i*Omega))/3;
+figure('Name','Ganancia del promediador');
+plot(Omega/pi,abs(HM),'LineWidth',1.6); grid on;
+xlabel('Frecuencia normalizada, Omega/pi'); ylabel('|G_M|');
+xline(2/3,':','Cero en 2pi/3');
+
+ks = (0:60)'; ts = ks*Ts;
+Omega0 = pi/6;
+nominal = 1+0.4*sin(Omega0*ks);
+perturbacion = 0.25*sin(2*pi*ks/3);
+medicion = nominal+perturbacion;
+salidaM = filter(bM,aM,medicion);
+H0 = (1+exp(-1i*Omega0)+exp(-2i*Omega0))/3;
+regimenM = 1+0.4*abs(H0)*sin(Omega0*ks+angle(H0));
+% evalfr recibe z; freqresp recibe frecuencia física en rad/s.
+assert(abs(evalfr(GM,exp(1i*Omega0))-H0)<1e-12);
+assert(abs(squeeze(freqresp(GM,Omega0/Ts))-H0)<1e-12);
+assert(max(abs(salidaM(3:end)-regimenM(3:end)))<1e-12);
+fprintf('Ganancia a pi/6: %.9f\n',abs(H0));
+fprintf('Fase a pi/6: %.6f grados\n',rad2deg(angle(H0)));
+figure('Name','Promediado de una señal sintética');
+tiledlayout(2,1);
+nexttile; plot(ts,medicion,'.',ts,nominal,'--'); grid on;
+ylabel('Velocidad (m/s)'); legend('Entrada','Componente nominal');
+nexttile; plot(ts,salidaM,'o',ts,regimenM,'--'); grid on;
+xlabel('Tiempo (s)'); ylabel('Velocidad (m/s)');
+legend('Promedio causal','Régimen calculado');
+      </script>
+
+      <h2>Acumulación, errores de medida y deriva</h2>
+
+      <p>El integrador no olvida las contribuciones
+        anteriores como el promediador. Esto es
+        necesario cuando se desea acumular un
+        desplazamiento, pero también significa que
+        un pequeño error persistente se acumula.
+        Si la velocidad medida contiene un sesgo
+        constante $\varepsilon$, la integración
+        trapezoidal inicializada en la misma
+        posición añade un error</p>
+
+      <div class="equation">\[
+        e_y[k]=\varepsilon\,kT_s.
+      \]</div>
+
+      <p>Con un sesgo de 0.02 m/s, después de
+        10 s el error de posición es 0.20 m.
+        La figura 12 utiliza una velocidad
+        $0.6\cos(1.2t)$ m/s, cuya integral
+        desde una posición de 0.2 m es
+        $0.2+0.5\sin(1.2t)$ m. Esto permite
+        separar el error de cuadratura del
+        efecto del sesgo.</p>
+
+      <figure id="fig-fd-deriva">
+        <img src="/drautomatica/html/funtrand-deriva.png" alt="La integración trapezoidal sin sesgo sigue la integral analítica de una velocidad sinusoidal, mientras un sesgo constante de 0.02 metros por segundo produce una separación creciente de 0.20 metros a los diez segundos."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 12. El sesgo se acumula aunque
+          el algoritmo ejecute correctamente la recurrencia.
+          Los puntos son resultados discretos y la línea
+          representa la integral continua conocida.</figcaption>
+      </figure>
+
+      <p>El promedio puede reducir una parte del ruido,
+        pero conserva un sesgo constante porque su
+        ganancia estática es uno. Colocar un
+        promediador antes del integrador no elimina
+        por sí solo esta deriva. En estimación
+        de posición suelen requerirse referencias
+        adicionales o un tratamiento explícito
+        del sesgo.</p>
+
+      <script type="text/matlab">
+%% Sesgo de velocidad y deriva de posición
+sesgo = 0.02;                 % m/s
+posicionAnalitica = posicion0+0.5*sin(1.2*ti);
+estimacion = posicion0+cumtrapz(ti,velocidad+sesgo);
+deriva = estimacion-yCuadratura;
+assert(max(abs(deriva-sesgo*ti))<1e-12);
+figure('Name','Deriva por sesgo en la medición');
+plot(ti,posicionAnalitica,'k-',ti,yCuadratura,'o', ...
+    ti,estimacion,'.'); grid on;
+xlabel('Tiempo (s)'); ylabel('Posición (m)');
+legend('Integral analítica','Trapecios sin sesgo','Con sesgo');
+fprintf('Deriva por sesgo a 10 s: %.6f m\n',deriva(end));
+      </script>
+
+      <h3>Qué predice la respuesta en frecuencia del integrador</h3>
+
+      <p>Para $0&lt;\Omega&lt;\pi$, la evaluación
+        formal del integrador trapezoidal da</p>
+
+      <div class="equation">\[
+        G_T(e^{j\Omega})
+        =-j\frac{T_s}{2}\cot\left(\frac{\Omega}{2}\right).
+      \]</div>
+
+      <p>En bajas frecuencias, su ganancia se aproxima
+        a $T_s/\Omega=1/\omega$, la de un
+        integrador continuo. Cerca de la frecuencia
+        de Nyquist, $\Omega=\pi$, la ganancia
+        tiende a cero. La aproximación trapezoidal
+        no reproduce exactamente todas las
+        frecuencias del integrador continuo.</p>
+
+      <p>Esta evaluación puede construir una respuesta
+        particular sinusoidal fuera del polo
+        $z=1$, pero no define un régimen único
+        que olvide toda condición inicial.
+        La contribución constante del estado
+        inicial persiste. Tampoco demuestra
+        estabilidad BIBO, que ya ha sido
+        descartada mediante una entrada constante.</p>
+
+      <p>Un ejemplo concreto es la entrada alternante
+        $u[k]=(-1)^k$ para $k\geq0$, con
+        reposo previo. El algoritmo produce
+        $y[k]=T_s/2$ para todos esos índices.
+        El cero en $z=-1$ anula la componente
+        alternante, pero queda una constante
+        originada al comenzar la secuencia.
+        La respuesta forzada completa no tiene
+        por qué coincidir con la particular
+        sinusoidal calculada sobre la
+        circunferencia unidad.</p>
+
+      <h2>Introducir una fuga cambia el sistema que se calcula</h2>
+
+      <p>Cuando interesa una acumulación que olvide
+        progresivamente su historia puede utilizarse
+        un modelo con <strong>fuga</strong>. Su
+        equivalente continuo es
+        $\dot{y}+\lambda y=u$, con $\lambda&gt;0$.
+        Aplicar la regla trapezoidal conduce a</p>
+
+      <div class="equation">\[
+        y[k]=\rho y[k-1]+\beta_F\bigl(u[k]+u[k-1]\bigr),
+      \]</div>
+
+      <div class="equation">\[
+        \rho=\frac{1-\lambda T_s/2}{1+\lambda T_s/2},\qquad
+        \beta_F=\frac{T_s/2}{1+\lambda T_s/2}.
+      \]</div>
+
+      <p>Como $|\rho|&lt;1$, el efecto inicial
+        decae y la transferencia es BIBO estable.
+        Su ganancia estática es</p>
+
+      <div class="equation">\[
+        G_F(1)=\frac{2\beta_F}{1-\rho}=\frac{1}{\lambda}.
+      \]</div>
+
+      <p>Con $\lambda=0.5$ s$^{-1}$ y
+        $T_s=0.1$ s, el polo es aproximadamente
+        0.9512195. Una entrada constante de
+        1 m/s conduce a una salida de 2 m,
+        mientras el integrador ideal continúa
+        creciendo.</p>
+
+      <figure id="fig-fd-fuga">
+        <img src="/drautomatica/html/funtrand-fuga.png" alt="La salida del integrador ideal crece como una rampa ante entrada unitaria, mientras la del integrador con fuga se aproxima al límite de dos metros."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 13. La fuga mejora el olvido
+          de la memoria, pero deja de integrar
+          exactamente una constante. Los dos
+          modelos realizan funciones distintas.</figcaption>
+      </figure>
+
+      <p>La relación con tiempo continuo también
+        se reconoce mediante la sustitución
+        bilineal de Tustin,
+        $s\approx(2/T_s)(z-1)/(z+1)$.
+        Aplicada a $1/s$ produce $G_T$, y
+        aplicada a $1/(s+\lambda)$ produce
+        $G_F$. En MATLAB se verifica con
+        <code>c2d</code> y la opción
+        <code>'tustin'</code>.</p>
+
+      <p>La fuga puede ser adecuada para un
+        filtro o un acumulador con olvido.
+        Si se desea medir una posición física
+        que realmente sigue acumulándose,
+        estabilizar numéricamente el algoritmo
+        de esta manera no sustituye la
+        información de posición que falta.</p>
+
+      <script type="text/matlab">
+%% Estabilidad, criterio de Jury e integración con fuga
+disp('Polos del promediador:'); disp(pole(GM));
+disp('Ceros del promediador:'); disp(zero(GM));
+disp('Polos del integrador:'); disp(pole(GT));
+a1 = -1.2; a2 = 0.5;
+condicionesJury = [1+a1+a2, 1-a1+a2, 1-a2];
+assert(all(condicionesJury>0));
+disp('Raíces del ejemplo cuadrático:'); disp(roots([1 a1 a2]));
+
+lambda = 0.5;                % 1/s
+rho = (1-lambda*Ts/2)/(1+lambda*Ts/2);
+betaF = (Ts/2)/(1+lambda*Ts/2);
+bF = betaF*[1 1]; aF = [1 -rho];
+GF = tf(bF,aF,Ts);
+assert(isstable(GF));
+assert(abs(dcgain(GF)-1/lambda)<1e-12);
+% Las transferencias coinciden con la discretización de Tustin.
+GTdesdeS = c2d(tf(1,[1 0]),Ts,'tustin');
+GFdesdeS = c2d(tf(1,[1 lambda]),Ts,'tustin');
+assert(norm(minreal(GT-GTdesdeS,1e-10),inf)<1e-10);
+assert(norm(minreal(GF-GFdesdeS,1e-10),inf)<1e-10);
+kf = (0:80)'; tfis = kf*Ts;
+uConstante = ones(size(kf));
+yIdeal = filter(bT,aT,uConstante);
+yFuga = filter(bF,aF,uConstante);
+figure('Name','Acumulación ideal e integración con fuga');
+plot(tfis,yIdeal,'o',tfis,yFuga,'.'); hold on;
+yline(1/lambda,':','Límite con fuga'); grid on;
+xlabel('Tiempo (s)'); ylabel('Salida (m)');
+legend('Integrador ideal','Integración con fuga','Location','best');
+fprintf('Polo con fuga: %.9f\n',rho);
+fprintf('Ganancia estática con fuga: %.6f s\n',dcgain(GF));
+      </script>
+
+      <h2>Conservar la memoria al ejecutar el algoritmo</h2>
+
+      <p>Un sistema LTI con memoria no debe
+        reiniciarse cada vez que llega un
+        bloque de mediciones. Hacerlo
+        introduce nuevos transitorios y
+        rompe la continuidad del cálculo.
+        <code>filter</code> permite recuperar
+        su estado final y utilizarlo al
+        procesar el siguiente bloque.</p>
+
+      <script type="text/matlab">
+%% Procesamiento por bloques sin perder la memoria
+corte = 25;
+entradaBloques = medicion;
+[primera,zFinal] = filter(bM,aM,entradaBloques(1:corte));
+segunda = filter(bM,aM,entradaBloques(corte+1:end),zFinal);
+salidaBloques = [primera; segunda];
+assert(max(abs(salidaBloques-salidaM))<1e-12);
+% zFinal es la memoria interna de filter, no el par de muestras.
+fprintf('Error al procesar por bloques: %.3e\n', ...
+    max(abs(salidaBloques-salidaM)));
+disp('VALIDACION_FUNTRAND_COMPLETA');
+      </script>
+
+      <p>La variable <code>zFinal</code> contiene
+        la memoria de la forma de implementación
+        interna de <code>filter</code>. No debe
+        confundirse automáticamente con las
+        muestras anteriores de entrada o con
+        una posición física. En un algoritmo
+        programado muestra a muestra, las
+        variables de memoria deben conservarse
+        entre llamadas y actualizarse después
+        de calcular la salida correspondiente.</p>
+
+      <p>El vínculo entre todas estas representaciones
+        comienza en la descomposición de la
+        entrada en impulsos. La respuesta a
+        cada uno se desplaza y escala, la
+        convolución suma sus efectos y la
+        transformada Z organiza esa operación
+        como un producto. Las recurrencias
+        y los estados permiten ejecutarla,
+        mientras los polos y la respuesta
+        al impulso permiten decidir qué
+        información se olvida, cuál persiste
+        y qué entradas pueden acumularse
+        sin límite.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>MathWorks. (2026a).
+          <a href="https://www.mathworks.com/help/control/"><em>Control System Toolbox documentation</em></a>.</li>
+        <li>MathWorks. (2026b).
+          <a href="https://www.mathworks.com/help/matlab/"><em>MATLAB documentation</em></a>.
+          Véanse las funciones <code>filter</code>,
+          <code>conv</code> y <code>cumtrapz</code>.</li>
+        <li>Ogata, K. (1995). <em>Discrete-time control systems</em>
+          (2.ª ed.). Prentice Hall.</li>
+        <li>Oppenheim, A. V., &amp; Schafer, R. W. (2010).
+          <a href="https://ocw.mit.edu/courses/res-6-dtsp-discrete-time-signal-processing/"><em>Discrete-time signal processing</em></a>
+          (3.ª ed.). Pearson.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>  </div> <footer class="w3-container w3-teal w3-center w3-margin-top footbar"> <p>&copy; 2026 <a href="https://isantosruiz.github.io/">Ildeberto de los Santos Ruiz</a></p> <p> <a href="https://www.facebook.com/idlsantos"><i class="fa-brands fa-facebook w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.instagram.com/idlsantos/"><i class="fa-brands fa-instagram w3-hover-opacity"></i></a>&nbsp;
+<a href="https://twitter.com/idlsantos"><i class="fa-brands fa-twitter w3-hover-opacity"></i></a>&nbsp;
+<a href="https://www.linkedin.com/in/idlsantos/"><i class="fa-brands fa-linkedin w3-hover-opacity"></i></a> </p> </footer> </div> <script>
+    const sidebar = document.getElementById('mySidebar');
+    const overlay = document.getElementById('myOverlay');
+    const intro = document.getElementById('myIntro');
+    const topbar = document.getElementById('myTop');
+
+    function openSidebar() {
+      sidebar.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    function closeSidebar() {
+      sidebar.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    document.querySelectorAll('[data-open-sidebar]').forEach((button) => button.addEventListener('click', openSidebar));
+    document.querySelectorAll('[data-close-sidebar]').forEach((button) => button.addEventListener('click', closeSidebar));
+    document.querySelectorAll('[data-accordion]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const id = button.getAttribute('data-accordion');
+        const target = document.getElementById(id);
+        const isOpen = target.className.indexOf('w3-show') !== -1;
+        target.className = isOpen ? target.className.replace('w3-show', '') : `${target.className} w3-show`;
+        button.className = isOpen ? button.className.replace(' w3-theme', '') : `${button.className} w3-theme`;
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        topbar.classList.add('w3-card-4', 'w3-animate-opacity');
+        intro.classList.add('w3-show-inline-block');
+      } else {
+        intro.classList.remove('w3-show-inline-block');
+        topbar.classList.remove('w3-card-4', 'w3-animate-opacity');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.renderMathInElement) {
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+            {left: '\\(', right: '\\)', display: false},
+            {left: '\\[', right: '\\]', display: true}
+          ],
+          throwOnError: false
+        });
+      }
+    });
+  </script> </body> </html>

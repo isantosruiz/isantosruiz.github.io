@@ -111,7 +111,7 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
       <h2>La función de transferencia conserva la dinámica de entrada a salida</h2>
 
       <p>La transformada de Laplace representa las señales del tiempo mediante
-        funciones de la variable compleja $s=\sigma+j\omega$, con $j^2=-1$.
+        funciones de la variable compleja $s$.
         Denotaremos por $X(s)$ y $F(s)$ las transformadas de $x(t)$ y $f(t)$.
         Para la señal de entrada, la transformada unilateral se escribe</p>
 
@@ -148,12 +148,12 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         inicial es nulo</em>. En este caso,</p>
 
       <div class="equation">\[
-        G(s)=\left.\frac{X(s)}{F(s)}\right|_{x_0=v_0=0}
+        G(s)=\left.\frac{X(s)}{F(s)}\right|_{\genfrac{}{}{0pt}{}{x_0=0}{v_0=0}}
         =\frac{1}{ms^2+cs+k}
         =\frac{1}{2s^2+4s+50}.
       \]</div>
 
-      <p>$G$ no es una ganancia constante. Su dependencia de $s$ contiene
+      <p>$G$ no es una ganancia constante, su dependencia de $s$ contiene
         la evolución dinámica del mecanismo. La relación desplazamiento/fuerza
         tiene unidades de m/N, y su valor en $s=0$ será la ganancia estática.
         Si las condiciones iniciales no son nulas, el cociente de las
@@ -203,11 +203,20 @@ Software <i class="fa fa-caret-down"></i> </button> <div id="software-menu" clas
         G(s)=C(sI-A)^{-1}B+D,
       \]</div>
 
-      <p>donde $I$ es la matriz identidad. Es importante conservar esta
-        elección física del estado si después se van a introducir
-        $x_0$ y $v_0$. Una realización obtenida automáticamente al
-        convertir <code>tf</code> a <code>ss</code> puede utilizar otras
-        coordenadas internas; sus condiciones iniciales no se interpretan
+      <p>donde $I$ es la matriz identidad. Para construir estos modelos
+        en MATLAB, <code>tf(num,den)</code> crea un modelo de función de
+        transferencia a partir de los coeficientes de sus polinomios
+        numerador y denominador, ordenados en potencias descendentes de
+        $s$. La función <code>ss(A,B,C,D)</code> crea un modelo en espacio
+        de estados a partir de las matrices que definen la evolución
+        del estado y la salida. Estos modelos se utilizan después para
+        calcular polos y simular respuestas.</p>
+
+      <p>Es importante conservar esta elección física del estado si
+        después se van a introducir $x_0$ y $v_0$. Al convertir una
+        función de transferencia a un modelo de estados mediante
+        <code>ss(G)</code>, MATLAB puede elegir otras coordenadas
+        internas; sus condiciones iniciales no se interpretan
         necesariamente como posición y velocidad.</p>
 
       <script type="text/matlab">
