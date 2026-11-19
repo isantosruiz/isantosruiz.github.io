@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Una introducción didáctica a la fuerza eléctrica, el campo, el potencial y la diferencia de potencial, con ilustraciones, ejemplos cotidianos y cálculos accesibles para estudiantes de bachillerato." />
+  <title>Electrostática: de las cargas al voltaje</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" defer></script>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Física</p>
+        <h1>Electrostática: de las cargas al voltaje</h1>
+        <p class="subtitle">Fuerza, campo y potencial para comprender desde un globo que atrae papel hasta la energía que entrega una pila.</p>
+        <div class="article-meta">
+          <span><strong>Madeline Reséndiz Domínguez</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La atracción de pequeños papeles por un globo y el funcionamiento
+          de una pila parecen fenómenos distantes, pero comparten una base
+          física. Las cargas eléctricas interactúan mediante fuerzas que
+          podemos describir con un campo; su disposición también determina
+          una energía potencial. El potencial eléctrico expresa esa energía
+          por unidad de carga y permite comprender el significado del
+          voltaje. Desarrollaremos estas ideas de manera gradual, con unas
+          pocas ecuaciones, ilustraciones y ejemplos relacionados con
+          situaciones cotidianas. Distinguir qué le ocurre a una carga,
+          qué propiedad tiene el espacio que la rodea y qué energía puede
+          intercambiar ayuda a interpretar muchos dispositivos eléctricos.</p>
+      </section>
+
+      <h2>Una atracción que comienza en la materia</h2>
+
+      <p>Después de frotar un globo con el cabello, es posible acercarlo
+        a unos trozos pequeños de papel y observar que se levantan hacia él.
+        El globo no necesita tocarlos para atraerlos. Algo parecido ocurre
+        cuando un peine recién utilizado atrae cabellos o cuando una prenda
+        se adhiere a otra al separarlas. Estos fenómenos son una buena entrada
+        a la <strong>electrostática</strong>, el estudio de las cargas
+        eléctricas en reposo y de sus interacciones. En la práctica, también
+        permite describir situaciones que cambian con suficiente lentitud
+        para tratarlas como una sucesión de estados de equilibrio.</p>
+
+      <p>La <strong>carga eléctrica</strong> es una propiedad de la materia
+        que interviene en la interacción electromagnética. Existen dos signos,
+        positivo y negativo. En los átomos, los protones tienen carga positiva
+        y los electrones negativa, de igual magnitud individual. Un cuerpo
+        es eléctricamente neutro cuando sus cargas positivas y negativas se
+        compensan; esto no significa que carezca de partículas cargadas.</p>
+
+      <p>La carga se mide en <strong>coulombs</strong>, cuyo símbolo es C.
+        La magnitud de la carga de un electrón es aproximadamente
+        $1.602\times10^{-19}$ C. Se trata de una cantidad muy pequeña,
+        por lo que incluso un objeto con una carga neta modesta puede
+        presentar un desequilibrio de muchísimos electrones.</p>
+
+      <p>Al poner en contacto y separar ciertos materiales inicialmente
+        neutros, el frotamiento puede favorecer la transferencia de electrones
+        entre sus superficies.
+        El material que gana electrones queda con carga neta negativa y el
+        que los pierde con carga neta positiva. La carga no se crea durante
+        el proceso; se redistribuye. El resultado concreto depende de los
+        materiales y de sus condiciones superficiales.</p>
+
+      <figure id="fig-es-polarizacion">
+        <img src="./electrostatica-polarizacion.png"
+          alt="Un globo con carga negativa atrae un papel neutro. En el papel se representa una ligera separación de carga, con el lado positivo más próximo al globo."
+          style="display:block;width:100%;max-width:46rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Un objeto cargado también puede atraer un
+          objeto neutro. La separación de cargas del papel está exagerada
+          para mostrar el efecto; su carga total sigue siendo nula.</figcaption>
+      </figure>
+
+      <p>El papel puede ser atraído aunque inicialmente sea neutro porque
+        el globo modifica ligeramente la distribución de sus cargas. Si el
+        globo es negativo, los electrones del papel se desplazan o se
+        deforman sus distribuciones de manera que la región más cercana
+        queda relativamente positiva. Esta <strong>polarización</strong>
+        conserva la carga total del papel. Como la atracción sobre la
+        región cercana puede superar la repulsión sobre la más lejana,
+        aparece una fuerza resultante hacia el globo.</p>
+
+      <h2>La fuerza eléctrica y la ley de Coulomb</h2>
+
+      <p>Dos cargas del mismo signo se repelen y dos de signos opuestos
+        se atraen. La <strong>fuerza eléctrica</strong> es una interacción
+        capaz de modificar el movimiento de los cuerpos o de mantenerlos
+        en equilibrio frente a otras fuerzas. Como cualquier fuerza, tiene
+        magnitud, dirección y sentido; por eso se representa mediante un
+        vector y se mide en newtons, N.</p>
+
+      <figure id="fig-es-fuerzas">
+        <img src="./electrostatica-fuerzas.png"
+          alt="Dos cargas positivas se repelen con fuerzas opuestas; una carga positiva y otra negativa se atraen. En ambos casos se señala la distancia r entre ellas."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Las fuerzas entre dos cargas puntuales
+          tienen igual magnitud y sentidos opuestos. Cada fuerza actúa
+          sobre una carga distinta, a lo largo de la recta que las une.</figcaption>
+      </figure>
+
+      <p>Para dos <strong>cargas puntuales</strong>, es decir, objetos cuyo
+        tamaño puede despreciarse frente a la distancia que los separa,
+        la ley de Coulomb da la magnitud de esa fuerza,</p>
+
+      <div class="equation">\[
+        F=k\frac{q_1q_2}{r^2}.
+      \]</div>
+
+      <p>Aquí $q_1$ y $q_2$ son las cargas, $r$ es su separación y
+        $k\approx8.99\times10^9\,\mathrm{N\,m^2/C^2}$ es la constante
+        de Coulomb en el vacío. Para muchos ejemplos sencillos en aire
+        puede usarse aproximadamente el mismo valor. El sentido de
+        atracción o repulsión se determina con los signos de las cargas.</p>
+
+      <p>La ecuación permite reconocer dos efectos sin hacer cálculos
+        complicados. Duplicar una de las cargas duplica la fuerza,
+        mientras que duplicar la distancia la reduce a la cuarta parte.
+        Esta dependencia con la distancia ayuda a entender la atracción
+        del papel polarizado. Para cuerpos extensos o rodeados de otros
+        materiales, hay que considerar cómo se distribuye la carga y
+        cómo responde el medio.</p>
+
+      <p>La acción sobre partículas cargadas se aprovecha en impresoras
+        láser y fotocopiadoras, donde campos eléctricos permiten
+        distribuir y transferir el tóner. También se utiliza en la
+        pintura electrostática, que favorece el depósito de partículas
+        cargadas sobre una pieza. Para describir cómo se organiza esta
+        acción en cada lugar conviene introducir el campo eléctrico.</p>
+
+      <h2>El campo describe lo que encontraría una carga</h2>
+
+      <p>Una carga modifica las condiciones eléctricas de su entorno.
+        Podemos describir esa influencia sin colocar primero un objeto
+        concreto en cada posición. Para hacerlo se imagina una
+        <strong>carga de prueba</strong> positiva $q$, suficientemente
+        pequeña para no alterar apreciablemente las cargas que originan
+        la interacción. El <strong>campo eléctrico</strong> en ese punto
+        se define como la fuerza que experimentaría la carga de prueba,
+        dividida entre su valor,</p>
+
+      <div class="equation">\[
+        \vec{E}=\frac{\vec{F}}{q},
+        \qquad \vec{F}=q\vec{E}.
+      \]</div>
+
+      <p>La flecha sobre una letra indica que es un vector. El campo
+        tiene dirección y sentido, y su unidad es el newton por coulomb,
+        N/C. Un campo de 300 N/C significa que la fuerza por cada
+        coulomb de carga positiva sería de 300 N. No es necesario
+        introducir realmente un coulomb, una cantidad muy grande para
+        muchos experimentos; la definición expresa una proporción.</p>
+
+      <p>Por ejemplo, una carga de $+2\,\mu\mathrm{C}$ en ese campo
+        experimentaría una fuerza de $6\times10^{-4}$ N en el sentido
+        de $\vec{E}$. El prefijo micro, $\mu$, significa una millonésima
+        parte. Si la carga fuera $-2\,\mu\mathrm{C}$, la fuerza tendría
+        la misma magnitud, pero sentido contrario. El campo creado por
+        las fuentes no cambia por elegir el signo de una carga de
+        prueba ideal.</p>
+
+      <figure id="fig-es-campo">
+        <img src="./electrostatica-campo.png"
+          alt="Líneas radiales que salen de una carga positiva. En un punto P se muestra un vector de campo eléctrico dirigido hacia afuera."
+          style="display:block;width:100%;max-width:35rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. El campo de una carga puntual positiva
+          apunta hacia afuera. Las flechas indican el sentido de la
+          fuerza sobre una carga positiva; una negativa recibe una
+          fuerza en sentido contrario.</figcaption>
+      </figure>
+
+      <p>Las <strong>líneas de campo</strong> son una representación
+        gráfica. Su dirección local indica la del campo y sus flechas
+        señalan el sentido. Salen de las cargas positivas y llegan a
+        las negativas, o se prolongan hacia regiones lejanas. No son
+        hilos materiales ni trayectorias obligatorias de las partículas,
+        cuyo movimiento también depende de su velocidad inicial y de
+        otras fuerzas.</p>
+
+      <p>Para una carga puntual fuente $Q$, la magnitud del campo a
+        distancia $r$ es</p>
+
+      <div class="equation">\[
+        E=k\frac{Q}{r^2}.
+      \]</div>
+
+      <p>El campo depende de la fuente y del lugar considerado,
+        mientras que la fuerza depende además de la carga que se
+        coloca allí. Si existen varias fuentes, sus campos se suman
+        <strong>vectorialmente</strong>, teniendo en cuenta sus
+        direcciones. Esta superposición permite diseñar distribuciones
+        de campo para orientar gotas, separar partículas o recoger
+        polvo cargado en un precipitador electrostático.</p>
+
+      <h2>Del movimiento a la energía potencial</h2>
+
+      <p>La fuerza permite estudiar hacia dónde se acelera una carga.
+        Para comprender cuánta energía puede intercambiar durante un
+        desplazamiento, resulta útil otra perspectiva. Una piedra elevada
+        puede aumentar su rapidez al caer porque disminuye su energía
+        potencial gravitatoria. De forma semejante, la disposición de
+        las cargas tiene asociada una <strong>energía potencial
+        eléctrica</strong>, que representaremos por $U$ y mediremos
+        en joules, J.</p>
+
+      <p>Si se acerca una carga positiva a otra positiva que permanece
+        fija, hay que actuar contra la repulsión. Al moverla lentamente,
+        sin cambiar de manera apreciable su energía cinética, el trabajo
+        externo aumenta la energía potencial del sistema. Si después
+        se libera y solo actúa la fuerza eléctrica, la carga puede
+        alejarse y transformar parte de esa energía potencial en
+        energía cinética.</p>
+
+      <p>En electrostática, la fuerza eléctrica es
+        <strong>conservativa</strong>. Esto significa que su trabajo
+        entre dos posiciones depende de los extremos del recorrido,
+        no del camino seguido. Podemos entonces asociar a cada
+        configuración una energía potencial, una vez elegida una
+        referencia. No toda la energía pertenece a una partícula
+        aislada; está vinculada a su interacción con las demás cargas.</p>
+
+      <h2>El potencial es energía por unidad de carga</h2>
+
+      <p>La misma posición puede corresponder a energías diferentes
+        si se coloca una carga de prueba mayor o menor. Para describir
+        el entorno independientemente de esa elección se define el
+        <strong>potencial eléctrico</strong> $V$ como la energía
+        potencial por unidad de carga, con una referencia común,</p>
+
+      <div class="equation">\[
+        V=\frac{U}{q},\qquad U=qV.
+      \]</div>
+
+      <p>El potencial es una magnitud <strong>escalar</strong>, por
+        lo que tiene valor y signo, pero no una dirección. Su unidad
+        es el <strong>volt</strong>, de símbolo V, equivalente a un
+        joule por coulomb. La letra $V$ en cursiva representa aquí
+        la magnitud física; la V que acompaña a un número indica
+        su unidad.</p>
+
+      <p>La analogía con una altura ayuda si se utiliza con cuidado.
+        Una carga positiva tiene más energía potencial en un lugar
+        de mayor potencial eléctrico, del mismo modo que una masa
+        tiene más energía gravitatoria a mayor altura. Para una
+        carga negativa la relación se invierte por el signo de $q$.
+        Además, la altura del paisaje eléctrico es una representación
+        de valores, no una elevación real del espacio.</p>
+
+      <p>El valor cero se elige por conveniencia. Para una carga
+        puntual aislada suele tomarse el potencial nulo a una
+        distancia infinitamente grande. Con esta elección,</p>
+
+      <div class="equation">\[
+        V=k\frac{Q}{r}.
+      \]</div>
+
+      <p>A diferencia de la fórmula para la magnitud del campo,
+        aquí se conserva el signo de $Q$. Una carga positiva
+        produce potencial positivo y una negativa, potencial
+        negativo, respecto a esa referencia. Para varias cargas,
+        sus potenciales se suman algebraicamente, con sus signos,
+        en lugar de sumar direcciones.</p>
+
+      <figure id="fig-es-potencial">
+        <img src="./electrostatica-potencial.png"
+          alt="Circunferencias equipotenciales alrededor de una carga positiva, con valores de 60, 30 y 20 volts al aumentar el radio. El campo apunta hacia los valores menores."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Un mapa de potencial alrededor de una
+          carga positiva. Los radios de las curvas de 60, 30 y 20 V
+          están en proporción 1:2:3, de acuerdo con $V\propto1/r$.
+          En tres dimensiones, las superficies de igual potencial
+          son esferas concéntricas.</figcaption>
+      </figure>
+
+      <p>Una <strong>superficie equipotencial</strong> reúne puntos
+        con el mismo potencial. Al desplazar una carga sobre ella
+        no cambia su energía potencial y la fuerza eléctrica no
+        realiza trabajo neto en ese desplazamiento. Las líneas de
+        campo cruzan las superficies equipotenciales
+        perpendicularmente, en los lugares donde el campo no es
+        nulo. Ambas representaciones describen el mismo entorno
+        desde perspectivas distintas.</p>
+
+      <h2>La diferencia de potencial y el significado del voltaje</h2>
+
+      <p>En la práctica importa especialmente cuánto cambia el
+        potencial entre dos puntos. La <strong>diferencia de
+        potencial</strong>, también llamada <strong>voltaje</strong>
+        o tensión eléctrica, se relaciona con el cambio de energía
+        potencial mediante</p>
+
+      <div class="equation">\[
+        \Delta V=V_B-V_A,\qquad \Delta U=q\,\Delta V.
+      \]</div>
+
+      <p>El símbolo $\Delta$ indica valor final menos valor inicial.
+        Si una carga de $+2\,\mu\mathrm{C}$ pasa de un punto A a
+        9 V a otro B a 3 V, entonces $\Delta V=-6$ V y
+        $\Delta U=-12\,\mu\mathrm{J}$. La disminución de energía
+        potencial puede convertirse en energía cinética o
+        transferirse a otros elementos, según el sistema.</p>
+
+      <p>El trabajo que realiza el campo eléctrico sobre la carga
+        tiene el signo contrario al cambio de energía potencial,</p>
+
+      <div class="equation">\[
+        W_{\mathrm{eléctrico}}=-\Delta U=-q\,\Delta V.
+      \]</div>
+
+      <p>En el ejemplo, el campo realiza un trabajo de
+        $+12\,\mu\mathrm{J}$. Con una carga negativa del mismo
+        valor absoluto y el mismo desplazamiento, los signos de
+        $\Delta U$ y del trabajo se invertirían. Esto explica por
+        qué una carga positiva inicialmente en reposo tiende a
+        acelerarse hacia potenciales menores, mientras una negativa
+        tiende a hacerlo hacia potenciales mayores, si solo actúa
+        la fuerza eléctrica.</p>
+
+      <p>Cambiar la referencia suma la misma constante a los
+        potenciales de ambos puntos, de modo que su diferencia
+        permanece igual. Dos personas pueden asignar valores
+        distintos a $V_A$ y $V_B$ y aun así calcular el mismo
+        voltaje, las mismas fuerzas y los mismos cambios de
+        energía. Por eso un valor de potencial necesita una
+        referencia, aunque a veces se deje implícita.</p>
+
+      <h2>Una pila y dos puntas de medición</h2>
+
+      <p>Cuando una pila se identifica como de 9 V, se indica
+        aproximadamente una diferencia de potencial entre sus
+        terminales en ciertas condiciones de funcionamiento.
+        Esto corresponde a 9 J de energía por cada coulomb
+        transferido entre ellos. No significa que cada electrón
+        posea 9 J ni que la pila contenga nueve unidades de carga.</p>
+
+      <p>Los procesos químicos de la pila mantienen una separación
+        de carga y suministran energía al circuito. Al conectar
+        un receptor mediante un camino conductor cerrado, se
+        establece una distribución de campo que favorece el
+        movimiento de las cargas. En una resistencia, esa energía
+        se transfiere principalmente como calor. Las cargas no
+        se consumen en el receptor; la pila transforma energía
+        química y el circuito la entrega a otros procesos.</p>
+
+      <figure id="fig-es-voltimetro">
+        <img src="./electrostatica-voltimetro.png"
+          alt="Circuito con pila de 9 volts, una resistencia y un voltímetro conectado en paralelo entre los nodos A y B. La punta positiva está en A y la negativa en B."
+          style="display:block;width:100%;max-width:42rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. El voltímetro compara dos puntos y se
+          conecta en paralelo con el elemento de interés. Con la
+          punta positiva en A y la negativa en B, indica $V_A-V_B$.
+          Se representan una pila ideal de 9 V y conductores ideales.</figcaption>
+      </figure>
+
+      <p>Un <strong>voltímetro</strong> necesita dos conexiones porque
+        mide una diferencia. Habitualmente muestra el potencial
+        de la punta roja menos el de la punta negra. En la figura 5
+        indicaría $+9$ V; al invertirlas, mostraría $-9$ V.
+        Esto es compatible con nuestra definición de cambio de A
+        hacia B, $V_B-V_A$, que en ese recorrido sería $-9$ V.
+        El signo depende del orden de comparación.</p>
+
+      <p>La <strong>corriente eléctrica</strong> expresa cuánta carga
+        atraviesa una sección por unidad de tiempo. Es una magnitud
+        distinta del voltaje. Puede existir diferencia de potencial
+        con el circuito abierto y sin una corriente sostenida;
+        al cerrar el circuito, la corriente también depende de sus
+        propiedades. Aunque un circuito en funcionamiento no sea
+        una colección de cargas inmóviles, los conceptos de campo
+        y potencial siguen siendo útiles cuando las condiciones
+        son estacionarias y los efectos de inducción pueden
+        despreciarse.</p>
+
+      <h2>Un mismo voltaje puede producir campos diferentes</h2>
+
+      <p>El campo está relacionado con la rapidez con que cambia
+        el potencial al desplazarnos por el espacio. Entre dos
+        placas metálicas paralelas, grandes frente a su separación,
+        el campo en la región central es aproximadamente uniforme.
+        Si $d$ es la distancia entre ellas,</p>
+
+      <div class="equation">\[
+        E=\frac{\Delta V}{d}
+        \qquad\text{para un campo uniforme entre las placas}.
+      \]</div>
+
+      <p>Con 9 V y una separación de 5 mm, el campo ideal es
+        $E=9/0.005=1800$ V/m. Esta unidad es equivalente al N/C.
+        Si la separación se reduce a la mitad manteniendo los
+        9 V, el campo se duplica. El voltaje por sí solo no
+        determina la intensidad del campo; también importa
+        la geometría.</p>
+
+      <figure id="fig-es-placas">
+        <img src="./electrostatica-placas.png"
+          alt="Placas paralelas a 9 y 0 volts separadas 5 milímetros. El campo uniforme apunta de la placa positiva a la negativa y cruza líneas de 6 y 3 volts. Se indican fuerzas opuestas sobre cargas positiva y negativa."
+          style="display:block;width:100%;max-width:44rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. El campo apunta de potenciales mayores
+          a menores. Las líneas discontinuas son equipotenciales.
+          Las cargas pequeñas ilustran el sentido de las fuerzas
+          sin considerar su perturbación del campo; se omiten
+          los efectos de borde de las placas.</figcaption>
+      </figure>
+
+      <p>En general, en electrostática el campo apunta en la
+        dirección en que el potencial disminuye más rápidamente.
+        Por eso las flechas del campo y el movimiento inicial
+        de una carga positiva son compatibles con la pérdida
+        de energía potencial. La carga negativa recibe la
+        fuerza contraria, como muestra la figura 6.</p>
+
+      <p>Dos conductores separados por un material aislante
+        forman la estructura básica de un
+        <strong>condensador</strong>, que puede mantener cargas
+        separadas y almacenar energía en el campo eléctrico.
+        Las pantallas táctiles capacitivas detectan cambios
+        en el acoplamiento eléctrico que produce la proximidad
+        de un dedo. Su electrónica utiliza esos cambios para
+        determinar la posición del contacto.</p>
+
+      <p>La geometría también influye en las descargas. Cerca de
+        una punta conductora el campo puede ser muy intenso.
+        Si las condiciones permiten ionizar el aire, este deja
+        de comportarse como un buen aislante y puede producirse
+        una descarga. La pequeña chispa que a veces aparece
+        al tocar un objeto metálico después de caminar sobre
+        una alfombra es una manifestación cotidiana de ese
+        intercambio de carga.</p>
+
+      <h2 style="break-after:avoid;page-break-after:avoid;">Potencial nulo no significa campo nulo</h2>
+
+      <p>Como el potencial y el campo describen aspectos
+        diferentes, el valor de uno no se deduce simplemente
+        del valor del otro en un punto. Consideremos dos
+        cargas puntuales de igual magnitud y signos opuestos,
+        un sistema llamado <strong>dipolo eléctrico</strong>.
+        Tomando el potencial nulo en el infinito, sus
+        contribuciones al potencial se cancelan en el punto
+        medio porque tienen igual magnitud y signo contrario.</p>
+
+      <figure id="fig-es-dipolo">
+        <img src="./electrostatica-dipolo.png"
+          alt="Dipolo con una carga positiva a la izquierda y otra negativa a la derecha. En el punto medio P, el potencial es cero, pero los campos de ambas cargas apuntan hacia la derecha y se suman."
+          style="display:block;width:100%;max-width:30rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. En P, los potenciales se cancelan
+          y los campos se refuerzan. Se muestran algunas líneas
+          de campo. La mediatriz es la recta
+          perpendicular al segmento que une las cargas y que
+          pasa por su punto medio; todos sus puntos tienen
+          potencial nulo con la referencia elegida.</figcaption>
+      </figure>
+
+      <p>El campo en P, en cambio, no se cancela. El de la carga
+        positiva apunta alejándose de ella y el de la negativa
+        apunta hacia esta última, de modo que ambos señalan
+        hacia la derecha. Una carga colocada en P puede recibir
+        una fuerza aunque allí el potencial sea cero.</p>
+
+      <p>También conviene distinguir el potencial nulo de un
+        potencial <em>constante en toda una región</em>. En el
+        interior del material de un conductor en equilibrio
+        electrostático, el campo es nulo y el potencial es
+        constante, aunque su valor no tiene por qué ser cero.
+        La redistribución de las cargas en conductores permite
+        el blindaje electrostático de instrumentos; para
+        interpretar su eficacia hay que considerar también
+        las aberturas y las condiciones reales del montaje.</p>
+
+      <h2>Cuatro conceptos para interpretar una misma situación</h2>
+
+      <p>La fuerza describe la acción sobre una carga concreta;
+        el campo permite anticipar esa acción en cada lugar.
+        La energía potencial relaciona la configuración con
+        el trabajo que puede realizar la interacción. Al
+        dividirla entre la carga se obtiene el potencial,
+        y al comparar dos puntos aparece la diferencia de
+        potencial. La tabla reúne sus unidades y significados.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Fuerza, campo, potencial y voltaje.">
+\begin{tabular}{lll}
+\hline
+Magnitud & Qué describe & Unidad \\
+\hline
+Fuerza eléctrica & Acción sobre una carga & N \\
+Campo eléctrico & Fuerza por unidad de carga & N/C o V/m \\
+Potencial eléctrico & Energía por unidad de carga & V o J/C \\
+Diferencia de potencial & Comparación entre dos puntos & V \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Para explorar estas relaciones se puede utilizar la
+        simulación <a href="https://phet.colorado.edu/es/simulations/charges-and-fields">Cargas
+        y campos, de PhET</a>. Al colocar una carga positiva
+        y observar el campo y las equipotenciales aparecen
+        los patrones de las figuras 3 y 4. Al añadir una
+        carga negativa de igual magnitud se puede buscar
+        la región de potencial nulo y comprobar que allí
+        persiste un campo. Comparar ambas representaciones
+        ayuda a distinguir un mapa de fuerzas posibles de
+        un mapa de energía por unidad de carga.</p>
+
+      <h2 style="break-after:avoid;page-break-after:avoid;">Referencias</h2>
+
+      <ul class="references" style="break-inside:avoid;page-break-inside:avoid;">
+        <li>PhET Interactive Simulations. (s. f.).
+          <a href="https://phet.colorado.edu/es/simulations/charges-and-fields"><em>Cargas y campos</em></a>
+          [Simulación interactiva]. University of Colorado Boulder.</li>
+        <li>The Physics Classroom. (s. f.).
+          <a href="https://www.physicsclassroom.com/class/circuits/Lesson-1/Electric-Potential-Difference"><em>Electric potential difference</em></a>.</li>
+        <li>Urone, P. P., &amp; Hinrichs, R. (2022).
+          <a href="https://openstax.org/details/books/college-physics-2e"><em>College physics</em></a>
+          (2.ª ed., caps. 18–19). OpenStax.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+</html>
