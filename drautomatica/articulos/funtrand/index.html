@@ -633,10 +633,13 @@ legend('Libre','Forzada','Total','Location','best');
 
       <p>Los coeficientes tienen unidades de segundos,
         coherentes con convertir velocidad en posición.
-        La convolución entrega, desde estado interno nulo,</p>
+        La convolución calcula la respuesta forzada
+        producida por la entrada $u[k]$ cuando el
+        estado interno inicial es nulo. La denotaremos
+        por $y_{\mathrm{forzada}}[k]$,</p>
 
       <div class="equation">\[
-        y_{\mathrm{cero\ estado}}[k]
+        y_{\mathrm{forzada}}[k]
         =T_s\sum_{\ell=0}^{k-1}u[\ell]
         +\frac{T_s}{2}u[k].
       \]</div>
@@ -682,7 +685,7 @@ legend('Libre','Forzada','Total','Location','best');
       <p>La posición calculada queda entonces</p>
 
       <div class="equation">\[
-        y[k]=y_{\mathrm{cero\ estado}}[k]
+        y[k]=y_{\mathrm{forzada}}[k]
           +y_0-\frac{T_s}{2}u[0].
       \]</div>
 
