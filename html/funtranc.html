@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Función de transferencia y convolución en sistemas mecatrónicos continuos. Respuestas libre y forzada, polos, estabilidad interna y BIBO, Routh-Hurwitz, valor final y régimen sinusoidal, con ejemplos reproducibles en MATLAB." />
+  <title>Función de transferencia y respuesta de un sistema</title>
+  <link rel="stylesheet" href="./scientific-template.css" />
+  <script src="./scientific-template.js" data-codehl-languages="matlab" defer></script>
+  <style>
+    @media print {
+      .article-inner h2, .article-inner h3 { break-after: avoid; page-break-after: avoid; }
+      .article-inner .references { break-inside: avoid; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+
+<body class="bookdown-style">
+  <main class="article-shell">
+    <article class="article-inner">
+      <header class="article-header">
+        <p class="article-kicker">Dinámica de sistemas y control</p>
+        <h1>Función de transferencia y respuesta de un sistema</h1>
+        <p class="subtitle">De las ecuaciones físicas a la respuesta temporal, la estabilidad y el régimen permanente de mecanismos y motores.</p>
+        <div class="article-meta">
+          <span><strong>Ildeberto de los Santos Ruiz</strong></span><span></span>
+          <span>Noviembre, 2026</span>
+        </div>
+      </header>
+
+      <section class="abstract">
+        <p>La respuesta de un sistema mecatrónico depende de la entrada aplicada
+          y de la energía que ya tenía almacenada. La función de transferencia
+          describe la relación entre entrada y salida con estado inicial nulo,
+          mientras que la convolución permite reconstruir esa respuesta en el
+          tiempo. Para utilizar ambas herramientas conviene distinguir las
+          respuestas libre y forzada de las componentes transitoria y permanente.
+          Desarrollaremos estas relaciones a partir de un mecanismo
+          masa–resorte–amortiguador y las aplicaremos después a un motor de
+          corriente directa. El análisis de polos, las condiciones de estabilidad
+          y los métodos para calcular el régimen permanente se acompañan de
+          soluciones analíticas, gráficas y código reproducible en MATLAB.</p>
+      </section>
+
+      <h2>Una entrada no basta para explicar todo el movimiento</h2>
+
+      <p>Una plataforma accionada por un motor no responde del mismo modo si
+        comienza en reposo o si ya se desplaza cuando recibe una orden. También
+        importa si sus elementos elásticos están deformados y si el circuito
+        de potencia conserva corriente. Estas condiciones contienen información
+        sobre la energía inicial que el sistema puede liberar, incluso sin
+        recibir una nueva entrada.</p>
+
+      <p>En un modelo dinámico llamamos <strong>entrada</strong> a la señal que
+        actúa sobre el sistema y <strong>salida</strong> a la variable que
+        interesa observar. La elección depende del problema. En un mecanismo
+        pueden ser fuerza y posición; en un motor, tensión y velocidad; en un
+        sensor térmico, temperatura del medio y temperatura indicada. Una misma
+        máquina puede tener varias entradas, incluidas las perturbaciones, y
+        distintas salidas útiles.</p>
+
+      <p>Trabajaremos con sistemas de una entrada y una salida, lineales e
+        invariantes en el tiempo, abreviados <strong>LTI</strong>. La
+        linealidad permite sumar respuestas y multiplicarlas por constantes;
+        la invariancia temporal significa que, desde reposo, retrasar una entrada
+        retrasa la respuesta sin cambiar su forma. Son propiedades del modelo,
+        no garantías de que toda máquina real las cumpla para cualquier amplitud.</p>
+
+      <p>La fricción seca, la saturación de un actuador y una rigidez que cambia
+        con la deformación pueden romper esas propiedades. En muchos problemas
+        se obtiene un modelo LTI aproximado alrededor de un equilibrio. En tal
+        caso, sus variables representan desviaciones respecto a ese punto y los
+        resultados deben mantenerse dentro del intervalo de validez de la
+        aproximación.</p>
+
+      <h2>Un modelo físico que acompañará la explicación</h2>
+
+      <p>Consideremos una masa $m$ que se desplaza horizontalmente, conectada a
+        un soporte fijo mediante un resorte de rigidez $k$ y un amortiguador
+        viscoso de coeficiente $c$. La entrada es una fuerza $f(t)$ y la salida
+        es el desplazamiento $x(t)$ respecto al equilibrio. El resorte ejerce
+        una fuerza $-kx$ y el amortiguador una fuerza $-c\dot{x}$, ambas con
+        signo opuesto a la deformación o a la velocidad correspondiente.</p>
+
+      <figure id="fig-ft-mecanica">
+        <img src="./funtranc-mecanica.png" alt="Masa móvil conectada a un soporte mediante un resorte y un amortiguador en paralelo, con una fuerza de entrada y desplazamiento positivo hacia la derecha."
+          style="display:block;width:100%;max-width:38rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 1. Modelo de un eje mecánico con inercia,
+          elasticidad y disipación. Las ruedas representan una guía ideal;
+          la disipación considerada se concentra en el amortiguador.</figcaption>
+      </figure>
+
+      <p>La segunda ley de Newton conduce a</p>
+
+      <div class="equation">\[
+        m\ddot{x}(t)+c\dot{x}(t)+kx(t)=f(t).
+      \]</div>
+
+      <p>Los puntos indican derivadas respecto al tiempo. La ecuación es
+        de segundo orden porque se necesita especificar la posición y la
+        velocidad iniciales para obtener una solución única. Utilizaremos</p>
+
+      <div class="equation">\[
+        m=2\,\mathrm{kg},\qquad
+        c=4\,\mathrm{N\,s/m},\qquad
+        k=50\,\mathrm{N/m}.
+      \]</div>
+
+      <p>Estos valores definen un ejemplo didáctico, no el dimensionamiento
+        de un equipo particular. Las gráficas numéricas del artículo son
+        soluciones de este modelo y del modelo de motor que se presentará
+        después; no son mediciones experimentales. El archivo
+        <a href="./funtranc_matlab.m" download><code>funtranc_matlab.m</code></a>
+        contiene los cálculos y las instrucciones para reproducir las curvas
+        en MATLAB. Se ha comprobado con MATLAB R2025a y requiere
+        <em>Control System Toolbox</em>; los bloques mostrados comparten
+        los parámetros definidos en el primero.</p>
+
+      <h2>La función de transferencia conserva la dinámica de entrada a salida</h2>
+
+      <p>La transformada de Laplace representa las señales del tiempo mediante
+        funciones de la variable compleja $s=\sigma+j\omega$, con $j^2=-1$.
+        Denotaremos por $X(s)$ y $F(s)$ las transformadas de $x(t)$ y $f(t)$.
+        Para la señal de entrada, la transformada unilateral se escribe</p>
+
+      <div class="equation">\[
+        F(s)=\int_{0^-}^{\infty}f(t)e^{-st}\,\mathrm{d}t,
+      \]</div>
+
+      <p>en la región de valores de $s$ donde la integral converja. Consideraremos
+        entradas causales, nulas antes del origen elegido; esto no
+        implica que el estado inicial del sistema sea nulo. El límite
+        inferior $0^-$ incluye el comienzo del experimento desde el
+        instante inmediatamente anterior a cero. Al transformar las
+        derivadas aparecen las condiciones iniciales. Para el mecanismo,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        \mathscr{L}\{\dot{x}\}&=sX(s)-x_0,\\
+        \mathscr{L}\{\ddot{x}\}&=s^2X(s)-sx_0-v_0,
+        \end{aligned}
+      \]</div>
+
+      <p>donde $x_0=x(0^-)$ y $v_0=\dot{x}(0^-)$. La notación $0^-$
+        se refiere al instante anterior a aplicar la entrada; con fuerzas
+        finitas, posición y velocidad son continuas en ese instante. Al
+        transformar la ecuación y reagrupar se obtiene</p>
+
+      <div class="equation">\[
+        (ms^2+cs+k)X(s)
+        =F(s)+(ms+c)x_0+mv_0.
+      \]</div>
+
+      <p>La <strong>función de transferencia</strong> es la relación entre
+        la transformada de la salida y la de la entrada <em>cuando el estado
+        inicial es nulo</em>. En este caso,</p>
+
+      <div class="equation">\[
+        G(s)=\left.\frac{X(s)}{F(s)}\right|_{x_0=v_0=0}
+        =\frac{1}{ms^2+cs+k}
+        =\frac{1}{2s^2+4s+50}.
+      \]</div>
+
+      <p>$G$ no es una ganancia constante. Su dependencia de $s$ contiene
+        la evolución dinámica del mecanismo. La relación desplazamiento/fuerza
+        tiene unidades de m/N, y su valor en $s=0$ será la ganancia estática.
+        Si las condiciones iniciales no son nulas, el cociente de las
+        transformadas de la respuesta total y la entrada ya no constituye
+        esta definición de $G$.</p>
+
+      <p>Para una ecuación diferencial lineal con coeficientes constantes,
+        la misma operación conduce a una función racional
+        $G(s)=B(s)/A(s)$. Las raíces del denominador, después de simplificar
+        factores comunes de esa relación, son sus <strong>polos</strong>;
+        las del numerador son sus <strong>ceros</strong>. Los polos
+        describen modos de la dinámica observables en esa relación y los
+        ceros modifican cómo la entrada excita y combina sus efectos.</p>
+
+      <p>Una función racional es <strong>propia</strong> si el grado del
+        numerador no supera al del denominador, y estrictamente propia si
+        es menor. Los modelos de estado ordinarios con entrada sin derivar
+        producen funciones propias. Una transferencia impropia puede
+        representar una idealización, como un diferenciador ideal, que no
+        se realiza exactamente en todo el intervalo de frecuencias de un
+        dispositivo físico.</p>
+
+      <h3>Conservar las condiciones iniciales en un modelo de estados</h3>
+
+      <p>Para mantener explícitas la posición y la velocidad definimos el
+        <strong>estado</strong> $\mathbf{z}=[x\;\dot{x}]^{\mathsf T}$,
+        un conjunto de variables que, junto con la entrada futura,
+        determina la evolución del modelo. Su representación es</p>
+
+      <div class="equation">\[
+        \dot{\mathbf{z}}=A\mathbf{z}+Bu,\qquad y=C\mathbf{z}+Du,
+      \]</div>
+
+      <div class="equation">\[
+        A=\begin{bmatrix}0&1\\-k/m&-c/m\end{bmatrix},\quad
+        B=\begin{bmatrix}0\\1/m\end{bmatrix},\quad
+        C=\begin{bmatrix}1&0\end{bmatrix},\quad D=0.
+      \]</div>
+
+      <p>Aquí $u=f$ y $y=x$; usamos $u$ e $y$ para escribir después
+        resultados generales. $D$ es el término de paso directo, que
+        relaciona instantáneamente entrada y salida. En este mecanismo
+        es cero porque una fuerza finita no cambia la posición de manera
+        instantánea. Para estado inicial nulo,</p>
+
+      <div class="equation">\[
+        G(s)=C(sI-A)^{-1}B+D,
+      \]</div>
+
+      <p>donde $I$ es la matriz identidad. Es importante conservar esta
+        elección física del estado si después se van a introducir
+        $x_0$ y $v_0$. Una realización obtenida automáticamente al
+        convertir <code>tf</code> a <code>ss</code> puede utilizar otras
+        coordenadas internas; sus condiciones iniciales no se interpretan
+        necesariamente como posición y velocidad.</p>
+
+      <script type="text/matlab">
+%% Modelo físico y representación de estados
+% Función de transferencia, convolución y estabilidad.
+% Modelos de tiempo continuo.
+% Requiere MATLAB y Control System Toolbox. No requiere Simulink.
+clear; close all; clc;
+m = 2;                 % kg
+c = 4;                 % N*s/m
+k = 50;                % N/m
+F0 = 10;               % N
+z0 = [0.08; -0.10];     % [posición en m; velocidad en m/s]
+dt = 0.002;            % Paso de observación, no del modelo continuo
+t = (0:dt:10)';
+
+Am = [0 1; -k/m -c/m];
+Bm = [0; 1/m];
+Cm = [1 0];
+Dm = 0;
+sys = ss(Am,Bm,Cm,Dm);
+G = tf(1,[m c k]);
+alpha = c/(2*m);
+wn = sqrt(k/m);
+zeta = alpha/wn;
+wd = sqrt(wn^2-alpha^2);
+disp('Polos de G:'); disp(pole(G));
+fprintf('Ganancia estática: %.6f m/N\n',dcgain(G));
+fprintf('Estabilidad estricta: %d\n',isstable(sys));
+      </script>
+
+      <h2>Respuesta libre y respuesta forzada</h2>
+
+      <p>Por linealidad, la salida total puede separarse en dos
+        experimentos. En el primero se conserva el estado inicial y
+        se anula la entrada; en el segundo se aplica la entrada, pero
+        se comienza con estado inicial nulo. Denominaremos
+        <strong>respuesta libre</strong> a la primera y
+        <strong>respuesta forzada de estado inicial nulo</strong>
+        a la segunda.</p>
+
+      <div class="equation">\[
+        y(t)=y_{\mathrm{libre}}(t)+y_{\mathrm{forzada}}(t).
+      \]</div>
+
+      <figure id="fig-ft-descomposicion">
+        <img src="./funtranc-descomposicion.png" alt="La respuesta total suma una rama libre que evoluciona desde las condiciones iniciales y una rama forzada calculada mediante la función de transferencia desde estado inicial nulo."
+          style="display:block;width:100%;max-width:49rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 2. Las condiciones iniciales no son una
+          entrada adicional a la definición de $G$. Su contribución
+          se calcula con la dinámica del modelo y después se suma
+          a la respuesta de estado inicial nulo.</figcaption>
+      </figure>
+
+      <p>La solución del modelo de estados permite escribir con precisión
+        esta separación,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        y_{\mathrm{libre}}(t)&=Ce^{At}\mathbf{z}_0,\\
+        y_{\mathrm{forzada}}(t)&=
+          C\int_0^t e^{A(t-\tau)}Bu(\tau)\,\mathrm{d}\tau+Du(t).
+        \end{aligned}
+      \]</div>
+
+      <p>La exponencial de matriz $e^{At}$ generaliza la exponencial
+        escalar y satisface $\dot{\Phi}=A\Phi$, $\Phi(0)=I$.
+        En la integral, $\tau$ recorre los instantes en que la entrada
+        actuó, mientras $t$ es el instante de observación.</p>
+
+      <p>Para nuestro mecanismo, la separación también se reconoce
+        directamente en Laplace,</p>
+
+      <div class="equation">\[
+        X(s)=\underbrace{\frac{(ms+c)x_0+mv_0}{ms^2+cs+k}}_{X_{\mathrm{libre}}(s)}
+        +\underbrace{\frac{F(s)}{ms^2+cs+k}}_{X_{\mathrm{forzada}}(s)}.
+      \]</div>
+
+      <h3>Un escalón aplicado a un mecanismo que ya se mueve</h3>
+
+      <p>Tomemos $x_0=0.08$ m, $v_0=-0.10$ m/s y una fuerza
+        constante de 10 N que comienza en $t=0$. Un
+        <strong>escalón</strong> representa ese cambio instantáneo
+        de nivel en la entrada. La fuerza es finita, por lo que no
+        produce saltos de posición ni de velocidad.</p>
+
+      <p>Definimos la frecuencia natural $\omega_n=\sqrt{k/m}$,
+        la razón de amortiguamiento $\zeta=c/(2\sqrt{mk})$ y
+        la tasa de decaimiento $\alpha=\zeta\omega_n=c/(2m)$.
+        Como $0&lt;\zeta&lt;1$, el sistema es subamortiguado y
+        su frecuencia de oscilación amortiguada es
+        $\omega_d=\omega_n\sqrt{1-\zeta^2}$. Para estos parámetros,</p>
+
+      <div class="equation">\[
+        \omega_n=5\,\mathrm{rad/s},\quad\zeta=0.2,\quad
+        \alpha=1\,\mathrm{s^{-1}},\quad
+        \omega_d=\sqrt{24}\,\mathrm{rad/s}.
+      \]</div>
+
+      <p>Las dos contribuciones, válidas para $t\geq0$, son</p>
+
+      <div class="equation">\[
+        x_{\mathrm{libre}}(t)=e^{-\alpha t}
+        \left[x_0\cos(\omega_dt)
+        +\frac{v_0+\alpha x_0}{\omega_d}\sin(\omega_dt)\right],
+      \]</div>
+
+      <div class="equation">\[
+        x_{\mathrm{forzada}}(t)=\frac{F_0}{k}
+        \left[1-e^{-\alpha t}
+        \left(\cos(\omega_dt)+\frac{\alpha}{\omega_d}\sin(\omega_dt)\right)\right].
+      \]</div>
+
+      <figure id="fig-ft-respuestas">
+        <img src="./funtranc-respuestas.png" alt="Respuestas libre, forzada y total del mecanismo. La libre decae a cero; la forzada y la total oscilan hasta converger al equilibrio de 0.20 metros."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 3. La respuesta libre comienza en
+          0.08 m; la forzada comienza con posición y velocidad
+          nulas. Su suma cumple las condiciones iniciales del
+          experimento completo y converge a 0.20 m.</figcaption>
+      </figure>
+
+      <p>En MATLAB, <code>initial</code> calcula la respuesta libre de
+        un modelo de estados y <code>lsim</code> permite aplicar una
+        entrada y especificar sus estados iniciales. El siguiente
+        bloque comprueba tanto la superposición como la coincidencia
+        con las expresiones analíticas.</p>
+
+      <script type="text/matlab">
+%% Respuesta libre, forzada y total
+fStep = F0*ones(size(t));
+xLibre = initial(sys,z0,t);
+xForzada = lsim(sys,fStep,t,zeros(2,1));
+xTotal = lsim(sys,fStep,t,z0);
+xLibreAn = exp(-alpha*t).*(z0(1)*cos(wd*t) + ...
+    (z0(2)+alpha*z0(1))/wd*sin(wd*t));
+xForzadaAn = F0/k*(1-exp(-alpha*t).* ...
+    (cos(wd*t)+alpha/wd*sin(wd*t)));
+errSuperposicion = max(abs(xTotal-xLibre-xForzada));
+errAnalitico = max(abs(xTotal-xLibreAn-xForzadaAn));
+fprintf('Error de superposición: %.3e m\n',errSuperposicion);
+fprintf('Error frente a la solución analítica: %.3e m\n', ...
+    errAnalitico);
+
+figure('Name','Libre, forzada y total');
+plot(t,xLibre,'LineWidth',1.4); hold on;
+plot(t,xForzada,'LineWidth',1.4);
+plot(t,xTotal,'LineWidth',1.7);
+yline(F0/k,'k:','Equilibrio'); grid on;
+xlabel('Tiempo (s)'); ylabel('Posición (m)');
+legend('Libre','Forzada con estado inicial nulo','Total', ...
+    'Location','best');
+xlim([0 8]);
+      </script>
+
+      <h2>La respuesta al impulso caracteriza la memoria del sistema</h2>
+
+      <p>Un <strong>impulso ideal</strong> $\delta(t)$ representa una
+        acción concentrada en un instante y de área unitaria. No es
+        una fuerza de amplitud uno ni un pulso de duración cero y
+        área cero. Es una idealización que se entiende por el efecto
+        de pulsos cada vez más cortos que conservan su área.</p>
+
+      <p>En mecánica, el impulso de una fuerza es
+        $\mathcal{J}=\int f(t)\,\mathrm{d}t$ y se mide en N·s.
+        Un golpe ideal $f=\mathcal{J}\delta(t)$ produce un salto de
+        velocidad $\mathcal{J}/m$, mientras la posición permanece
+        continua. La <strong>respuesta al impulso</strong> $h(t)$
+        es la respuesta con estado inicial nulo a un impulso de
+        área unitaria. Para un sistema causal,</p>
+
+      <div class="equation">\[
+        h(t)=\mathscr{L}^{-1}\{G(s)\},\qquad h(t)=0\quad(t&lt;0).
+      \]</div>
+
+      <p>En el caso subamortiguado del ejemplo,</p>
+
+      <div class="equation">\[
+        h(t)=\frac{1}{m\omega_d}e^{-\alpha t}\sin(\omega_dt),
+        \qquad t\geq0.
+      \]</div>
+
+      <figure id="fig-ft-impulso">
+        <img src="./funtranc-impulso.png" alt="Respuesta al impulso del mecanismo, una oscilación amortiguada que parte de posición cero y decae hacia cero."
+          style="display:block;width:100%;max-width:45rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 4. Cada pequeña aportación de fuerza
+          deja una respuesta que evoluciona durante un tiempo.
+          En este modelo, $h$ tiene unidades de m/(N·s), de modo
+          que un impulso de 1 N·s produce el desplazamiento
+          numéricamente indicado por la curva.</figcaption>
+      </figure>
+
+      <p>La forma de $h$ expresa la memoria dinámica del mecanismo.
+        Una perturbación breve puede seguir produciendo oscilaciones
+        después de haber terminado. El comando <code>impulse</code>
+        calcula esta respuesta sin construir numéricamente una señal
+        infinita.</p>
+
+      <script type="text/matlab">
+%% Respuesta al impulso
+h = squeeze(impulse(G,t));
+h = h(:);
+hAn = exp(-alpha*t).*sin(wd*t)/(m*wd);
+fprintf('Error de h(t): %.3e m/(N*s)\n',max(abs(h-hAn)));
+figure('Name','Respuesta al impulso');
+plot(t,h,'LineWidth',1.6); grid on;
+xlabel('Tiempo (s)'); ylabel('h(t) [m/(N s)]'); xlim([0 8]);
+      </script>
+
+      <h2>La convolución suma los efectos de la entrada pasada</h2>
+
+      <p>Para comprender la convolución, dividamos la entrada en
+        intervalos pequeños de duración $\Delta\tau$. La porción
+        aplicada alrededor del instante $\tau$ tiene aproximadamente
+        un área $u(\tau)\Delta\tau$. Si se sustituye por un impulso
+        de esa área, su contribución a la salida en el instante
+        posterior $t$ es $h(t-\tau)u(\tau)\Delta\tau$.</p>
+
+      <p>La invariancia temporal permite trasladar la respuesta al
+        impulso hasta el instante en que actuó cada porción. La
+        linealidad permite sumar todas las contribuciones. En el
+        límite, para entrada causal y estado inicial nulo, aparece
+        la <strong>integral de convolución</strong>,</p>
+
+      <div class="equation">\[
+        y_{\mathrm{forzada}}(t)=(h*u)(t)
+        =\int_0^t h(t-\tau)u(\tau)\,\mathrm{d}\tau.
+      \]</div>
+
+      <p>El factor $t-\tau$ es el tiempo transcurrido desde cada
+        aportación de la entrada. El sistema causal solo puede
+        responder a lo que ya ocurrió, de ahí el intervalo de
+        integración. Esta expresión corresponde a comenzar el
+        análisis en $t=0$; la influencia de una historia anterior
+        puede estar resumida en un estado inicial no nulo.</p>
+
+      <p>En Laplace, la convolución se convierte en el producto
+        $Y_{\mathrm{forzada}}(s)=G(s)U(s)$. No se obtiene la
+        respuesta temporal multiplicando simplemente $h(t)u(t)$;
+        ese producto omitiría la contribución de las entradas de
+        instantes anteriores.</p>
+
+      <h3>Un pulso de fuerza que termina antes que el movimiento</h3>
+
+      <p>Apliquemos 10 N entre 0.5 y 1.5 s y cero fuera de ese
+        intervalo, desde estado inicial nulo. Para calcular la
+        posición en $t^*=1.6$ s, el pulso ya terminó, pero sus
+        contribuciones anteriores siguen evolucionando. La figura 5
+        muestra la entrada, el núcleo invertido y desplazado
+        $h(t^*-\tau)$ y el producto que se integra.</p>
+
+      <figure id="fig-ft-convolucion">
+        <img src="./funtranc-convolucion.png" alt="Construcción gráfica de la convolución en 1.6 segundos. Se muestran el pulso de fuerza, la respuesta al impulso invertida y desplazada, y su producto con áreas positivas y negativas."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 5. El área con signo del panel inferior
+          determina $x(1.6)$. Las contribuciones negativas y
+          positivas corresponden a distintas fases de la respuesta
+          oscilatoria, no a errores del cálculo.</figcaption>
+      </figure>
+
+      <p>La integral da aproximadamente $x(1.6)=0.14598$ m.
+        Repitiendo la operación para todos los instantes se
+        construye la curva de la figura 6. Después de que la
+        entrada vuelve a cero, el mecanismo continúa moviéndose
+        y termina regresando al equilibrio.</p>
+
+      <figure id="fig-ft-pulso">
+        <img src="./funtranc-pulso.png" alt="La respuesta continua a un pulso y una suma numérica de convolución prácticamente coinciden. El movimiento persiste después de que la fuerza termina a los 1.5 segundos."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 6. La convolución y la simulación del
+          mismo modelo describen la misma respuesta. La curva
+          discontinua aproxima la integral con un paso de 0.002 s.</figcaption>
+      </figure>
+
+      <p>La instrucción <code>conv</code> calcula una suma de
+        convolución de secuencias. Para aproximar la integral
+        continua hay que multiplicar por $\Delta t$ y conservar
+        el tramo causal correspondiente al intervalo simulado.
+        Ese factor es necesario tanto numéricamente como por
+        unidades. La aproximación debe converger al reducir
+        el paso.</p>
+
+      <p>En el siguiente bloque, <code>lsim</code> interpreta el
+        pulso como constante entre muestras mediante
+        <code>'zoh'</code>. La comparación incluye además la
+        solución analítica como diferencia de dos escalones
+        retrasados. Con el paso indicado, el error máximo de
+        la suma de convolución es aproximadamente 0.815 mm;
+        no se trata de una discretización exacta del sistema.</p>
+
+      <script type="text/matlab">
+%% Pulso de fuerza y convolución numérica
+uPulso = F0*double(t>=0.5 & t<1.5);
+% Cada muestra de la fuerza se mantiene hasta la siguiente (ZOH).
+xPulso = lsim(sys,uPulso,t,zeros(2,1),'zoh');
+aux = dt*conv(h,uPulso);
+xConv = aux(1:numel(t));
+
+% Solución exacta como diferencia de dos respuestas al escalón.
+escalon = @(r) (1/k)*(1-exp(-alpha*r).* ...
+    (cos(wd*r)+alpha/wd*sin(wd*r)));
+xPulsoAn = F0*(escalon(max(t-0.5,0))-escalon(max(t-1.5,0)));
+fprintf('Error ZOH frente al pulso analítico: %.3e m\n', ...
+    max(abs(xPulso-xPulsoAn)));
+fprintf('Error de la suma de convolución: %.3e m\n', ...
+    max(abs(xConv-xPulso)));
+
+figure('Name','Respuesta al pulso');
+plot(t,xPulso,'LineWidth',1.8); hold on;
+plot(t,xConv,'--','LineWidth',1.3); grid on;
+xlabel('Tiempo (s)'); ylabel('Posición (m)');
+legend('Modelo continuo con entrada ZOH','Convolución aproximada');
+xlim([0 8]);
+
+% Una instantánea del integrando para t*=1.6 s.
+tEstrella = 1.6;
+tau = t(t<=2.3);
+uTau = F0*double(tau>=0.5 & tau<1.5);
+retardo = tEstrella-tau;
+hInvertida = zeros(size(tau));
+causal = retardo>=0;
+hInvertida(causal) = exp(-alpha*retardo(causal)).* ...
+    sin(wd*retardo(causal))/(m*wd);
+producto = uTau.*hInvertida;
+figure('Name','Construcción de la convolución');
+tiledlayout(3,1);
+nexttile; stairs(tau,uTau,'LineWidth',1.4); grid on;
+ylabel('u(\tau) (N)');
+nexttile; plot(tau,hInvertida,'LineWidth',1.4); grid on;
+ylabel('h(t^*-\tau)');
+nexttile; area(tau,producto); grid on;
+xlabel('\tau (s)'); ylabel('Producto (m/s)');
+      </script>
+
+      <section class="remark">
+        <p>Si existe paso directo, $D\ne0$, la respuesta al
+          impulso contiene $D\delta(t)$. En ese caso es más
+          claro calcular $Du(t)$ por separado y convolucionar
+          la parte regular $Ce^{At}B$ con la entrada. En el
+          mecanismo estudiado, $D=0$ y $h$ es una función
+          ordinaria para $t\geq0$.</p>
+      </section>
+
+      <h2>Libre y forzada no significan transitoria y permanente</h2>
+
+      <p>Las palabras libre y forzada clasifican la respuesta
+        por su <em>origen</em>. Transitoria y permanente la
+        clasifican por su <em>comportamiento a largo plazo</em>.
+        En el escalón estudiado, la respuesta forzada contiene
+        el término constante $F_0/k$, pero también términos
+        oscilatorios que decaen para cumplir el estado inicial
+        nulo. Por tanto, una respuesta forzada puede tener
+        transitorio.</p>
+
+      <p>En la solución clásica de una ecuación diferencial se
+        escribe una solución homogénea más una particular.
+        Para la fuerza constante puede elegirse como particular
+        $x_p=F_0/k$, pero esta no cumple por sí sola las
+        condiciones iniciales nulas. Los coeficientes de la
+        solución homogénea completan esas condiciones y
+        dependen también de la particular elegida.</p>
+
+      <p>Algunos textos usan «respuesta natural» y «respuesta
+        forzada» para esa otra separación. Aquí mantendremos
+        la definición operacional de entrada cero y estado
+        inicial cero, respectivamente. Así se evita confundir
+        el origen de los términos exponenciales con su forma
+        matemática.</p>
+
+      <script type="text/tabjax" data-caption="Tabla 1. Dos maneras distintas de clasificar la respuesta.">
+\begin{tabular}{lll}
+\hline
+Componente & Se identifica por & Puede contener \\
+\hline
+Libre & Condiciones iniciales & Decaimiento u oscilación \\
+Forzada & Entrada aplicada & Transitorio y régimen \\
+Transitoria & Desaparece con el tiempo & Modos que decaen \\
+Permanente & Persiste a largo plazo & Constante, seno o rampa \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>En un sistema asintóticamente estable, la respuesta
+        libre desaparece. Esto permite hablar de un régimen
+        que ya no depende del estado inicial. Un sistema
+        sin disipación puede conservar oscilaciones libres;
+        uno inestable puede amplificarlas. Antes de calcular
+        un régimen permanente independiente de la condición
+        inicial, es necesario analizar la estabilidad.</p>
+
+      <h2>Los polos relacionan la ecuación con el movimiento</h2>
+
+      <p>Para encontrar los modos libres se busca una solución
+        proporcional a $e^{pt}$. Al sustituir en la ecuación
+        homogénea aparece la ecuación característica
+        $mp^2+cp+k=0$. Sus raíces coinciden con los polos
+        de la transferencia de este mecanismo,</p>
+
+      <div class="equation">\[
+        p_{1,2}=-1\pm j\sqrt{24}\;\mathrm{s^{-1}}.
+      \]</div>
+
+      <p>Un polo real negativo produce un decaimiento
+        exponencial. Una pareja compleja conjugada
+        $p=\sigma\pm j\omega$ produce oscilaciones
+        moduladas por $e^{\sigma t}$. La parte real
+        determina si la envolvente disminuye, permanece
+        o crece; la parte imaginaria determina la
+        frecuencia angular de la oscilación.</p>
+
+      <figure id="fig-ft-polos">
+        <img src="./funtranc-polos.png" alt="Polos del mecanismo en el plano complejo para amortiguamiento positivo, nulo y negativo. Con amortiguamiento positivo están a la izquierda; con el nulo, sobre el eje imaginario; con el negativo, a la derecha."
+          style="display:block;width:100%;max-width:43rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 7. El signo del amortiguamiento cambia
+          la parte real de los polos. Un amortiguamiento equivalente
+          negativo puede representar una acción activa que aporta
+          energía, por ejemplo una realimentación con signo incorrecto.</figcaption>
+      </figure>
+
+      <p>La multiplicidad también importa. Un polo repetido
+        puede generar factores como $te^{pt}$ o $t^2e^{pt}$.
+        Si su parte real es negativa, esos términos todavía
+        decaen; sobre el eje imaginario pueden producir
+        crecimiento. Esta observación será importante al
+        distinguir las nociones de estabilidad.</p>
+
+      <h2>Estabilidad interna y estabilidad de entrada a salida</h2>
+
+      <h3>La evolución de las condiciones iniciales</h3>
+
+      <p>El equilibrio de un modelo lineal es
+        <strong>asintóticamente estable</strong> si, con
+        entrada cero, todo estado inicial suficientemente
+        cercano permanece cercano y converge al equilibrio.
+        Para un sistema LTI finito dimensional
+        $\dot{\mathbf{z}}=A\mathbf{z}$, esto equivale a</p>
+
+      <div class="equation">\[
+        \operatorname{Re}\lambda_i(A)&lt;0
+        \qquad\text{para todos los eigenvalores de }A.
+      \]</div>
+
+      <p>Una matriz que satisface esta condición se llama
+        <strong>Hurwitz</strong>. Si algún eigenvalor (polo del sistema) tiene
+        parte real positiva, el equilibrio es inestable.
+        La posición de los eigenvalores debe comprobarse
+        en el modelo completo que se desea evaluar.</p>
+
+      <p>La estabilidad <strong>en el sentido de Lyapunov</strong>
+        no exige converger al equilibrio, sino permanecer
+        cerca cuando se parte suficientemente cerca. En
+        un modelo lineal permite eigenvalores sobre el eje
+        imaginario si no hay bloques de Jordan de tamaño
+        mayor que uno asociados a ellos, es decir, si
+        son semisimples. Para el oscilador de segundo
+        orden sin amortiguamiento, las raíces imaginarias
+        simples producen oscilaciones libres acotadas
+        que no desaparecen.</p>
+
+      <h3>Una entrada acotada debe producir una salida acotada</h3>
+
+      <p>La estabilidad <strong>BIBO</strong>, del inglés
+        <em>bounded-input, bounded-output</em>, exige que
+        toda entrada acotada produzca una salida acotada
+        desde estado inicial nulo. «Acotada» significa
+        que existe una constante finita que limita su
+        valor absoluto para todo el tiempo considerado.</p>
+
+      <p>Para una transferencia racional propia, la condición
+        BIBO es que todos sus polos estén estrictamente
+        en el semiplano izquierdo. Para una respuesta al
+        impulso ordinaria de un sistema causal, el criterio
+        equivalente es su integrabilidad absoluta,</p>
+
+      <div class="equation">\[
+        \int_0^\infty |h(t)|\,\mathrm{d}t&lt;\infty.
+      \]</div>
+
+      <p>Un paso directo finito $D$ puede añadirse sin
+        perder esta propiedad; la condición integral
+        se aplica entonces a la parte regular de $h$.
+        Una entrada escalón es solo una de las posibles
+        entradas acotadas. Que su respuesta permanezca
+        limitada no demuestra estabilidad BIBO.</p>
+
+      <p>El mecanismo con $c=0$ muestra la diferencia.
+        Puede oscilar libremente con amplitud constante
+        y su respuesta a un escalón es acotada, pero
+        una fuerza sinusoidal a la frecuencia natural
+        produce <strong>resonancia</strong>. La amplitud
+        de la respuesta aumenta con el tiempo, aunque
+        la amplitud de la fuerza permanezca fija.</p>
+
+      <figure id="fig-ft-resonancia">
+        <img src="./funtranc-resonancia.png" alt="Una fuerza sinusoidal de amplitud un newton y frecuencia cinco radianes por segundo produce oscilaciones de amplitud creciente sin amortiguamiento, mientras el mecanismo amortiguado permanece acotado."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 8. Para $f(t)=\sin(5t)$ N,
+          el oscilador no amortiguado incumple la estabilidad
+          BIBO. Las líneas punteadas muestran el crecimiento
+          lineal dominante de su envolvente. La sección 7
+          del archivo MATLAB reproduce esta comparación.</figcaption>
+      </figure>
+
+      <p>En efecto, desde reposo y con $c=0$, la fuerza
+        $F_a\sin(\omega_nt)$ produce</p>
+
+      <div class="equation">\[
+        x(t)=\frac{F_a}{2m\omega_n^2}\sin(\omega_nt)
+        -\frac{F_a}{2m\omega_n}t\cos(\omega_nt).
+      \]</div>
+
+      <p>El segundo término no está acotado. Por eso
+        llamar «marginalmente estable» a este oscilador
+        solo resulta claro si se precisa que se habla
+        de la evolución libre, y no de estabilidad BIBO.
+        Un integrador $G(s)=1/s$ ofrece otro ejemplo
+        inmediato, pues una entrada constante produce
+        una salida rampa.</p>
+
+      <h2>Determinar la estabilidad sin resolver toda la respuesta</h2>
+
+      <p>En un modelo numérico se calculan los polos con
+        <code>pole</code> o los eigenvalores con
+        <code>eig</code>. <code>isstable</code> comprueba
+        estabilidad estricta de los modelos continuos,
+        por lo que los polos sobre el eje imaginario
+        no se consideran estables con ese comando.
+        Los polos muy cercanos al eje requieren valorar
+        la precisión numérica y la incertidumbre del
+        modelo, no solo el signo de un decimal pequeño.</p>
+
+      <p>Cuando hay parámetros simbólicos, el criterio de
+        <strong>Routh–Hurwitz</strong> permite determinar
+        cuántas raíces tienen parte real positiva a
+        partir de los coeficientes del polinomio
+        característico. Para mostrarlo, consideremos
+        un ejemplo normalizado de realimentación
+        negativa con planta
+        $P(s)=1/[s(s+1)(s+2)]$ y ganancia proporcional
+        $K$. La transferencia cerrada es
+        $KP/(1+KP)$ y su polinomio característico es</p>
+
+      <div class="equation">\[
+        p(s)=s^3+3s^2+2s+K.
+      \]</div>
+
+      <p>La tabla de Routh se construye a partir de
+        los coeficientes alternados de las dos primeras
+        filas. Para este cúbico resulta</p>
+
+      <script type="text/tabjax" data-caption="Tabla 2. Arreglo de Routh para el polinomio cúbico del ejemplo.">
+\begin{tabular}{lll}
+\hline
+Fila & Primera columna & Segunda columna \\
+\hline
+$s^3$ & $1$ & $2$ \\
+$s^2$ & $3$ & $K$ \\
+$s^1$ & $(6-K)/3$ & $0$ \\
+$s^0$ & $K$ & $0$ \\
+\hline
+\end{tabular}
+      </script>
+
+      <p>Sin ceros especiales en el procedimiento, el
+        número de cambios de signo de la primera columna
+        es el número de raíces en el semiplano derecho.
+        Para que el polinomio sea Hurwitz, todos sus
+        elementos deben ser positivos en este ejemplo,</p>
+
+      <div class="equation">\[
+        1&gt;0,\quad3&gt;0,\quad\frac{6-K}{3}&gt;0,\quad K&gt;0
+        \quad\Longrightarrow\quad 0&lt;K&lt;6.
+      \]</div>
+
+      <p>Los extremos requieren un tratamiento específico.
+        En $K=0$ aparece un polo en cero; en $K=6$,
+        $p(s)=(s+3)(s^2+2)$ tiene una pareja imaginaria.
+        Ninguno de esos extremos satisface estabilidad
+        asintótica estricta. Si una fila completa del
+        arreglo se anula o aparece un cero como pivote,
+        se aplican las reglas especiales del criterio;
+        no basta con ignorar el cero.</p>
+
+      <p>El resultado también muestra que tener todos
+        los coeficientes positivos no es una condición
+        suficiente de estabilidad. Para $K=8$ son
+        positivos, pero hay dos cambios de signo en la
+        primera columna y dos polos con parte real
+        positiva. El siguiente bloque comprueba estos
+        casos y dibuja los polos del mecanismo.</p>
+
+      <script type="text/matlab">
+%% Estabilidad y criterio de Routh-Hurwitz
+fprintf('\nEstabilidad al cambiar el amortiguamiento:\n');
+valoresC = [4 0 -2];
+figure('Name','Polos y estabilidad'); hold on;
+for j = 1:numel(valoresC)
+    Gj = tf(1,[m valoresC(j) k]);
+    pj = pole(Gj);
+    plot(real(pj),imag(pj),'x','MarkerSize',10,'LineWidth',1.7, ...
+        'DisplayName',sprintf('c = %g N s/m',valoresC(j)));
+    fprintf('c=%g: isstable=%d\n',valoresC(j),isstable(Gj));
+end
+xline(0,'k:'); yline(0,'k:'); grid on;
+xlabel('Parte real (1/s)'); ylabel('Parte imaginaria (rad/s)');
+legend('Location','best');
+
+% p(s)=s^3+3s^2+2s+K es Hurwitz exactamente para 0<K<6.
+for K = [1 6 8]
+    fprintf('\nK=%g, raíces del polinomio:\n',K);
+    disp(roots([1 3 2 K]));
+end
+      </script>
+
+      <h2>Lo que puede ocultar una transferencia reducida</h2>
+
+      <p>La coincidencia entre estabilidad interna y
+        estabilidad BIBO requiere una realización
+        <strong>mínima</strong>, en la que todos los
+        modos internos sean excitables desde la entrada
+        y detectables en la salida. Un estado no
+        excitable o no detectable puede desaparecer
+        de la función de transferencia, aunque siga
+        existiendo en la representación interna.</p>
+
+      <p>Por ejemplo, el sistema</p>
+
+      <div class="equation">\[
+        A_h=\begin{bmatrix}1&0\\0&-2\end{bmatrix},\qquad
+        B_h=\begin{bmatrix}0\\1\end{bmatrix},\qquad
+        C_h=\begin{bmatrix}1&1\end{bmatrix},\qquad D_h=0
+      \]</div>
+
+      <p>tiene la transferencia reducida $G_h(s)=1/(s+2)$,
+        BIBO estable. Sin embargo, su primer estado
+        satisface $\dot{z}_1=z_1$ y no recibe la entrada.
+        Con $\mathbf{z}_0=[1\;0]^{\mathsf T}$ y entrada
+        cero, la salida es $e^t$. La estabilidad del
+        canal de entrada a salida no elimina ese modo
+        interno inestable.</p>
+
+      <p><code>minreal</code> permite reducir una
+        representación, pero no constituye una prueba
+        de estabilidad interna de la realización
+        original. Además, una cancelación aproximada
+        entre un polo y un cero puede ser frágil frente
+        a errores de parámetros.</p>
+
+      <script type="text/matlab">
+%% Un modo interno que no aparece en la transferencia reducida
+Ah = [1 0; 0 -2]; Bh = [0; 1]; Ch = [1 1]; Dh = 0;
+sysOculto = ss(Ah,Bh,Ch,Dh);
+Gred = minreal(tf(sysOculto),1e-9);
+disp('Transferencia reducida:'); disp(Gred);
+fprintf('Transferencia reducida estable: %d\n',isstable(Gred));
+disp('Eigenvalores internos:'); disp(eig(Ah));
+% Con entrada cero y estado inicial [1;0], la salida es exp(t).
+% minreal no debe usarse como prueba de estabilidad interna.
+      </script>
+
+      <h2>Estado estable para una entrada constante</h2>
+
+      <p>La <strong>respuesta en estado estable</strong>,
+        o régimen permanente, es la parte que describe
+        el comportamiento después de desaparecer los
+        transitorios. No siempre es un número. Para
+        una entrada constante puede ser un equilibrio;
+        para una sinusoidal, una oscilación permanente.
+        Primero estudiaremos el caso constante.</p>
+
+      <p>El <strong>teorema del valor final</strong>
+        permite calcular un límite sin invertir toda
+        la transformada. Para las respuestas racionales
+        consideradas, se utiliza cuando todos los polos
+        de $sY(s)$ están estrictamente en el semiplano
+        izquierdo,</p>
+
+      <div class="equation">\[
+        \lim_{t\to\infty}y(t)=\lim_{s\to0}sY(s).
+      \]</div>
+
+      <p>Esta condición permite que $Y(s)$ tenga un
+        polo simple en el origen, como corresponde
+        a un valor constante no nulo. Excluye los
+        polos que producen crecimiento u oscilaciones
+        persistentes. Debe comprobarse sobre la
+        respuesta completa, incluidas sus condiciones
+        iniciales cuando corresponda.</p>
+
+      <p>Si el sistema es internamente asintóticamente
+        estable y recibe un escalón de amplitud $u_0$,
+        la respuesta libre desaparece y se obtiene</p>
+
+      <div class="equation">\[
+        y_\infty=G(0)u_0.
+      \]</div>
+
+      <p>$G(0)$ es la <strong>ganancia estática</strong>
+        o ganancia de corriente directa, DC, aunque
+        el modelo sea mecánico. Para el mecanismo,
+        $G(0)=1/k=0.02$ m/N y una fuerza de 10 N
+        conduce a $x_\infty=0.20$ m. Es el mismo
+        resultado de imponer aceleración y velocidad
+        nulas en la ecuación física, $kx_\infty=F_0$.</p>
+
+      <p>En estados también puede calcularse el equilibrio
+        para una entrada constante. Si $A$ es Hurwitz,
+        es invertible y</p>
+
+      <div class="equation">\[
+        \mathbf{z}_{\mathrm{eq}}=-A^{-1}Bu_0,\qquad
+        y_\infty=(D-CA^{-1}B)u_0.
+      \]</div>
+
+      <section class="remark">
+        <p>La sustitución $s=0$ no demuestra por sí
+          sola que exista un valor final. Con $c=0$,
+          la respuesta al escalón es
+          $x(t)=(F_0/k)[1-\cos(\omega_nt)]$ y no
+          converge. Aunque $\lim_{s\to0}sX(s)=F_0/k$
+          sea finito, los polos imaginarios de $sX$
+          impiden aplicar el teorema.</p>
+      </section>
+
+      <h3>Cuánto tarda en aproximarse al régimen</h3>
+
+      <p>Un valor final correcto no indica si el
+        movimiento será aceptable. En una respuesta
+        al escalón se estudian también el
+        <strong>sobreimpulso</strong>, cuánto supera
+        el máximo al cambio final, y el
+        <strong>tiempo de establecimiento</strong>,
+        a partir del cual la salida permanece en
+        una banda elegida alrededor de ese valor.</p>
+
+      <p>Para el modelo canónico subamortiguado de
+        segundo orden, sin ceros y con estado inicial
+        nulo, el sobreimpulso porcentual y el tiempo
+        del primer máximo son</p>
+
+      <div class="equation">\[
+        M_p=100e^{-\pi\zeta/\sqrt{1-\zeta^2}},\qquad
+        t_p=\frac{\pi}{\omega_d}.
+      \]</div>
+
+      <p>En nuestro ejemplo, $M_p\approx52.66\%$
+        y $t_p\approx0.6413$ s. Una estimación usual
+        del establecimiento al 2 % es
+        $t_s\approx4/(\zeta\omega_n)=4$ s.
+        Es una aproximación, no una definición ni
+        un criterio de estabilidad. <code>stepinfo</code>
+        calcula indicadores de la respuesta al escalón;
+        su interpretación debe respetar las hipótesis
+        y la banda utilizadas. Para estos parámetros, el cálculo
+        numérico del establecimiento al 2 % da aproximadamente 3.92 s.</p>
+
+      <h2>Estado estable para una entrada sinusoidal</h2>
+
+      <p>La excitación periódica aparece en vibraciones,
+        desequilibrios de rotores y perturbaciones
+        repetitivas. Para un sistema asintóticamente
+        estable, una entrada
+        $u(t)=A_u\sin(\Omega t)$ deja, después del
+        transitorio, una salida con la misma frecuencia
+        y diferente amplitud y fase,</p>
+
+      <div class="equation">\[
+        y_{\mathrm{permanente}}(t)
+        =A_u|G(j\Omega)|\sin\!\left(\Omega t+\arg G(j\Omega)\right).
+      \]</div>
+
+      <p>$G(j\Omega)$ es la <strong>respuesta en
+        frecuencia</strong> evaluada en la frecuencia
+        aplicada. Su módulo es la relación de
+        amplitudes y su argumento es el desfase.
+        Esta fórmula no se utiliza en un polo de
+        $G$ sobre $j\Omega$, como ocurre en la
+        resonancia no amortiguada anterior.</p>
+
+      <p>Para el mecanismo,</p>
+
+      <div class="equation">\[
+        G(j\Omega)=\frac{1}{k-m\Omega^2+jc\Omega}.
+      \]</div>
+
+      <p>Con fuerza de amplitud 5 N y
+        $\Omega=3$ rad/s, el módulo es
+        $0.0292603$ m/N y la fase es
+        $-20.556^\circ$, aproximadamente $-0.35877$
+        rad. Por tanto,</p>
+
+      <div class="equation">\[
+        x_{\mathrm{permanente}}(t)
+        \approx0.146301\sin(3t-0.35877)\;\mathrm{m}.
+      \]</div>
+
+      <figure id="fig-ft-seno">
+        <img src="./funtranc-seno.png" alt="La respuesta total a una fuerza sinusoidal difiere al inicio de la oscilación permanente, pero ambas curvas se aproximan cuando decae el transitorio."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 9. La salida total parte de
+          $x_0=0.08$ m y $v_0=-0.10$ m/s. La
+          sinusoidal permanente no tiene por qué
+          satisfacer esas condiciones; la diferencia
+          entre ambas es un transitorio que decae.</figcaption>
+      </figure>
+
+      <p>No existe un límite constante de esta salida,
+        pero sí un régimen periódico bien definido.
+        Para entradas periódicas más generales, la
+        descomposición en armónicos permite aplicar
+        el mismo procedimiento a cada frecuencia
+        y sumar las contribuciones cuando se cumplen
+        las condiciones de convergencia correspondientes.</p>
+
+      <h3>Una rampa puede dejar un régimen que sigue creciendo</h3>
+
+      <p>Si la fuerza es $f(t)=at$, la entrada ya no
+        está acotada. Para el mecanismo estable,
+        una solución particular es</p>
+
+      <div class="equation">\[
+        x_{\mathrm{régimen}}(t)=\frac{a}{k}t-\frac{ac}{k^2}.
+      \]</div>
+
+      <p>La respuesta desde reposo se aproxima a esa
+        rampa después de que sus términos homogéneos
+        decaen. No tiene un valor final finito y
+        esto no contradice la estabilidad BIBO,
+        pues la entrada tampoco está acotada. En
+        una máquina real, la carrera disponible,
+        la fuerza máxima y la validez del modelo
+        limitarían este crecimiento.</p>
+
+      <p>El siguiente bloque calcula el valor final,
+        los indicadores del escalón y el régimen
+        sinusoidal, y compara también la respuesta
+        a una rampa con su expresión asintótica.</p>
+
+      <script type="text/matlab">
+%% Valor final y respuesta sinusoidal permanente
+xInf = F0*dcgain(G);
+zEq = -Am\(Bm*F0);
+info = stepinfo(G);    % Escalón unitario, estado inicial nulo
+fprintf('\nx(infinito) = %.4f m\n',xInf);
+fprintf('Equilibrio [posición; velocidad]:\n'); disp(zEq);
+fprintf('Sobreimpulso: %.2f %%\n',info.Overshoot);
+fprintf('Establecimiento al 2 %%: %.3f s\n',info.SettlingTime);
+
+Au = 5;               % Amplitud de fuerza, N
+Omega = 3;            % rad/s
+uSen = Au*sin(Omega*t);
+Gj = squeeze(freqresp(G,Omega));
+amplitud = Au*abs(Gj);
+fase = angle(Gj);
+xPermanente = amplitud*sin(Omega*t+fase);
+xSen = lsim(sys,uSen,t,z0,'foh');
+fprintf('Amplitud permanente: %.6f m\n',amplitud);
+fprintf('Fase: %.4f grados\n',rad2deg(fase));
+figure('Name','Estado estable sinusoidal');
+plot(t,xSen,'LineWidth',1.6); hold on;
+plot(t,xPermanente,'--','LineWidth',1.4); grid on;
+xlabel('Tiempo (s)'); ylabel('Posición (m)');
+legend('Respuesta total','Respuesta permanente sinusoidal');
+
+% Una rampa no tiene por qué producir un valor final constante.
+aRampa = 2;           % N/s
+xRampa = lsim(sys,aRampa*t,t,zeros(2,1),'foh');
+xRampaAsintotica = aRampa/k*t-aRampa*c/k^2;
+figure('Name','Régimen de una rampa');
+plot(t,xRampa,'LineWidth',1.5); hold on;
+plot(t,xRampaAsintotica,'--','LineWidth',1.4); grid on;
+xlabel('Tiempo (s)'); ylabel('Posición (m)');
+legend('Respuesta desde reposo','Régimen asintótico');
+      </script>
+
+      <h2>Un motor de corriente directa como segundo caso de estudio</h2>
+
+      <p>En un motor de CD de flujo constante, la
+        tensión aplicada establece una corriente
+        que produce par. A su vez, el giro genera
+        una fuerza contraelectromotriz que se
+        opone a la tensión. Este acoplamiento
+        eléctrico y mecánico determina la
+        transferencia completa.</p>
+
+      <p>Si $v_a$ es la tensión de armadura,
+        $i$ la corriente, $\omega$ la velocidad
+        y $\tau_L$ un par de carga opuesto
+        al giro positivo,</p>
+
+      <div class="equation">\[
+        \begin{aligned}
+        L\dot{i}+Ri+K_e\omega&=v_a,\\
+        J\dot{\omega}+b\omega&=K_ti-\tau_L.
+        \end{aligned}
+      \]</div>
+
+      <p>$L$ y $R$ son inductancia y resistencia;
+        $J$ es la inercia, $b$ la fricción
+        viscosa, $K_t$ la constante de par y
+        $K_e$ la de fuerza contraelectromotriz.
+        El modelo supone flujo constante y
+        operación sin saturación, e ignora
+        la fricción seca y otras no linealidades.</p>
+
+      <figure id="fig-ft-motor-bloques">
+        <img src="./funtranc-motor-bloques.png" alt="Diagrama de bloques del motor. Se resta la fuerza contraelectromotriz a la tensión, se obtiene corriente mediante uno sobre Ls más R, el par mediante Kt y la velocidad mediante uno sobre Js más b; el par de carga entra restando."
+          style="display:block;width:100%;max-width:50rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 10. La realimentación
+          electromecánica de $K_e\Omega$ impide
+          tratar los subsistemas como una cascada
+          sin interacción. $T_m$ y $T_L$ son
+          las transformadas del par motor y del
+          par de carga, respectivamente.</figcaption>
+      </figure>
+
+      <p>Con condiciones iniciales nulas, al eliminar
+        la corriente resulta</p>
+
+      <div class="equation">\[
+        \Omega(s)=
+        \underbrace{\frac{K_t}{(Ls+R)(Js+b)+K_eK_t}}_{G_\omega(s)}V(s)
+        -\frac{Ls+R}{(Ls+R)(Js+b)+K_eK_t}T_L(s).
+      \]</div>
+
+      <p>Ahora hay dos entradas físicas y cada una
+        tiene su relación con la salida. En ausencia
+        de par de carga externo, la transferencia
+        tensión–velocidad es $G_\omega$. Para
+        ilustrarla tomemos</p>
+
+      <div class="equation">\[
+        \begin{gathered}
+        R=2\,\Omega,\quad L=0.01\,\mathrm{H},\quad
+        J=0.002\,\mathrm{kg\,m^2},\\
+        b=0.02\,\mathrm{N\,m\,s/rad},\quad
+        K_t=0.1\,\mathrm{N\,m/A},\quad
+        K_e=0.1\,\mathrm{V\,s/rad}.
+        \end{gathered}
+      \]</div>
+
+      <p>Se obtiene</p>
+
+      <div class="equation">\[
+        G_\omega(s)=\frac{0.1}{0.00002s^2+0.0042s+0.05}.
+      \]</div>
+
+      <p>Sus polos son aproximadamente $-197.331$
+        y $-12.669$ s$^{-1}$, ambos estables.
+        La ganancia estática es 2 (rad/s)/V,
+        por lo que 12 V producen 24 rad/s
+        en régimen sin carga externa, manteniendo
+        la fricción viscosa del modelo. Con una
+        carga constante, el equilibrio es</p>
+
+      <div class="equation">\[
+        \omega_\infty=
+        \frac{K_tV_0-R\tau_{L0}}{Rb+K_eK_t}.
+      \]</div>
+
+      <figure id="fig-ft-motor-respuesta">
+        <img src="./funtranc-motor-respuesta.png" alt="Velocidad del motor con 12 volts. Se aproxima a 24 radianes por segundo y, al aplicar un par de carga de 0.1 newton metro a los 0.35 segundos, evoluciona hacia 20 radianes por segundo."
+          style="display:block;width:100%;max-width:47rem;height:auto;margin-inline:auto;" />
+        <figcaption>Figura 11. Respuesta desde reposo
+          a 12 V, con un par de carga de 0.1 N·m
+          aplicado en 0.35 s. La velocidad cambia
+          de equilibrio, pero no salta instantáneamente.</figcaption>
+      </figure>
+
+      <p>El ejemplo demuestra también que es necesario
+        precisar la salida al hablar de estabilidad.
+        Para la posición angular $\theta$ aparece
+        un integrador adicional,
+        $G_\theta(s)=G_\omega(s)/s$. Una tensión
+        constante puede dejar velocidad finita y
+        posición creciente. El canal tensión–posición
+        no es BIBO estable en lazo abierto. Si se
+        incluye el ángulo entre los estados,
+        aparece ese modo adicional que no regresa
+        por sí solo a una posición de referencia.</p>
+
+      <script type="text/matlab">
+%% Motor de CD con tensión y par de carga como entradas
+R = 2; L = 0.01; J = 0.002; b = 0.02; Kt = 0.1; Ke = 0.1;
+denMotor = [L*J L*b+R*J R*b+Ke*Kt];
+Gomega = tf(Kt,denMotor);
+Gtau = tf([-L -R],denMotor);
+Gmotor = [Gomega Gtau];
+tm = (0:0.0005:1.2)';
+Vm = 12; tau0 = 0.1;
+entradas = [Vm*ones(size(tm)), tau0*double(tm>=0.35)];
+omega = lsim(Gmotor,entradas,tm,'zoh');
+omegaSinCarga = Vm*dcgain(Gomega);
+omegaConCarga = Vm*dcgain(Gomega)+tau0*dcgain(Gtau);
+fprintf('\nVelocidad sin carga: %.3f rad/s\n',omegaSinCarga);
+fprintf('Velocidad con carga: %.3f rad/s\n',omegaConCarga);
+disp('Polos de velocidad:'); disp(pole(Gomega));
+
+figure('Name','Motor de CD');
+plot(tm,omega,'LineWidth',1.7); hold on;
+yline(omegaSinCarga,':','Sin carga');
+yline(omegaConCarga,'--','Con carga');
+xline(0.35,':','Se aplica la carga'); grid on;
+xlabel('Tiempo (s)'); ylabel('Velocidad angular (rad/s)');
+
+% Para posición angular aparece un integrador adicional.
+Gtheta = Gomega*tf(1,[1 0]);
+fprintf('Transferencia tensión-posición BIBO estable: %d\n', ...
+    isstable(Gtheta));
+      </script>
+
+      <h2>Representar las mismas condiciones en Simulink</h2>
+
+      <p>La ecuación mecánica puede implementarse
+        sin comenzar por la función de transferencia.
+        Se despeja la aceleración,
+        $\ddot{x}=(f-c\dot{x}-kx)/m$, y se
+        construye el modelo con dos integradores
+        en cascada.</p>
+
+      <ol>
+        <li>Un bloque <em>Sum</em>, con signos
+          <code>+--</code>, recibe la fuerza,
+          $c\dot{x}$ y $kx$.</li>
+        <li>Un bloque <em>Gain</em> de valor
+          <code>1/m</code> convierte la fuerza
+          neta en aceleración.</li>
+        <li>El primer <em>Integrator</em> produce
+          velocidad y se inicializa en
+          <code>-0.10</code>.</li>
+        <li>El segundo produce posición y se
+          inicializa en <code>0.08</code>.</li>
+        <li>Se realimentan velocidad mediante
+          una ganancia <code>c</code> y posición
+          mediante una ganancia <code>k</code>
+          a las entradas negativas del sumador.</li>
+        <li>Un bloque <em>Step</em> que cambie
+          de 0 a 10 en $t=0$ proporciona la
+          fuerza del ejemplo; un <em>Scope</em>
+          permite observar la posición.</li>
+      </ol>
+
+      <p>El bloque <em>State-Space</em> con
+        <code>Am</code>, <code>Bm</code>,
+        <code>Cm</code>, <code>Dm</code> y
+        <code>z0</code> ofrece una implementación
+        equivalente. Un bloque <em>Transfer Fcn</em>
+        con numerador <code>[1]</code> y
+        denominador <code>[2 4 50]</code>,
+        en cambio, representa aquí la respuesta
+        desde condiciones iniciales nulas.
+        No se recupera la energía inicial
+        añadiendo simplemente una constante
+        de 0.08 a su salida.</p>
+
+      <p>Para este mecanismo puede iniciarse la
+        simulación con <code>ode45</code>,
+        tolerancia relativa <code>1e-7</code>
+        y paso máximo de 0.002 s, comprobando
+        convergencia al refinarlo. La selección
+        del paso debe revisarse cuando se
+        incorporen dinámicas más rápidas,
+        como las eléctricas de un motor.</p>
+
+      <h2>Una secuencia de análisis desde el modelo físico</h2>
+
+      <p>El análisis comienza por escoger entrada,
+        salida y estados con unidades claras.
+        Después se obtiene una ecuación o una
+        representación de estados y se verifica
+        dónde es válida su aproximación lineal.
+        La transferencia se deduce con estado
+        inicial nulo, mientras las condiciones
+        iniciales del experimento se conservan
+        para calcular la respuesta libre.</p>
+
+      <p>Los polos y los eigenvalores permiten
+        decidir qué términos decaen y qué
+        noción de estabilidad se cumple.
+        Con esa información se utiliza la
+        convolución para una entrada general,
+        la ganancia estática para un escalón
+        estable o la respuesta en frecuencia
+        para una excitación sinusoidal.
+        La comparación entre soluciones
+        analíticas, simulación y unidades
+        físicas ayuda a detectar errores
+        antes de trasladar el resultado
+        a una máquina.</p>
+
+      <h2>Referencias</h2>
+
+      <ul class="references">
+        <li>Åström, K. J., &amp; Murray, R. M. (2021).
+          <a href="https://press.princeton.edu/books/hardcover/9780691193984/feedback-systems"><em>Feedback systems: An introduction for scientists and engineers</em></a>
+          (2.ª ed.). Princeton University Press.</li>
+        <li>MathWorks. (2026).
+          <a href="https://www.mathworks.com/help/control/"><em>Control System Toolbox documentation</em></a>.
+          Véanse las funciones <code>tf</code>, <code>ss</code>,
+          <code>initial</code>, <code>impulse</code>, <code>lsim</code>,
+          <code>pole</code>, <code>isstable</code>, <code>dcgain</code>
+          y <code>stepinfo</code>.</li>
+        <li>Ogata, K. (2010). <em>Modern control engineering</em>
+          (5.ª ed.). Pearson.</li>
+      </ul>
+
+      <footer class="article-footer ccby"></footer>
+    </article>
+  </main>
+</body>
+</html>
